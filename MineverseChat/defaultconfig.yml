@@ -1,0 +1,454 @@
+#===============================================================
+#                     MineverseChat Config                     =
+#                      Author: Aust1n46                        =                     
+#===============================================================
+
+# - regex1,regex2
+# Simple regex tips: Use \b to "cut" a section of the word or phrase.  Example: \bass,donuts
+# Example filtered sentence: You are an ass.  Will become: You are an donuts.  
+# Example filtered sentence: You caught a bass.  Will stay: You caught a bass.  
+# Example filtered sentence: You are an asshole.  Will become: You are an donutshole.
+# Default filters by Jabelpeeps
+filters:
+- (\b.?anus),donuts
+- (\ba+r*(se+|ss+(?!(ass|um|oc|ign|ist)).*?|s*e*h+[o0]*[l1]+e*[sz]*)\b),donuts
+- (b[i1]a?tch(es)?),puppy
+- Carpet Muncher,cookie monster
+- (\bc((?!ook\b)[o0]+c*|aw)k\W?(sucker|s*|he[ea]*d)\b),rooster
+- (\b[ck]r+a+p+(er|s|z)?\b),poopoo
+- (\bcu+m+\b),go
+- (\b.?[ck](u*n+|[l1]+[i1]+)t+[sz]*\b),peach
+- (\b.?d[1i](c?k(head)?|[l1]+d[o0])e?[sz]?\b),rooster
+- f u c k( e r)?,nono
+- (\b.?fai*g+[oei1]*t*[sz]*\b),cigar
+- Fudge Packer,fine person
+- (\b(m[uo]+th[ae]r?)?(f|ph)uc*k*(e[rn]|ah*|ing?|)[sz]?\b),oh dear
+- (\b(j(ac|er|ur)k\W?(of+))|(ji[sz]+i*m*)\b),bake brownies
+- (\b(ma+s+te?rbai?te?[rs]?|wank(er)?[sz]?)\b),bake brownies
+- orafi(s|ce),rooster
+- (\bp+[e3]+[ai]*n+[i1!ua]+s+),rooster
+- (\bp[i1]s+(?!(ton))(flap|face|drop)?),peepee
+- (\b.?sh[i1!y]t+(er?|y|head)?[sz]*),poopoo
+- (\bva[1i]?[gj]+[i1]+na+\b),peach
+- vu[1l]+va,peach
+- planet.?minecraft,another dimension
+- pmc,another dimension
+- ((\d+\.){3}\d+),another dimension
+
+# command without the /
+blockablecommands:
+- vote
+- me
+
+# blacklisted nicknames 
+nicknames:
+- Notch
+
+nickname-in-tablist: true
+
+commandspy:
+  worldeditcommands: true
+  
+antispam:
+  enabled: true
+  
+  # number of messages to be spam
+  spamnumber: 5
+  
+  # amount of time in seconds for it to be spam
+  spamtime: 10
+  
+  # amount of time in minutes for the mute to last, use 0 for untimed mute
+  mutetime: 10
+ 
+# Logging chat and commands to a mysql database 
+mysql:
+  enabled: false
+  user: User
+  port: 3306
+  password: Password
+  host: localhost
+  database: Database
+
+# Login and logout messages
+# Use Default for the vanilla login and logout messages
+login:
+  enabled: true
+  message: Default
+logout:
+  enabled: true
+  message: Default
+
+# Loglevel feature is still in the works for adding of debug messages
+# Valid loglevels:
+# Info: Regular logging
+# Debug: Show extra messages and caught errors for debugging
+# Severe: Only show severe messages
+loglevel: info
+
+# saveinterval is in minutes
+saveinterval: 30
+
+# The time in seconds between each check to remove timed mutes
+unmuteinterval: 60
+
+# The color of the private messages
+tellcolor: white
+
+# Enables or disabled BungeeCord messaging
+bungeecordmessaging: true
+
+# This will allow vanished players to be exempt from being sent private messages, and will act as if they aren't online
+vanishsupport: true
+
+# {playerto} : player receivings name
+# {playerfrom} : player sendings name
+# use Default for the basic formatting
+tellformatto: Default
+tellformatfrom: Default
+tellformatspy: Default
+replyformatto: Default
+replyformatfrom: Default
+replyformatspy: Default
+
+# {sender} : player sendings name
+# {player} : player receivings name
+# {time} : time mail was sent
+# use Default for the basic formatting
+mailformat: Default
+
+# {host} : party hosts name
+# {player} : player name
+# use Default for the basic formatting
+partyformat: Default
+
+broadcastafk: false
+formatcleaner: true
+
+# If true, /ignore will block chat from the ignored player as well as PM's
+ignorechat: false
+
+# The message shown to players alerting them no one is in the channel to hear them
+emptychannelalert: "&6No one is listening to you."
+
+messageremoverpermissions: '&cYou need additional permissions to view this message!'
+
+# The name of the group is the permissions node for the format
+# Example: mineversechat.json.Owner is the node for the group Owner
+# A lower priority overrides a higher priority if a player has more than 1 group
+# Possible options for click_name and click_prefix are suggest_command, run_command, and open_url
+jsonformatting:
+  Default:
+    priority: 2147483647 # Integer.MAX_VALUE
+    hover_name:
+    - '&6I have no rank!'
+    click_name: 'suggest_command'
+    click_name_text: '/msg {player_name}'
+    hover_prefix:
+    - '&dI am default!'
+    click_prefix: 'run_command'
+    click_prefix_text: '/help'
+    hover_suffix:
+    - '&dI am default suffix!'
+    click_suffix: 'suggest_command'
+    click_suffix_text: '/msg {player_name}'
+  Owner:
+    priority: 1 # Lowest Priority
+    hover_name:
+    - '&cOwner of the server!'
+    - '&bMessage me for help!'
+    click_name: 'suggest_command'
+    click_name_text: '/msg {player_name}'
+    hover_prefix:
+    - '&dServer Owner'
+    click_prefix: 'run_command'
+    click_prefix_text: '/help'
+    hover_suffix:
+    - '&dI am Owner suffix!'
+    click_suffix: 'suggest_command'
+    click_suffix_text: '/msg {player_name}'
+    
+# The icon is the block shown in the GUI
+# The text is the display name of the block icon
+# Include a slash (/) before the command   
+# Permissions automatically include "mineversechat." 
+# Example: permissions: alert equals mineversechat.alert
+venturegui:
+  mute:
+    icon: 'REDSTONE_BLOCK'
+    durability: 0
+    text: '&cMute {player_name}'
+    permission: 'mute'
+    command: '/mute {player_name} {channel} 10'
+    slot: 1
+  unmute:
+    icon: 'DIAMOND_BLOCK'
+    durability: 0
+    text: '&bUnmute {player_name}'
+    permission: 'mute'
+    command: '/unmute {player_name} {channel}'
+    slot: 2
+  removemessage:
+    icon: 'DIAMOND_AXE'
+    durability: 0
+    text: '&cRemove Message'
+    permission: 'removemessage'
+    command: '/removemessage {hash} true'
+    slot: 7
+    
+guiicon: '&c [✓]'
+guitext: '&cOpen Moderation GUI'
+guirows: 1
+
+# All clickable URL's will be underlined if set to true
+underlineurls: true
+
+# broadcast information
+broadcast:
+  color: red
+  permissions: mineversechat.adminchannel
+  displaytag: '[Broadcast]'
+  
+# Use $ to include arguments into the message  
+# Valid component types are:
+# Command: Sends a message or command in chat
+# Message: Sends a message to the player
+# Broadcast: Sends a broadcast to all players on the server
+# Permissions automatically include "mineversechat." 
+# Example: permissions: alert equals mineversechat.alert
+# Use None for no permissions
+# The number of arguments is the minimum number of required arguments, use 0 for no required arguments
+alias:  
+  vote:
+    arguments: 0
+    permissions: None
+    components:
+    - 'Message: &6Vote here: www.votelinkhere.com'
+  bane:
+    arguments: 2
+    permissions: bane
+    components:
+    - 'Command: /ban $ appeal at www.site.com'
+    - 'Command: /st banned $'
+  alert:
+    arguments: 1
+    permissions: alert
+    components:
+    - 'Broadcast: &c<Alert> $'
+  donate:
+    arguments: 0
+    permissions: None
+    components:
+    - 'Message: &bDonate here: www.mywebsite.com'
+  website:
+    arguments: 0
+    permissions: None
+    components:
+    - 'Message: &aThis is our website: www.site.net'
+  mail:
+    arguments: 0
+    permissions: None
+    components:
+    - 'Command: /email$'
+  tell:
+    arguments: 0
+    permissions: None
+    components:
+    - 'Command: /vtell$'
+  whisper:
+    arguments: 0
+    permissions: None
+    components:
+    - 'Command: /vwhisper$'
+  w:
+    arguments: 0
+    permissions: None
+    components:
+    - 'Command: /vwhisper$' 
+  msg:
+    arguments: 0
+    permissions: None
+    components:
+    - 'Command: /vmessage$' 
+  message:
+    arguments: 0
+    permissions: None
+    components:
+    - 'Command: /vmessage$'
+    
+# Valid modes are:
+# * Everyone
+# v Voice and up
+# h HalfOp and up
+# q Owner
+# o Op and up
+# Enter components like console commands
+# Arguments are accepted
+irc:
+  enabled: false
+  nick: 'MineverseChatBot'
+  login: 'MineverseChatbot'
+  server: 'irc.freenode.net'
+  port: 6667
+  channel: '#mineversechat'
+  trustallcertificates: true
+  # the delay before the bot logs into the channel in seconds
+  # increase the time if the bot fails to login
+  channeldelay: 60
+  commands:
+    mute:
+      mode: 'v'
+      components:
+      - 'mute'
+    ban:
+      mode: 'o'
+      components:
+      - 'ban'
+    kick:
+      mode: 'v'
+      components:
+      - 'kick'
+
+# color = [channel] color
+# chatcolor = text color
+# cooldown is in seconds
+# bungeecord overrides distance
+# channel permissions are configurable
+# channels can be changed, and new channels can be created
+# Permissions automatically include "mineversechat." 
+# Example: permissions: staff equals mineversechat.staff
+# Use None for no permissions
+
+# Legacy Placeholders:  
+# Use PlaceholderAPI
+# {name} : player name
+# {nickname} : player nickname or name if they have no nickname
+# {prefix} : player prefix and color
+# {suffix} : player suffix and color
+# {servername} : name of the server in server.properties
+# {herolevel} : heroes hero level
+# {heroclass} : heroes hero class
+# {heroxp} : heroes hero xp
+# {herosecondclass} : heroes second class
+# {party} : heroes party
+# {herosecondmaster} : heroes second class master
+# {heromaster} : heroes class master
+# {herosecondlevel} : heroes second class level
+# {herosecondxp} : heroes second class xp
+# Use '' or "" around format, example: '[&2global&f] {prefix}{name}&2:'
+# You must have prefixes and suffixes set in a Vault compatible permissions plugin to avoid errors
+# Use "" as the prefix or suffix to have none
+# use Default for the basic formatting
+channels:
+  Global:
+    color: dark_green
+    chatcolor: dark_green
+    mutable: true
+    filter: true
+    autojoin: true
+    default: true
+    distance: 0
+    cooldown: 0
+    bungeecord: false
+    alias: g
+    permissions: None
+    format: '&f[&2Global&f] {prefix} {nickname}&2:'
+    irc: false
+  Staff:
+    color: green
+    chatcolor: green
+    mutable: false
+    filter: false
+    autojoin: true
+    default: false
+    distance: 0
+    cooldown: 0
+    bungeecord: false
+    alias: st
+    permissions: staffchannel
+    format: '&f[&aStaff&f] {prefix} {nickname}&a:'
+    irc: false
+  Admin:
+    color: red
+    chatcolor: red
+    mutable: false
+    filter: false
+    autojoin: true
+    default: false
+    distance: 0
+    cooldown: 0
+    bungeecord: false
+    alias: a
+    permissions: adminchannel
+    format: '&f[&cAdmin&f] {prefix} {nickname}&c:'
+    irc: false
+  Donator:
+    color: light_purple
+    chatcolor: light_purple
+    mutable: true
+    filter: true
+    autojoin: true
+    default: false
+    distance: 0
+    cooldown: 0
+    bungeecord: false
+    alias: d
+    permissions: donatorchannel
+    format: '&f[&dDonator&f] {prefix} {nickname}&d:'
+    irc: false
+  Help:
+    color: aqua
+    chatcolor: aqua
+    mutable: true
+    filter: true
+    autojoin: true
+    default: false
+    distance: 0
+    cooldown: 0
+    bungeecord: false
+    alias: h
+    permissions: None
+    format: '&f[&bHelp&f] {prefix} {nickname}&b:'
+    irc: false
+  Trade:
+    color: dark_aqua
+    chatcolor: dark_aqua
+    mutable: true
+    filter: true
+    autojoin: true
+    default: false
+    distance: 0
+    cooldown: 0
+    bungeecord: false
+    alias: t
+    permissions: None
+    format: '&f[&3Trade&f] {prefix} {nickname}&3:'
+    irc: false
+  Local:
+    color: yellow
+    chatcolor: yellow
+    mutable: true
+    filter: true
+    autojoin: true
+    default: false
+    distance: 230
+    cooldown: 0
+    bungeecord: false
+    alias: l
+    permissions: None
+    format: '&f[&eLocal&f] {prefix} {nickname}&e:'
+    irc: false
+  Network:
+    color: gold
+    chatcolor: gold
+    mutable: true
+    filter: true
+    autojoin: true
+    default: false
+    distance: 0
+    cooldown: 60
+    bungeecord: true
+    alias: n
+    permissions: None
+    format: '&f[&6Network&f] {prefix} {nickname}&6:'
+    irc: false

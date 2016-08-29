@@ -1,0 +1,53 @@
+#===============================================================
+#                     MineverseChat Config                     =
+#                      Author: Aust1n46                        =                     
+#===============================================================
+
+# - regex1,regex2
+# Simple regex tips: Use \b to "cut" a section of the word or phrase.  Example: \bass,donuts
+# Example filtered sentence: You are an ass.  Will become: You are an donuts.  
+# Example filtered sentence: You caught a bass.  Will stay: You caught a bass.  
+# Example filtered sentence: You are an asshole.  Will become: You are an donutshole.
+# Default filters by Jabelpeeps
+filters:
+- (\banus),donuts
+- (\ba+r*(se+|ss+(?!(ass|um|oc|ign)).*?|s*e*h+[o0]*[l1]+e*[sz]*)\b),donuts
+- (b[i1]a?tch(es)?),puppy
+- Carpet Muncher,cookie monster
+- (\bc((?!ook\b)[o0]+c*|aw)k\W?(sucker|s*|he[ea]*d)\b),rooster
+- (\b[ck]r+a+p+(er|s|z)?\b),poopoo
+- (\bcum+\b),go
+- (\b[ck](u*n+|[l1]+[i1]+)t+[sz]*\b),peach
+- (\bd[1i](c?k(head)?|[l1]+d[o0])e?[sz]?\b),rooster
+- (\bd[1i]+n+g+u+s+),discus
+- f u c k( e r)?,nono
+- (\bfai*g+[oei1]*t*[sz]*\b),cigar
+- Fudge Packer,fine person
+- (\b(m[uo]+th[ae]r?)?(f|ph)uc*k*(e[rn]|ah*|ing?|)[sz]?\b),oh dear
+- (\b(j(ac|er|ur)k\W?(of+))|(ji[sz]+i*m*)\b),bake brownies
+- (\b(ma+s+te?rbai?te?[rs]?|wank(er)?[sz]?)\b),bake brownies
+- orafi(s|ce),rooster
+- (\bp+[e3]+[ai]*n+[i1!ua]+s+),rooster
+- (\bp[i1]s+(flap|face|drop)?),peepee
+- (\bsh[i1!y]t+(er?|y|head)?[sz]*),poopoo
+- (\bva[1i]?[gj]+[i1]+na+\b),peach
+- vu[1l]+va,peach
+- planet ?minecraft,another dimension
+- pmc,another dimension
+- ((\d+\.){3}\d+),another dimension
+
+# {playerto} : player receivings name
+# {playerfrom} : player sendings name
+tellformatto: Default
+tellformatfrom: Default
+tellformatspy: Default
+replyformatto: Default
+replyformatfrom: Default
+replyformatspy: Default
+
+tellcolor: white
+
+# enable bungeecord messaging 
+messaging: true
+# enable bungeecord muting
+muting: true
