@@ -3,6 +3,7 @@ package mineverse.Aust1n46.chat.utilities;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 
 import me.clip.placeholderapi.PlaceholderAPI;
@@ -36,7 +37,7 @@ public class Format {
 		}
 		catch(Exception e) {
 			if(plugin.getConfig().getString("loglevel", "info").equals("debug")) {
-				System.out.println("[" + plugin.getConfig().getString("pluginname", "MineverseChat") + "] Prefix and / or suffix don't exist, setting to nothing.");
+				Bukkit.getConsoleSender().sendMessage(Format.FormatStringAll("&8[&eVentureChat&8]&e - Prefix and / or suffix don't exist, setting to nothing."));
 			}
 		}	
 		String nickname = "";

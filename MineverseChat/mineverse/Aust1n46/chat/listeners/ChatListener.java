@@ -299,12 +299,13 @@ public class ChatListener implements Listener {
 					p.getPlayer().sendMessage(send);
 					mcp.getPlayer().sendMessage(echo);
 					if(p.hasNotifications()) {
-						if(VersionHandler.is1_8()) {
+						if(VersionHandler.is1_8() || VersionHandler.is1_7_10() || VersionHandler.is1_7_2() || VersionHandler.is1_7_9()) {
 							p.getPlayer().playSound(p.getPlayer().getLocation(), Sound.valueOf("LEVEL_UP"), 1, 0);
 						}
-						if(VersionHandler.is1_9()) {
+						else {
 							p.getPlayer().playSound(p.getPlayer().getLocation(), Sound.valueOf("ENTITY_PLAYER_LEVELUP"), 1, 0);
 						}
+						p.getPlayer().playSound(p.getPlayer().getLocation(), Sound.valueOf("ENTITY_PLAYER_LEVELUP"), 1, 0);
 					}
 					p.setReplyPlayer(mcp.getUUID());
 					mcp.setReplyPlayer(p.getUUID());
