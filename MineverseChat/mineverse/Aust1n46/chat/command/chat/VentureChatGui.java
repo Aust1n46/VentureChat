@@ -66,7 +66,7 @@ public class VentureChatGui extends MineverseCommand {
 				Set<String> blockedCommands = new HashSet<String>();
 				List<String> mail = new ArrayList<String>();
 				String jsonFormat = "Default";
-				target = new MineverseChatPlayer(uuid, name, current, ignores, listening, mutes, blockedCommands, mail, false, null, true, true, name, jsonFormat, false, false, false, true);
+				target = new MineverseChatPlayer(uuid, name, current, ignores, listening, mutes, blockedCommands, mail, false, null, true, true, name, jsonFormat, false, false, false, true, true);
 				MineverseChat.players.add(target);
 			}
 			if(MineverseChat.ccInfo.isChannel(args[1])) {

@@ -39,6 +39,8 @@ public class Format {
 			if(plugin.getConfig().getString("loglevel", "info").equals("debug")) {
 				Bukkit.getConsoleSender().sendMessage(Format.FormatStringAll("&8[&eVentureChat&8]&e - Prefix and / or suffix don't exist, setting to nothing."));
 			}
+			suffix = "venturechat_no_suffix_code";
+			prefix = "venturechat_no_prefix_code";
 		}	
 		String nickname = "";
 		if(icp.getPlayer() != null) {
@@ -132,34 +134,25 @@ public class Format {
 				temp += convertToJsonColors(lastCode + remaining.substring(0, indexStart)) + ",";
 				lastCode = getLastCode(lastCode + remaining.substring(0, indexStart));
 				String action = "";
-				if(placeholder.contains(prefix))
-					action = format.getClickPrefix();
-				if(placeholder.contains(nickname))
-					action = format.getClickName();
-				if(placeholder.contains(suffix))
-					action = format.getClickSuffix();
 				String text = "";
-				if(placeholder.contains(prefix))
-					text = PlaceholderAPI.setBracketPlaceholders(icp.getPlayer(), format.getClickPrefixText());
-				if(placeholder.contains(nickname))
-					text = PlaceholderAPI.setBracketPlaceholders(icp.getPlayer(), format.getClickNameText());
-				if(placeholder.contains(suffix))
-					text = PlaceholderAPI.setBracketPlaceholders(icp.getPlayer(), format.getClickSuffixText());
 				String hover = "";
 				if(placeholder.contains(prefix)) {
-					hover = "";
+					action = format.getClickPrefix();
+					text = PlaceholderAPI.setBracketPlaceholders(icp.getPlayer(), format.getClickPrefixText());
 					for(String st : format.getHoverTextPrefix()) {
 						hover += Format.FormatStringAll(st) + "\n";
 					}
 				}
 				if(placeholder.contains(nickname)) {
-					hover = "";
+					action = format.getClickName();
+					text = PlaceholderAPI.setBracketPlaceholders(icp.getPlayer(), format.getClickNameText());
 					for(String st : format.getHoverTextName()) {
 						hover += Format.FormatStringAll(st) + "\n";
 					}
 				}
 				if(placeholder.contains(suffix)) {
-					hover = "";
+					action = format.getClickSuffix(); 
+					text = PlaceholderAPI.setBracketPlaceholders(icp.getPlayer(), format.getClickSuffixText());
 					for(String st : format.getHoverTextSuffix()) {
 						hover += Format.FormatStringAll(st) + "\n";
 					}

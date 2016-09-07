@@ -11,13 +11,15 @@ public class SynchronizedMineverseChatPlayer {
 	private Set<UUID> ignores;
 	private int messagePackets;
 	private boolean spy;
+	private boolean messageToggle;
 	
-	public SynchronizedMineverseChatPlayer(UUID uuid, Set<String> listening, HashMap<String, Integer> mutes, Set<UUID> ignores, boolean spy) {
+	public SynchronizedMineverseChatPlayer(UUID uuid, Set<String> listening, HashMap<String, Integer> mutes, Set<UUID> ignores, boolean spy, boolean messageToggle) {
 		this.uuid = uuid;
 		this.listening = listening;
 		this.mutes = mutes;
 		this.ignores = ignores;
 		this.spy = spy;
+		this.messageToggle = messageToggle;
 	}
 	
 	public int getMessagePackets() {
@@ -78,5 +80,13 @@ public class SynchronizedMineverseChatPlayer {
 	
 	public void setSpy(boolean spy) {
 		this.spy = spy;
+	}
+	
+	public boolean getMessageToggle() {
+		return this.messageToggle;
+	}
+	
+	public void setMessageToggle(boolean messageToggle) {
+		this.messageToggle = messageToggle;
 	}
 }

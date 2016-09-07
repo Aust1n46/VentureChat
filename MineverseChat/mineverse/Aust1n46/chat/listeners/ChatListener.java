@@ -128,6 +128,11 @@ public class ChatListener implements Listener {
 					event.setCancelled(true);
 					return;
 				}
+				if(!tp.getMessageToggle()) {
+					mcp.getPlayer().sendMessage(ChatColor.GOLD + tp.getName() + " is currently blocking messages.");
+					event.setCancelled(true);
+					return;
+				}
 				String filtered = event.getMessage();
 				String echo = "";
 				String send = "";
@@ -258,6 +263,11 @@ public class ChatListener implements Listener {
 						event.setCancelled(true);
 						return;
 					}
+					if(!p.getMessageToggle()) {
+						mcp.getPlayer().sendMessage(ChatColor.GOLD + p.getName() + " is currently blocking messages.");
+						event.setCancelled(true);
+						return;
+					}
 					String echo = "";
 					String send = "";
 					String spy = "";
@@ -325,6 +335,11 @@ public class ChatListener implements Listener {
 					}
 					if(p.getIgnores().contains(mcp.getUUID())) {
 						mcp.getPlayer().sendMessage(ChatColor.GOLD + p.getName() + " is currently ignoring your messages.");
+						event.setCancelled(true);
+						return;
+					}
+					if(!p.getMessageToggle()) {
+						mcp.getPlayer().sendMessage(ChatColor.GOLD + p.getName() + " is currently blocking messages.");
 						event.setCancelled(true);
 						return;
 					}

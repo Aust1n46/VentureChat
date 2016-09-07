@@ -114,6 +114,10 @@ public class Message extends MineverseCommand {
 			mcp.getPlayer().sendMessage(ChatColor.GOLD + player.getName() + " is currently ignoring your messages.");
 			return;
 		}
+		if(!player.getMessageToggle()) {
+			mcp.getPlayer().sendMessage(ChatColor.GOLD + player.getName() + " is currently blocking messages.");
+			return;
+		}
 		if(args.length >= 2) {
 			String msg = "";
 			String echo = "";

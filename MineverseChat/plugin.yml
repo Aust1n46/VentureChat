@@ -220,3 +220,8 @@ commands:
         aliases: [vchatgui]
         description: Opens the chat management gui
         permission-message: You don't have <permission>
+    messagetoggle:
+        usage: /<command>
+        aliases: [mtoggle,vmessagetoggle]
+        description: Toggle receiving messages
+        permission-message: You don't have <permission>

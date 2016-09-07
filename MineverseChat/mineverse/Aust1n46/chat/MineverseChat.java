@@ -83,6 +83,7 @@ import mineverse.Aust1n46.chat.command.chat.Venturechat;
 import mineverse.Aust1n46.chat.command.message.Afk;
 import mineverse.Aust1n46.chat.command.message.Ignore;
 import mineverse.Aust1n46.chat.command.message.Message;
+import mineverse.Aust1n46.chat.command.message.MessageToggle;
 import mineverse.Aust1n46.chat.command.message.Notifications;
 import mineverse.Aust1n46.chat.command.message.Reply;
 import mineverse.Aust1n46.chat.command.message.Spy;
@@ -214,6 +215,7 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 		// Set up Vault
 		if(!this.setupPermissions()) {
 			Bukkit.getConsoleSender().sendMessage(Format.FormatStringAll("&8[&eVentureChat&8]&e - &cCould not find Vault dependency, disabling."));
+			Bukkit.getPluginManager().disablePlugin(this);
 		}
 		this.setupChat();
 		// Log completion of initialization
@@ -272,7 +274,8 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 				boolean commandSpy = PlayerData.getPlayerData().getConfigurationSection("players." + uuidString).getBoolean("commandspy", false);
 				boolean rangedSpy = PlayerData.getPlayerData().getConfigurationSection("players." + uuidString).getBoolean("rangedspy", false);
 				boolean buttons = PlayerData.getPlayerData().getConfigurationSection("players." + uuidString).getBoolean("buttons", true);
-				players.add(new MineverseChatPlayer(uuid, name, currentChannel, ignores, listening, mutes, blockedCommands, mail, host, party, filter, notifications, nickname, jsonFormat, spy, commandSpy, rangedSpy, buttons));
+				boolean messageToggle = PlayerData.getPlayerData().getConfigurationSection("players." + uuidString).getBoolean("messagetoggle", true);
+				players.add(new MineverseChatPlayer(uuid, name, currentChannel, ignores, listening, mutes, blockedCommands, mail, host, party, filter, notifications, nickname, jsonFormat, spy, commandSpy, rangedSpy, buttons, messageToggle));
 			}
 		}
 		else {
@@ -377,6 +380,7 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 		commands.put("unmute", new Unmute("unmute"));
 		commands.put("unmuteall", new Unmuteall("unmuteall"));
 		commands.put("venturechatgui", new VentureChatGui("venturechatgui"));
+		commands.put("messagetoggle", new MessageToggle("messagetoggle"));
 		commandExecutor = new MineverseCommandExecutor(commands);
 		for(String command : commands.keySet()) {
 			this.getCommand(command).setExecutor(commandExecutor);
@@ -697,6 +701,7 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 					out.writeUTF(c.toString());
 				}
 				out.writeBoolean(mcp.isSpy());
+				out.writeBoolean(mcp.getMessageToggle());
 			}
 			for(MineverseChatPlayer p : MineverseChat.onlinePlayers) {
 				p.getPlayer().sendPluginMessage(this, "VentureChat", outstream.toByteArray());
@@ -830,6 +835,7 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 				}
 				// System.out.println(msgin.available() + " available before");
 				p.setSpy(msgin.readBoolean());
+				p.setMessageToggle(msgin.readBoolean());
 				// System.out.println(msgin.available() + " available after");
 				for(Object o : p.getIgnores().toArray()) {
 					p.removeIgnore((UUID) o);
@@ -939,6 +945,15 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 						player.sendPluginMessage(this, "VentureChat", stream.toByteArray());
 						return;
 					}
+					if(!p.getMessageToggle()) {
+						out.writeUTF("Message");
+						out.writeUTF("Blocked");
+						out.writeUTF(server);
+						out.writeUTF(receiver);
+						out.writeUTF(sender.toString());
+						player.sendPluginMessage(this, "VentureChat", stream.toByteArray());
+						return;
+					}
 					if(s != null) {
 						sName = Format.FormatStringAll(s.getNickname());
 					}
@@ -953,7 +968,7 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 						Set<String> blockedCommands = new HashSet<String>();
 						List<String> mail = new ArrayList<String>();
 						String jsonFormat = "Default";
-						s = new MineverseChatPlayer(uuid, name, current, ignores, listening, mutes, blockedCommands, mail, false, null, true, true, name, jsonFormat, false, false, false, true);
+						s = new MineverseChatPlayer(uuid, name, current, ignores, listening, mutes, blockedCommands, mail, false, null, true, true, name, jsonFormat, false, false, false, true, true);
 						MineverseChat.players.add(s);
 					}
 					p.getPlayer().sendMessage(msg.replace("{playerfrom}", sName).replace("{playerto}", Format.FormatStringAll(p.getNickname())));
@@ -989,6 +1004,12 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 					UUID sender = UUID.fromString(msgin.readUTF());
 					MineverseChatPlayer p = MineverseChatAPI.getOnlineMineverseChatPlayer(sender);
 					p.getPlayer().sendMessage(ChatColor.GOLD + receiver + " is currently ignoring your messages.");
+				}
+				if(identifier.equals("Blocked")) {
+					String receiver = msgin.readUTF();
+					UUID sender = UUID.fromString(msgin.readUTF());
+					MineverseChatPlayer p = MineverseChatAPI.getOnlineMineverseChatPlayer(sender);
+					p.getPlayer().sendMessage(ChatColor.GOLD + receiver + " is currently blocking messages.");
 				}
 				if(identifier.equals("Echo")) {
 					String receiver = msgin.readUTF();

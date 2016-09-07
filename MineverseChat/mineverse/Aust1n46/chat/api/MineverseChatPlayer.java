@@ -49,8 +49,9 @@ public class MineverseChatPlayer {
 	private int editHash;
 	private boolean rangedSpy;
 	private boolean buttons;
+	private boolean messageToggle;
 
-	public MineverseChatPlayer(UUID uuid, String name, ChatChannel currentChannel, Set<UUID> ignores, Set<String> listening, HashMap<String, Integer> mutes, Set<String> blockedCommands, List<String> mail, boolean host, UUID party, boolean filter, boolean notifications, String nickname, String jsonFormat, boolean spy, boolean commandSpy, boolean rangedSpy, boolean buttons) {
+	public MineverseChatPlayer(UUID uuid, String name, ChatChannel currentChannel, Set<UUID> ignores, Set<String> listening, HashMap<String, Integer> mutes, Set<String> blockedCommands, List<String> mail, boolean host, UUID party, boolean filter, boolean notifications, String nickname, String jsonFormat, boolean spy, boolean commandSpy, boolean rangedSpy, boolean buttons, boolean messageToggle) {
 		this.uuid = uuid;
 		this.name = name;
 		this.currentChannel = currentChannel;
@@ -82,6 +83,15 @@ public class MineverseChatPlayer {
 		this.jsonFormat = jsonFormat;
 		this.cooldowns = new HashMap<ChatChannel, Integer>();
 		this.spam = new HashMap<ChatChannel, List<Integer>>();
+		this.messageToggle = messageToggle;
+	}
+	
+	public boolean getMessageToggle() {
+		return this.messageToggle;
+	}
+	
+	public void setMessageToggle(boolean messageToggle) {
+		this.messageToggle = messageToggle;
 	}
 	
 	public boolean getButtons() {

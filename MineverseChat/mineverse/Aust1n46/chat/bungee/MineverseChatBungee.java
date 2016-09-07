@@ -81,7 +81,8 @@ public class MineverseChatBungee extends Plugin implements Listener {
 				ignores.add(UUID.fromString(ignore));
 			}
 			boolean spy = playerData.getBoolean(uuidString + ".spy");
-			players.add(new SynchronizedMineverseChatPlayer(uuid, listening, mutes, ignores, spy));
+			boolean messageToggle = playerData.getBoolean(uuidString + ".messagetoggle");
+			players.add(new SynchronizedMineverseChatPlayer(uuid, listening, mutes, ignores, spy, messageToggle));
 		}
 		this.getProxy().registerChannel("VentureChat");
 		this.getProxy().getPluginManager().registerListener(this, this);
@@ -122,6 +123,7 @@ public class MineverseChatBungee extends Plugin implements Listener {
 			playerData.set(p.getUUID().toString() + ".mutes", mute);
 			playerData.set(p.getUUID().toString() + ".ignores", ignore);
 			playerData.set(p.getUUID().toString() + ".spy", p.isSpy());
+			playerData.set(p.getUUID().toString() + ".messagetoggle", p.getMessageToggle());
 		}
 		try {
 			ConfigurationProvider.getProvider(YamlConfiguration.class).save(playerData, new File(getDataFolder(), "BungeePlayers.yml"));
@@ -297,6 +299,18 @@ public class MineverseChatBungee extends Plugin implements Listener {
 						getProxy().getServers().get(server).sendData("VentureChat", outstream.toByteArray());
 					}
 				}
+				if(identifier.equals("Blocked")) {
+					String server = in.readUTF();
+					String player = in.readUTF();
+					String sender = in.readUTF();
+					out.writeUTF("Message");
+					out.writeUTF("Blocked");
+					out.writeUTF(player);
+					out.writeUTF(sender);
+					if(getProxy().getServers().get(server).getPlayers().size() > 0) {
+						getProxy().getServers().get(server).sendData("VentureChat", outstream.toByteArray());
+					}
+				}
 				if(identifier.equals("Echo")) {
 					String server = in.readUTF();
 					String player = in.readUTF();
@@ -335,7 +349,7 @@ public class MineverseChatBungee extends Plugin implements Listener {
 					UUID uuid = UUID.fromString(in.readUTF());
 					SynchronizedMineverseChatPlayer smcp = MineverseChatAPI.getSynchronizedMineverseChatPlayer(uuid);
 					if(smcp == null) {
-						smcp = new SynchronizedMineverseChatPlayer(uuid, new HashSet<String>(), new HashMap<String, Integer>(), new HashSet<UUID>(), false);
+						smcp = new SynchronizedMineverseChatPlayer(uuid, new HashSet<String>(), new HashMap<String, Integer>(), new HashSet<UUID>(), false, true);
 						players.add(smcp);
 					}
 					out.writeUTF("Sync");
@@ -356,6 +370,7 @@ public class MineverseChatBungee extends Plugin implements Listener {
 					//System.out.println(smcp.isSpy() + " spy value");
 					//System.out.println(out.size() + " size before");
 					out.writeBoolean(smcp.isSpy());
+					out.writeBoolean(smcp.getMessageToggle());
 					//System.out.println(out.size() + " size after");
 					int ignoreCount = smcp.getIgnores().size();
 					//System.out.println(ignoreCount + " ignore size");
@@ -370,7 +385,7 @@ public class MineverseChatBungee extends Plugin implements Listener {
 					UUID uuid = UUID.fromString(in.readUTF());
 					SynchronizedMineverseChatPlayer smcp = MineverseChatAPI.getSynchronizedMineverseChatPlayer(uuid);
 					if(smcp == null) {
-						smcp = new SynchronizedMineverseChatPlayer(uuid, new HashSet<String>(), new HashMap<String, Integer>(), new HashSet<UUID>(), false);
+						smcp = new SynchronizedMineverseChatPlayer(uuid, new HashSet<String>(), new HashMap<String, Integer>(), new HashSet<UUID>(), false, true);
 						players.add(smcp);
 					}		
 					smcp.getListening().clear();
@@ -395,6 +410,7 @@ public class MineverseChatBungee extends Plugin implements Listener {
 						smcp.addIgnore(MineverseChatAPI.getSynchronizedMineverseChatPlayer(UUID.fromString(ignore)));
 					}
 					smcp.setSpy(in.readBoolean());
+					smcp.setMessageToggle(in.readBoolean());
 				}
 				if(identifier.equals("PlayersReceive")) {
 					String server = in.readUTF();

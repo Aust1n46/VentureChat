@@ -93,6 +93,10 @@ public class Reply extends MineverseCommand {
 					mcp.getPlayer().sendMessage(ChatColor.GOLD + player.getNickname() + " is currently ignoring your replies.");
 					return;
 				}
+				if(!player.getMessageToggle()) {
+					mcp.getPlayer().sendMessage(ChatColor.GOLD + player.getNickname() + " is currently blocking messages.");
+					return;
+				}
 				String msg = "";
 				String echo = "";
 				String send = "";
