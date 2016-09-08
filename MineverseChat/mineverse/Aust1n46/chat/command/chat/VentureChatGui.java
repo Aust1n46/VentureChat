@@ -42,7 +42,7 @@ public class VentureChatGui extends MineverseCommand {
 			return;
 		}
 		if(args.length < 3) {
-			sender.sendMessage(ChatColor.RED + "Invalid command: /venturechatgui [player] [channel] [hash]");
+			sender.sendMessage(ChatColor.RED + "Invalid command: " + command+ " [player] [channel] [hash]");
 			return;
 		}
 		MineverseChatPlayer mcp = MineverseChatAPI.getMineverseChatPlayer((Player) sender);
@@ -83,7 +83,7 @@ public class VentureChatGui extends MineverseCommand {
 	}
 	
 	private void openInventory(MineverseChatPlayer mcp, MineverseChatPlayer target, ChatChannel channel, int hash) {
-		Inventory inv = Bukkit.createInventory(null, this.getSlots(), target.getName() + " GUI");
+		Inventory inv = Bukkit.createInventory(null, this.getSlots(), "VentureChat: " + target.getName() + " GUI");
 		ItemStack close = new ItemStack(Material.BARRIER);
 		ItemMeta closeMeta = close.getItemMeta();
 		closeMeta.setDisplayName("§oClose GUI");

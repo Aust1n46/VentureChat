@@ -263,12 +263,12 @@ public class CommandListener implements CommandExecutor, Listener {
 	@EventHandler(priority = EventPriority.LOW)
 	public void InventoryClick(InventoryClickEvent e) {
 		ItemStack item = e.getCurrentItem();
-		if(item == null || !e.getInventory().getTitle().contains("GUI")) {
+		if(item == null || !e.getInventory().getTitle().contains("VentureChat") && !e.getInventory().getTitle().contains("GUI")) {
 			return;
 		}
 		e.setCancelled(true);
 		MineverseChatPlayer mcp = MineverseChatAPI.getOnlineMineverseChatPlayer((Player) e.getWhoClicked());
-		MineverseChatPlayer target = MineverseChatAPI.getMineverseChatPlayer(e.getInventory().getTitle().replace(" GUI", ""));
+		MineverseChatPlayer target = MineverseChatAPI.getMineverseChatPlayer(e.getInventory().getTitle().replace(" GUI", "").replace("VentureChat: ", ""));
 		ItemStack skull = e.getInventory().getItem(0);
 		SkullMeta skullMeta = (SkullMeta) skull.getItemMeta();
 		ChatChannel channel = MineverseChat.ccInfo.getChannelInfo(ChatColor.stripColor(skullMeta.getLore().get(0)).replace("Channel: ", ""));
