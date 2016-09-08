@@ -707,7 +707,7 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 				p.getPlayer().sendPluginMessage(this, "VentureChat", outstream.toByteArray());
 				break;
 			}
-			// System.out.println("Sync start bottom...");
+			//System.out.println("Sync start bottom...");
 			out.close();
 		}
 		catch(IOException e) {
@@ -798,6 +798,7 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 				}
 			}
 			if(subchannel.equals("Sync")) {
+				//System.out.println("Received update...");
 				String uuid = msgin.readUTF();
 				MineverseChatPlayer p = MineverseChatAPI.getMineverseChatPlayer(UUID.fromString(uuid));
 				for(Object ch : p.getListening().toArray()) {

@@ -118,7 +118,7 @@ public class LoginListener implements Listener {
 			public void run() {
 				plugin.synchronize(sync, false);
 			}
-		}, 1L);
+		}, 10L);
 		if(!plugin.getConfig().getConfigurationSection("login").getString("message", "Default").equalsIgnoreCase("Default")) {
 			event.setJoinMessage(Format.FormatStringAll(plugin.getConfig().getConfigurationSection("login").getString("message", "Default").replace("{player}", event.getPlayer().getName())));
 		}

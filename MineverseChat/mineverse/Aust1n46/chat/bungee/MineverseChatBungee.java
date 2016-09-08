@@ -345,6 +345,7 @@ public class MineverseChatBungee extends Plugin implements Listener {
 				//System.out.println("Sync received...");
 				String identifier = in.readUTF();
 				if(identifier.equals("Receive")) {
+					//System.out.println("Sending update...");
 					String server = ser.getInfo().getName();
 					UUID uuid = UUID.fromString(in.readUTF());
 					SynchronizedMineverseChatPlayer smcp = MineverseChatAPI.getSynchronizedMineverseChatPlayer(uuid);
