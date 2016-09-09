@@ -798,7 +798,9 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 				}
 			}
 			if(subchannel.equals("Sync")) {
-				//System.out.println("Received update...");
+				if(plugin.getConfig().getString("loglevel", "info").equals("debug")) {
+					Bukkit.getConsoleSender().sendMessage(Format.FormatStringAll("&8[&eVentureChat&8]&e - Received update..."));
+				}
 				String uuid = msgin.readUTF();
 				MineverseChatPlayer p = MineverseChatAPI.getMineverseChatPlayer(UUID.fromString(uuid));
 				for(Object ch : p.getListening().toArray()) {
