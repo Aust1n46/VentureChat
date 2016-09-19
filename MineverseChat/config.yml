@@ -245,11 +245,6 @@ alias:
     permissions: None
     components:
     - 'Message: &aThis is our website: www.site.net'
-  mail:
-    arguments: 0
-    permissions: None
-    components:
-    - 'Command: /email$'
   tell:
     arguments: 0
     permissions: None

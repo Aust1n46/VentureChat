@@ -263,7 +263,7 @@ public class CommandListener implements CommandExecutor, Listener {
 	@EventHandler(priority = EventPriority.LOW)
 	public void InventoryClick(InventoryClickEvent e) {
 		ItemStack item = e.getCurrentItem();
-		if(item == null || !e.getInventory().getTitle().contains("VentureChat") && !e.getInventory().getTitle().contains("GUI")) {
+		if(item == null || !e.getInventory().getTitle().contains("VentureChat")) {
 			return;
 		}
 		e.setCancelled(true);
