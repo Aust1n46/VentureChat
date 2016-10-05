@@ -50,6 +50,6 @@ public class GuiSlot {
 	}
 	
 	public boolean hasPermission() {
-		return !permission.equalsIgnoreCase("mineversechat.none");
+		return !permission.equalsIgnoreCase("venturechat.none");
 	}
 }
