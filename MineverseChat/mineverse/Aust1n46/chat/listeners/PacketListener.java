@@ -12,13 +12,18 @@ import mineverse.Aust1n46.chat.api.MineverseChatAPI;
 import mineverse.Aust1n46.chat.api.MineverseChatPlayer;
 import mineverse.Aust1n46.chat.utilities.Format;
 import mineverse.Aust1n46.chat.versions.VersionHandler;
+import net.md_5.bungee.api.chat.BaseComponent;
+import net.md_5.bungee.api.chat.TextComponent;
+import net.md_5.bungee.chat.ComponentSerializer;
 
 import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.events.ListenerPriority;
 import com.comphenix.protocol.events.PacketAdapter;
 import com.comphenix.protocol.events.PacketEvent;
+import com.comphenix.protocol.reflect.StructureModifier;
 import com.comphenix.protocol.wrappers.WrappedChatComponent;
 
+import me.clip.placeholderapi.PlaceholderAPI;
 
 //This class listens for chat packets and intercepts them before they are sent to the Player.
 //The packets are modified to include advanced json formating and the message remover button if the 
@@ -35,7 +40,7 @@ public class PacketListener extends PacketAdapter {
 			return;
 		}
 		
-		/*StructureModifier<WrappedChatComponent> chatP = event.getPacket().getChatComponents();
+		StructureModifier<WrappedChatComponent> chatP = event.getPacket().getChatComponents();
 		WrappedChatComponent c = chatP.read(0);
 		if (c == null) {
 			StructureModifier<BaseComponent[]> modifier = event.getPacket().getSpecificModifier(BaseComponent[].class);
@@ -62,7 +67,7 @@ public class PacketListener extends PacketAdapter {
 			return;
 		}
 		msg = PlaceholderAPI.setBracketPlaceholders(event.getPlayer(), msg);
-		chatP.write(0, WrappedChatComponent.fromJson(msg))*/
+		chatP.write(0, WrappedChatComponent.fromJson(msg));
 		
 		try {
 			if(VersionHandler.is1_7_10() || VersionHandler.is1_7_9() || VersionHandler.is1_7_2()) {
@@ -96,7 +101,9 @@ public class PacketListener extends PacketAdapter {
 			hash = message != null ? message.hashCode() : -1;
 		}
 		catch(Exception ex) {
-			ex.printStackTrace();
+			message = TextComponent.toPlainText(new TextComponent(chat.getJson()));
+			System.out.println(message);
+			//ex.printStackTrace();
 		}
 		ChatMessage lastChatMessage = MineverseChat.lastChatMessage;
 		MineverseChatPlayer mcp = MineverseChatAPI.getMineverseChatPlayer(event.getPlayer());

@@ -1,5 +1,5 @@
 #===============================================================
-#                     MineverseChat Config                     =
+#                     VentureChat Config                       =
 #                      Author: Aust1n46                        =                     
 #===============================================================
 
@@ -171,8 +171,8 @@ jsonformatting:
 # The icon is the block shown in the GUI
 # The text is the display name of the block icon
 # Include a slash (/) before the command   
-# Permissions automatically include "mineversechat." 
-# Example: permissions: alert equals mineversechat.alert
+# Permissions are the name of the button and automatically include "venturechat." 
+# Example: mute equals venturechat.mute
 venturegui:
   mute:
     icon: 'REDSTONE_BLOCK'
@@ -206,7 +206,7 @@ underlineurls: true
 # broadcast information
 broadcast:
   color: red
-  permissions: mineversechat.adminchannel
+  permissions: venturechat.adminchannel
   displaytag: '[Broadcast]'
   
 # Use $ to include arguments into the message  
@@ -214,8 +214,8 @@ broadcast:
 # Command: Sends a message or command in chat
 # Message: Sends a message to the player
 # Broadcast: Sends a broadcast to all players on the server
-# Permissions automatically include "mineversechat." 
-# Example: permissions: alert equals mineversechat.alert
+# Permissions automatically include "venturechat." 
+# Example: permissions: alert equals venturechat.alert
 # Use None for no permissions
 # The number of arguments is the minimum number of required arguments, use 0 for no required arguments
 alias:  
@@ -281,11 +281,11 @@ alias:
 # Arguments are accepted
 irc:
   enabled: false
-  nick: 'MineverseChatBot'
-  login: 'MineverseChatbot'
+  nick: 'VentureChatBot'
+  login: 'VentureChatbot'
   server: 'irc.freenode.net'
   port: 6667
-  channel: '#mineversechat'
+  channel: '#venturechat'
   trustallcertificates: true
   # the delay before the bot logs into the channel in seconds
   # increase the time if the bot fails to login
@@ -310,8 +310,8 @@ irc:
 # bungeecord overrides distance
 # channel permissions are configurable
 # channels can be changed, and new channels can be created
-# Permissions automatically include "mineversechat." 
-# Example: permissions: staff equals mineversechat.staff
+# Permissions automatically include "venturechat." 
+# Example: permissions: staff equals venturechat.staff
 # Use None for no permissions
 
 # Legacy Placeholders:  

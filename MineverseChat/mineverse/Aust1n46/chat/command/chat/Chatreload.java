@@ -22,10 +22,10 @@ public class Chatreload extends MineverseCommand {
 			plugin.reloadConfig();
 			Bukkit.getPluginManager().disablePlugin(plugin);
 			Bukkit.getPluginManager().enablePlugin(plugin);
-			plugin.getServer().getLogger().info("[" + plugin.getConfig().getString("pluginname", "MineverseChat") + "] Config reloaded");		
+			plugin.getServer().getLogger().info("[VentureChat] Config reloaded");		
 			for(MineverseChatPlayer player : MineverseChat.players) {
 				if(player.isOnline() && player.getPlayer().hasPermission("venturechat.reload")) {
-					player.getPlayer().sendMessage(ChatColor.GOLD + plugin.getConfig().getString("pluginname", "MineverseChat") + " config reloaded.");
+					player.getPlayer().sendMessage(ChatColor.GOLD + "VentureChat config reloaded.");
 				}
 			}
 			return;

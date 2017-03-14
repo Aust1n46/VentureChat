@@ -36,6 +36,7 @@ import mineverse.Aust1n46.chat.MineverseChat;
 import mineverse.Aust1n46.chat.api.MineverseChatAPI;
 import mineverse.Aust1n46.chat.api.MineverseChatPlayer;
 import mineverse.Aust1n46.chat.api.events.ChannelJoinEvent;
+import mineverse.Aust1n46.chat.api.events.ChatMessageEvent;
 import mineverse.Aust1n46.chat.channel.ChatChannel;
 import mineverse.Aust1n46.chat.channel.ChatChannelInfo;
 import mineverse.Aust1n46.chat.database.DatabaseSender;
@@ -677,6 +678,10 @@ public class ChatListener implements Listener {
 			}
 			MineverseChat.lastChatMessage = new ChatMessage(mcp.getPlayer().getName(), message, message.hashCode(), format, chat, eventChannel.getName());
 			MineverseChat.lastJson = Format.convertToJson(MineverseChat.lastChatMessage);
+			
+			ChatMessageEvent chatMessageEvent = new ChatMessageEvent(MineverseChat.lastChatMessage, MineverseChat.lastJson);
+			Bukkit.getServer().getPluginManager().callEvent(chatMessageEvent);
+			
 			if(irc && plugin.irc) {
 				if(bot.bot.isConnected()) {
 					bot.bot.getUserChannelDao().getChannel(bot.channel).send().message(mcp.getName() + ":" + evMessage);

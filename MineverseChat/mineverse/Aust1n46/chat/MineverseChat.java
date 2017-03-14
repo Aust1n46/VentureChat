@@ -563,22 +563,6 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 			}
 			return;
 		}*/
-		if(VersionHandler.is1_9() || VersionHandler.is1_10()) {
-			try {
-				MineverseChat.posField = MinecraftReflection.getMinecraftClass("PacketPlayOutChat").getDeclaredField("b");
-				MineverseChat.posField.setAccessible(true);
-			}
-			catch(NoSuchFieldException | SecurityException localNoSuchFieldException) {
-				localNoSuchFieldException.printStackTrace();
-			}
-			try {
-				MineverseChat.messageMethod = MinecraftReflection.getMinecraftClass("ChatBaseComponent").getDeclaredMethod("toPlainText", new Class[0]);
-				MineverseChat.messageMethod.setAccessible(true);
-			}
-			catch(SecurityException | NoSuchMethodException e) {
-				e.printStackTrace();
-			}
-		}
 		if(VersionHandler.is1_8() || VersionHandler.is1_7_10()) {
 			try {
 				MineverseChat.posField = MinecraftReflection.getMinecraftClass("PacketPlayOutChat").getDeclaredField("b");
@@ -589,6 +573,22 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 			}
 			try {
 				MineverseChat.messageMethod = MinecraftReflection.getMinecraftClass("IChatBaseComponent").getDeclaredMethod("c", new Class[0]);
+				MineverseChat.messageMethod.setAccessible(true);
+			}
+			catch(SecurityException | NoSuchMethodException e) {
+				e.printStackTrace();
+			}
+		}
+		else {
+			try {
+				MineverseChat.posField = MinecraftReflection.getMinecraftClass("PacketPlayOutChat").getDeclaredField("b");
+				MineverseChat.posField.setAccessible(true);
+			}
+			catch(NoSuchFieldException | SecurityException localNoSuchFieldException) {
+				localNoSuchFieldException.printStackTrace();
+			}
+			try {
+				MineverseChat.messageMethod = MinecraftReflection.getMinecraftClass("ChatBaseComponent").getDeclaredMethod("toPlainText", new Class[0]);
 				MineverseChat.messageMethod.setAccessible(true);
 			}
 			catch(SecurityException | NoSuchMethodException e) {
