@@ -482,11 +482,14 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 			@Override
 			public void run() {
 				for(MineverseChatPlayer p : MineverseChat.players) {
-					Calendar currentDate = Calendar.getInstance();
-					SimpleDateFormat formatter = new SimpleDateFormat("dd:HH:mm:ss");
-					String date = formatter.format(currentDate.getTime());
-					String[] datearray = date.split(":");
-					int time = (Integer.parseInt(datearray[0]) * 1440) + (Integer.parseInt(datearray[1]) * 60) + (Integer.parseInt(datearray[2]));
+					//Calendar currentDate = Calendar.getInstance();
+					//SimpleDateFormat formatter = new SimpleDateFormat("dd:HH:mm:ss");
+					//String date = formatter.format(currentDate.getTime());
+					//String[] datearray = date.split(":");
+					//int time = (Integer.parseInt(datearray[0]) * 1440) + (Integer.parseInt(datearray[1]) * 60) + (Integer.parseInt(datearray[2]));
+					
+					int time = (int) (System.currentTimeMillis() / 60000);
+					
 					for(String c : p.getMutes().keySet()) {
 						ChatChannel channel = ccInfo.getChannelInfo(c);
 						int timemark = p.getMutes().get(channel.getName());

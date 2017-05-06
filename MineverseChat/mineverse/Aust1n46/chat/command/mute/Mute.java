@@ -1,8 +1,5 @@
 package mineverse.Aust1n46.chat.command.mute;
 
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 
@@ -65,11 +62,14 @@ public class Mute extends MineverseCommand {
 				}
 				if(channel.isMutable()) {
 					try {
-						Calendar currentDate = Calendar.getInstance();
-						SimpleDateFormat formatter = new SimpleDateFormat("dd:HH:mm:ss");
-						String date = formatter.format(currentDate.getTime());
-						String[] datearray = date.split(":");
-						int datetime = (Integer.parseInt(datearray[0]) * 1440) + (Integer.parseInt(datearray[1]) * 60) + (Integer.parseInt(datearray[2]));
+						//Calendar currentDate = Calendar.getInstance();
+						//SimpleDateFormat formatter = new SimpleDateFormat("dd:HH:mm:ss");
+						//String date = formatter.format(currentDate.getTime());
+						//String[] datearray = date.split(":");
+						//int datetime = (Integer.parseInt(datearray[0]) * 1440) + (Integer.parseInt(datearray[1]) * 60) + (Integer.parseInt(datearray[2]));
+						
+						int datetime = (int) (System.currentTimeMillis() / 60000);
+						
 						int time = Integer.parseInt(args[2]);
 						if(time > 0) {
 							player.addMute(channel.getName(), datetime + time);

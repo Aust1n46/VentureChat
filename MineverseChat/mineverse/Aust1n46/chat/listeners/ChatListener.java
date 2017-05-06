@@ -409,14 +409,17 @@ public class ChatListener implements Listener {
 		if(mcp.isMuted(eventChannel.getName())) {
 			String timedMute = "";
 			if(mcp.getMutes().get(eventChannel.getName()).intValue() > 0) {
-				Calendar currentDate = Calendar.getInstance();
-				SimpleDateFormat formatter = new SimpleDateFormat("dd:HH:mm:ss");
-				String date = formatter.format(currentDate.getTime());
-				String[] datearray = date.split(":");
-				int datetime = (Integer.parseInt(datearray[0]) * 1440) + (Integer.parseInt(datearray[1]) * 60) + (Integer.parseInt(datearray[2]));
+				//Calendar currentDate = Calendar.getInstance();
+				//SimpleDateFormat formatter = new SimpleDateFormat("dd:HH:mm:ss");
+				//String date = formatter.format(currentDate.getTime());
+				//String[] datearray = date.split(":");
+				//int datetime = (Integer.parseInt(datearray[0]) * 1440) + (Integer.parseInt(datearray[1]) * 60) + (Integer.parseInt(datearray[2]));
+				
+				int time = (int) (System.currentTimeMillis() / 60000);
+				
 				String keyword = "minutes";
-				int time = mcp.getMutes().get(eventChannel.getName()).intValue();
-				int remaining = time - datetime;
+				int timemark = mcp.getMutes().get(eventChannel.getName()).intValue();
+				int remaining = timemark - time;
 				if(remaining <= 0) remaining = 1;
 				if(remaining == 1) keyword = "minute";
 				timedMute = ChatColor.RED + " for " + remaining + " more " + keyword;
@@ -445,17 +448,21 @@ public class ChatListener implements Listener {
 		Calendar currentDate = Calendar.getInstance();
 		SimpleDateFormat formatter = new SimpleDateFormat("dd:HH:mm:ss");
 		String date = formatter.format(currentDate.getTime());
-		String[] datearray = date.split(":");
-		int time = (Integer.parseInt(datearray[0]) * 86400) + (Integer.parseInt(datearray[1]) * 3600) + (Integer.parseInt(datearray[2]) * 60) + (Integer.parseInt(datearray[3]));
-		int datetime = (Integer.parseInt(datearray[0]) * 1440) + (Integer.parseInt(datearray[1]) * 60) + (Integer.parseInt(datearray[2]));
+		//String[] datearray = date.split(":");
+		//int time = (Integer.parseInt(datearray[0]) * 86400) + (Integer.parseInt(datearray[1]) * 3600) + (Integer.parseInt(datearray[2]) * 60) + (Integer.parseInt(datearray[3]));
+		//int datetime = (Integer.parseInt(datearray[0]) * 1440) + (Integer.parseInt(datearray[1]) * 60) + (Integer.parseInt(datearray[2]));
+		
+		int time = (int) (System.currentTimeMillis() / 1000);
+		
 		if(eventChannel.hasCooldown()) {
 			chCooldown = eventChannel.getCooldown();
 		}
 		try {
 			if(mcp.hasCooldown(eventChannel)) {
 				int timemark = mcp.getCooldowns().get(eventChannel).intValue();
-				if(time < timemark + chCooldown) {
-					int remaining = timemark + chCooldown - time;
+				System.out.println("Checking cooldown for " + mcp.getName() + " as time " + timemark + " current time as " + time);
+				if(time < timemark) {
+					int remaining = timemark - time;
 					String keyword = "seconds";
 					if(remaining == 1) keyword = "second";
 					mcp.getPlayer().sendMessage(ChatColor.RED + "" + remaining + " " + keyword + " of cooldown remaining.");
@@ -467,7 +474,8 @@ public class ChatListener implements Listener {
 			}
 			if(eventChannel.hasCooldown() && !event.isCancelled()) {
 				if(!mcp.getPlayer().hasPermission("venturechat.cooldown.bypass")) {
-					mcp.addCooldown(eventChannel, time);
+					mcp.addCooldown(eventChannel, time + chCooldown);
+					System.out.println("Added new cooldown for " + mcp.getName() + " as current time " + (time + chCooldown));
 				}
 			}
 		}
@@ -480,7 +488,9 @@ public class ChatListener implements Listener {
 			int spamtime = mcp.getSpam().get(eventChannel).get(1);
 			int spamtimeconfig = plugin.getConfig().getConfigurationSection("antispam").getInt("spamnumber");
 			int mutedfor = plugin.getConfig().getConfigurationSection("antispam").getInt("mutetime", 0);
-			if(time < spamtime + plugin.getConfig().getConfigurationSection("antispam").getInt("spamtime")) {
+			
+			int datetime = time/60;
+			if(datetime < spamtime + plugin.getConfig().getConfigurationSection("antispam").getInt("spamtime")) {
 				if(spamcount + 1 >= spamtimeconfig) {
 					mcp.addMute(eventChannel.getName(), datetime + mutedfor);
 					String timedmute = "";
