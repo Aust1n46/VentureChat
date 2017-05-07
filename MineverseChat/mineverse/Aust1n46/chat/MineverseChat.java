@@ -166,7 +166,7 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 	public static HashMap<String, String> networkPlayers = new HashMap<String, String>();
 	public static ArmorStand cape;
 	public static ItemStack banner;
-	public static boolean capeToggle = true;
+	public static boolean capeToggle = false;
 	private boolean firstRun = true;
 
 	// Vault --------------------------------

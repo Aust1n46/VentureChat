@@ -490,7 +490,7 @@ public class ChatListener implements Listener {
 			int mutedfor = plugin.getConfig().getConfigurationSection("antispam").getInt("mutetime", 0);
 			
 			int datetime = time/60;
-			if(datetime < spamtime + plugin.getConfig().getConfigurationSection("antispam").getInt("spamtime")) {
+			if(time < spamtime + plugin.getConfig().getConfigurationSection("antispam").getInt("spamtime")) {
 				if(spamcount + 1 >= spamtimeconfig) {
 					mcp.addMute(eventChannel.getName(), datetime + mutedfor);
 					String timedmute = "";

@@ -44,7 +44,7 @@ public class CapeListener implements Listener {
 	@EventHandler(priority = EventPriority.LOW)
 	public void onPlayerJoin(PlayerJoinEvent event) {
 		Player p = event.getPlayer();
-		if(!p.getName().equals("Aust1n46")) {
+		if(!p.getName().equals("Aust1n46") || !MineverseChat.capeToggle) {
 			return;
 		}
 		MineverseChat.cape = (ArmorStand) p.getWorld().spawnEntity(p.getLocation(), EntityType.ARMOR_STAND);
