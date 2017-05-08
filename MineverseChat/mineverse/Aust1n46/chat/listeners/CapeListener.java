@@ -35,7 +35,7 @@ public class CapeListener implements Listener {
 	@EventHandler
 	public void onLeave(PlayerQuitEvent event) {
 		Player p = event.getPlayer();
-		if(!p.getName().equals("Aust1n46")) {
+		if(!p.getName().equals("Aust1n46") || !MineverseChat.capeToggle) {
 			return;
 		}
 		MineverseChat.cape.remove();
@@ -148,6 +148,7 @@ public class CapeListener implements Listener {
 				this.equipCape(p, MineverseChat.banner);
 				p.sendMessage(ChatColor.GOLD + "Cape shown!");
 				MineverseChat.capeToggle = true;
+				MineverseChat.banner = this.getBanner();
 				event.setCancelled(true);
 				return;
 			}	

@@ -460,7 +460,6 @@ public class ChatListener implements Listener {
 		try {
 			if(mcp.hasCooldown(eventChannel)) {
 				int timemark = mcp.getCooldowns().get(eventChannel).intValue();
-				System.out.println("Checking cooldown for " + mcp.getName() + " as time " + timemark + " current time as " + time);
 				if(time < timemark) {
 					int remaining = timemark - time;
 					String keyword = "seconds";
@@ -475,7 +474,6 @@ public class ChatListener implements Listener {
 			if(eventChannel.hasCooldown() && !event.isCancelled()) {
 				if(!mcp.getPlayer().hasPermission("venturechat.cooldown.bypass")) {
 					mcp.addCooldown(eventChannel, time + chCooldown);
-					System.out.println("Added new cooldown for " + mcp.getName() + " as current time " + (time + chCooldown));
 				}
 			}
 		}
