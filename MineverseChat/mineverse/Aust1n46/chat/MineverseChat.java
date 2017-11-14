@@ -41,13 +41,13 @@ import mineverse.Aust1n46.chat.listeners.LoginListener;
 import mineverse.Aust1n46.chat.listeners.ChatListener;
 import mineverse.Aust1n46.chat.listeners.PacketListener;
 import mineverse.Aust1n46.chat.listeners.SignListener;
-import mineverse.Aust1n46.chat.alias.Alias;
+//import mineverse.Aust1n46.chat.alias.Alias;
 import mineverse.Aust1n46.chat.alias.AliasInfo;
 import mineverse.Aust1n46.chat.api.MineverseChatAPI;
 import mineverse.Aust1n46.chat.api.MineverseChatPlayer;
 import mineverse.Aust1n46.chat.channel.ChatChannel;
 import mineverse.Aust1n46.chat.channel.ChatChannelInfo;
-import mineverse.Aust1n46.chat.command.CCommand;
+//import mineverse.Aust1n46.chat.command.CCommand;
 import mineverse.Aust1n46.chat.command.MineverseCommand;
 import mineverse.Aust1n46.chat.command.MineverseCommandExecutor;
 import mineverse.Aust1n46.chat.command.chat.Broadcast;
@@ -136,7 +136,7 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 	public static String lastJson;
 	public static Method messageMethod;
 	public static Field posField;
-	public static Class chatMessageType;
+	public static Class<?> chatMessageType;
 	private static Field commandMap;
 	private static Field knownCommands;
 

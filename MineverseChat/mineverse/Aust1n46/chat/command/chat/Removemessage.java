@@ -81,8 +81,8 @@ public class Removemessage extends MineverseCommand {
 							resend = true;
 							continue;
 						}
-						if(message.getMessage().contains(Format.FormatStringAll(plugin.getConfig().getString("guiicon")))) {
-							String submessage = message.getMessage().substring(0, message.getMessage().length() - plugin.getConfig().getString("guiicon").length() - 1).replaceAll("(§([a-z0-9]))", "");
+						if(message.getMessage().contains(ChatColor.stripColor(Format.FormatStringAll(plugin.getConfig().getString("guiicon"))))) {
+							String submessage = message.getMessage().substring(0, message.getMessage().length() - ChatColor.stripColor(Format.FormatStringAll(plugin.getConfig().getString("guiicon"))).length());
 							if(submessage.hashCode() == hash) {
 								WrappedChatComponent removedComponent = p.getPlayer().hasPermission("venturechat.message.bypass") ? Removemessage.this.getMessageDeletedChatComponentAdmin(message) : Removemessage.this.getMessageDeletedChatComponentPlayer();
 								message.setComponent(removedComponent);
@@ -148,7 +148,6 @@ public class Removemessage extends MineverseCommand {
 						for(Player p : packets.keySet()) {
 							List<PacketContainer> pPackets = packets.get(p);
 							for(PacketContainer c : pPackets) {
-								//System.out.println("test packet send");
 								Removemessage.this.sendPacketPlayOutChat(p, c);
 							}
 						}
