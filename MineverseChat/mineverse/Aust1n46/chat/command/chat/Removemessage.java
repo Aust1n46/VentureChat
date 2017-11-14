@@ -182,8 +182,8 @@ public class Removemessage extends MineverseCommand {
 
 	public WrappedChatComponent getMessageDeletedChatComponentAdmin(ChatMessage message) {
 		String oMessage = message.getOriginalComponent().getJson().substring(1, message.getOriginalComponent().getJson().length() - 11);
-		if(message.getMessage().contains(Format.FormatStringAll(plugin.getConfig().getString("guiicon")))) {
-			oMessage = oMessage.substring(0, oMessage.length() - plugin.getConfig().getString("guiicon").length() - 4) + "\"}]";
+		if(message.getMessage().contains(ChatColor.stripColor(Format.FormatStringAll(plugin.getConfig().getString("guiicon"))))) {
+			oMessage = oMessage.substring(0, oMessage.length() - ChatColor.stripColor(Format.FormatStringAll(plugin.getConfig().getString("guiicon"))).length() - 3) + "\"}]";
 		}
 		return WrappedChatComponent.fromJson(Format.FormatStringAll("{\"text\":\"\",\"extra\":[{\"text\":\"&c&o<message removed>\",\"hoverEvent\":{\"action\":\"show_text\",\"value\":{\"text\":\"&7Message: \"," + oMessage + "}}}]}"));
 	}
