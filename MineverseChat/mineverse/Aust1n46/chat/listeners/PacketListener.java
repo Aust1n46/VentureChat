@@ -75,13 +75,18 @@ public class PacketListener extends PacketAdapter {
 					return;
 				}
 			}
-			if(VersionHandler.is1_8()) {
+			else if(VersionHandler.is1_8()) {
 				if((MineverseChat.posField != null) && (((Byte) MineverseChat.posField.get(event.getPacket().getHandle())).intValue() > 1)) {
 					return;
 				}
 			}
-			if(VersionHandler.is1_9() || VersionHandler.is1_10()) {
+			else if(VersionHandler.is1_9() || VersionHandler.is1_10() || VersionHandler.is1_11()){
 				if((MineverseChat.posField != null) && (((Byte) MineverseChat.posField.get(event.getPacket().getHandle())).intValue() > 1)) {
+					return;
+				}
+			}
+			else {
+				if((MineverseChat.posField != null) && ((Object) MineverseChat.posField.get(event.getPacket().getHandle())) == MineverseChat.chatMessageType.getEnumConstants()[2]) {
 					return;
 				}
 			}

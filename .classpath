@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="MineverseChat"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="lib" path="C:/Users/Austin/Desktop/Mineverse Network/Servers/Hub/spigot-1.11.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Austin/Desktop/Mineverse Network/Servers/Hub/plugins/Vault.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Austin/Desktop/Mineverse Network/Servers/Hub/plugins/PlaceholderAPI.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Austin/Desktop/Mineverse Network/Servers/Hub/spigot-1.8.8-R0.1-SNAPSHOT.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Austin/Desktop/MineverseChat Dependencies/Factions-2.7.3/Factions-2.7.3/Factions.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Austin/Desktop/MineverseChat Dependencies/Factions-2.7.3/Factions-2.7.3/MassiveCore.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Austin/Desktop/MineverseChat Dependencies/Upload/Plugins/Towny.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Austin/Desktop/MineverseChat Dependencies/BungeeCord.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Austin/Desktop/MineverseChat Dependencies/Upload/Plugins/Heroes.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Austin/Desktop/MineverseChat Dependencies/pircbotx-2.0.1.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Austin/Desktop/Mineverse Network/Servers/Hub/plugins/ProtocolLib.jar"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>

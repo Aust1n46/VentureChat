@@ -136,6 +136,7 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 	public static String lastJson;
 	public static Method messageMethod;
 	public static Field posField;
+	public static Class chatMessageType;
 	private static Field commandMap;
 	private static Field knownCommands;
 
@@ -418,6 +419,7 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 		catch(Exception e) {
 			e.printStackTrace();
 		}
+		this.quickchat = false;
 		if(cmap == null) {
 			this.quickchat = false;
 			// log.info(String.format("[" + String.format("VentureChat" + "]" +
@@ -429,6 +431,7 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 			// getDescription().getName())));
 		}
 		else {
+			/*Don't run this code right now
 			for(ChatChannel c : ccInfo.getChannelsInfo()) {
 				CCommand cmd = new CCommand(c.getAlias());
 				cmap.register("", cmd);
@@ -440,6 +443,7 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 			}
 			Bukkit.getConsoleSender().sendMessage(Format.FormatStringAll("&8[&eVentureChat&8]&e - Registering Alias commands"));
 			Bukkit.getConsoleSender().sendMessage(Format.FormatStringAll("&8[&eVentureChat&8]&e - Registering Quickchat commands"));
+			*/
 		}
 		Bukkit.getConsoleSender().sendMessage(Format.FormatStringAll("&8[&eVentureChat&8]&e - Establishing BungeeCord"));
 		Bukkit.getMessenger().registerOutgoingPluginChannel(this, "VentureChat");
@@ -597,8 +601,27 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 			catch(SecurityException | NoSuchMethodException e) {
 				e.printStackTrace();
 			}
+			try {
+				MineverseChat.chatMessageType = getNMSClass("ChatMessageType");
+			}
+			catch(Exception e) {
+				e.printStackTrace();
+			}
 		}
 	}
+	
+	private Class<?> getNMSClass(String name) {
+        try {
+            return Class.forName("net.minecraft.server." + getVersion() + "." + name);
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+	
+	private String getVersion() {
+        return Bukkit.getServer().getClass().getPackage().getName().split("\\.")[3];
+    }
 
 	private boolean setupPermissions() {
 		RegisteredServiceProvider<Permission> permissionProvider = getServer().getServicesManager().getRegistration(net.milkbowl.vault.permission.Permission.class);

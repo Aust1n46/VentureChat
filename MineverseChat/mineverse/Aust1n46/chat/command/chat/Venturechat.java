@@ -23,7 +23,7 @@ public class Venturechat extends MineverseCommand {
 	public void execute(CommandSender sender, String command, String[] args) {
 		sender.sendMessage(ChatColor.GOLD + "VentureChat Version: " + plugin.getDescription().getVersion());
 		sender.sendMessage(ChatColor.GOLD + "Written by Aust1n46");
-		if (sender instanceof Player) {
+		if (sender instanceof Player && plugin.getConfig().getString("loglevel", "info").equals("debug")) {
 			Player player = (Player) sender;
 			String title = ChatColor.GOLD + " | " + ChatColor.BLUE.toString() + ChatColor.BOLD + "Click here to begin..." + ChatColor.RESET + ChatColor.GOLD + " | ";
 			String spaces = " ";

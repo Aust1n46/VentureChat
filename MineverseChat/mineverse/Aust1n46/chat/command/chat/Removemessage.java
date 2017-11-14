@@ -21,6 +21,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.events.PacketContainer;
+import com.comphenix.protocol.wrappers.EnumWrappers.ChatType;
 import com.comphenix.protocol.wrappers.WrappedChatComponent;
 
 public class Removemessage extends MineverseCommand {
@@ -147,6 +148,7 @@ public class Removemessage extends MineverseCommand {
 						for(Player p : packets.keySet()) {
 							List<PacketContainer> pPackets = packets.get(p);
 							for(PacketContainer c : pPackets) {
+								//System.out.println("test packet send");
 								Removemessage.this.sendPacketPlayOutChat(p, c);
 							}
 						}
@@ -159,6 +161,7 @@ public class Removemessage extends MineverseCommand {
 	private PacketContainer createPacketPlayOutChat(WrappedChatComponent component) {
 		PacketContainer container = new PacketContainer(PacketType.Play.Server.CHAT);
 		container.getChatComponents().write(0, component);
+		container.getChatTypes().write(0, ChatType.CHAT);
 		return container;
 	}
 

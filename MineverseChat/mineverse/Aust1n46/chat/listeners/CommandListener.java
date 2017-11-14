@@ -213,6 +213,7 @@ public class CommandListener implements CommandExecutor, Listener {
 		}
 	}
 
+	//old 1.8 command map
 	@EventHandler
 	public void onServerCommand(ServerCommandEvent event) {
 		if(plugin.irc && bot.bot.isConnected() && !event.getCommand().equalsIgnoreCase("say ") && event.getCommand().toLowerCase().startsWith("say ")) {
