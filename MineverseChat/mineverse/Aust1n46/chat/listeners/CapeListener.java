@@ -120,7 +120,6 @@ public class CapeListener implements Listener {
 		return new EulerAngle(0.0D, d.doubleValue(), 0.0D);
 	}
 
-	@SuppressWarnings("deprecation")
 	public void capeInHand(Player p) {
 		if(p.getName().equals("Aust1n46")) {
 			if(p.getInventory().getItemInHand().getType().equals(Material.BANNER)) {
