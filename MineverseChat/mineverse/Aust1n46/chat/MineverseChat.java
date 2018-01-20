@@ -51,6 +51,7 @@ import mineverse.Aust1n46.chat.channel.ChatChannelInfo;
 import mineverse.Aust1n46.chat.command.MineverseCommand;
 import mineverse.Aust1n46.chat.command.MineverseCommandExecutor;
 import mineverse.Aust1n46.chat.command.chat.Broadcast;
+import mineverse.Aust1n46.chat.command.chat.BungeeToggle;
 import mineverse.Aust1n46.chat.command.chat.Buttons;
 import mineverse.Aust1n46.chat.command.chat.Channel;
 import mineverse.Aust1n46.chat.command.chat.Channelinfo;
@@ -276,7 +277,8 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 				boolean rangedSpy = PlayerData.getPlayerData().getConfigurationSection("players." + uuidString).getBoolean("rangedspy", false);
 				boolean buttons = PlayerData.getPlayerData().getConfigurationSection("players." + uuidString).getBoolean("buttons", true);
 				boolean messageToggle = PlayerData.getPlayerData().getConfigurationSection("players." + uuidString).getBoolean("messagetoggle", true);
-				players.add(new MineverseChatPlayer(uuid, name, currentChannel, ignores, listening, mutes, blockedCommands, mail, host, party, filter, notifications, nickname, jsonFormat, spy, commandSpy, rangedSpy, buttons, messageToggle));
+				boolean bungeeToggle = PlayerData.getPlayerData().getConfigurationSection("players." + uuidString).getBoolean("bungeetoggle", true);
+				players.add(new MineverseChatPlayer(uuid, name, currentChannel, ignores, listening, mutes, blockedCommands, mail, host, party, filter, notifications, nickname, jsonFormat, spy, commandSpy, rangedSpy, buttons, messageToggle, bungeeToggle));
 			}
 		}
 		else {
@@ -382,6 +384,7 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 		commands.put("unmuteall", new Unmuteall("unmuteall"));
 		commands.put("venturechatgui", new VentureChatGui("venturechatgui"));
 		commands.put("messagetoggle", new MessageToggle("messagetoggle"));
+		commands.put("bungeetoggle", new BungeeToggle("bungeetoggle"));
 		commandExecutor = new MineverseCommandExecutor(commands);
 		for(String command : commands.keySet()) {
 			this.getCommand(command).setExecutor(commandExecutor);
@@ -797,6 +800,9 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 				for(MineverseChatPlayer p : MineverseChat.onlinePlayers) {
 					//System.out.println(p.getName() + " received chat message");
 					if(p.isOnline() && p.getListening().contains(ccInfo.getChannelInfo(chatchannel).getName())) {
+						if(!p.getBungeeToggle() && MineverseChatAPI.getOnlineMineverseChatPlayer(playerName) == null) {
+							continue;
+						}
 						if(plugin.getConfig().getBoolean("ignorechat", false)) {
 							// System.out.println(p.getIgnores());
 							if(sender == null) {
@@ -1002,7 +1008,7 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 						Set<String> blockedCommands = new HashSet<String>();
 						List<String> mail = new ArrayList<String>();
 						String jsonFormat = "Default";
-						s = new MineverseChatPlayer(uuid, name, current, ignores, listening, mutes, blockedCommands, mail, false, null, true, true, name, jsonFormat, false, false, false, true, true);
+						s = new MineverseChatPlayer(uuid, name, current, ignores, listening, mutes, blockedCommands, mail, false, null, true, true, name, jsonFormat, false, false, false, true, true, true);
 						MineverseChat.players.add(s);
 					}
 					p.getPlayer().sendMessage(msg.replace("{playerfrom}", sName).replace("{playerto}", Format.FormatStringAll(p.getNickname())));

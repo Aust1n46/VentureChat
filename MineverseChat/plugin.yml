@@ -1,5 +1,5 @@
 name: VentureChat
-version: 2.12.2
+version: 2.12.3
 main: mineverse.Aust1n46.chat.MineverseChat
 depend: [Vault, ProtocolLib, PlaceholderAPI]
 softdepend: [Towny, Factions, Heroes]
@@ -224,4 +224,9 @@ commands:
         usage: /<command>
         aliases: [mtoggle,vmessagetoggle]
         description: Toggle receiving messages
+        permission-message: You don't have <permission>
+    bungeetoggle:
+        usage: /<command>
+        aliases: [btoggle,vbungeetoggle]
+        description: Toggle receiving BungeeCord chat
         permission-message: You don't have <permission>

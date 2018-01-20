@@ -109,6 +109,7 @@ public class PlayerData {
 					cs.set("rangedspy", p.getRangedSpy());
 					cs.set("buttons", p.getButtons());
 					cs.set("messagetoggle", p.getMessageToggle());
+					cs.set("bungeetoggle", p.getBungeeToggle());
 					Calendar currentDate = Calendar.getInstance();
 					SimpleDateFormat formatter = new SimpleDateFormat("yyyy/MMM/dd HH:mm:ss");
 					String dateNow = formatter.format(currentDate.getTime());

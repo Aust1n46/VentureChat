@@ -77,7 +77,7 @@ public class LoginListener implements Listener {
 			Set<String> blockedCommands = new HashSet<String>();
 			List<String> mail = new ArrayList<String>();
 			String jsonFormat = "Default";
-			mcp = new MineverseChatPlayer(uuid, name, current, ignores, listening, mutes, blockedCommands, mail, false, null, true, true, name, jsonFormat, false, false, false, true, true);
+			mcp = new MineverseChatPlayer(uuid, name, current, ignores, listening, mutes, blockedCommands, mail, false, null, true, true, name, jsonFormat, false, false, false, true, true, true);
 			MineverseChat.players.add(mcp);
 		}
 		mcp.setOnline(true);
