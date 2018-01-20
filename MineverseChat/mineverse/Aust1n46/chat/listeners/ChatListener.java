@@ -712,8 +712,8 @@ public class ChatListener implements Listener {
 				message = String.format(Channelformat + event.getMessage(), new Object[] { event.getPlayer().getDisplayName(), event.getMessage() }).replaceAll("(§([a-z0-9]))", "");
 				format = String.format(Channelformat, new Object[] { event.getPlayer().getDisplayName() });
 				chat = event.getMessage();
-				MineverseChat.lastChatMessage = new ChatMessage(mcp.getPlayer().getName(), message, message.hashCode(), format, chat, eventChannel.getName());
-				MineverseChat.lastJson = Format.convertToJson(MineverseChat.lastChatMessage);
+				//MineverseChat.lastChatMessage = new ChatMessage(mcp.getPlayer().getName(), message, message.hashCode(), format, chat, eventChannel.getName());
+				//MineverseChat.lastJson = Format.convertToJson(MineverseChat.lastChatMessage);
 				event.setCancelled(true);
 				ByteArrayOutputStream byteOutStream = new ByteArrayOutputStream();
 				DataOutputStream out = new DataOutputStream(byteOutStream);
@@ -725,7 +725,13 @@ public class ChatListener implements Listener {
 					out.writeUTF(message);
 					out.writeUTF(format);
 					out.writeUTF(chat);
+					if(plugin.getConfig().getString("loglevel", "info").equals("debug")) {
+						System.out.println(out.size() + " size bytes without json");
+					}
 					out.writeUTF(MineverseChat.lastJson);
+					if(plugin.getConfig().getString("loglevel", "info").equals("debug")) {
+						System.out.println(out.size() + " bytes size with json");
+					}
 					mcp.getPlayer().sendPluginMessage(plugin, "VentureChat", byteOutStream.toByteArray());
 					out.close();
 				}

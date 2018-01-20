@@ -113,6 +113,11 @@ public class Format {
 		json += "]";
 		if(plugin.getConfig().getString("loglevel", "info").equals("debug")) {
 			System.out.println(json);
+			System.out.println("END OF JSON");
+			System.out.println("END OF JSON");
+			System.out.println("END OF JSON");
+			System.out.println("END OF JSON");
+			System.out.println("END OF JSON");
 		}
 		return json;
 	}
