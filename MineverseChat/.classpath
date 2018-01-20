@@ -14,6 +14,6 @@
 	<classpathentry kind="lib" path="C:/Users/aust1/workspace/VentureChat Dependencies/Vault.jar"/>
 	<classpathentry kind="lib" path="C:/Users/aust1/Desktop/SSD Backup 12_28_17/Desktop/Mineverse Network/Servers/Hub/plugins/ProtocolLib.jar"/>
 	<classpathentry kind="lib" path="C:/Users/aust1/Desktop/SSD Backup 12_28_17/Desktop/Mineverse Network/Servers/Hub/spigot-1.12.2.jar"/>
-	<classpathentry kind="lib" path="IRC Libraries"/>
+	<classpathentry kind="lib" path="C:/Users/aust1/Desktop/SSD Backup 12_28_17/Desktop/MineverseChat Dependencies/pircbotx-2.0.1.jar"/>
 	<classpathentry kind="output" path=""/>
 </classpath>
