@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry excluding="IRC Libraries/|Plugins/|IRC Libraries/|IRC Libraries/" kind="src" path=""/>
+	<classpathentry excluding="IRC Libraries/|Plugins/|IRC Libraries/|IRC Libraries/|IRC Libraries/" kind="src" path=""/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="lib" path="IRC Libraries"/>
 	<classpathentry kind="lib" path="C:/Users/aust1/workspace/VentureChat Dependencies/BungeeCord.jar"/>
 	<classpathentry kind="lib" path="C:/Users/aust1/workspace/VentureChat Dependencies/Factions.jar"/>
 	<classpathentry kind="lib" path="C:/Users/aust1/workspace/VentureChat Dependencies/Heroes.jar"/>
@@ -15,5 +14,6 @@
 	<classpathentry kind="lib" path="C:/Users/aust1/workspace/VentureChat Dependencies/Vault.jar"/>
 	<classpathentry kind="lib" path="C:/Users/aust1/Desktop/SSD Backup 12_28_17/Desktop/Mineverse Network/Servers/Hub/plugins/ProtocolLib.jar"/>
 	<classpathentry kind="lib" path="C:/Users/aust1/Desktop/SSD Backup 12_28_17/Desktop/Mineverse Network/Servers/Hub/spigot-1.12.2.jar"/>
+	<classpathentry kind="lib" path="IRC Libraries"/>
 	<classpathentry kind="output" path=""/>
 </classpath>
