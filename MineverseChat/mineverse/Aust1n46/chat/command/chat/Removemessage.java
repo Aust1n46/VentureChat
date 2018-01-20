@@ -13,6 +13,7 @@ import mineverse.Aust1n46.chat.api.MineverseChatPlayer;
 import mineverse.Aust1n46.chat.command.MineverseCommand;
 //import mineverse.Aust1n46.chat.json.JsonButton;
 import mineverse.Aust1n46.chat.utilities.Format;
+import mineverse.Aust1n46.chat.versions.VersionHandler;
 
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
@@ -61,6 +62,7 @@ public class Removemessage extends MineverseCommand {
 			catch(Exception e) {
 				e.printStackTrace();
 			}
+			return;
 		}
 		new BukkitRunnable() {
 			public void run() {
@@ -160,7 +162,9 @@ public class Removemessage extends MineverseCommand {
 	private PacketContainer createPacketPlayOutChat(WrappedChatComponent component) {
 		PacketContainer container = new PacketContainer(PacketType.Play.Server.CHAT);
 		container.getChatComponents().write(0, component);
-		container.getChatTypes().write(0, ChatType.CHAT);
+		if(!VersionHandler.is1_7_10() && !VersionHandler.is1_8() && !VersionHandler.is1_9() && !VersionHandler.is1_10() && !VersionHandler.is1_11()) {
+			container.getChatTypes().write(0, ChatType.CHAT);
+		}
 		return container;
 	}
 

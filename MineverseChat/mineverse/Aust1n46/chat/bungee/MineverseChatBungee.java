@@ -158,15 +158,15 @@ public class MineverseChatBungee extends Plugin implements Listener {
 				String f = in.readUTF();
 				String c = in.readUTF();
 				String json = in.readUTF();
+				out.writeUTF("Chat");
+				out.writeUTF(chatchannel);
+				out.writeUTF(message);
+				out.writeUTF(playerName);
+				out.writeUTF(lastMessage);
+				out.writeUTF(f);
+				out.writeUTF(c);
+				out.writeUTF(json);
 				for(String send : getProxy().getServers().keySet()) {
-					out.writeUTF("Chat");
-					out.writeUTF(chatchannel);
-					out.writeUTF(message);
-					out.writeUTF(playerName);
-					out.writeUTF(lastMessage);
-					out.writeUTF(f);
-					out.writeUTF(c);
-					out.writeUTF(json);
 					if(getProxy().getServers().get(send).getPlayers().size() > 0) {
 						getProxy().getServers().get(send).sendData("VentureChat", outstream.toByteArray());
 					}
@@ -174,9 +174,9 @@ public class MineverseChatBungee extends Plugin implements Listener {
 			}
 			if(subchannel.equals("RemoveMessage")) {
 				String hash = in.readUTF();
+				out.writeUTF("RemoveMessage");
+				out.writeUTF(hash);
 				for(String send : getProxy().getServers().keySet()) {
-					out.writeUTF("RemoveMessage");
-					out.writeUTF(hash);
 					if(getProxy().getServers().get(send).getPlayers().size() > 0) {
 						getProxy().getServers().get(send).sendData("VentureChat", outstream.toByteArray());
 					}
