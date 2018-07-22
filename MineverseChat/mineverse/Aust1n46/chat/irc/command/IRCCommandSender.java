@@ -106,4 +106,10 @@ public class IRCCommandSender implements CommandSender {
 		}
 		Bukkit.getConsoleSender().sendMessage(messages);
 	}
+
+	@Override
+	public Spigot spigot() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }

@@ -248,13 +248,17 @@ public class Party extends MineverseCommand {
 							String members = "";
 							long linecount = plugin.getLineLength();
 							for(MineverseChatPlayer p : MineverseChat.players) {
-								if(p.getParty().equals(player.getUUID())) {
+								if(p.getParty() != null && p.getParty().equals(player.getUUID())) {
 									if(members.length() + p.getName().length() > linecount) {
 										members += "\n";
 										linecount = linecount + plugin.getLineLength();
 									}
-									if(p.isOnline()) members += ChatColor.GREEN + p.getName() + ChatColor.WHITE + ", ";
-									else members += ChatColor.RED + p.getName() + ChatColor.WHITE + ", ";
+									if(p.isOnline()) {
+										members += ChatColor.GREEN + p.getName() + ChatColor.WHITE + ", ";
+									}
+									else {
+										members += ChatColor.RED + p.getName() + ChatColor.WHITE + ", ";
+									}
 								}
 							}
 							if(members.length() > 2) {

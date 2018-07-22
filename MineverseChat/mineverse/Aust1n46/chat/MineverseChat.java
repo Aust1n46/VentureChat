@@ -449,8 +449,8 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 			 */
 		}
 		Bukkit.getConsoleSender().sendMessage(Format.FormatStringAll("&8[&eVentureChat&8]&e - Establishing BungeeCord"));
-		Bukkit.getMessenger().registerOutgoingPluginChannel(this, "VentureChat");
-		Bukkit.getMessenger().registerIncomingPluginChannel(this, "VentureChat", this);
+		Bukkit.getMessenger().registerOutgoingPluginChannel(this, "venturechat:");
+		Bukkit.getMessenger().registerIncomingPluginChannel(this, "venturechat:", this);
 		if(pluginManager.isPluginEnabled("Towny")) {
 			Bukkit.getConsoleSender().sendMessage(Format.FormatStringAll("&8[&eVentureChat&8]&e - Enabling Towny Formatting"));
 		}
@@ -589,7 +589,7 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 				e.printStackTrace();
 			}
 		}
-		else {
+		else if(!VersionHandler.is1_13()){
 			try {
 				MineverseChat.posField = MinecraftReflection.getMinecraftClass("PacketPlayOutChat").getDeclaredField("b");
 				MineverseChat.posField.setAccessible(true);
@@ -599,6 +599,34 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 			}
 			try {
 				MineverseChat.messageMethod = MinecraftReflection.getMinecraftClass("ChatBaseComponent").getDeclaredMethod("toPlainText", new Class[0]);
+				MineverseChat.messageMethod.setAccessible(true);
+			}
+			catch(SecurityException | NoSuchMethodException e) {
+				e.printStackTrace();
+			}
+			if(!VersionHandler.is1_9() && !VersionHandler.is1_10() && !VersionHandler.is1_11()) {
+				try {
+					MineverseChat.chatMessageType = getNMSClass("ChatMessageType");
+				}
+				catch(Exception e) {
+					e.printStackTrace();
+				}
+			}
+		}
+		else {
+			try {
+				MineverseChat.posField = MinecraftReflection.getMinecraftClass("PacketPlayOutChat").getDeclaredField("b");
+				MineverseChat.posField.setAccessible(true);
+			}
+			catch(NoSuchFieldException | SecurityException localNoSuchFieldException) {
+				localNoSuchFieldException.printStackTrace();
+			}
+			try {
+				/*for(Method m : MinecraftReflection.getMinecraftClass("ChatBaseComponent").getDeclaredMethods()) {
+					System.out.println(m.getName());
+				}*/
+				
+				MineverseChat.messageMethod = MinecraftReflection.getMinecraftClass("ChatBaseComponent").getDeclaredMethod("getString", new Class[0]);
 				MineverseChat.messageMethod.setAccessible(true);
 			}
 			catch(SecurityException | NoSuchMethodException e) {
@@ -736,7 +764,7 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 				out.writeBoolean(mcp.getMessageToggle());
 			}
 			for(MineverseChatPlayer p : MineverseChat.onlinePlayers) {
-				p.getPlayer().sendPluginMessage(this, "VentureChat", outstream.toByteArray());
+				p.getPlayer().sendPluginMessage(this, "venturechat:", outstream.toByteArray());
 				break;
 			}
 			// System.out.println("Sync start bottom...");
@@ -765,7 +793,7 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 					out.writeUTF(p + "," + networkPlayers.get(p));
 				}
 			}
-			mcp.getPlayer().sendPluginMessage(this, "VentureChat", outstream.toByteArray());
+			mcp.getPlayer().sendPluginMessage(this, "venturechat:", outstream.toByteArray());
 			// System.out.println("Sync start bottom...");
 			out.close();
 		}
@@ -776,7 +804,7 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 
 	@Override
 	public void onPluginMessageReceived(String channel, Player player, byte[] message) {
-		if(!channel.equals("VentureChat")) {
+		if(!channel.equals("venturechat:")) {
 			return;
 		}
 		try {
@@ -917,7 +945,7 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 						out.writeUTF(server);
 						out.writeUTF(receiver);
 						out.writeUTF(sender.toString());
-						player.sendPluginMessage(this, "VentureChat", stream.toByteArray());
+						player.sendPluginMessage(this, "venturechat:", stream.toByteArray());
 						return;
 					}
 					p.setReplyPlayer(sender);
@@ -926,7 +954,7 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 					out.writeUTF(server);
 					out.writeUTF(p.getUUID().toString());
 					out.writeUTF(sender.toString());
-					player.sendPluginMessage(this, "VentureChat", stream.toByteArray());
+					player.sendPluginMessage(this, "venturechat:", stream.toByteArray());
 					return;
 				}
 				if(identifier.equals("Offline")) {
@@ -973,7 +1001,7 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 						out.writeUTF(server);
 						out.writeUTF(receiver);
 						out.writeUTF(sender.toString());
-						player.sendPluginMessage(this, "VentureChat", stream.toByteArray());
+						player.sendPluginMessage(this, "venturechat:", stream.toByteArray());
 						return;
 					}
 					if(p.getIgnores().contains(sender)) {
@@ -982,7 +1010,7 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 						out.writeUTF(server);
 						out.writeUTF(receiver);
 						out.writeUTF(sender.toString());
-						player.sendPluginMessage(this, "VentureChat", stream.toByteArray());
+						player.sendPluginMessage(this, "venturechat:", stream.toByteArray());
 						return;
 					}
 					if(!p.getMessageToggle()) {
@@ -991,7 +1019,7 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 						out.writeUTF(server);
 						out.writeUTF(receiver);
 						out.writeUTF(sender.toString());
-						player.sendPluginMessage(this, "VentureChat", stream.toByteArray());
+						player.sendPluginMessage(this, "venturechat:", stream.toByteArray());
 						return;
 					}
 					if(s != null) {
@@ -1029,7 +1057,7 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 					out.writeUTF(sName);
 					out.writeUTF(echo);
 					out.writeUTF(spy);
-					player.sendPluginMessage(this, "VentureChat", stream.toByteArray());
+					player.sendPluginMessage(this, "venturechat:", stream.toByteArray());
 					return;
 				}
 				if(identifier.equals("Offline")) {
@@ -1102,7 +1130,7 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 						out.writeUTF("Channel");
 						out.writeUTF(sendplayer);
 						out.writeUTF(chatchannel);
-						player.sendPluginMessage(this, "VentureChat", stream.toByteArray());
+						player.sendPluginMessage(this, "venturechat:", stream.toByteArray());
 					}
 					catch(Exception e) {
 						e.printStackTrace();
@@ -1116,7 +1144,7 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 						out.writeUTF(sendplayer);
 						out.writeUTF(mutePlayer);
 						out.writeUTF(server);
-						player.sendPluginMessage(this, "VentureChat", stream.toByteArray());
+						player.sendPluginMessage(this, "venturechat:", stream.toByteArray());
 					}
 					catch(Exception e) {
 						e.printStackTrace();
@@ -1130,7 +1158,7 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 						out.writeUTF(sendplayer);
 						out.writeUTF(cc.getName());
 						out.writeUTF(cc.getColor());
-						player.sendPluginMessage(this, "VentureChat", stream.toByteArray());
+						player.sendPluginMessage(this, "venturechat:", stream.toByteArray());
 					}
 					catch(Exception e) {
 						e.printStackTrace();
@@ -1145,7 +1173,7 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 						out.writeUTF(mutePlayer);
 						out.writeUTF(cc.getName());
 						out.writeUTF(cc.getColor());
-						player.sendPluginMessage(this, "VentureChat", stream.toByteArray());
+						player.sendPluginMessage(this, "venturechat:", stream.toByteArray());
 					}
 					catch(Exception e) {
 						e.printStackTrace();
@@ -1177,7 +1205,7 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 								out.writeUTF(cc.getName());
 								out.writeUTF(cc.getColor());
 								out.writeUTF(time);
-								player.sendPluginMessage(this, "VentureChat", stream.toByteArray());
+								player.sendPluginMessage(this, "venturechat:", stream.toByteArray());
 							}
 							catch(Exception e) {
 								e.printStackTrace();
@@ -1189,7 +1217,7 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 							out.writeUTF("Time");
 							out.writeUTF(sendplayer);
 							out.writeUTF(time);
-							player.sendPluginMessage(this, "VentureChat", stream.toByteArray());
+							player.sendPluginMessage(this, "venturechat:", stream.toByteArray());
 						}
 						catch(Exception e) {
 							e.printStackTrace();
@@ -1202,7 +1230,7 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 							out.writeUTF("Time");
 							out.writeUTF(sendplayer);
 							out.writeUTF(time);
-							player.sendPluginMessage(this, "VentureChat", stream.toByteArray());
+							player.sendPluginMessage(this, "venturechat:", stream.toByteArray());
 						}
 						catch(Exception e1) {
 							e1.printStackTrace();
@@ -1224,7 +1252,7 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 					out.writeUTF(cc.getName());
 					out.writeUTF(cc.getColor());
 					out.writeUTF(time);
-					player.sendPluginMessage(this, "VentureChat", stream.toByteArray());
+					player.sendPluginMessage(this, "venturechat:", stream.toByteArray());
 				}
 				catch(Exception e) {
 					e.printStackTrace();
@@ -1246,7 +1274,7 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 						out.writeUTF(sendplayer);
 						out.writeUTF(muteplayer);
 						out.writeUTF(server);
-						player.sendPluginMessage(this, "VentureChat", stream.toByteArray());
+						player.sendPluginMessage(this, "venturechat:", stream.toByteArray());
 					}
 					catch(Exception e) {
 						e.printStackTrace();
@@ -1274,7 +1302,7 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 					out.writeUTF("Valid");
 					out.writeUTF(sendplayer);
 					out.writeUTF(muteplayer);
-					player.sendPluginMessage(this, "VentureChat", stream.toByteArray());
+					player.sendPluginMessage(this, "venturechat:", stream.toByteArray());
 				}
 				catch(Exception e) {
 					e.printStackTrace();
@@ -1296,7 +1324,7 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 						out.writeUTF(sendplayer);
 						out.writeUTF(muteplayer);
 						out.writeUTF(server);
-						player.sendPluginMessage(this, "VentureChat", stream.toByteArray());
+						player.sendPluginMessage(this, "venturechat:", stream.toByteArray());
 					}
 					catch(Exception e) {
 						e.printStackTrace();
@@ -1322,7 +1350,7 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 					out.writeUTF("Valid");
 					out.writeUTF(sendplayer);
 					out.writeUTF(muteplayer);
-					player.sendPluginMessage(this, "VentureChat", stream.toByteArray());
+					player.sendPluginMessage(this, "venturechat:", stream.toByteArray());
 				}
 				catch(Exception e) {
 					e.printStackTrace();
@@ -1344,7 +1372,7 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 						out.writeUTF("Channel");
 						out.writeUTF(sendplayer);
 						out.writeUTF(chatchannel);
-						player.sendPluginMessage(this, "VentureChat", stream.toByteArray());
+						player.sendPluginMessage(this, "venturechat:", stream.toByteArray());
 					}
 					catch(Exception e) {
 						e.printStackTrace();
@@ -1358,7 +1386,7 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 						out.writeUTF(sendplayer);
 						out.writeUTF(mutePlayer);
 						out.writeUTF(server);
-						player.sendPluginMessage(this, "VentureChat", stream.toByteArray());
+						player.sendPluginMessage(this, "venturechat:", stream.toByteArray());
 					}
 					catch(Exception e) {
 						e.printStackTrace();
@@ -1373,7 +1401,7 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 						out.writeUTF(mutePlayer);
 						out.writeUTF(cc.getName());
 						out.writeUTF(cc.getColor());
-						player.sendPluginMessage(this, "VentureChat", stream.toByteArray());
+						player.sendPluginMessage(this, "venturechat:", stream.toByteArray());
 					}
 					catch(Exception e) {
 						e.printStackTrace();
@@ -1393,7 +1421,7 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 					out.writeUTF(mutePlayer);
 					out.writeUTF(cc.getName());
 					out.writeUTF(cc.getColor());
-					player.sendPluginMessage(this, "VentureChat", stream.toByteArray());
+					player.sendPluginMessage(this, "venturechat:", stream.toByteArray());
 				}
 				catch(Exception e) {
 					e.printStackTrace();

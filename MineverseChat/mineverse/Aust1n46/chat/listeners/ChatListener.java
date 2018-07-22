@@ -722,6 +722,7 @@ public class ChatListener implements Listener {
 					out.writeUTF(eventChannel.getName());
 					out.writeUTF(Channelformat + event.getMessage());
 					out.writeUTF(mcp.getName());
+					out.writeBoolean(mcp.getBungeeToggle());
 					out.writeUTF(message);
 					out.writeUTF(format);
 					out.writeUTF(chat);
@@ -732,7 +733,7 @@ public class ChatListener implements Listener {
 					if(plugin.getConfig().getString("loglevel", "info").equals("debug")) {
 						System.out.println(out.size() + " bytes size with json");
 					}
-					mcp.getPlayer().sendPluginMessage(plugin, "VentureChat", byteOutStream.toByteArray());
+					mcp.getPlayer().sendPluginMessage(plugin, "venturechat:", byteOutStream.toByteArray());
 					out.close();
 				}
 				catch(Exception e) {

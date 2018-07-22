@@ -73,7 +73,7 @@ public class Reply extends MineverseCommand {
 						out.writeUTF(send);
 						out.writeUTF(echo);
 						out.writeUTF(spy);
-						mcp.getPlayer().sendPluginMessage(plugin, "VentureChat", byteOutStream.toByteArray());
+						mcp.getPlayer().sendPluginMessage(plugin, "venturechat:", byteOutStream.toByteArray());
 						out.close();
 					}
 					catch(Exception e) {
