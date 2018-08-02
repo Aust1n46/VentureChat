@@ -1,5 +1,5 @@
 name: VentureChat
-version: 2.12.3
+version: 2.12.4
 main: mineverse.Aust1n46.chat.MineverseChat
 depend: [Vault, ProtocolLib, PlaceholderAPI]
 softdepend: [Towny, Factions, Heroes]

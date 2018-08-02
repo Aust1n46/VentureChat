@@ -69,7 +69,7 @@ public class Ignore extends MineverseCommand {
 				out.writeUTF("Send");
 				out.writeUTF(args[0]);
 				out.writeUTF(mcp.getUUID().toString());
-				mcp.getPlayer().sendPluginMessage(plugin, "VentureChat", byteOutStream.toByteArray());
+				mcp.getPlayer().sendPluginMessage(plugin, "venturechat:", byteOutStream.toByteArray());
 				out.close();
 			}
 			catch(Exception e) {
