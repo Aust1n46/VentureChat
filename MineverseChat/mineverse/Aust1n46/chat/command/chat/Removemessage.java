@@ -50,13 +50,13 @@ public class Removemessage extends MineverseCommand {
 			sender.sendMessage(ChatColor.RED + "Invalid hashcode.");
 			return;
 		}
-		if(args.length > 1 && Boolean.parseBoolean(args[1]) && sender instanceof Player) {
+		if(args.length > 1 && MineverseChat.ccInfo.isChannel(args[1]) && MineverseChat.ccInfo.getChannelInfo(args[1]).getBungee() && Boolean.parseBoolean(args[2]) && sender instanceof Player) {
 			ByteArrayOutputStream byteOutStream = new ByteArrayOutputStream();
 			DataOutputStream out = new DataOutputStream(byteOutStream);
 			try {
 				out.writeUTF("RemoveMessage");
 				out.writeUTF(String.valueOf(hash));
-				((Player) sender).sendPluginMessage(plugin, "VentureChat", byteOutStream.toByteArray());
+				((Player) sender).sendPluginMessage(plugin, "venturechat:", byteOutStream.toByteArray());
 				out.close();
 			}
 			catch(Exception e) {
@@ -75,6 +75,7 @@ public class Removemessage extends MineverseCommand {
 						playerPackets.add(Removemessage.this.emptyLinePacketContainer);
 					}
 					for(ChatMessage message : messages) {
+						//System.out.println(message.getMessage() + " remover test");
 						if(message.getHash() == hash) {
 							WrappedChatComponent removedComponent = p.getPlayer().hasPermission("venturechat.message.bypass") ? Removemessage.this.getMessageDeletedChatComponentAdmin(message) : Removemessage.this.getMessageDeletedChatComponentPlayer();
 							message.setComponent(removedComponent);
@@ -139,6 +140,7 @@ public class Removemessage extends MineverseCommand {
 							resend = true;
 							continue;
 						}*/
+						//System.out.println(message.getComponent().getJson());
 						playerPackets.add(Removemessage.this.createPacketPlayOutChat(message.getComponent()));
 					}
 					if(resend) {

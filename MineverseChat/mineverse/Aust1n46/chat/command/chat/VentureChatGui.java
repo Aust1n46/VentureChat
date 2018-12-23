@@ -26,6 +26,7 @@ import mineverse.Aust1n46.chat.command.MineverseCommand;
 import mineverse.Aust1n46.chat.gui.GuiSlot;
 import mineverse.Aust1n46.chat.utilities.Format;
 import mineverse.Aust1n46.chat.utilities.UUIDFetcher;
+import mineverse.Aust1n46.chat.versions.VersionHandler;
 
 public class VentureChatGui extends MineverseCommand {
 	private MineverseChat plugin;
@@ -84,7 +85,13 @@ public class VentureChatGui extends MineverseCommand {
 	
 	private void openInventory(MineverseChatPlayer mcp, MineverseChatPlayer target, ChatChannel channel, int hash) {
 		Inventory inv = Bukkit.createInventory(null, this.getSlots(), "VentureChat: " + target.getName() + " GUI");
-		ItemStack close = new ItemStack(Material.BARRIER);
+		ItemStack close = null;
+		if(VersionHandler.is1_7_10()) {
+			close = new ItemStack(Material.BEDROCK);
+		}
+		else {
+			close = new ItemStack(Material.BARRIER);
+		}
 		ItemMeta closeMeta = close.getItemMeta();
 		closeMeta.setDisplayName("§oClose GUI");
 		close.setItemMeta(closeMeta);

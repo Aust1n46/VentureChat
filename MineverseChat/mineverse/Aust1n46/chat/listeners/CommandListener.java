@@ -17,6 +17,7 @@ import mineverse.Aust1n46.chat.gui.GuiSlot;
 import mineverse.Aust1n46.chat.irc.Bot;
 import mineverse.Aust1n46.chat.utilities.Format;
 import mineverse.Aust1n46.chat.utilities.FormatTags;
+import mineverse.Aust1n46.chat.versions.VersionHandler;
 
 //import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -274,8 +275,15 @@ public class CommandListener implements CommandExecutor, Listener {
 		SkullMeta skullMeta = (SkullMeta) skull.getItemMeta();
 		ChatChannel channel = MineverseChat.ccInfo.getChannelInfo(ChatColor.stripColor(skullMeta.getLore().get(0)).replace("Channel: ", ""));
 		int hash = Integer.parseInt(ChatColor.stripColor(skullMeta.getLore().get(1).replace("Hash: ", "")));
-		if(item.getType() == Material.BARRIER) {
-			mcp.getPlayer().closeInventory();
+		if(VersionHandler.is1_7_10()) {
+			if(item.getType() == Material.BEDROCK) {
+				mcp.getPlayer().closeInventory();
+			}
+		}
+		else {
+			if(item.getType() == Material.BARRIER) {
+				mcp.getPlayer().closeInventory();
+			}
 		}
 		for(GuiSlot g : MineverseChat.gsInfo.getGuiSlots()) {
 			if(g.getIcon() == item.getType() && g.getDurability() == item.getDurability() && g.getSlot() == e.getSlot()) {

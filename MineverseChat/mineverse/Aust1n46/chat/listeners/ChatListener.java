@@ -2,6 +2,7 @@ package mineverse.Aust1n46.chat.listeners;
 
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
+import java.lang.reflect.Method;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.text.SimpleDateFormat;
@@ -21,6 +22,7 @@ import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.PluginManager;
+import org.bukkit.plugin.messaging.PluginMessageRecipient;
 import org.bukkit.util.EulerAngle;
 
 import com.massivecraft.factions.entity.MPlayer;
@@ -734,6 +736,14 @@ public class ChatListener implements Listener {
 						System.out.println(out.size() + " bytes size with json");
 					}
 					mcp.getPlayer().sendPluginMessage(plugin, "venturechat:", byteOutStream.toByteArray());
+					
+					//PluginMessageRecipient test = (PluginMessageRecipient) mcp.getPlayer();
+					//System.out.println("Listening plugin channels?");
+					//System.out.println(test.getListeningPluginChannels());
+					//System.out.println("PluginMessageRecipient methods?");
+					//for(Method m : test.getClass().getMethods()) {
+						//System.out.println(m.getName());
+					//}
 					out.close();
 				}
 				catch(Exception e) {

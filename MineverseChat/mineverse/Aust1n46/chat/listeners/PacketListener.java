@@ -101,13 +101,17 @@ public class PacketListener extends PacketAdapter {
 		try {
 			//System.out.println(chat.getJson());
 			//message = TextComponent.toPlainText(new TextComponent(chat.getJson()));
-			message = (String) MineverseChat.messageMethod.invoke(chat.getHandle(), new Object[0]);
+			//message = (String) MineverseChat.messageMethod.invoke(chat.getHandle(), new Object[0]);
 			//System.out.println(MineverseChat.lastChatMessage.getMessage());
+			
+			message = MineverseChat.toPlainText(chat.getHandle(), chat.getHandleType());
+			//System.out.println(chat.getJson());
+			//System.out.println(message + " message");
 			hash = message != null ? message.hashCode() : -1;
 		}
 		catch(Exception ex) {
 			message = TextComponent.toPlainText(new TextComponent(chat.getJson()));
-			System.out.println(message);
+			//System.out.println(message);
 			//ex.printStackTrace();
 		}
 		ChatMessage lastChatMessage = MineverseChat.lastChatMessage;
@@ -128,8 +132,11 @@ public class PacketListener extends PacketAdapter {
 			}*/
 			if(mcp.getPlayer().hasPermission("venturechat.gui")) {
 				json = json.substring(0, json.length() - 1);
-				json += "," + Format.convertToJsonColors(Format.FormatStringAll(plugin.getConfig().getString("guiicon")), ",\"clickEvent\":{\"action\":\"run_command\",\"value\":\"/vchatgui " + lastChatMessage.getSender() + " " + lastChatMessage.getChannel() + " " + lastChatMessage.getHash() +"\"},\"hoverEvent\":{\"action\":\"show_text\",\"value\":{\"text\":\"\",\"extra\":[" + Format.convertToJsonColors(Format.FormatStringAll(plugin.getConfig().getString("guitext"))) + "]}}") + "]}]";
+				json += "," + Format.convertToJsonColors(Format.FormatStringAll(plugin.getConfig().getString("guiicon")), ",\"clickEvent\":{\"action\":\"run_command\",\"value\":\"/vchatgui " + lastChatMessage.getSender() + " " + lastChatMessage.getChannel() + " " + lastChatMessage.getHash() +"\"},\"hoverEvent\":{\"action\":\"show_text\",\"value\":{\"text\":\"\",\"extra\":[" + Format.convertToJsonColors(Format.FormatStringAll(plugin.getConfig().getString("guitext"))) + "]}}") + "]";
+				//json += ",{\"text\":\"" + "json test" + "\"}]";
 			}
+			//System.out.println("," + Format.convertToJsonColors(Format.FormatStringAll(plugin.getConfig().getString("guiicon")), ",\"clickEvent\":{\"action\":\"run_command\",\"value\":\"/vchatgui " + lastChatMessage.getSender() + " " + lastChatMessage.getChannel() + " " + lastChatMessage.getHash() +"\"},\"hoverEvent\":{\"action\":\"show_text\",\"value\":{\"text\":\"\",\"extra\":[" + Format.convertToJsonColors(Format.FormatStringAll(plugin.getConfig().getString("guitext"))) + "]}}") + "]}]");
+			//System.out.println("\nline break\n");
 			//System.out.println(json);
 			chat.setJson(json);
 			event.getPacket().getChatComponents().write(0, chat);

@@ -193,7 +193,7 @@ venturegui:
     durability: 0
     text: '&cRemove Message'
     permission: 'removemessage'
-    command: '/removemessage {channel} {hash} true'
+    command: '/removemessage {hash} {channel} true'
     slot: 7
     
 guiicon: '&c [✓]'

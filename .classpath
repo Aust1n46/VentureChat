@@ -7,11 +7,12 @@
 	<classpathentry kind="lib" path="C:/Users/Austin/workspace/VentureChat Dependencies/MassiveCore.jar"/>
 	<classpathentry kind="lib" path="C:/Users/Austin/workspace/VentureChat Dependencies/pircbotx-2.0.1.jar"/>
 	<classpathentry kind="lib" path="C:/Users/Austin/workspace/VentureChat Dependencies/PlaceholderAPI-2.8.2.jar"/>
-	<classpathentry kind="lib" path="C:/Users/Austin/workspace/VentureChat Dependencies/ProtocolLib.jar"/>
 	<classpathentry kind="lib" path="C:/Users/Austin/workspace/VentureChat Dependencies/spigot-1.12.2-R0.1-SNAPSHOT-b1581.jar"/>
 	<classpathentry kind="lib" path="C:/Users/Austin/workspace/VentureChat Dependencies/Towny.jar"/>
 	<classpathentry kind="lib" path="C:/Users/Austin/workspace/VentureChat Dependencies/Vault.jar"/>
 	<classpathentry kind="lib" path="C:/Users/Austin/workspace/VentureChat Dependencies/BungeeCord.jar"/>
 	<classpathentry kind="lib" path="C:/Users/Austin/workspace/VentureChat Dependencies/spigot-1.8.8-R0.1-SNAPSHOT.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Austin/Desktop/Mineverse Network/Servers/Hub/spigot-1.13-R0.1-SNAPSHOT-b1726.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Austin/Desktop/Mineverse Network/Servers/Hub/plugins_1.13/ProtocolLib.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
