@@ -11,7 +11,6 @@ import java.io.DataOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -553,36 +552,46 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 		this.protocolManager.addPacketListener(this.packetListener);
 	}
 	
-	public static String toPlainText(Object o, Class<?> c) throws NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException { 
-		//System.out.println(o.getClass().getName());
-		//System.out.println(c.getName());
-		/*for(Method m : c.getDeclaredMethods()) {
-			System.out.println(m.getName());
-			System.out.println(m.getGenericReturnType().toString());
-	    }*/
-		ArrayList<?> list = (ArrayList<?>) c.getMethod("a").invoke(o, new Object[0]);
-		//System.out.println(list);
-		//System.out.println(list.get(0).getClass().getName());
-		/*for(Method m : list.get(0).getClass().getDeclaredMethods()) {
-			System.out.println(m.getName());
-			System.out.println(m.getGenericReturnType().toString());
-		}*/
+	public static String toPlainText(Object o, Class<?> c) { 
+		List<Object> finalList = new ArrayList<>();
 		StringBuilder stringbuilder = new StringBuilder();
-		for(Object component : list) {
-			if(VersionHandler.is1_7_10()) {
-				stringbuilder.append((String) component.getClass().getMethod("e").invoke(component));
-			}
-			else {
-				stringbuilder.append((String) component.getClass().getMethod("getText").invoke(component));
+		try {
+			splitComponents(finalList, o, c);
+			
+			for(Object component : finalList) {
+				if(VersionHandler.is1_7_10()) {
+					stringbuilder.append((String) component.getClass().getMethod("e").invoke(component));
+				}
+				else {
+					stringbuilder.append((String) component.getClass().getMethod("getText").invoke(component));
+				}
 			}
 		}
-		//System.out.println("my string");
-		//System.out.println("my string");
-		//System.out.println("my string");
-		//System.out.println("my string");
-		//System.out.println("my string");
-		//System.out.println(stringbuilder.toString());
+		catch(Exception e) {
+			e.printStackTrace();
+		}
+		if(plugin.getConfig().getString("loglevel", "info").equals("debug")) {
+			System.out.println("my string");
+			System.out.println("my string");
+			System.out.println("my string");
+			System.out.println("my string");
+			System.out.println("my string");
+			System.out.println(stringbuilder.toString());
+		}
 		return stringbuilder.toString();
+	}
+	
+	private static void splitComponents(List<Object> finalList, Object o, Class<?> c) throws Exception {
+		ArrayList<?> list = (ArrayList<?>) c.getMethod("a").invoke(o, new Object[0]);
+		for(Object component : list) {
+			ArrayList<?> innerList = (ArrayList<?>) c.getMethod("a").invoke(component, new Object[0]);
+			if(innerList.size() > 0) {
+				splitComponents(finalList, component, c);
+			}
+			else {
+				finalList.add(component);
+			}
+		}
 	}
 
 	private void loadNMS() {	

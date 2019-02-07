@@ -142,6 +142,7 @@ public class Removemessage extends MineverseCommand {
 						}*/
 						//System.out.println(message.getComponent().getJson());
 						playerPackets.add(Removemessage.this.createPacketPlayOutChat(message.getComponent()));
+						
 					}
 					if(resend) {
 						packets.put(p.getPlayer(), playerPackets);

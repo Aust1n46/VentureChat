@@ -13,7 +13,6 @@ import mineverse.Aust1n46.chat.api.MineverseChatPlayer;
 import mineverse.Aust1n46.chat.utilities.Format;
 import mineverse.Aust1n46.chat.versions.VersionHandler;
 import net.md_5.bungee.api.chat.BaseComponent;
-import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.chat.ComponentSerializer;
 
 import com.comphenix.protocol.PacketType;
@@ -98,22 +97,15 @@ public class PacketListener extends PacketAdapter {
 		WrappedChatComponent originalChat = (WrappedChatComponent) event.getPacket().getChatComponents().read(0);
 		String message = null;
 		int hash = -1;
-		try {
-			//System.out.println(chat.getJson());
-			//message = TextComponent.toPlainText(new TextComponent(chat.getJson()));
-			//message = (String) MineverseChat.messageMethod.invoke(chat.getHandle(), new Object[0]);
-			//System.out.println(MineverseChat.lastChatMessage.getMessage());
-			
-			message = MineverseChat.toPlainText(chat.getHandle(), chat.getHandleType());
-			//System.out.println(chat.getJson());
-			//System.out.println(message + " message");
-			hash = message != null ? message.hashCode() : -1;
-		}
-		catch(Exception ex) {
-			message = TextComponent.toPlainText(new TextComponent(chat.getJson()));
-			//System.out.println(message);
-			//ex.printStackTrace();
-		}
+		//System.out.println(chat.getJson());
+		//message = TextComponent.toPlainText(new TextComponent(chat.getJson()));
+		//message = (String) MineverseChat.messageMethod.invoke(chat.getHandle(), new Object[0]);
+		//System.out.println(MineverseChat.lastChatMessage.getMessage());
+		message = MineverseChat.toPlainText(chat.getHandle(), chat.getHandleType());
+		//System.out.println(chat.getJson());
+		//System.out.println(message + " message");
+		hash = message != null ? message.hashCode() : -1;
+		//System.out.println("remover goes in here?");
 		ChatMessage lastChatMessage = MineverseChat.lastChatMessage;
 		MineverseChatPlayer mcp = MineverseChatAPI.getMineverseChatPlayer(event.getPlayer());
 		if(lastChatMessage != null && lastChatMessage.getHash() == hash) {
