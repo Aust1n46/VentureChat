@@ -132,6 +132,7 @@ ignorechat: false
 emptychannelalert: "&6No one is listening to you."
 
 messageremoverpermissions: '&cYou need additional permissions to view this message!'
+messageremovertext: '&c&o<message removed>'
 
 # The name of the group is the permissions node for the format
 # Example: venturechat.json.Owner is the node for the group Owner

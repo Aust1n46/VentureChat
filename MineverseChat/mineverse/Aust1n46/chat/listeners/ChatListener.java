@@ -689,7 +689,7 @@ public class ChatListener implements Listener {
 			MineverseChat.lastChatMessage = new ChatMessage(mcp.getPlayer().getName(), message, message.hashCode(), format, chat, eventChannel.getName());
 			MineverseChat.lastJson = Format.convertToJson(MineverseChat.lastChatMessage);
 			
-			ChatMessageEvent chatMessageEvent = new ChatMessageEvent(MineverseChat.lastChatMessage, MineverseChat.lastJson);
+			ChatMessageEvent chatMessageEvent = new ChatMessageEvent(mcp, eventChannel, bungee, MineverseChat.lastChatMessage, MineverseChat.lastJson);
 			Bukkit.getServer().getPluginManager().callEvent(chatMessageEvent);
 			
 			if(irc && plugin.irc) {
@@ -749,6 +749,7 @@ public class ChatListener implements Listener {
 				catch(Exception e) {
 					e.printStackTrace();
 				}
+				
 			}
 		}
 		catch(IllegalFormatException ex) {

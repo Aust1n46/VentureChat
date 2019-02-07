@@ -181,7 +181,8 @@ public class Removemessage extends MineverseCommand {
 
 	public WrappedChatComponent getMessageDeletedChatComponentPlayer() {
 		if(this.messageDeletedComponentPlayer == null) {
-			this.messageDeletedComponentPlayer = WrappedChatComponent.fromJson("{\"text\":\"\",\"extra\":[{\"text\":\"<message removed>\",\"color\":\"red\",\"italic\":\"true\",\"hoverEvent\":{\"action\":\"show_text\",\"value\":{\"text\":\"\",\"extra\":[{\"text\":\"" + Format.FormatStringAll(plugin.getConfig().getString("messageremoverpermissions")) + "\"}]}}}]}");
+			//this.messageDeletedComponentPlayer = WrappedChatComponent.fromJson("{\"text\":\"\",\"extra\":[{\"text\":\"<message removed>\",\"color\":\"red\",\"italic\":\"true\",\"hoverEvent\":{\"action\":\"show_text\",\"value\":{\"text\":\"\",\"extra\":[{\"text\":\"" + Format.FormatStringAll(plugin.getConfig().getString("messageremoverpermissions")) + "\"}]}}}]}");
+			this.messageDeletedComponentPlayer = WrappedChatComponent.fromJson("{\"text\":\"\",\"extra\":[{\"text\":\"" + Format.FormatStringAll(plugin.getConfig().getString("messageremovertext")) + "\",\"hoverEvent\":{\"action\":\"show_text\",\"value\":{\"text\":\"\",\"extra\":[{\"text\":\"" + Format.FormatStringAll(plugin.getConfig().getString("messageremoverpermissions")) + "\"}]}}}]}");
 		}
 		return this.messageDeletedComponentPlayer;
 	}
@@ -191,6 +192,6 @@ public class Removemessage extends MineverseCommand {
 		if(message.getMessage().contains(ChatColor.stripColor(Format.FormatStringAll(plugin.getConfig().getString("guiicon"))))) {
 			oMessage = oMessage.substring(0, oMessage.length() - ChatColor.stripColor(Format.FormatStringAll(plugin.getConfig().getString("guiicon"))).length() - 3) + "\"}]";
 		}
-		return WrappedChatComponent.fromJson(Format.FormatStringAll("{\"text\":\"\",\"extra\":[{\"text\":\"&c&o<message removed>\",\"hoverEvent\":{\"action\":\"show_text\",\"value\":{\"text\":\"&7Message: \"," + oMessage + "}}}]}"));
+		return WrappedChatComponent.fromJson(Format.FormatStringAll("{\"text\":\"\",\"extra\":[{\"text\":\"" + Format.FormatStringAll(plugin.getConfig().getString("messageremovertext")) + "\",\"hoverEvent\":{\"action\":\"show_text\",\"value\":{\"text\":\"&7Message: \"," + oMessage + "}}}]}"));
 	}
 }
