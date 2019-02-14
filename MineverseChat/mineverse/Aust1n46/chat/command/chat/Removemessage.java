@@ -50,7 +50,7 @@ public class Removemessage extends MineverseCommand {
 			sender.sendMessage(ChatColor.RED + "Invalid hashcode.");
 			return;
 		}
-		if(args.length > 1 && MineverseChat.ccInfo.isChannel(args[1]) && MineverseChat.ccInfo.getChannelInfo(args[1]).getBungee() && Boolean.parseBoolean(args[2]) && sender instanceof Player) {
+		if(args.length > 1 && MineverseChat.ccInfo.isChannel(args[1]) && MineverseChat.ccInfo.getChannelInfo(args[1]).getBungee() && sender instanceof Player) {
 			ByteArrayOutputStream byteOutStream = new ByteArrayOutputStream();
 			DataOutputStream out = new DataOutputStream(byteOutStream);
 			try {
@@ -64,29 +64,20 @@ public class Removemessage extends MineverseCommand {
 			}
 			return;
 		}
-		new BukkitRunnable() {
-			public void run() {
-				final Map<Player, List<PacketContainer>> packets = new HashMap();
-				for(MineverseChatPlayer p : MineverseChat.onlinePlayers) {
-					List<ChatMessage> messages = p.getMessages();
-					List<PacketContainer> playerPackets = new ArrayList();
-					boolean resend = false;
-					for(int fill = 0; fill < 100 - messages.size(); fill++) {
-						playerPackets.add(Removemessage.this.emptyLinePacketContainer);
-					}
-					for(ChatMessage message : messages) {
-						//System.out.println(message.getMessage() + " remover test");
-						if(message.getHash() == hash) {
-							WrappedChatComponent removedComponent = p.getPlayer().hasPermission("venturechat.message.bypass") ? Removemessage.this.getMessageDeletedChatComponentAdmin(message) : Removemessage.this.getMessageDeletedChatComponentPlayer();
-							message.setComponent(removedComponent);
-							message.setHash(-1);
-							playerPackets.add(Removemessage.this.createPacketPlayOutChat(removedComponent));
-							resend = true;
-							continue;
+		else {
+			new BukkitRunnable() {
+				public void run() {
+					final Map<Player, List<PacketContainer>> packets = new HashMap();
+					for(MineverseChatPlayer p : MineverseChat.onlinePlayers) {
+						List<ChatMessage> messages = p.getMessages();
+						List<PacketContainer> playerPackets = new ArrayList();
+						boolean resend = false;
+						for(int fill = 0; fill < 100 - messages.size(); fill++) {
+							playerPackets.add(Removemessage.this.emptyLinePacketContainer);
 						}
-						if(message.getMessage().contains(ChatColor.stripColor(Format.FormatStringAll(plugin.getConfig().getString("guiicon"))))) {
-							String submessage = message.getMessage().substring(0, message.getMessage().length() - ChatColor.stripColor(Format.FormatStringAll(plugin.getConfig().getString("guiicon"))).length());
-							if(submessage.hashCode() == hash) {
+						for(ChatMessage message : messages) {
+							//System.out.println(message.getMessage() + " remover test");
+							if(message.getHash() == hash) {
 								WrappedChatComponent removedComponent = p.getPlayer().hasPermission("venturechat.message.bypass") ? Removemessage.this.getMessageDeletedChatComponentAdmin(message) : Removemessage.this.getMessageDeletedChatComponentPlayer();
 								message.setComponent(removedComponent);
 								message.setHash(-1);
@@ -94,25 +85,54 @@ public class Removemessage extends MineverseCommand {
 								resend = true;
 								continue;
 							}
-						}
-						/*if(message.getMessage().contains(Format.FormatStringAll(plugin.getConfig().getString("messageremovericon")))) {
-							String submessage = message.getMessage().substring(0, message.getMessage().length() - plugin.getConfig().getString("messageremovericon").length() - 1).replaceAll("(§([a-z0-9]))", "");
-							if(submessage.hashCode() == hash) {
-								WrappedChatComponent removedComponent = p.getPlayer().hasPermission("venturechat.message.bypass") ? Removemessage.this.getMessageDeletedChatComponentAdmin(message) : Removemessage.this.getMessageDeletedChatComponentPlayer();
-								message.setComponent(removedComponent);
-								message.setHash(-1);
-								playerPackets.add(Removemessage.this.createPacketPlayOutChat(removedComponent));
-								resend = true;
-								continue;
+							if(message.getMessage().contains(ChatColor.stripColor(Format.FormatStringAll(plugin.getConfig().getString("guiicon"))))) {
+								String submessage = message.getMessage().substring(0, message.getMessage().length() - ChatColor.stripColor(Format.FormatStringAll(plugin.getConfig().getString("guiicon"))).length());
+								if(submessage.hashCode() == hash) {
+									WrappedChatComponent removedComponent = p.getPlayer().hasPermission("venturechat.message.bypass") ? Removemessage.this.getMessageDeletedChatComponentAdmin(message) : Removemessage.this.getMessageDeletedChatComponentPlayer();
+									message.setComponent(removedComponent);
+									message.setHash(-1);
+									playerPackets.add(Removemessage.this.createPacketPlayOutChat(removedComponent));
+									resend = true;
+									continue;
+								}
+							}
+							/*if(message.getMessage().contains(Format.FormatStringAll(plugin.getConfig().getString("messageremovericon")))) {
+								String submessage = message.getMessage().substring(0, message.getMessage().length() - plugin.getConfig().getString("messageremovericon").length() - 1).replaceAll("(§([a-z0-9]))", "");
+								if(submessage.hashCode() == hash) {
+									WrappedChatComponent removedComponent = p.getPlayer().hasPermission("venturechat.message.bypass") ? Removemessage.this.getMessageDeletedChatComponentAdmin(message) : Removemessage.this.getMessageDeletedChatComponentPlayer();
+									message.setComponent(removedComponent);
+									message.setHash(-1);
+									playerPackets.add(Removemessage.this.createPacketPlayOutChat(removedComponent));
+									resend = true;
+									continue;
+								}
+								int cut = 0;
+								for(JsonButton b : MineverseChat.jbInfo.getJsonButtons()) {
+									if(b.hasPermission() && p.getPlayer().hasPermission(b.getPermission())) {
+										cut += b.getIcon().length() - 1;
+									}
+								}
+								submessage = submessage.substring(0, submessage.length() - cut).replaceAll("(§([a-z0-9]))", "");
+								//System.out.println(submessage + " submess");
+								if(submessage.hashCode() == hash) {
+									WrappedChatComponent removedComponent = p.getPlayer().hasPermission("venturechat.message.bypass") ? Removemessage.this.getMessageDeletedChatComponentAdmin(message) : Removemessage.this.getMessageDeletedChatComponentPlayer();
+									message.setComponent(removedComponent);
+									message.setHash(-1);
+									playerPackets.add(Removemessage.this.createPacketPlayOutChat(removedComponent));
+									resend = true;
+									continue;
+								}
 							}
 							int cut = 0;
 							for(JsonButton b : MineverseChat.jbInfo.getJsonButtons()) {
-								if(b.hasPermission() && p.getPlayer().hasPermission(b.getPermission())) {
+								if(b.hasPermission() && p.getPlayer().hasPermission(b.getPermission()) && message.getMessage().contains(b.getIcon())) {
 									cut += b.getIcon().length() - 1;
 								}
 							}
-							submessage = submessage.substring(0, submessage.length() - cut).replaceAll("(§([a-z0-9]))", "");
-							//System.out.println(submessage + " submess");
+							String submessage = message.getMessage().replaceAll("(§([a-z0-9]))", "");
+							//System.out.println(submessage + " " + submessage.length());
+							submessage = submessage.substring(0, submessage.length() - cut);
+							//System.out.println(submessage);
 							if(submessage.hashCode() == hash) {
 								WrappedChatComponent removedComponent = p.getPlayer().hasPermission("venturechat.message.bypass") ? Removemessage.this.getMessageDeletedChatComponentAdmin(message) : Removemessage.this.getMessageDeletedChatComponentPlayer();
 								message.setComponent(removedComponent);
@@ -120,46 +140,28 @@ public class Removemessage extends MineverseCommand {
 								playerPackets.add(Removemessage.this.createPacketPlayOutChat(removedComponent));
 								resend = true;
 								continue;
+							}*/
+							//System.out.println(message.getComponent().getJson());
+							playerPackets.add(Removemessage.this.createPacketPlayOutChat(message.getComponent()));
+							
+						}
+						if(resend) {
+							packets.put(p.getPlayer(), playerPackets);
+						}
+					}
+					new BukkitRunnable() {
+						public void run() {
+							for(Player p : packets.keySet()) {
+								List<PacketContainer> pPackets = packets.get(p);
+								for(PacketContainer c : pPackets) {
+									Removemessage.this.sendPacketPlayOutChat(p, c);
+								}
 							}
 						}
-						int cut = 0;
-						for(JsonButton b : MineverseChat.jbInfo.getJsonButtons()) {
-							if(b.hasPermission() && p.getPlayer().hasPermission(b.getPermission()) && message.getMessage().contains(b.getIcon())) {
-								cut += b.getIcon().length() - 1;
-							}
-						}
-						String submessage = message.getMessage().replaceAll("(§([a-z0-9]))", "");
-						//System.out.println(submessage + " " + submessage.length());
-						submessage = submessage.substring(0, submessage.length() - cut);
-						//System.out.println(submessage);
-						if(submessage.hashCode() == hash) {
-							WrappedChatComponent removedComponent = p.getPlayer().hasPermission("venturechat.message.bypass") ? Removemessage.this.getMessageDeletedChatComponentAdmin(message) : Removemessage.this.getMessageDeletedChatComponentPlayer();
-							message.setComponent(removedComponent);
-							message.setHash(-1);
-							playerPackets.add(Removemessage.this.createPacketPlayOutChat(removedComponent));
-							resend = true;
-							continue;
-						}*/
-						//System.out.println(message.getComponent().getJson());
-						playerPackets.add(Removemessage.this.createPacketPlayOutChat(message.getComponent()));
-						
-					}
-					if(resend) {
-						packets.put(p.getPlayer(), playerPackets);
-					}
+					}.runTask(plugin);
 				}
-				new BukkitRunnable() {
-					public void run() {
-						for(Player p : packets.keySet()) {
-							List<PacketContainer> pPackets = packets.get(p);
-							for(PacketContainer c : pPackets) {
-								Removemessage.this.sendPacketPlayOutChat(p, c);
-							}
-						}
-					}
-				}.runTask(plugin);
-			}
-		}.runTaskAsynchronously(plugin);
+			}.runTaskAsynchronously(plugin);
+		}
 	}
 
 	private PacketContainer createPacketPlayOutChat(WrappedChatComponent component) {

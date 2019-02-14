@@ -557,7 +557,6 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 		StringBuilder stringbuilder = new StringBuilder();
 		try {
 			splitComponents(finalList, o, c);
-			
 			for(Object component : finalList) {
 				if(VersionHandler.is1_7_10()) {
 					stringbuilder.append((String) component.getClass().getMethod("e").invoke(component));

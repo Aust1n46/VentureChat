@@ -25,7 +25,7 @@ public class GlobalUnmute extends Command {
 		if(!(commandSender instanceof ProxiedPlayer)) {
 			return;
 		}
-		if(commandSender.hasPermission("mineversechat.mute")) {
+		if(commandSender.hasPermission("venturechat.mute")) {
 			if(args.length < 3) {
 				commandSender.sendMessage(new TextComponent(ChatColor.RED + "Invalid command: /" + alias + " [server] [player] [channel]"));
 				return;
@@ -42,7 +42,7 @@ public class GlobalUnmute extends Command {
 						out.writeUTF(args[2]);
 						out.writeUTF(args[0]);
 						if(plugin.getProxy().getServers().get(args[0]).getPlayers().size() > 0) {
-							plugin.getProxy().getServers().get(args[0]).sendData("MineverseChat", stream.toByteArray());
+							plugin.getProxy().getServers().get(args[0]).sendData("venturechat:", stream.toByteArray());
 							return;
 						}
 						commandSender.sendMessage(new TextComponent(ChatColor.RED + "Player: " + ChatColor.GOLD + args[1] + ChatColor.RED + " is not connected to server: " + args[0]));
