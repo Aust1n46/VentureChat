@@ -58,9 +58,9 @@ public class CommandListener implements CommandExecutor, Listener {
 	public void onPlayerCommandPreprocess(PlayerCommandPreprocessEvent event) throws FileNotFoundException {
 		ConfigurationSection cs = plugin.getConfig().getConfigurationSection("commandspy");
 		Boolean wec = cs.getBoolean("worldeditcommands", true);
-		MineverseChatPlayer mcp = MineverseChatAPI.getMineverseChatPlayer(event.getPlayer());
-		for(MineverseChatPlayer p : MineverseChat.players) {
-			if(p.hasCommandSpy() && p.isOnline()) {
+		MineverseChatPlayer mcp = MineverseChatAPI.getOnlineMineverseChatPlayer(event.getPlayer());
+		for(MineverseChatPlayer p : MineverseChat.onlinePlayers) {
+			if(p.hasCommandSpy()) {
 				if(wec) {
 					p.getPlayer().sendMessage(ChatColor.GOLD + mcp.getName() + ": " + event.getMessage());
 				}

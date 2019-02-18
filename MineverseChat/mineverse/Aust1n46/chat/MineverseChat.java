@@ -283,6 +283,7 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 		else {
 			for(Player p : this.getServer().getOnlinePlayers()) {
 				MineverseChatPlayer mcp = MineverseChatAPI.getMineverseChatPlayer(p);
+				mcp.setName(p.getName());
 				mcp.setOnline(true);
 			}
 		}
@@ -785,6 +786,8 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 				System.out.println(msgin.available() + " size on receiving end");
 			}
 			String subchannel = msgin.readUTF();
+			ByteArrayOutputStream stream = new ByteArrayOutputStream();
+			DataOutputStream out = new DataOutputStream(stream);
 			if(subchannel.equals("Chat")) {
 				String chatchannel = msgin.readUTF();
 				String chat = msgin.readUTF();
@@ -820,6 +823,50 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 							p.getPlayer().sendMessage(chat);
 						}
 					}
+				}
+			}
+			if(subchannel.equals("Chwho")) {
+				String identifier = msgin.readUTF();
+				if(identifier.equals("Get")) {
+					String sender = msgin.readUTF();
+					String chatchannel = msgin.readUTF();
+					List<String> listening = new ArrayList<String>();
+					if(ccInfo.isChannel(chatchannel)) {
+						for(MineverseChatPlayer mcp : onlinePlayers) {
+							if(mcp.getListening().contains(chatchannel)) {
+								String entry = "&f" + mcp.getName();
+								if(mcp.isMuted(chatchannel)) {
+									entry = "&c" + mcp.getName();
+								}
+								listening.add(entry);
+							}
+						}
+					}
+					out.writeUTF("Chwho");
+					out.writeUTF("Receive");
+					out.writeUTF(sender);
+					out.writeUTF(chatchannel);
+					out.writeInt(listening.size());
+					for(String s : listening) {
+						out.writeUTF(s);
+					}
+					player.sendPluginMessage(this, "venturechat:", stream.toByteArray());
+				}
+				if(identifier.equals("Receive")) {
+					String sender = msgin.readUTF();
+					String stringchannel = msgin.readUTF();
+					MineverseChatPlayer mcp = MineverseChatAPI.getOnlineMineverseChatPlayer(UUID.fromString(sender));
+					ChatChannel chatchannel = ccInfo.getChannelInfo(stringchannel);
+					String playerList = "";
+					int size = msgin.readInt();
+					for(int a = 0; a < size; a++) {
+						playerList += msgin.readUTF() + ChatColor.WHITE + ", ";
+					}
+					if(playerList.length() > 2) {
+						playerList = playerList.substring(0, playerList.length() - 2);
+					}
+					mcp.getPlayer().sendMessage(ChatColor.GOLD + "Players in Channel: " + ChatColor.valueOf(chatchannel.getColor().toUpperCase()) + chatchannel.getName());
+					mcp.getPlayer().sendMessage(Format.FormatStringAll(playerList));
 				}
 			}
 			if(subchannel.equals("RemoveMessage")) {
@@ -911,8 +958,6 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 					String receiver = msgin.readUTF();
 					MineverseChatPlayer p = MineverseChatAPI.getOnlineMineverseChatPlayer(receiver);
 					UUID sender = UUID.fromString(msgin.readUTF());
-					ByteArrayOutputStream stream = new ByteArrayOutputStream();
-					DataOutputStream out = new DataOutputStream(stream);
 					if(!plugin.getConfig().getBoolean("bungeecordmessaging", true) || p == null || !p.isOnline()) {
 						out.writeUTF("Ignore");
 						out.writeUTF("Offline");
@@ -963,8 +1008,6 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 					String msg = msgin.readUTF();
 					String echo = msgin.readUTF();
 					String spy = msgin.readUTF();
-					ByteArrayOutputStream stream = new ByteArrayOutputStream();
-					DataOutputStream out = new DataOutputStream(stream);
 					// System.out.println((p == null) + " null");
 					if(p != null) {
 						// System.out.println(p.isOnline() + " online");
@@ -1096,8 +1139,6 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 				int numtime = 0;
 				MineverseChatPlayer p = MineverseChatAPI.getMineverseChatPlayer(mutePlayer);
 				ChatChannel cc = ccInfo.getChannelInfo(chatchannel);
-				ByteArrayOutputStream stream = new ByteArrayOutputStream();
-				DataOutputStream out = new DataOutputStream(stream);
 				if(cc == null) {
 					try {
 						out.writeUTF("Mute");
@@ -1239,8 +1280,6 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 				String server = msgin.readUTF();
 				Player mp = Bukkit.getPlayer(muteplayer);
 				MineverseChatPlayer p = MineverseChatAPI.getMineverseChatPlayer(mp);
-				ByteArrayOutputStream stream = new ByteArrayOutputStream();
-				DataOutputStream out = new DataOutputStream(stream);
 				if(mp == null) {
 					try {
 						out.writeUTF("Muteall");
@@ -1289,8 +1328,6 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 				String server = msgin.readUTF();
 				Player mp = Bukkit.getPlayer(muteplayer);
 				MineverseChatPlayer p = MineverseChatAPI.getMineverseChatPlayer(mp);
-				ByteArrayOutputStream stream = new ByteArrayOutputStream();
-				DataOutputStream out = new DataOutputStream(stream);
 				if(mp == null) {
 					try {
 						out.writeUTF("Unmuteall");
@@ -1338,8 +1375,6 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 				String server = msgin.readUTF();
 				MineverseChatPlayer p = MineverseChatAPI.getMineverseChatPlayer(mutePlayer);
 				ChatChannel cc = ccInfo.getChannelInfo(chatchannel);
-				ByteArrayOutputStream stream = new ByteArrayOutputStream();
-				DataOutputStream out = new DataOutputStream(stream);
 				if(cc == null) {
 					try {
 						out.writeUTF("Unmute");

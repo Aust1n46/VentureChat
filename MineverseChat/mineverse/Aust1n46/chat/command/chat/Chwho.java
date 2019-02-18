@@ -1,5 +1,8 @@
 package mineverse.Aust1n46.chat.command.chat;
 
+import java.io.ByteArrayOutputStream;
+import java.io.DataOutputStream;
+
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
@@ -17,6 +20,7 @@ import mineverse.Aust1n46.chat.api.MineverseChatPlayer;
 import mineverse.Aust1n46.chat.channel.ChatChannel;
 import mineverse.Aust1n46.chat.channel.ChatChannelInfo;
 import mineverse.Aust1n46.chat.command.MineverseCommand;
+import mineverse.Aust1n46.chat.utilities.UUIDFetcher;
 
 @SuppressWarnings("unused")
 public class Chwho extends MineverseCommand {
@@ -43,6 +47,25 @@ public class Chwho extends MineverseCommand {
 							return;
 						}
 					}
+					
+					if(channel.getBungee() && sender instanceof Player) {
+						MineverseChatPlayer mcp = MineverseChatAPI.getOnlineMineverseChatPlayer((Player) sender);
+						ByteArrayOutputStream byteOutStream = new ByteArrayOutputStream();
+						DataOutputStream out = new DataOutputStream(byteOutStream);
+						try {
+							out.writeUTF("Chwho");
+							out.writeUTF("Get");
+							out.writeUTF(mcp.getUUID().toString());
+							out.writeUTF(channel.getName());
+							mcp.getPlayer().sendPluginMessage(plugin, "venturechat:", byteOutStream.toByteArray());
+							out.close();
+						}
+						catch(Exception e) {
+							e.printStackTrace();
+						}
+						return;
+					}
+					
 					PluginManager pluginManager = plugin.getServer().getPluginManager();
 					long linecount = plugin.getLineLength();
 					for(MineverseChatPlayer p : MineverseChat.onlinePlayers) {

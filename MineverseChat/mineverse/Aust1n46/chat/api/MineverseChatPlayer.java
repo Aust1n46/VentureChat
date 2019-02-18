@@ -311,7 +311,7 @@ public class MineverseChatPlayer {
 	public void setOnline(boolean online) {
 		this.online = online;
 		if(this.online) {
-			this.player = Bukkit.getPlayer(this.uuid);
+			this.player = Bukkit.getPlayer(name);
 		}
 		else {
 			this.player = null;

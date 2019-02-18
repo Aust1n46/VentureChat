@@ -1,6 +1,8 @@
 package mineverse.Aust1n46.chat.api;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
@@ -10,6 +12,7 @@ public class SynchronizedMineverseChatPlayer {
 	private HashMap<String, Integer> mutes;
 	private Set<UUID> ignores;
 	private int messagePackets;
+	private List<String> messageData = new ArrayList<String>();
 	private boolean spy;
 	private boolean messageToggle;
 	
@@ -20,6 +23,18 @@ public class SynchronizedMineverseChatPlayer {
 		this.ignores = ignores;
 		this.spy = spy;
 		this.messageToggle = messageToggle;
+	}
+	
+	public List<String> getMessageData() {
+		return this.messageData;
+	}
+	
+	public void addData(String s) {
+		this.messageData.add(s);
+	}
+	
+	public void clearMessageData() {
+		this.messageData.clear();
 	}
 	
 	public int getMessagePackets() {

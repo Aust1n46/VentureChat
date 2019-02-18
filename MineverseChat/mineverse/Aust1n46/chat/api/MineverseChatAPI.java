@@ -12,7 +12,7 @@ import org.bukkit.entity.Player;
 public final class MineverseChatAPI {
 	public static MineverseChatPlayer getMineverseChatPlayer(Player player) {
 		for(MineverseChatPlayer mcp : MineverseChat.players) {
-			if(mcp.getUUID().toString().equals(player.getUniqueId().toString())) {
+			if(mcp.getName().equals(player.getName())) {
 				return mcp;
 			}
 		}
@@ -39,7 +39,7 @@ public final class MineverseChatAPI {
 	
 	public static MineverseChatPlayer getOnlineMineverseChatPlayer(Player player) {
 		for(MineverseChatPlayer mcp : MineverseChat.onlinePlayers) {
-			if(mcp.getUUID().toString().equals(player.getUniqueId().toString())) {
+			if(mcp.getName().equals(player.getName())) {
 				return mcp;
 			}
 		}

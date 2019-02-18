@@ -1,15 +1,1 @@
-players:
-  5771a47a-74b4-35c1-aa03-6713ad69554e:
-    name: PhantomsCore
-    current: Global
-    ignores: ''
-    listen: Global,Noob,Local
-    mutes: ''
-    blockedcommands: ''
-    mail: ''
-    host: false
-    party: ''
-    filter: true
-    notifications: true
-    nickname: Phantom
-    date: 2014/Dec/02 17:12:40
+players: {}

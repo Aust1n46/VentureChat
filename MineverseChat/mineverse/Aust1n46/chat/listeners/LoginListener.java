@@ -17,6 +17,7 @@ import mineverse.Aust1n46.chat.channel.ChatChannelInfo;
 import mineverse.Aust1n46.chat.database.PlayerData;
 import mineverse.Aust1n46.chat.json.JsonFormat;
 import mineverse.Aust1n46.chat.utilities.Format;
+import mineverse.Aust1n46.chat.utilities.UUIDFetcher;
 
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -63,12 +64,12 @@ public class LoginListener implements Listener {
 	}
 
 	@EventHandler(priority = EventPriority.LOW)
-	public void onPlayerJoin(PlayerJoinEvent event) {
+	public void onPlayerJoin(PlayerJoinEvent event) throws Exception {
 		MineverseChatPlayer mcp = MineverseChatAPI.getMineverseChatPlayer(event.getPlayer());
 		if(mcp == null) {
 			Player player = event.getPlayer();
-			UUID uuid = player.getUniqueId();
 			String name = player.getName();
+			UUID uuid = UUIDFetcher.getUUIDOf(name);
 			ChatChannel current = cc.getDefaultChannel();
 			Set<UUID> ignores = new HashSet<UUID>();
 			Set<String> listening = new HashSet<String>();
@@ -80,6 +81,7 @@ public class LoginListener implements Listener {
 			mcp = new MineverseChatPlayer(uuid, name, current, ignores, listening, mutes, blockedCommands, mail, false, null, true, true, name, jsonFormat, false, false, false, true, true, true);
 			MineverseChat.players.add(mcp);
 		}
+		mcp.setName(event.getPlayer().getName());
 		mcp.setOnline(true);
 		mcp.setHasPlayed(false);
 		MineverseChat.onlinePlayers.add(mcp);
@@ -94,7 +96,6 @@ public class LoginListener implements Listener {
 		if(mcp.getNickname().equals(mcp.getName())) {
 			mcp.setNickname(event.getPlayer().getName());
 		}
-		mcp.setName(event.getPlayer().getName());
 		mcp.getPlayer().setDisplayName(Format.FormatStringAll(mcp.getNickname()));
 		String nick = mcp.getNickname();
 		if(nick.length() >= 16) {

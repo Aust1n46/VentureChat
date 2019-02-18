@@ -176,6 +176,55 @@ public class MineverseChatBungee extends Plugin implements Listener {
 					}
 				}
 			}
+			if(subchannel.equals("Chwho")) {
+				String identifier = in.readUTF();
+				if(identifier.equals("Get")) {
+					String sender = in.readUTF();
+					String channel = in.readUTF();
+					SynchronizedMineverseChatPlayer smcp = MineverseChatAPI.getSynchronizedMineverseChatPlayer(UUID.fromString(sender));
+					smcp.clearMessagePackets();
+					smcp.clearMessageData();
+					out.writeUTF("Chwho");
+					out.writeUTF("Get");
+					out.writeUTF(sender);
+					out.writeUTF(channel);
+					for(String send : getProxy().getServers().keySet()) {
+						if(getProxy().getServers().get(send).getPlayers().size() > 0) {
+							getProxy().getServers().get(send).sendData("venturechat:", outstream.toByteArray());
+						}
+					}
+				}
+				if(identifier.equals("Receive")) {
+					String sender = in.readUTF();
+					String channel = in.readUTF();
+					SynchronizedMineverseChatPlayer smcp = MineverseChatAPI.getSynchronizedMineverseChatPlayer(UUID.fromString(sender));
+					smcp.incrementMessagePackets();
+					int players = in.readInt();
+					for(int a = 0; a < players; a++) {
+						smcp.addData(in.readUTF());
+					}
+					int servers = 0;
+					for(String send : getProxy().getServers().keySet()) {
+						if(getProxy().getServers().get(send).getPlayers().size() > 0) {
+							servers ++;
+						}
+					}
+					if(smcp.getMessagePackets() >= servers) {
+						smcp.clearMessagePackets();
+						out.writeUTF("Chwho");
+						out.writeUTF("Receive");
+						out.writeUTF(sender);
+						out.writeUTF(channel);
+						out.writeInt(smcp.getMessageData().size());
+						for(String s : smcp.getMessageData()) {
+							out.writeUTF(s);
+						}
+						smcp.clearMessageData();
+						Server server = getProxy().getPlayer(UUID.fromString(sender)).getServer();
+						server.sendData("venturechat:", outstream.toByteArray());
+					}	
+				}
+			}
 			if(subchannel.equals("RemoveMessage")) {
 				String hash = in.readUTF();
 				out.writeUTF("RemoveMessage");
@@ -194,12 +243,12 @@ public class MineverseChatBungee extends Plugin implements Listener {
 					String sender = in.readUTF();
 					SynchronizedMineverseChatPlayer smcp = MineverseChatAPI.getSynchronizedMineverseChatPlayer(UUID.fromString(sender));
 					smcp.clearMessagePackets();
+					out.writeUTF("Ignore");
+					out.writeUTF("Send");
+					out.writeUTF(server);
+					out.writeUTF(player);
+					out.writeUTF(sender);
 					for(String send : getProxy().getServers().keySet()) {
-						out.writeUTF("Ignore");
-						out.writeUTF("Send");
-						out.writeUTF(server);
-						out.writeUTF(player);
-						out.writeUTF(sender);
 						if(getProxy().getServers().get(send).getPlayers().size() > 0) {
 							getProxy().getServers().get(send).sendData("venturechat:", outstream.toByteArray());
 						}
@@ -253,16 +302,16 @@ public class MineverseChatBungee extends Plugin implements Listener {
 					String spy = in.readUTF();
 					SynchronizedMineverseChatPlayer smcp = MineverseChatAPI.getSynchronizedMineverseChatPlayer(UUID.fromString(sender));
 					smcp.clearMessagePackets();
+					out.writeUTF("Message");
+					out.writeUTF("Send");
+					out.writeUTF(server);
+					out.writeUTF(player);
+					out.writeUTF(sender);
+					out.writeUTF(sName);
+					out.writeUTF(message);
+					out.writeUTF(echo);
+					out.writeUTF(spy);
 					for(String send : getProxy().getServers().keySet()) {
-						out.writeUTF("Message");
-						out.writeUTF("Send");
-						out.writeUTF(server);
-						out.writeUTF(player);
-						out.writeUTF(sender);
-						out.writeUTF(sName);
-						out.writeUTF(message);
-						out.writeUTF(echo);
-						out.writeUTF(spy);
 						if(getProxy().getServers().get(send).getPlayers().size() > 0) {
 							getProxy().getServers().get(send).sendData("venturechat:", outstream.toByteArray());
 						}
