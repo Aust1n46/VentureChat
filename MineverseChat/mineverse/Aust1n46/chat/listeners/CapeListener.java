@@ -122,11 +122,21 @@ public class CapeListener implements Listener {
 
 	public void capeInHand(Player p) {
 		if(p.getName().equals("Aust1n46")) {
-			if(p.getInventory().getItemInHand().getType().equals(Material.BANNER)) {
-				equipCape(p, p.getInventory().getItemInHand());
-				BannerMeta b = (BannerMeta) p.getInventory().getItemInHand().getItemMeta();
-				this.addBanner("cape", b);
-				p.setItemInHand(null);
+			if(VersionHandler.is1_7() || VersionHandler.is1_8() || VersionHandler.is1_9() || VersionHandler.is1_10() || VersionHandler.is1_11() || VersionHandler.is1_12()) {
+				if(p.getInventory().getItemInHand().getType().equals(Material.getMaterial("BANNER"))) {
+					equipCape(p, p.getInventory().getItemInHand());
+					BannerMeta b = (BannerMeta) p.getInventory().getItemInHand().getItemMeta();
+					this.addBanner("cape", b);
+					p.setItemInHand(null);
+				}
+			}
+			else {
+				if(p.getInventory().getItemInHand().getType().equals(Material.BLACK_BANNER)) {
+					equipCape(p, p.getInventory().getItemInHand());
+					BannerMeta b = (BannerMeta) p.getInventory().getItemInHand().getItemMeta();
+					this.addBanner("cape", b);
+					p.setItemInHand(null);
+				}
 			}
 		}
 	}
@@ -174,9 +184,17 @@ public class CapeListener implements Listener {
 	}
 
 	public ItemStack getBanner() {
-		ItemStack i = new ItemStack(Material.BANNER, 1);
+		ItemStack i = null;
+		if(VersionHandler.is1_7() || VersionHandler.is1_8() || VersionHandler.is1_9() || VersionHandler.is1_10() || VersionHandler.is1_11() || VersionHandler.is1_12()) {
+			i = new ItemStack(Material.getMaterial("BANNER"), 1);
+		}
+		else {
+			i = new ItemStack(Material.BLACK_BANNER, 1);
+		}	
 		BannerMeta bMeta = (BannerMeta) i.getItemMeta();
-		bMeta.setBaseColor(DyeColor.valueOf("BLACK"));
+		if(VersionHandler.is1_7() || VersionHandler.is1_8() || VersionHandler.is1_9() || VersionHandler.is1_10() || VersionHandler.is1_11() || VersionHandler.is1_12()) {
+			bMeta.setBaseColor(DyeColor.valueOf("BLACK"));
+		}
 		List<String> patterns = new ArrayList<String>();
 		patterns.add("STRIPE_BOTTOM;MAGENTA");
 		patterns.add("STRIPE_TOP;MAGENTA");

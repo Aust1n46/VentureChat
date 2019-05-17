@@ -176,7 +176,7 @@ public class LoginListener implements Listener {
 		String mutes = "";
 		for(String channel : mcp.getMutes().keySet()) {
 			ChatChannel c = MineverseChat.ccInfo.getChannelInfo(channel);
-			mutes += c.getName() + ":" + mcp.getMutes().get(c) + ",";
+			mutes += c.getName() + ":" + mcp.getMutes().get(c.getName()) + ",";
 		}
 		String blockedCommands = "";
 		for(String s : mcp.getBlockedCommands()) {

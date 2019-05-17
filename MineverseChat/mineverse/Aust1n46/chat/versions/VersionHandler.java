@@ -29,6 +29,10 @@ public class VersionHandler {
 		return Bukkit.getVersion().contains("1.6.4");
 	}
 
+	public static boolean is1_7() {
+		return Bukkit.getVersion().contains("1.7");
+	}
+
 	public static boolean is1_7_2() {
 		return Bukkit.getVersion().contains("1.7") && Bukkit.getServer().getClass().getPackage().getName().contains("R1");
 	}
@@ -63,6 +67,10 @@ public class VersionHandler {
 	
 	public static boolean is1_13() {
 		return Bukkit.getVersion().contains("1.13");
+	}
+	
+	public static boolean is1_14() {
+		return Bukkit.getVersion().contains("1.14");
 	}
 	
 	public static boolean isCauldron() {

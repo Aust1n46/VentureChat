@@ -16,7 +16,7 @@ import mineverse.Aust1n46.chat.channel.ChatChannelInfo;
 import mineverse.Aust1n46.chat.gui.GuiSlot;
 import mineverse.Aust1n46.chat.irc.Bot;
 import mineverse.Aust1n46.chat.utilities.Format;
-import mineverse.Aust1n46.chat.utilities.FormatTags;
+//import mineverse.Aust1n46.chat.utilities.FormatTags;
 import mineverse.Aust1n46.chat.versions.VersionHandler;
 
 //import org.bukkit.Bukkit;
@@ -33,8 +33,10 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.server.ServerCommandEvent;
+import org.bukkit.inventory.Inventory;
 //import org.bukkit.plugin.Plugin;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.inventory.meta.SkullMeta;
 
 import me.clip.placeholderapi.PlaceholderAPI;
@@ -120,7 +122,7 @@ public class CommandListener implements CommandExecutor, Listener {
 			String date = formatter.format(currentDate.getTime());
 			try {
 				statement = plugin.c.createStatement();
-				statement.executeUpdate("INSERT INTO `VentureChat` (`ChatTime`, `UUID`, `Name`, `Server`, `Channel`, `Text`, `Type`) VALUES ('" + date + "', '" + mcp.getUUID().toString() + "', '" + mcp.getName() + "', '" + plugin.getServer().getServerName() + "', 'Command_Component', '" + event.getMessage().replace("'", "''") + "', 'Command');");
+				statement.executeUpdate("INSERT INTO `VentureChat` (`ChatTime`, `UUID`, `Name`, `Server`, `Channel`, `Text`, `Type`) VALUES ('" + date + "', '" + mcp.getUUID().toString() + "', '" + mcp.getName() + "', '" + plugin.getServer().getName() + "', 'Command_Component', '" + event.getMessage().replace("'", "''") + "', 'Command');");
 			}
 			catch(SQLException error) {
 				error.printStackTrace();
@@ -194,7 +196,7 @@ public class CommandListener implements CommandExecutor, Listener {
 						message = message.substring(channel.getAlias().length() + 1);
 						mcp.addListening(channel.getName());
 						mcp.setQuickChannel(channel);
-						String format = "";
+						/*String format = "";
 						if(plugin.getConfig().getConfigurationSection("channels." + channel.getName()).getString("format").equalsIgnoreCase("Default")) {
 							format = FormatTags.ChatFormat(ChatColor.valueOf(channel.getColor().toUpperCase()) + "[" + channel.getName() + "] {prefix}{name}" + ChatColor.valueOf(channel.getColor().toUpperCase()) + ":" + ChatColor.valueOf(channel.getChatColor().toUpperCase()), mcp.getPlayer(), plugin, cc, channel, plugin.getConfig().getBoolean("jsonFormat"));
 						}
@@ -204,7 +206,7 @@ public class CommandListener implements CommandExecutor, Listener {
 								format = format.replace("[]", " ");
 								format = format.replace("    ", " ").replace("   ", " ").replace("  ", " ");
 							}
-						}
+						}*/
 						mcp.setQuickChat(true);
 						mcp.getPlayer().chat(message);
 						event.setCancelled(true);
@@ -227,7 +229,7 @@ public class CommandListener implements CommandExecutor, Listener {
 			String date = formatter.format(currentDate.getTime());
 			try {
 				statement = plugin.c.createStatement();
-				statement.executeUpdate("INSERT INTO `VentureChat` (`ChatTime`, `UUID`, `Name`, `Server`, `Channel`, `Text`, `Type`) VALUES ('" + date + "', 'N/A', 'Console', '" + plugin.getServer().getServerName() + "', 'Command_Component', '" + event.getCommand().replace("'", "''") + "', 'Command');");
+				statement.executeUpdate("INSERT INTO `VentureChat` (`ChatTime`, `UUID`, `Name`, `Server`, `Channel`, `Text`, `Type`) VALUES ('" + date + "', 'N/A', 'Console', '" + plugin.getServer().getName() + "', 'Command_Component', '" + event.getCommand().replace("'", "''") + "', 'Command');");
 			}
 			catch(SQLException error) {
 				error.printStackTrace();
@@ -265,12 +267,12 @@ public class CommandListener implements CommandExecutor, Listener {
 	@EventHandler(priority = EventPriority.LOW)
 	public void InventoryClick(InventoryClickEvent e) {
 		ItemStack item = e.getCurrentItem();
-		if(item == null || !e.getInventory().getTitle().contains("VentureChat")) {
+		if(item == null || !e.getView().getTitle().contains("VentureChat")) {
 			return;
 		}
 		e.setCancelled(true);
 		MineverseChatPlayer mcp = MineverseChatAPI.getOnlineMineverseChatPlayer((Player) e.getWhoClicked());
-		MineverseChatPlayer target = MineverseChatAPI.getMineverseChatPlayer(e.getInventory().getTitle().replace(" GUI", "").replace("VentureChat: ", ""));
+		MineverseChatPlayer target = MineverseChatAPI.getMineverseChatPlayer(e.getView().getTitle().replace(" GUI", "").replace("VentureChat: ", ""));
 		ItemStack skull = e.getInventory().getItem(0);
 		SkullMeta skullMeta = (SkullMeta) skull.getItemMeta();
 		ChatChannel channel = MineverseChat.ccInfo.getChannelInfo(ChatColor.stripColor(skullMeta.getLore().get(0)).replace("Channel: ", ""));

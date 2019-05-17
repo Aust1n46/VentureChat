@@ -12,6 +12,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -86,17 +87,25 @@ public class VentureChatGui extends MineverseCommand {
 	private void openInventory(MineverseChatPlayer mcp, MineverseChatPlayer target, ChatChannel channel, int hash) {
 		Inventory inv = Bukkit.createInventory(null, this.getSlots(), "VentureChat: " + target.getName() + " GUI");
 		ItemStack close = null;
+		ItemStack skull = null;
 		if(VersionHandler.is1_7_10()) {
 			close = new ItemStack(Material.BEDROCK);
 		}
 		else {
 			close = new ItemStack(Material.BARRIER);
 		}
+		
+		if(VersionHandler.is1_7() || VersionHandler.is1_8() || VersionHandler.is1_9() || VersionHandler.is1_10() || VersionHandler.is1_11() || VersionHandler.is1_12()) {
+			skull = new ItemStack(Material.getMaterial("SKULL_ITEM"));
+		}
+		else {
+			skull = new ItemStack(Material.PLAYER_HEAD);
+		}
+		
 		ItemMeta closeMeta = close.getItemMeta();
 		closeMeta.setDisplayName("§oClose GUI");
 		close.setItemMeta(closeMeta);
 		
-		ItemStack skull = new ItemStack(Material.SKULL_ITEM);
 		SkullMeta skullMeta = (SkullMeta) skull.getItemMeta(); 
 		skullMeta.setOwner(target.getName()); 
 		skullMeta.setDisplayName("§b" + target.getName());

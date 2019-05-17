@@ -135,7 +135,7 @@ public class MineverseChatBungee extends Plugin implements Listener {
 
 	@EventHandler
 	public void onPluginMessage(PluginMessageEvent ev) {
-		//System.out.println(ev.getTag() + "," + ev.getSender().toString() + "," + (ev.getSender() instanceof Server));
+		System.out.println(ev.getTag() + "," + ev.getSender().toString() + "," + (ev.getSender() instanceof Server));
 		if(!ev.getTag().equals("venturechat:") && !ev.getTag().contains("viaversion:")) {
 			return;
 		}

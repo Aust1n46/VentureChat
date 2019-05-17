@@ -756,7 +756,7 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 			if(request) {
 				out.writeUTF("PlayersReceive");
 				// System.out.println(mcp.getPlayer().getServer().getServerName());
-				out.writeUTF(this.getServer().getServerName());
+				out.writeUTF(this.getServer().getName());
 			}
 			else {
 				out.writeUTF("PlayersUpdate");

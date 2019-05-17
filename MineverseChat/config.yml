@@ -304,6 +304,17 @@ irc:
       mode: 'v'
       components:
       - 'kick'
+  
+# Enables the creation of special Towny channels: Town and Nation
+# To create these channels, simply name two channels below "Town" and "Nation"
+# Bungeecord must be set to false for these channels! 
+enable_towny_channel: false
+
+# Enables the creation of a special faction only channel using the Factions plugin
+# To create this channel, simply name a channel below "Faction"
+# Bungeecord must be set to false for this channel!
+# WARNING: May not work for all versions of Factions!
+enable_factions_channel: false
 
 # color = [channel] color
 # chatcolor = text color
@@ -315,22 +326,14 @@ irc:
 # Example: permissions: staff equals venturechat.staff
 # Use None for no permissions
 
+# Use PlaceholderAPI placeholders please!!!
+# Use PlaceholderAPI placeholders please!!!
+# Use PlaceholderAPI placeholders please!!!
 # Legacy Placeholders:  
-# Use PlaceholderAPI
 # {name} : player name
 # {nickname} : player nickname or name if they have no nickname
 # {prefix} : player prefix and color
 # {suffix} : player suffix and color
-# {servername} : name of the server in server.properties
-# {herolevel} : heroes hero level
-# {heroclass} : heroes hero class
-# {heroxp} : heroes hero xp
-# {herosecondclass} : heroes second class
-# {party} : heroes party
-# {herosecondmaster} : heroes second class master
-# {heromaster} : heroes class master
-# {herosecondlevel} : heroes second class level
-# {herosecondxp} : heroes second class xp
 # Use '' or "" around format, example: '[&2global&f] {prefix}{name}&2:'
 # You must have prefixes and suffixes set in a Vault compatible permissions plugin to avoid errors
 # Use "" as the prefix or suffix to have none

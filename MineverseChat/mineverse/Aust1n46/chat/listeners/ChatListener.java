@@ -192,7 +192,7 @@ public class ChatListener implements Listener {
 					Calendar currentDate = Calendar.getInstance();
 					SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 					String date = formatter.format(currentDate.getTime());
-					DatabaseSender.writeToMySQL("ChatTime", "UUID", "Name", "Server", "Channel", "Text", "Type", date, mcp.getUUID().toString(), mcp.getName(), plugin.getServer().getServerName(), "Messaging_Component", event.getMessage().replace("'", "''"), "Chat");
+					DatabaseSender.writeToMySQL("ChatTime", "UUID", "Name", "Server", "Channel", "Text", "Type", date, mcp.getUUID().toString(), mcp.getName(), plugin.getServer().getName(), "Messaging_Component", event.getMessage().replace("'", "''"), "Chat");
 				}
 			}
 			event.setCancelled(true);
@@ -232,7 +232,7 @@ public class ChatListener implements Listener {
 					String date = formatter.format(currentDate.getTime());
 					try {
 						statement = plugin.c.createStatement();
-						statement.executeUpdate("INSERT INTO `VentureChat` (`ChatTime`, `UUID`, `Name`, `Server`, `Channel`, `Text`, `Type`) VALUES ('" + date + "', '" + mcp.getUUID().toString() + "', '" + mcp.getName() + "', '" + plugin.getServer().getServerName() + "', 'Party_Component', '" + event.getMessage().replace("'", "''") + "', 'Chat');");
+						statement.executeUpdate("INSERT INTO `VentureChat` (`ChatTime`, `UUID`, `Name`, `Server`, `Channel`, `Text`, `Type`) VALUES ('" + date + "', '" + mcp.getUUID().toString() + "', '" + mcp.getName() + "', '" + plugin.getServer().getName() + "', 'Party_Component', '" + event.getMessage().replace("'", "''") + "', 'Chat');");
 					}
 					catch(SQLException e) {
 						e.printStackTrace();
@@ -565,7 +565,7 @@ public class ChatListener implements Listener {
 					recipientSize--;
 					continue;
 				}
-				if(pluginManager.isPluginEnabled("Towny")) {
+				if(plugin.getConfig().getBoolean("enable_towny_channel") && pluginManager.isPluginEnabled("Towny")) {
 					try {
 						Resident r = TownyUniverse.getDataSource().getResident(p.getName());
 						Resident pp = TownyUniverse.getDataSource().getResident(mcp.getName());
@@ -609,7 +609,7 @@ public class ChatListener implements Listener {
 					}
 				}
 
-				if(pluginManager.isPluginEnabled("Factions")) {
+				if(plugin.getConfig().getBoolean("enable_factions_channel") && pluginManager.isPluginEnabled("Factions")) {
 					try {
 						MPlayer mplayer = MPlayer.get(mcp.getPlayer());
 						MPlayer mplayerp = MPlayer.get(p.getPlayer());
@@ -689,8 +689,12 @@ public class ChatListener implements Listener {
 			MineverseChat.lastChatMessage = new ChatMessage(mcp.getPlayer().getName(), message, message.hashCode(), format, chat, eventChannel.getName());
 			MineverseChat.lastJson = Format.convertToJson(MineverseChat.lastChatMessage);
 			
-			ChatMessageEvent chatMessageEvent = new ChatMessageEvent(mcp, eventChannel, bungee, MineverseChat.lastChatMessage, MineverseChat.lastJson);
+			
+			/* Temp disabled for 1.14 
+			 * ChatMessageEvent chatMessageEvent = new ChatMessageEvent(mcp, eventChannel, bungee, MineverseChat.lastChatMessage, MineverseChat.lastJson);
 			Bukkit.getServer().getPluginManager().callEvent(chatMessageEvent);
+			*/
+			
 			
 			if(irc && plugin.irc) {
 				if(bot.bot.isConnected()) {
@@ -704,7 +708,7 @@ public class ChatListener implements Listener {
 				date = formatter.format(currentDate.getTime());
 				try {
 					statement = plugin.c.createStatement();
-					statement.executeUpdate("INSERT INTO `VentureChat` (`ChatTime`, `UUID`, `Name`, `Server`, `Channel`, `Text`, `Type`) VALUES ('" + date + "', '" + mcp.getUUID().toString() + "', '" + mcp.getName() + "', '" + plugin.getServer().getServerName() + "', '" + eventChannel.getName() + "', '" + event.getMessage().replace("'", "''") + "', 'Chat');");
+					statement.executeUpdate("INSERT INTO `VentureChat` (`ChatTime`, `UUID`, `Name`, `Server`, `Channel`, `Text`, `Type`) VALUES ('" + date + "', '" + mcp.getUUID().toString() + "', '" + mcp.getName() + "', '" + plugin.getServer().getName() + "', '" + eventChannel.getName() + "', '" + event.getMessage().replace("'", "''") + "', 'Chat');");
 				}
 				catch(SQLException e) {
 					e.printStackTrace();
