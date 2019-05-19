@@ -4,7 +4,6 @@ import me.clip.placeholderapi.PlaceholderAPI;
 import mineverse.Aust1n46.chat.MineverseChat;
 import mineverse.Aust1n46.chat.channel.ChatChannel;
 import mineverse.Aust1n46.chat.channel.ChatChannelInfo;
-import mineverse.Aust1n46.chat.versions.VersionHandler;
 
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;

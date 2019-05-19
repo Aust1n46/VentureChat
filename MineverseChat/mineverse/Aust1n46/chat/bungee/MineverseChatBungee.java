@@ -135,7 +135,7 @@ public class MineverseChatBungee extends Plugin implements Listener {
 
 	@EventHandler
 	public void onPluginMessage(PluginMessageEvent ev) {
-		System.out.println(ev.getTag() + "," + ev.getSender().toString() + "," + (ev.getSender() instanceof Server));
+		//System.out.println(ev.getTag() + "," + ev.getSender().toString() + "," + (ev.getSender() instanceof Server));
 		if(!ev.getTag().equals("venturechat:") && !ev.getTag().contains("viaversion:")) {
 			return;
 		}
@@ -180,6 +180,7 @@ public class MineverseChatBungee extends Plugin implements Listener {
 				String identifier = in.readUTF();
 				if(identifier.equals("Get")) {
 					String sender = in.readUTF();
+					String name = in.readUTF();
 					String channel = in.readUTF();
 					SynchronizedMineverseChatPlayer smcp = MineverseChatAPI.getSynchronizedMineverseChatPlayer(UUID.fromString(sender));
 					smcp.clearMessagePackets();
@@ -187,6 +188,7 @@ public class MineverseChatBungee extends Plugin implements Listener {
 					out.writeUTF("Chwho");
 					out.writeUTF("Get");
 					out.writeUTF(sender);
+					out.writeUTF(name);
 					out.writeUTF(channel);
 					for(String send : getProxy().getServers().keySet()) {
 						if(getProxy().getServers().get(send).getPlayers().size() > 0) {
@@ -196,6 +198,7 @@ public class MineverseChatBungee extends Plugin implements Listener {
 				}
 				if(identifier.equals("Receive")) {
 					String sender = in.readUTF();
+					String name = in.readUTF();
 					String channel = in.readUTF();
 					SynchronizedMineverseChatPlayer smcp = MineverseChatAPI.getSynchronizedMineverseChatPlayer(UUID.fromString(sender));
 					smcp.incrementMessagePackets();
@@ -220,7 +223,7 @@ public class MineverseChatBungee extends Plugin implements Listener {
 							out.writeUTF(s);
 						}
 						smcp.clearMessageData();
-						Server server = getProxy().getPlayer(UUID.fromString(sender)).getServer();
+						Server server = getProxy().getPlayer(name).getServer();
 						server.sendData("venturechat:", outstream.toByteArray());
 					}	
 				}

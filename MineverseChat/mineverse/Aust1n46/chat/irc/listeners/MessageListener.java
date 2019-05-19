@@ -59,7 +59,7 @@ public class MessageListener extends ListenerAdapter {
 		for(ChatChannel ci : cc.getChannelsInfo()) {
 			if(ci.isIRC()) {
 				for(MineverseChatPlayer p : MineverseChat.players) {
-					if(p.isOnline() && p.getListening().contains(ci)) {
+					if(p.isOnline() && p.getListening().contains(ci.getName())) {
 						players.add(p);
 					}
 				}

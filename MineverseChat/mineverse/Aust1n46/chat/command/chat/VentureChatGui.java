@@ -1,18 +1,13 @@
 package mineverse.Aust1n46.chat.command.chat;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
-import java.util.UUID;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -26,7 +21,6 @@ import mineverse.Aust1n46.chat.channel.ChatChannel;
 import mineverse.Aust1n46.chat.command.MineverseCommand;
 import mineverse.Aust1n46.chat.gui.GuiSlot;
 import mineverse.Aust1n46.chat.utilities.Format;
-import mineverse.Aust1n46.chat.utilities.UUIDFetcher;
 import mineverse.Aust1n46.chat.versions.VersionHandler;
 
 public class VentureChatGui extends MineverseCommand {
@@ -51,7 +45,9 @@ public class VentureChatGui extends MineverseCommand {
 		if(mcp.getPlayer().hasPermission("venturechat.gui")) {
 			MineverseChatPlayer target = MineverseChatAPI.getMineverseChatPlayer(args[0]);
 			if(target == null) {
-				//mcp.getPlayer().sendMessage(ChatColor.RED + "Player: " + ChatColor.GOLD + args[0] + ChatColor.RED + " is not online.");
+				mcp.getPlayer().sendMessage(ChatColor.RED + "Player: " + ChatColor.GOLD + args[0] + ChatColor.RED + " is not online.");
+				return;
+				/*
 				UUID uuid = null;
 				try {
 					uuid = UUIDFetcher.getUUIDOf(args[0]);
@@ -70,6 +66,7 @@ public class VentureChatGui extends MineverseCommand {
 				String jsonFormat = "Default";
 				target = new MineverseChatPlayer(uuid, name, current, ignores, listening, mutes, blockedCommands, mail, false, null, true, true, name, jsonFormat, false, false, false, true, true, true);
 				MineverseChat.players.add(target);
+				*/
 			}
 			if(MineverseChat.ccInfo.isChannel(args[1])) {
 				ChatChannel channel = MineverseChat.ccInfo.getChannelInfo(args[1]);
@@ -84,6 +81,7 @@ public class VentureChatGui extends MineverseCommand {
 		return;
 	}
 	
+	@SuppressWarnings("deprecation")
 	private void openInventory(MineverseChatPlayer mcp, MineverseChatPlayer target, ChatChannel channel, int hash) {
 		Inventory inv = Bukkit.createInventory(null, this.getSlots(), "VentureChat: " + target.getName() + " GUI");
 		ItemStack close = null;

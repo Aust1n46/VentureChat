@@ -16,10 +16,8 @@ import mineverse.Aust1n46.chat.channel.ChatChannelInfo;
 import mineverse.Aust1n46.chat.gui.GuiSlot;
 import mineverse.Aust1n46.chat.irc.Bot;
 import mineverse.Aust1n46.chat.utilities.Format;
-//import mineverse.Aust1n46.chat.utilities.FormatTags;
 import mineverse.Aust1n46.chat.versions.VersionHandler;
 
-//import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.command.Command;
@@ -33,10 +31,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.server.ServerCommandEvent;
-import org.bukkit.inventory.Inventory;
-//import org.bukkit.plugin.Plugin;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.inventory.meta.SkullMeta;
 
 import me.clip.placeholderapi.PlaceholderAPI;
@@ -264,6 +259,7 @@ public class CommandListener implements CommandExecutor, Listener {
 		return false;
 	}
 
+	@SuppressWarnings("deprecation")
 	@EventHandler(priority = EventPriority.LOW)
 	public void InventoryClick(InventoryClickEvent e) {
 		ItemStack item = e.getCurrentItem();

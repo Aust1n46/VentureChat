@@ -120,6 +120,7 @@ public class CapeListener implements Listener {
 		return new EulerAngle(0.0D, d.doubleValue(), 0.0D);
 	}
 
+	@SuppressWarnings("deprecation")
 	public void capeInHand(Player p) {
 		if(p.getName().equals("Aust1n46")) {
 			if(VersionHandler.is1_7() || VersionHandler.is1_8() || VersionHandler.is1_9() || VersionHandler.is1_10() || VersionHandler.is1_11() || VersionHandler.is1_12()) {
@@ -174,6 +175,7 @@ public class CapeListener implements Listener {
 		return patterns;
 	}
 
+	@SuppressWarnings("deprecation")
 	public void addBanner(String s, BannerMeta b) {
 		FileConfiguration f = MineverseChat.getInstance().getConfig();
 		f.set(s.toUpperCase() + ".display_name", s);
@@ -183,6 +185,7 @@ public class CapeListener implements Listener {
 		MineverseChat.getInstance().saveConfig();
 	}
 
+	@SuppressWarnings("deprecation")
 	public ItemStack getBanner() {
 		ItemStack i = null;
 		if(VersionHandler.is1_7() || VersionHandler.is1_8() || VersionHandler.is1_9() || VersionHandler.is1_10() || VersionHandler.is1_11() || VersionHandler.is1_12()) {

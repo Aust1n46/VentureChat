@@ -7,7 +7,6 @@ import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.plugin.PluginManager;
 
 import com.massivecraft.factions.entity.MPlayer;
@@ -20,9 +19,7 @@ import mineverse.Aust1n46.chat.api.MineverseChatPlayer;
 import mineverse.Aust1n46.chat.channel.ChatChannel;
 import mineverse.Aust1n46.chat.channel.ChatChannelInfo;
 import mineverse.Aust1n46.chat.command.MineverseCommand;
-import mineverse.Aust1n46.chat.utilities.UUIDFetcher;
 
-@SuppressWarnings("unused")
 public class Chwho extends MineverseCommand {
 	private MineverseChat plugin;
 	private ChatChannelInfo cc = MineverseChat.ccInfo;
@@ -56,6 +53,7 @@ public class Chwho extends MineverseCommand {
 							out.writeUTF("Chwho");
 							out.writeUTF("Get");
 							out.writeUTF(mcp.getUUID().toString());
+							out.writeUTF(mcp.getName());
 							out.writeUTF(channel.getName());
 							mcp.getPlayer().sendPluginMessage(plugin, "venturechat:", byteOutStream.toByteArray());
 							out.close();

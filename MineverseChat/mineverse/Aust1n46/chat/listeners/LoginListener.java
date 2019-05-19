@@ -17,7 +17,6 @@ import mineverse.Aust1n46.chat.channel.ChatChannelInfo;
 import mineverse.Aust1n46.chat.database.PlayerData;
 import mineverse.Aust1n46.chat.json.JsonFormat;
 import mineverse.Aust1n46.chat.utilities.Format;
-import mineverse.Aust1n46.chat.utilities.UUIDFetcher;
 
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -69,7 +68,9 @@ public class LoginListener implements Listener {
 		if(mcp == null) {
 			Player player = event.getPlayer();
 			String name = player.getName();
-			UUID uuid = UUIDFetcher.getUUIDOf(name);
+			// Disabling Mojang UUID Query
+			//UUID uuid = UUIDFetcher.getUUIDOf(name);
+			UUID uuid = player.getUniqueId();
 			ChatChannel current = cc.getDefaultChannel();
 			Set<UUID> ignores = new HashSet<UUID>();
 			Set<String> listening = new HashSet<String>();
