@@ -582,14 +582,33 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 	}
 	
 	private static void splitComponents(List<Object> finalList, Object o, Class<?> c) throws Exception {
-		ArrayList<?> list = (ArrayList<?>) c.getMethod("a").invoke(o, new Object[0]);
-		for(Object component : list) {
-			ArrayList<?> innerList = (ArrayList<?>) c.getMethod("a").invoke(component, new Object[0]);
-			if(innerList.size() > 0) {
-				splitComponents(finalList, component, c);
+		if(plugin.getConfig().getString("loglevel", "info").equals("debug")) {
+			for(Method m : c.getMethods()) {
+				System.out.println(m.getName());
 			}
-			else {
-				finalList.add(component);
+		}
+		if(VersionHandler.is1_14_4()) {
+			ArrayList<?> list = (ArrayList<?>) c.getMethod("getSiblings").invoke(o, new Object[0]);
+			for(Object component : list) {
+				ArrayList<?> innerList = (ArrayList<?>) c.getMethod("getSiblings").invoke(component, new Object[0]);
+				if(innerList.size() > 0) {
+					splitComponents(finalList, component, c);
+				}
+				else {
+					finalList.add(component);
+				}
+			}
+		}
+		else {
+			ArrayList<?> list = (ArrayList<?>) c.getMethod("a").invoke(o, new Object[0]);
+			for(Object component : list) {
+				ArrayList<?> innerList = (ArrayList<?>) c.getMethod("a").invoke(component, new Object[0]);
+				if(innerList.size() > 0) {
+					splitComponents(finalList, component, c);
+				}
+				else {
+					finalList.add(component);
+				}
 			}
 		}
 	}

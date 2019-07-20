@@ -144,10 +144,10 @@ public class ChatListener implements Listener {
 					filtered = cc.FilterChat(event.getMessage());
 				}
 				if(mcp.getPlayer().hasPermission("venturechat.color")) {
-					filtered = Format.FormatStringColor(filtered);
+					//filtered = Format.FormatStringColor(filtered);
 				}
 				if(mcp.getPlayer().hasPermission("venturechat.format")) {
-					filtered = Format.FormatString(filtered);
+					//filtered = Format.FormatString(filtered);
 				}
 				filtered = " " + filtered;
 				if(plugin.getConfig().getString("tellformatto").equalsIgnoreCase("Default")) {
