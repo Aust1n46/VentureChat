@@ -20,5 +20,6 @@
 	<classpathentry kind="lib" path="C:/Users/Austin/Desktop/Mineverse Network/Servers/Hub/spigot-1.12.2.jar"/>
 	<classpathentry kind="lib" path="C:/Users/Austin/Desktop/Mineverse Network/Servers/Hub/spigot-1.13.2.jar"/>
 	<classpathentry kind="lib" path="C:/Users/Austin/Desktop/Mineverse Network/Servers/Hub/spigot-1.14.4.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Austin/Desktop/Mineverse Network/Servers/Hub/spigot-1.15.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

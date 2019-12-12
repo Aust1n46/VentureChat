@@ -587,10 +587,10 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 				System.out.println(m.getName());
 			}
 		}
-		if(VersionHandler.is1_14_4()) {
-			ArrayList<?> list = (ArrayList<?>) c.getMethod("getSiblings").invoke(o, new Object[0]);
+		if(VersionHandler.is1_7() || VersionHandler.is1_8() || VersionHandler.is1_9() || VersionHandler.is1_10() || VersionHandler.is1_11() || VersionHandler.is1_12() || VersionHandler.is1_13() || (VersionHandler.is1_14() && !VersionHandler.is1_14_4())) {
+			ArrayList<?> list = (ArrayList<?>) c.getMethod("a").invoke(o, new Object[0]);
 			for(Object component : list) {
-				ArrayList<?> innerList = (ArrayList<?>) c.getMethod("getSiblings").invoke(component, new Object[0]);
+				ArrayList<?> innerList = (ArrayList<?>) c.getMethod("a").invoke(component, new Object[0]);
 				if(innerList.size() > 0) {
 					splitComponents(finalList, component, c);
 				}
@@ -600,9 +600,9 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 			}
 		}
 		else {
-			ArrayList<?> list = (ArrayList<?>) c.getMethod("a").invoke(o, new Object[0]);
+			ArrayList<?> list = (ArrayList<?>) c.getMethod("getSiblings").invoke(o, new Object[0]);
 			for(Object component : list) {
-				ArrayList<?> innerList = (ArrayList<?>) c.getMethod("a").invoke(component, new Object[0]);
+				ArrayList<?> innerList = (ArrayList<?>) c.getMethod("getSiblings").invoke(component, new Object[0]);
 				if(innerList.size() > 0) {
 					splitComponents(finalList, component, c);
 				}
