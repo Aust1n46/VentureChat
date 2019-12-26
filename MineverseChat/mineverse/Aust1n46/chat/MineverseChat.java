@@ -39,7 +39,7 @@ import mineverse.Aust1n46.chat.listeners.LoginListener;
 import mineverse.Aust1n46.chat.listeners.ChatListener;
 import mineverse.Aust1n46.chat.listeners.PacketListener;
 import mineverse.Aust1n46.chat.listeners.SignListener;
-import mineverse.Aust1n46.chat.localization.Localization;
+//import mineverse.Aust1n46.chat.localization.Localization;
 //import mineverse.Aust1n46.chat.alias.Alias;
 import mineverse.Aust1n46.chat.alias.AliasInfo;
 import mineverse.Aust1n46.chat.api.MineverseChatAPI;
@@ -221,7 +221,7 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 		Bukkit.getConsoleSender().sendMessage(Format.FormatStringAll("&8[&eVentureChat&8]&e - Enabled Successfully"));
 		// Get config and handle
 		// Configuration
-		Localization.initialize();
+		//Localization.initialize();
 		PlayerData.initialize();
 		if(this.firstRun) {
 			for(String uuidString : PlayerData.getPlayerData().getConfigurationSection("players").getKeys(false)) {
