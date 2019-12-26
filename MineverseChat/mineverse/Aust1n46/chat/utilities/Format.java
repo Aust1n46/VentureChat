@@ -46,67 +46,6 @@ public class Format {
 		if(icp.getPlayer() != null) {
 			nickname = FormatStringAll(icp.getPlayer().getDisplayName());
 		}
-		/*int prefixIndex = f.indexOf(prefix);
-		if(prefixIndex == -1) {
-			prefixIndex = 0;
-			prefix = "";
-		}
-		int nameIndex = f.indexOf(nickname);
-		if(nameIndex == -1) {
-			nameIndex = 0;
-			nickname = "";
-		}
-		int suffixIndex = f.indexOf(suffix);
-		if(suffixIndex == -1) {
-			suffixIndex = 0;
-			suffix = "";
-		}*/
-		/*int lower = prefixIndex;
-		int middle = nameIndex;
-		//int higher = suffixIndex;
-		String lowerText = prefix;
-		List<String> lowerList = format.getHoverTextPrefix();
-		String middleText = nickname;
-		List<String> middleList = format.getHoverTextName();
-		String clickLowerAction = format.getClickPrefix();
-		String clickLowerActionText = PlaceholderAPI.setBracketPlaceholders(icp.getPlayer(), format.getClickPrefixText());
-		String clickMiddleAction = format.getClickName();
-		String clickMiddleActionText = PlaceholderAPI.setBracketPlaceholders(icp.getPlayer(), format.getClickNameText());
-		if(nameIndex < prefixIndex) {
-			lower = nameIndex;
-			middle = prefixIndex;
-			lowerText = nickname;
-			lowerList = format.getHoverTextName();
-			middleText = prefix;
-			middleList = format.getHoverTextPrefix();
-			clickLowerAction = format.getClickName();
-			clickLowerActionText = PlaceholderAPI.setBracketPlaceholders(icp.getPlayer(), format.getClickNameText());
-			clickMiddleAction = format.getClickPrefix();
-			clickMiddleActionText = PlaceholderAPI.setBracketPlaceholders(icp.getPlayer(), format.getClickPrefixText());
-		}
-		String hoverLower = "";
-		for(String s : lowerList) {
-			hoverLower += s + "\n";
-		}
-		hoverLower = FormatStringAll(hoverLower.substring(0, hoverLower.length() - 1));
-		if(pluginManager.isPluginEnabled("PlaceholderAPI")) {
-			hoverLower = PlaceholderAPI.setBracketPlaceholders(icp.getPlayer(), hoverLower);
-		}
-		String hoverMiddle = "";
-		for(String s : middleList) {
-			hoverMiddle += s + "\n";
-		}
-		hoverMiddle = FormatStringAll(hoverMiddle.substring(0, hoverMiddle.length() - 1));
-		if(pluginManager.isPluginEnabled("PlaceholderAPI")) {
-			hoverMiddle = PlaceholderAPI.setBracketPlaceholders(icp.getPlayer(), hoverMiddle);
-		}*/
-		
-		//json += convertToJsonColors(f.substring(0, lower));
-		//json += "]},{\"text\":\"" + lowerText + "\",\"clickEvent\":{\"action\":\"" + clickLowerAction + "\",\"value\":\"" + clickLowerActionText + "\"},\"hoverEvent\":{\"action\":\"show_text\",\"value\":{\"text\":\"\",\"extra\":[" + convertToJsonColors(hoverLower) + "]}}}";
-		//json += ",{\"text\":\"\",\"extra\":[" + convertToJsonColors(getLastCode(lowerText) + f.substring(lower + lowerText.length(), middle)) + "]}";
-		//json += ",{\"text\":\"" + getLastCode(lowerText + f.substring(lower + lowerText.length(), middle)) + middleText + "\",\"clickEvent\":{\"action\":\"" + clickMiddleAction + "\",\"value\":\"" + clickMiddleActionText + "\"},\"hoverEvent\":{\"action\":\"show_text\",\"value\":{\"text\":\"\",\"extra\":[" + convertToJsonColors(hoverMiddle) + "]}}}";
-		//json += "," + convertToJsonColors(getLastCode(lowerText + f.substring(lower + lowerText.length(), middle)) + f.substring(middle + middleText.length(), f.length())) + "," + convertLinks(getLastCode(lowerText + f.substring(lower + lowerText.length(), middle) + f.substring(middle + middleText.length(), f.length())) + c);		
-		
 		json += convertPlaceholders(f, format, prefix, nickname, suffix, icp);
 		json += "]}";
 		json += "," + convertLinks(c);		
@@ -221,44 +160,6 @@ public class Format {
 		}
 		return ts;
 	}
-	
-	/*
-	private static String getLastFormat(String s) {
-		Stack<Character> temp = new Stack<Character>();
-		String ts = "";
-		for(char c : s.toCharArray()) {
-			temp.push(c);
-		}
-		String i = "";
-		while(!temp.isEmpty()) {
-			i += temp.pop();
-		}
-		char[] ch = i.toCharArray();
-		for(int a = 0; a < i.length() - 1; a ++) {
-			if(String.valueOf(ch[a]).matches("[lkonmr]") && ch[a + 1] == '§') {
-				ts += String.valueOf(ch[a + 1]) + ch[a];
-			}				
-		}
-		return ts;
-	}
-	
-	private static String getLastColor(String s) {
-		Stack<Character> temp = new Stack<Character>();
-		for(char c : s.toCharArray()) {
-			temp.push(c);
-		}
-		String i = "";
-		while(!temp.isEmpty()) {
-			i += temp.pop();
-		}
-		char[] ch = i.toCharArray();
-		for(int a = 0; a < i.length() - 1; a ++) {
-			if(String.valueOf(ch[a]).matches("[0123456789abcdef]") && ch[a + 1] == '§') {
-				return String.valueOf(ch[a + 1]) + ch[a];
-			}				
-		}
-		return "§f";
-	}*/
 	
 	public static String convertToJsonColors(String s) {
 		return convertToJsonColors(s, "");

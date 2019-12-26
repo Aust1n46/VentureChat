@@ -107,7 +107,6 @@ public class PlayerData {
 					cs.set("spy", p.isSpy());
 					cs.set("commandspy", p.hasCommandSpy());
 					cs.set("rangedspy", p.getRangedSpy());
-					cs.set("buttons", p.getButtons());
 					cs.set("messagetoggle", p.getMessageToggle());
 					cs.set("bungeetoggle", p.getBungeeToggle());
 					Calendar currentDate = Calendar.getInstance();

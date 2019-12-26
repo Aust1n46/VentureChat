@@ -48,10 +48,11 @@ public class MineverseChatPlayer {
 	private boolean editing;
 	private int editHash;
 	private boolean rangedSpy;
-	private boolean buttons;
 	private boolean messageToggle;
 	private boolean bungeeToggle;
 
+	//buttons variable no longer used
+	@Deprecated
 	public MineverseChatPlayer(UUID uuid, String name, ChatChannel currentChannel, Set<UUID> ignores, Set<String> listening, HashMap<String, Integer> mutes, Set<String> blockedCommands, List<String> mail, boolean host, UUID party, boolean filter, boolean notifications, String nickname, String jsonFormat, boolean spy, boolean commandSpy, boolean rangedSpy, boolean buttons, boolean messageToggle, boolean bungeeToggle) {
 		this.uuid = uuid;
 		this.name = name;
@@ -73,7 +74,41 @@ public class MineverseChatPlayer {
 		this.spy = spy;
 		this.rangedSpy = rangedSpy;
 		this.commandSpy = commandSpy;
-		this.buttons = buttons;
+		this.afk = false;
+		this.quickChat = false;
+		this.quickChannel = null;
+		this.replyPlayer = null;
+		this.partyChat = false;
+		this.modified = false;
+		this.messages = new ArrayList<ChatMessage>();
+		this.jsonFormat = jsonFormat;
+		this.cooldowns = new HashMap<ChatChannel, Integer>();
+		this.spam = new HashMap<ChatChannel, List<Integer>>();
+		this.messageToggle = messageToggle;
+		this.bungeeToggle = bungeeToggle;
+	}
+	
+	public MineverseChatPlayer(UUID uuid, String name, ChatChannel currentChannel, Set<UUID> ignores, Set<String> listening, HashMap<String, Integer> mutes, Set<String> blockedCommands, List<String> mail, boolean host, UUID party, boolean filter, boolean notifications, String nickname, String jsonFormat, boolean spy, boolean commandSpy, boolean rangedSpy, boolean messageToggle, boolean bungeeToggle) {
+		this.uuid = uuid;
+		this.name = name;
+		this.currentChannel = currentChannel;
+		this.ignores = ignores;
+		this.listening = listening;
+		this.mutes = mutes;
+		this.blockedCommands = blockedCommands;
+		this.mail = mail;
+		this.host = host;
+		this.party = party;
+		this.filter = filter;
+		this.notifications = notifications;
+		this.nickname = nickname;
+		this.online = false;
+		this.player = null;
+		this.hasPlayed = false;
+		this.conversation = null;
+		this.spy = spy;
+		this.rangedSpy = rangedSpy;
+		this.commandSpy = commandSpy;
 		this.afk = false;
 		this.quickChat = false;
 		this.quickChannel = null;
@@ -102,14 +137,6 @@ public class MineverseChatPlayer {
 	
 	public void setMessageToggle(boolean messageToggle) {
 		this.messageToggle = messageToggle;
-	}
-	
-	public boolean getButtons() {
-		return this.buttons;
-	}
-	
-	public void setButtons(boolean buttons) {
-		this.buttons = buttons;
 	}
 	
 	public boolean getRangedSpy() {

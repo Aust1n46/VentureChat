@@ -32,7 +32,6 @@ import net.milkbowl.vault.chat.Chat;
 import net.milkbowl.vault.permission.Permission;
 import mineverse.Aust1n46.chat.irc.Bot;
 import mineverse.Aust1n46.chat.irc.command.IRCCommandInfo;
-//import mineverse.Aust1n46.chat.json.JsonButtonInfo;
 import mineverse.Aust1n46.chat.json.JsonFormatInfo;
 import mineverse.Aust1n46.chat.listeners.CapeListener;
 import mineverse.Aust1n46.chat.listeners.CommandListener;
@@ -40,6 +39,7 @@ import mineverse.Aust1n46.chat.listeners.LoginListener;
 import mineverse.Aust1n46.chat.listeners.ChatListener;
 import mineverse.Aust1n46.chat.listeners.PacketListener;
 import mineverse.Aust1n46.chat.listeners.SignListener;
+import mineverse.Aust1n46.chat.localization.Localization;
 //import mineverse.Aust1n46.chat.alias.Alias;
 import mineverse.Aust1n46.chat.alias.AliasInfo;
 import mineverse.Aust1n46.chat.api.MineverseChatAPI;
@@ -51,7 +51,6 @@ import mineverse.Aust1n46.chat.command.MineverseCommand;
 import mineverse.Aust1n46.chat.command.MineverseCommandExecutor;
 import mineverse.Aust1n46.chat.command.chat.Broadcast;
 import mineverse.Aust1n46.chat.command.chat.BungeeToggle;
-import mineverse.Aust1n46.chat.command.chat.Buttons;
 import mineverse.Aust1n46.chat.command.chat.Channel;
 import mineverse.Aust1n46.chat.command.chat.Channelinfo;
 import mineverse.Aust1n46.chat.command.chat.Chatinfo;
@@ -156,7 +155,6 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 	public static ChatChannelInfo ccInfo;
 	public static AliasInfo aaInfo;
 	public static JsonFormatInfo jfInfo;
-	// public static JsonButtonInfo jbInfo;
 	public static IRCCommandInfo ircInfo;
 	public static GuiSlotInfo gsInfo;
 	public boolean quickchat = true;
@@ -223,6 +221,7 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 		Bukkit.getConsoleSender().sendMessage(Format.FormatStringAll("&8[&eVentureChat&8]&e - Enabled Successfully"));
 		// Get config and handle
 		// Configuration
+		Localization.initialize();
 		PlayerData.initialize();
 		if(this.firstRun) {
 			for(String uuidString : PlayerData.getPlayerData().getConfigurationSection("players").getKeys(false)) {
@@ -274,10 +273,9 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 				boolean spy = PlayerData.getPlayerData().getConfigurationSection("players." + uuidString).getBoolean("spy", false);
 				boolean commandSpy = PlayerData.getPlayerData().getConfigurationSection("players." + uuidString).getBoolean("commandspy", false);
 				boolean rangedSpy = PlayerData.getPlayerData().getConfigurationSection("players." + uuidString).getBoolean("rangedspy", false);
-				boolean buttons = PlayerData.getPlayerData().getConfigurationSection("players." + uuidString).getBoolean("buttons", true);
 				boolean messageToggle = PlayerData.getPlayerData().getConfigurationSection("players." + uuidString).getBoolean("messagetoggle", true);
 				boolean bungeeToggle = PlayerData.getPlayerData().getConfigurationSection("players." + uuidString).getBoolean("bungeetoggle", true);
-				players.add(new MineverseChatPlayer(uuid, name, currentChannel, ignores, listening, mutes, blockedCommands, mail, host, party, filter, notifications, nickname, jsonFormat, spy, commandSpy, rangedSpy, buttons, messageToggle, bungeeToggle));
+				players.add(new MineverseChatPlayer(uuid, name, currentChannel, ignores, listening, mutes, blockedCommands, mail, host, party, filter, notifications, nickname, jsonFormat, spy, commandSpy, rangedSpy, messageToggle, bungeeToggle));
 			}
 		}
 		else {
@@ -293,7 +291,6 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 		ircInfo = new IRCCommandInfo(this);
 		aaInfo = new AliasInfo(this);
 		jfInfo = new JsonFormatInfo(this);
-		// jbInfo = new JsonButtonInfo();
 		gsInfo = new GuiSlotInfo();
 
 		if(ccInfo == null) {
@@ -341,7 +338,6 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 		}
 
 		commands.put("afk", new Afk("afk"));
-		commands.put("buttons", new Buttons("button"));
 		commands.put("broadcast", new Broadcast("broadcast"));
 		commands.put("channel", new Channel("channel"));
 		commands.put("join", new Channel("join"));
@@ -1074,7 +1070,7 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 						Set<String> blockedCommands = new HashSet<String>();
 						List<String> mail = new ArrayList<String>();
 						String jsonFormat = "Default";
-						s = new MineverseChatPlayer(uuid, name, current, ignores, listening, mutes, blockedCommands, mail, false, null, true, true, name, jsonFormat, false, false, false, true, true, true);
+						s = new MineverseChatPlayer(uuid, name, current, ignores, listening, mutes, blockedCommands, mail, false, null, true, true, name, jsonFormat, false, false, false, true, true);
 						MineverseChat.players.add(s);
 					}
 					p.getPlayer().sendMessage(msg.replace("{playerfrom}", sName).replace("{playerto}", Format.FormatStringAll(p.getNickname())));
