@@ -56,7 +56,7 @@ public class Removemessage extends MineverseCommand {
 			try {
 				out.writeUTF("RemoveMessage");
 				out.writeUTF(String.valueOf(hash));
-				((Player) sender).sendPluginMessage(plugin, "venturechat:", byteOutStream.toByteArray());
+				((Player) sender).sendPluginMessage(plugin, MineverseChat.PLUGIN_MESSAGING_CHANNEL, byteOutStream.toByteArray());
 				out.close();
 			}
 			catch(Exception e) {

@@ -739,7 +739,7 @@ public class ChatListener implements Listener {
 					if(plugin.getConfig().getString("loglevel", "info").equals("debug")) {
 						System.out.println(out.size() + " bytes size with json");
 					}
-					mcp.getPlayer().sendPluginMessage(plugin, "venturechat:data", byteOutStream.toByteArray());
+					mcp.getPlayer().sendPluginMessage(plugin, MineverseChat.PLUGIN_MESSAGING_CHANNEL, byteOutStream.toByteArray());
 					
 					//PluginMessageRecipient test = (PluginMessageRecipient) mcp.getPlayer();
 					//System.out.println("Listening plugin channels?");
