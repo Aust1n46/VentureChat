@@ -440,8 +440,8 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 			 */
 		}
 		Bukkit.getConsoleSender().sendMessage(Format.FormatStringAll("&8[&eVentureChat&8]&e - Establishing BungeeCord"));
-		Bukkit.getMessenger().registerOutgoingPluginChannel(this, "venturechat:");
-		Bukkit.getMessenger().registerIncomingPluginChannel(this, "venturechat:", this);
+		Bukkit.getMessenger().registerOutgoingPluginChannel(this, "venturechat:data");
+		Bukkit.getMessenger().registerIncomingPluginChannel(this, "venturechat:data", this);
 		if(pluginManager.isPluginEnabled("Towny")) {
 			Bukkit.getConsoleSender().sendMessage(Format.FormatStringAll("&8[&eVentureChat&8]&e - Enabling Towny Formatting"));
 		}
@@ -752,7 +752,7 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 				out.writeBoolean(mcp.getMessageToggle());
 			}
 			for(MineverseChatPlayer p : MineverseChat.onlinePlayers) {
-				p.getPlayer().sendPluginMessage(this, "venturechat:", outstream.toByteArray());
+				p.getPlayer().sendPluginMessage(this, "venturechat:data", outstream.toByteArray());
 				break;
 			}
 			// System.out.println("Sync start bottom...");
@@ -792,7 +792,7 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 
 	@Override
 	public void onPluginMessageReceived(String channel, Player player, byte[] message) {
-		if(!channel.equals("venturechat:")) {
+		if(!channel.equals("venturechat:data")) {
 			return;
 		}
 		try {
