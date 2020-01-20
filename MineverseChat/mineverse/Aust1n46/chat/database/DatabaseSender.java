@@ -19,7 +19,7 @@ public class DatabaseSender {
 					return;
 				}
 			}
-			plugin.c.createStatement().executeUpdate("INSERT INTO `MineverseChat` (`" + time + "`, `" + uuid + "`, `" + name + "`, `" + server + "`, `" + channel + "`, `" + text + "`, `" + type + "`) VALUES ('" + timeValue + "', '" + uuidValue + "', '" + nameValue + "', '" + serverValue + "', '" + channelValue + "', '" + textValue + "', '" + typeValue + "');");
+			plugin.c.createStatement().executeUpdate("INSERT INTO `VentureChat` (`" + time + "`, `" + uuid + "`, `" + name + "`, `" + server + "`, `" + channel + "`, `" + text + "`, `" + type + "`) VALUES ('" + timeValue + "', '" + uuidValue + "', '" + nameValue + "', '" + serverValue + "', '" + channelValue + "', '" + textValue + "', '" + typeValue + "');");
 		}
 		catch(SQLException e) {
 			e.printStackTrace();
