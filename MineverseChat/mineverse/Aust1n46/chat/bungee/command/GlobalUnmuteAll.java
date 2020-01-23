@@ -40,7 +40,7 @@ public class GlobalUnmuteAll extends Command {
 						out.writeUTF(args[1]);
 						out.writeUTF(args[0]);
 						if(plugin.getProxy().getServers().get(args[0]).getPlayers().size() > 0) {
-							plugin.getProxy().getServers().get(args[0]).sendData("venturechat:", stream.toByteArray());
+							plugin.getProxy().getServers().get(args[0]).sendData(MineverseChatBungee.PLUGIN_MESSAGING_CHANNEL, stream.toByteArray());
 							return;
 						}
 						commandSender.sendMessage(new TextComponent(ChatColor.RED + "Player: " + ChatColor.GOLD + args[1] + ChatColor.RED + " is not connected to server: " + args[0]));
