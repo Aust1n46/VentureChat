@@ -13,6 +13,7 @@ import mineverse.Aust1n46.chat.api.MineverseChatAPI;
 import mineverse.Aust1n46.chat.api.MineverseChatPlayer;
 import mineverse.Aust1n46.chat.channel.ChatChannelInfo;
 import mineverse.Aust1n46.chat.command.MineverseCommand;
+import mineverse.Aust1n46.chat.localization.LocalizedMessage;
 import mineverse.Aust1n46.chat.utilities.Format;
 import mineverse.Aust1n46.chat.versions.VersionHandler;
 
@@ -28,17 +29,21 @@ public class Message extends MineverseCommand {
 	@Override
 	public void execute(CommandSender sender, String command, String[] args) {
 		if(!(sender instanceof Player)) {
-			plugin.getServer().getConsoleSender().sendMessage(ChatColor.RED + "This command must be run by a player.");
+			plugin.getServer().getConsoleSender().sendMessage(LocalizedMessage.COMMAND_MUST_BE_RUN_BY_PLAYER.toString());
 			return;
 		}
 		MineverseChatPlayer mcp = MineverseChatAPI.getMineverseChatPlayer((Player) sender);
 		if(args.length == 0) {
-			mcp.getPlayer().sendMessage(ChatColor.RED + "Invalid command: /" + command + " [player] [msg]");
+			mcp.getPlayer().sendMessage(LocalizedMessage.COMMAND_INVALID_ARGUMENTS.toString()
+			.replace("{command}", "/" + command)
+			.replace("{args}", "[player] [message]"));
 			return;
 		}
 		if(plugin.getConfig().getBoolean("bungeecordmessaging", true)) {
 			if(args.length < 2) {
-				mcp.getPlayer().sendMessage(ChatColor.RED + "Invalid command: /" + command + " [player] [msg]");
+				mcp.getPlayer().sendMessage(LocalizedMessage.COMMAND_INVALID_ARGUMENTS.toString()
+						.replace("{command}", "/" + command)
+						.replace("{args}", "[player] [message]"));
 				return;
 			}
 			ByteArrayOutputStream byteOutStream = new ByteArrayOutputStream();
@@ -111,11 +116,11 @@ public class Message extends MineverseCommand {
 			return;
 		}
 		if(player.getIgnores().contains(mcp.getUUID())) {
-			mcp.getPlayer().sendMessage(ChatColor.GOLD + player.getName() + " is currently ignoring your messages.");
+			mcp.getPlayer().sendMessage(LocalizedMessage.IGNORING_MESSAGE.toString());
 			return;
 		}
 		if(!player.getMessageToggle()) {
-			mcp.getPlayer().sendMessage(ChatColor.GOLD + player.getName() + " is currently blocking messages.");
+			mcp.getPlayer().sendMessage(LocalizedMessage.BLOCKING_MESSAGE.toString());
 			return;
 		}
 		if(args.length >= 2) {

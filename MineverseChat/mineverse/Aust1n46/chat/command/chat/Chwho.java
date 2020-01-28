@@ -19,6 +19,7 @@ import mineverse.Aust1n46.chat.api.MineverseChatPlayer;
 import mineverse.Aust1n46.chat.channel.ChatChannel;
 import mineverse.Aust1n46.chat.channel.ChatChannelInfo;
 import mineverse.Aust1n46.chat.command.MineverseCommand;
+import mineverse.Aust1n46.chat.localization.LocalizedMessage;
 
 public class Chwho extends MineverseCommand {
 	private MineverseChat plugin;
@@ -40,7 +41,7 @@ public class Chwho extends MineverseCommand {
 						if(!sender.hasPermission(channel.getPermission())) {
 							MineverseChatPlayer mcp = MineverseChatAPI.getMineverseChatPlayer(((Player) sender));
 							mcp.removeListening(channel.getName());
-							mcp.getPlayer().sendMessage(ChatColor.RED + "You do not have permission to look at this channel.");
+							mcp.getPlayer().sendMessage(LocalizedMessage.CHANNEL_NO_PERMISSION_VIEW.toString());
 							return;
 						}
 					}
@@ -178,22 +179,27 @@ public class Chwho extends MineverseCommand {
 					if(playerlist.length() > 2) {
 						playerlist = playerlist.substring(0, playerlist.length() - 2);
 					}
-					sender.sendMessage(ChatColor.GOLD + "Players in Channel: " + ChatColor.valueOf(channel.getColor().toUpperCase()) + channel.getName());
+					sender.sendMessage(LocalizedMessage.CHANNEL_PLAYER_LIST_HEADER.toString()
+							.replace("{channel_color}", (ChatColor.valueOf(channel.getColor().toUpperCase())).toString())
+							.replace("{channel_name}", channel.getName()));
 					sender.sendMessage(playerlist);
 					return;
 				}
 				else {
-					sender.sendMessage(ChatColor.RED + "Invalid channel: " + args[0]);
+					sender.sendMessage(LocalizedMessage.INVALID_CHANNEL.toString()
+							.replace("{args}", args[0]));
 					return;
 				}
 			}
 			else {
-				sender.sendMessage(ChatColor.RED + "Invalid command: /chwho [channel]");
+				sender.sendMessage(LocalizedMessage.COMMAND_INVALID_ARGUMENTS.toString()
+						.replace("{command}", "/chwho")
+						.replace("{args}", "[channel]"));
 				return;
 			}
 		}
 		else {
-			sender.sendMessage(ChatColor.RED + "You do not have permission for this command.");
+			sender.sendMessage(LocalizedMessage.COMMAND_NO_PERMISSION.toString());
 			return;
 		}
 	}

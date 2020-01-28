@@ -38,7 +38,7 @@ public class VentureChatGui extends MineverseCommand {
 			return;
 		}
 		if(args.length < 3) {
-			sender.sendMessage(ChatColor.RED + "Invalid command: " + command+ " [player] [channel] [hash]");
+			sender.sendMessage(ChatColor.RED + "Invalid command: " + command + " [player] [channel] [hash]");
 			return;
 		}
 		MineverseChatPlayer mcp = MineverseChatAPI.getMineverseChatPlayer((Player) sender);

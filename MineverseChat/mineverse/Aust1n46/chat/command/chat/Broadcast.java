@@ -6,6 +6,7 @@ import org.bukkit.command.CommandSender;
 import mineverse.Aust1n46.chat.MineverseChat;
 import mineverse.Aust1n46.chat.channel.ChatChannelInfo;
 import mineverse.Aust1n46.chat.command.MineverseCommand;
+import mineverse.Aust1n46.chat.localization.LocalizedMessage;
 import mineverse.Aust1n46.chat.utilities.Format;
 
 public class Broadcast extends MineverseCommand {
@@ -30,12 +31,14 @@ public class Broadcast extends MineverseCommand {
 				return;
 			}
 			else {
-				sender.sendMessage(ChatColor.RED + "Invalid command: /broadcast [msg]");
+				sender.sendMessage(LocalizedMessage.COMMAND_INVALID_ARGUMENTS.toString()
+						.replace("{command}", "/broadcast")
+						.replace("{args}", "[msg]"));
 				return;
 			}
 		}
 		else {
-			sender.sendMessage(ChatColor.RED + "You do not have permission for this command.");
+			sender.sendMessage(LocalizedMessage.COMMAND_NO_PERMISSION.toString());
 			return;
 		}
 	}
