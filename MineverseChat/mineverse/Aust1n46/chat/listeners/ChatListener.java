@@ -23,7 +23,6 @@ import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.messaging.PluginMessageRecipient;
-import org.bukkit.util.EulerAngle;
 
 import com.massivecraft.factions.entity.MPlayer;
 import com.palmergames.bukkit.towny.object.Resident;
@@ -42,7 +41,6 @@ import mineverse.Aust1n46.chat.api.events.ChatMessageEvent;
 import mineverse.Aust1n46.chat.channel.ChatChannel;
 import mineverse.Aust1n46.chat.channel.ChatChannelInfo;
 import mineverse.Aust1n46.chat.database.DatabaseSender;
-import mineverse.Aust1n46.chat.irc.Bot;
 import mineverse.Aust1n46.chat.utilities.Format;
 import mineverse.Aust1n46.chat.utilities.FormatTags;
 import mineverse.Aust1n46.chat.versions.VersionHandler;
@@ -52,16 +50,14 @@ import mineverse.Aust1n46.chat.versions.VersionHandler;
 public class ChatListener implements Listener {
 	private MineverseChat plugin;
 	private ChatChannelInfo cc;
-	private Bot bot;
 
 	public ChatListener(MineverseChat plugin) {
 		this.plugin = plugin;
 	}
 
-	public ChatListener(MineverseChat plugin, ChatChannelInfo cc, Bot bot) {
+	public ChatListener(MineverseChat plugin, ChatChannelInfo cc) {
 		this.plugin = plugin;
 		this.cc = cc;
-		this.bot = bot;
 	}
 
 	@EventHandler(priority = EventPriority.NORMAL)
@@ -695,12 +691,6 @@ public class ChatListener implements Listener {
 			Bukkit.getServer().getPluginManager().callEvent(chatMessageEvent);
 			*/
 			
-			
-			if(irc && plugin.irc) {
-				if(bot.bot.isConnected()) {
-					bot.bot.getUserChannelDao().getChannel(bot.channel).send().message(mcp.getName() + ":" + evMessage);
-				}
-			}
 			if(plugin.mysql) {
 				Statement statement;
 				currentDate = Calendar.getInstance();
