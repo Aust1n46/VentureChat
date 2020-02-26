@@ -14,7 +14,6 @@ import mineverse.Aust1n46.chat.api.MineverseChatPlayer;
 import mineverse.Aust1n46.chat.channel.ChatChannel;
 import mineverse.Aust1n46.chat.channel.ChatChannelInfo;
 import mineverse.Aust1n46.chat.gui.GuiSlot;
-import mineverse.Aust1n46.chat.irc.Bot;
 import mineverse.Aust1n46.chat.utilities.Format;
 import mineverse.Aust1n46.chat.versions.VersionHandler;
 
@@ -42,13 +41,11 @@ public class CommandListener implements CommandExecutor, Listener {
 	private MineverseChat plugin;
 	private ChatChannelInfo cc;
 	private AliasInfo aa;
-	private Bot bot;
 
-	public CommandListener(MineverseChat plugin, ChatChannelInfo cc, AliasInfo aa, Bot bot) {
+	public CommandListener(MineverseChat plugin, ChatChannelInfo cc, AliasInfo aa) {
 		this.plugin = plugin;
 		this.cc = cc;
 		this.aa = aa;
-		this.bot = bot;
 	}
 
 	@EventHandler
@@ -214,9 +211,6 @@ public class CommandListener implements CommandExecutor, Listener {
 	//old 1.8 command map
 	@EventHandler
 	public void onServerCommand(ServerCommandEvent event) {
-		if(plugin.irc && bot.bot.isConnected() && !event.getCommand().equalsIgnoreCase("say ") && event.getCommand().toLowerCase().startsWith("say ")) {
-			bot.bot.getUserChannelDao().getChannel(bot.channel).send().message("[Server] " + event.getCommand().substring(4));
-		}
 		if(plugin.mysql) {
 			Statement statement;
 			Calendar currentDate = Calendar.getInstance();

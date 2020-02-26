@@ -30,10 +30,7 @@ import java.util.logging.Logger;
 
 import net.milkbowl.vault.chat.Chat;
 import net.milkbowl.vault.permission.Permission;
-import mineverse.Aust1n46.chat.irc.Bot;
-import mineverse.Aust1n46.chat.irc.command.IRCCommandInfo;
 import mineverse.Aust1n46.chat.json.JsonFormatInfo;
-import mineverse.Aust1n46.chat.listeners.CapeListener;
 import mineverse.Aust1n46.chat.listeners.CommandListener;
 import mineverse.Aust1n46.chat.listeners.LoginListener;
 import mineverse.Aust1n46.chat.listeners.ChatListener;
@@ -102,9 +99,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandMap;
 import org.bukkit.command.SimpleCommandMap;
-import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -125,7 +120,6 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 	private SignListener signListener;
 	private CommandListener commandListener;
 	private PacketListener packetListener;
-	private CapeListener capeListener;
 	private Channel channelListener;
 	public static String[] playerlist;
 	public static String playerlist_server;
@@ -155,7 +149,6 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 	public static ChatChannelInfo ccInfo;
 	public static AliasInfo aaInfo;
 	public static JsonFormatInfo jfInfo;
-	public static IRCCommandInfo ircInfo;
 	public static GuiSlotInfo gsInfo;
 	public boolean quickchat = true;
 	private static final Logger log = Logger.getLogger("Minecraft");
@@ -163,9 +156,6 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 	public static Set<MineverseChatPlayer> players = new HashSet<MineverseChatPlayer>();
 	public static Set<MineverseChatPlayer> onlinePlayers = new HashSet<MineverseChatPlayer>();
 	public static HashMap<String, String> networkPlayers = new HashMap<String, String>();
-	public static ArmorStand cape;
-	public static ItemStack banner;
-	public static boolean capeToggle = false;
 	private boolean firstRun = true;
 	
 	// Plugin Messaging Channel
@@ -179,10 +169,6 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 	// Offline data ----------------------------
 	public Map<String, String> mutes = new HashMap<String, String>();
 	public Map<String, List<String>> mail = new HashMap<String, List<String>>();
-
-	// IRC Bot -----------
-	public Bot bot;
-	public boolean irc = false;
 
 	private LogLevels curLogLevel;
 
@@ -291,7 +277,6 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 
 		Bukkit.getConsoleSender().sendMessage(Format.FormatStringAll("&8[&eVentureChat&8]&e - Registering Listeners"));
 		// Channel information reference
-		ircInfo = new IRCCommandInfo(this);
 		aaInfo = new AliasInfo(this);
 		jfInfo = new JsonFormatInfo(this);
 		gsInfo = new GuiSlotInfo();
@@ -333,12 +318,6 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 
 		// this.loadCommandMap();
 		// this.unregister("msg");
-
-		if(this.getConfig().getConfigurationSection("irc").getBoolean("enabled", false)) {
-			bot = new Bot(this, ccInfo, ircInfo);
-			bot.init();
-			irc = true;
-		}
 
 		commands.put("afk", new Afk("afk"));
 		commands.put("broadcast", new Broadcast("broadcast"));
@@ -391,18 +370,14 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 
 		channelListener = new Channel();
 		signListener = new SignListener(this, ccInfo);
-		chatListener = new ChatListener(this, ccInfo, bot);
-		commandListener = new CommandListener(this, ccInfo, aaInfo, bot);
+		chatListener = new ChatListener(this, ccInfo);
+		commandListener = new CommandListener(this, ccInfo, aaInfo);
 
 		PluginManager pluginManager = getServer().getPluginManager();
 		pluginManager.registerEvents(channelListener, this);
 		pluginManager.registerEvents(chatListener, this);
 		pluginManager.registerEvents(signListener, this);
 		pluginManager.registerEvents(commandListener, this);
-		if(!VersionHandler.is1_7_10() && !VersionHandler.is1_7_9() && !VersionHandler.is1_7_2()) {
-			capeListener = new CapeListener();
-			pluginManager.registerEvents(capeListener, this);
-		}
 		loginListener = new LoginListener(this, ccInfo);
 		pluginManager.registerEvents(loginListener, this);
 		this.registerPacketListeners();
@@ -673,12 +648,6 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 		PlayerData.savePlayerData();
 		Bukkit.getConsoleSender().sendMessage(Format.FormatStringAll("&8[&eVentureChat&8]&e - Disabling..."));
 		Bukkit.getConsoleSender().sendMessage(Format.FormatStringAll("&8[&eVentureChat&8]&e - Disabled Successfully"));
-		if(irc) {
-			bot.terminate();
-		}
-		if(MineverseChat.cape != null) {
-			MineverseChat.cape.remove();
-		}
 	}
 
 	public void setLogLevel(String loglevel) {
