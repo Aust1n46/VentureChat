@@ -267,12 +267,11 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 				players.add(new MineverseChatPlayer(uuid, name, currentChannel, ignores, listening, mutes, blockedCommands, mail, host, party, filter, notifications, nickname, jsonFormat, spy, commandSpy, rangedSpy, messageToggle, bungeeToggle));
 			}
 		}
-		else {
-			for(Player p : this.getServer().getOnlinePlayers()) {
-				MineverseChatPlayer mcp = MineverseChatAPI.getMineverseChatPlayer(p);
-				mcp.setName(p.getName());
-				mcp.setOnline(true);
-			}
+		for(Player p : this.getServer().getOnlinePlayers()) {
+			MineverseChatPlayer mcp = MineverseChatAPI.getMineverseChatPlayer(p);
+			mcp.setName(p.getName());
+			mcp.setOnline(true);
+			onlinePlayers.add(mcp);
 		}
 
 		Bukkit.getConsoleSender().sendMessage(Format.FormatStringAll("&8[&eVentureChat&8]&e - Registering Listeners"));
