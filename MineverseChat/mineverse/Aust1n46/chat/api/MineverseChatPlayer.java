@@ -7,7 +7,9 @@ import java.util.Set;
 import java.util.UUID;
 
 import mineverse.Aust1n46.chat.ChatMessage;
+import mineverse.Aust1n46.chat.MineverseChat;
 import mineverse.Aust1n46.chat.channel.ChatChannel;
+import mineverse.Aust1n46.chat.json.JsonFormat;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -516,7 +518,13 @@ public class MineverseChatPlayer {
 		return this.jsonFormat;
 	}
 
-	public void setJsonFormat(String jsonFormat) {
-		this.jsonFormat = jsonFormat;
+	public void setJsonFormat() {
+		for(JsonFormat j : MineverseChat.jfInfo.getJsonFormats()) {
+			if(this.getPlayer().hasPermission("venturechat.json." + j.getName())) {
+				if(MineverseChat.jfInfo.getJsonFormat(this.getJsonFormat()).getPriority() > j.getPriority()) {
+					this.jsonFormat = j.getName();
+				}
+			}
+		}
 	}
 }

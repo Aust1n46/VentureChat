@@ -15,7 +15,6 @@ import mineverse.Aust1n46.chat.api.MineverseChatPlayer;
 import mineverse.Aust1n46.chat.channel.ChatChannel;
 import mineverse.Aust1n46.chat.channel.ChatChannelInfo;
 import mineverse.Aust1n46.chat.database.PlayerData;
-import mineverse.Aust1n46.chat.json.JsonFormat;
 import mineverse.Aust1n46.chat.utilities.Format;
 
 import org.bukkit.configuration.ConfigurationSection;
@@ -86,23 +85,16 @@ public class LoginListener implements Listener {
 		mcp.setOnline(true);
 		mcp.setHasPlayed(false);
 		MineverseChat.onlinePlayers.add(mcp);
-		mcp.setJsonFormat("Default");
-		for(JsonFormat j : MineverseChat.jfInfo.getJsonFormats()) {
-			if(mcp.getPlayer().hasPermission("venturechat.json." + j.getName())) {
-				if(MineverseChat.jfInfo.getJsonFormat(mcp.getJsonFormat()).getPriority() > j.getPriority()) {
-					mcp.setJsonFormat(j.getName());
-				}
-			}
-		}
+		mcp.setJsonFormat();
 		if(mcp.getNickname().equals(mcp.getName())) {
 			mcp.setNickname(event.getPlayer().getName());
 		}
 		mcp.getPlayer().setDisplayName(Format.FormatStringAll(mcp.getNickname()));
-		String nick = mcp.getNickname();
-		if(nick.length() >= 16) {
-			nick = nick.substring(0, 16);
-		}
 		if(plugin.getConfig().getBoolean("nickname-in-tablist", false)) {
+			String nick = mcp.getNickname();
+			if(nick.length() >= 16) {
+				nick = nick.substring(0, 16);
+			}
 			mcp.getPlayer().setPlayerListName(Format.FormatStringAll(nick));
 		}	
 		for(ChatChannel ch : MineverseChat.ccInfo.getAutojoinList()) {

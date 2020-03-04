@@ -211,6 +211,13 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 		// Get config and handle
 		// Configuration
 		//Localization.initialize();
+		
+		Bukkit.getConsoleSender().sendMessage(Format.FormatStringAll("&8[&eVentureChat&8]&e - Registering Listeners"));
+		// Channel information reference
+		aaInfo = new AliasInfo(this);
+		jfInfo = new JsonFormatInfo(this);
+		gsInfo = new GuiSlotInfo();
+		
 		PlayerData.initialize();
 		if(this.firstRun) {
 			for(String uuidString : PlayerData.getPlayerData().getConfigurationSection("players").getKeys(false)) {
@@ -258,7 +265,7 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 				boolean filter = PlayerData.getPlayerData().getConfigurationSection("players." + uuidString).getBoolean("filter");
 				boolean notifications = PlayerData.getPlayerData().getConfigurationSection("players." + uuidString).getBoolean("notifications");
 				String nickname = PlayerData.getPlayerData().getConfigurationSection("players." + uuidString).getString("nickname");
-				String jsonFormat = PlayerData.getPlayerData().getConfigurationSection("players." + uuidString).getString("jsonformat");
+				String jsonFormat = "Default";
 				boolean spy = PlayerData.getPlayerData().getConfigurationSection("players." + uuidString).getBoolean("spy", false);
 				boolean commandSpy = PlayerData.getPlayerData().getConfigurationSection("players." + uuidString).getBoolean("commandspy", false);
 				boolean rangedSpy = PlayerData.getPlayerData().getConfigurationSection("players." + uuidString).getBoolean("rangedspy", false);
@@ -271,14 +278,10 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 			MineverseChatPlayer mcp = MineverseChatAPI.getMineverseChatPlayer(p);
 			mcp.setName(p.getName());
 			mcp.setOnline(true);
+			mcp.setHasPlayed(false);
+			mcp.setJsonFormat();
 			onlinePlayers.add(mcp);
 		}
-
-		Bukkit.getConsoleSender().sendMessage(Format.FormatStringAll("&8[&eVentureChat&8]&e - Registering Listeners"));
-		// Channel information reference
-		aaInfo = new AliasInfo(this);
-		jfInfo = new JsonFormatInfo(this);
-		gsInfo = new GuiSlotInfo();
 
 		if(ccInfo == null) {
 			Bukkit.getConsoleSender().sendMessage(Format.FormatStringAll("&8[&eVentureChat&8]&e - &cConfiguration is BAD!"));
