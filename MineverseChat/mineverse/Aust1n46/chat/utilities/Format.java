@@ -5,11 +5,15 @@ import java.util.regex.Pattern;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.entity.Player;
+
+import com.comphenix.protocol.PacketType;
+import com.comphenix.protocol.ProtocolLibrary;
+import com.comphenix.protocol.events.PacketContainer;
+import com.comphenix.protocol.wrappers.WrappedChatComponent;
 
 import me.clip.placeholderapi.PlaceholderAPI;
-import mineverse.Aust1n46.chat.ChatMessage;
 import mineverse.Aust1n46.chat.MineverseChat;
-import mineverse.Aust1n46.chat.api.MineverseChatAPI;
 import mineverse.Aust1n46.chat.api.MineverseChatPlayer;
 import mineverse.Aust1n46.chat.json.JsonFormat;
 
@@ -17,17 +21,16 @@ import mineverse.Aust1n46.chat.json.JsonFormat;
 public class Format { 
 	private static MineverseChat plugin = MineverseChat.getInstance();
 	
-	public static String convertToJson(ChatMessage lastChatMessage) {
-		MineverseChatPlayer icp = MineverseChatAPI.getMineverseChatPlayer(lastChatMessage.getSender());
-		JsonFormat format = MineverseChat.jfInfo.getJsonFormat(icp.getJsonFormat());
-		String f = lastChatMessage.getFormat().replace("\\", "\\\\").replace("\"", "\\\"");
-		String c = lastChatMessage.getChat().replace("\\", "\\\\").replace("\"", "\\\"");
+	public static String convertToJson(MineverseChatPlayer sender, String format, String chat) {
+		JsonFormat JSONformat = MineverseChat.jfInfo.getJsonFormat(sender.getJsonFormat());
+		String f = format.replace("\\", "\\\\").replace("\"", "\\\"");
+		String c = chat.replace("\\", "\\\\").replace("\"", "\\\"");
 		String json = "[\"\",{\"text\":\"\",\"extra\":[";
 		String prefix = "";
 		String suffix = "";
 		try {
-			prefix = FormatStringAll(MineverseChat.chat.getPlayerPrefix(icp.getPlayer()));
-			suffix = FormatStringAll(MineverseChat.chat.getPlayerSuffix(icp.getPlayer()));
+			prefix = FormatStringAll(MineverseChat.chat.getPlayerPrefix(sender.getPlayer()));
+			suffix = FormatStringAll(MineverseChat.chat.getPlayerSuffix(sender.getPlayer()));
 			if(suffix.equals("")) {
 				suffix = "venturechat_no_suffix_code";
 			}
@@ -43,10 +46,10 @@ public class Format {
 			prefix = "venturechat_no_prefix_code";
 		}	
 		String nickname = "";
-		if(icp.getPlayer() != null) {
-			nickname = FormatStringAll(icp.getPlayer().getDisplayName());
+		if(sender.getPlayer() != null) {
+			nickname = FormatStringAll(sender.getPlayer().getDisplayName());
 		}
-		json += convertPlaceholders(f, format, prefix, nickname, suffix, icp);
+		json += convertPlaceholders(f, JSONformat, prefix, nickname, suffix, sender);
 		json += "]}";
 		json += "," + convertLinks(c);		
 		json += "]";
@@ -275,6 +278,30 @@ public class Format {
 			case "f": return "white";
 		}
 		return "";
+	}
+	
+	public static String formatModerationGUI(String json, Player player, String sender, String channelName, int hash) {
+		if(player.hasPermission("venturechat.gui")) {
+			json = json.substring(0, json.length() - 1);
+			json += "," + Format.convertToJsonColors(Format.FormatStringAll(plugin.getConfig().getString("guiicon")), ",\"clickEvent\":{\"action\":\"run_command\",\"value\":\"/vchatgui " + sender + " " + channelName + " " + hash +"\"},\"hoverEvent\":{\"action\":\"show_text\",\"value\":{\"text\":\"\",\"extra\":[" + Format.convertToJsonColors(Format.FormatStringAll(plugin.getConfig().getString("guitext"))) + "]}}") + "]";
+		}
+		return json;
+	}
+	
+	public static PacketContainer createPacketPlayOutChat(WrappedChatComponent component) {
+		PacketContainer container = new PacketContainer(PacketType.Play.Server.CHAT);
+		container.getModifier().writeDefaults();
+		container.getChatComponents().write(0, component);
+		return container;
+	}
+	
+	public static void sendPacketPlayOutChat(Player player, PacketContainer packet) {
+		try {
+			ProtocolLibrary.getProtocolManager().sendServerPacket(player, packet);
+		}
+		catch(Exception e) {
+			e.printStackTrace();
+		}
 	}
 	
 	protected static Pattern chatColorPattern = Pattern.compile("(?i)&([0-9A-F])");

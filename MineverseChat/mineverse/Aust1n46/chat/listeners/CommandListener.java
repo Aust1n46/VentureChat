@@ -38,12 +38,11 @@ import me.clip.placeholderapi.PlaceholderAPI;
 //This class listens for commands (Any chat that begins with a /) to use in the command spy and
 //in the custom commands such as aliases.
 public class CommandListener implements CommandExecutor, Listener {
-	private MineverseChat plugin;
+	private MineverseChat plugin = MineverseChat.getInstance();
 	private ChatChannelInfo cc;
 	private AliasInfo aa;
 
-	public CommandListener(MineverseChat plugin, ChatChannelInfo cc, AliasInfo aa) {
-		this.plugin = plugin;
+	public CommandListener(ChatChannelInfo cc, AliasInfo aa) {
 		this.cc = cc;
 		this.aa = aa;
 	}

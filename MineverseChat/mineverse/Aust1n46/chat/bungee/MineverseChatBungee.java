@@ -153,20 +153,18 @@ public class MineverseChatBungee extends Plugin implements Listener {
 			DataOutputStream out = new DataOutputStream(outstream);
 			if(subchannel.equals("Chat")) {
 				String chatchannel = in.readUTF();
-				String message = in.readUTF();
-				String playerName = in.readUTF();
+				String senderName = in.readUTF();
+				String senderUUID = in.readUTF();
 				boolean bungeeToggle = in.readBoolean();
-				String lastMessage = in.readUTF();
-				String f = in.readUTF();
-				String c = in.readUTF();
+				int hash = in.readInt();
+				String consoleChat = in.readUTF();
 				String json = in.readUTF();
 				out.writeUTF("Chat");
 				out.writeUTF(chatchannel);
-				out.writeUTF(message);
-				out.writeUTF(playerName);
-				out.writeUTF(lastMessage);
-				out.writeUTF(f);
-				out.writeUTF(c);
+				out.writeUTF(senderName);
+				out.writeUTF(senderUUID);
+				out.writeInt(hash);
+				out.writeUTF(consoleChat);
 				out.writeUTF(json);
 				for(String send : getProxy().getServers().keySet()) {
 					if(getProxy().getServers().get(send).getPlayers().size() > 0) {

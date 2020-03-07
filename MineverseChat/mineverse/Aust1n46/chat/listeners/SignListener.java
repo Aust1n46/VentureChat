@@ -13,11 +13,10 @@ import mineverse.Aust1n46.chat.utilities.Format;
 
 //This class listens for text being added to signs, and it formats them to allow colors and formatting.
 public class SignListener implements Listener {
-	MineverseChat plugin;
+	MineverseChat plugin = MineverseChat.getInstance();
 	ChatChannelInfo cc;
 
-	public SignListener(MineverseChat plugin, ChatChannelInfo cc) {
-		this.plugin = plugin;
+	public SignListener(ChatChannelInfo cc) {
 		this.cc = cc;
 	}
 

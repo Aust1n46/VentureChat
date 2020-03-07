@@ -108,8 +108,9 @@ import org.bukkit.scheduler.BukkitScheduler;
 import org.bukkit.Sound;
 
 import com.comphenix.protocol.ProtocolLibrary;
-import com.comphenix.protocol.ProtocolManager;
+import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.utility.MinecraftReflection;
+import com.comphenix.protocol.wrappers.WrappedChatComponent;
 
 import me.clip.placeholderapi.PlaceholderAPI;
 
@@ -119,12 +120,10 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 	private LoginListener loginListener;
 	private SignListener signListener;
 	private CommandListener commandListener;
-	private PacketListener packetListener;
 	private Channel channelListener;
 	public static String[] playerlist;
 	public static String playerlist_server;
 	public boolean ircListen;
-	public ProtocolManager protocolManager;
 	public static ChatMessage lastChatMessage;
 	public static String lastJson;
 	public static Method messageMethod;
@@ -371,16 +370,16 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 		}
 
 		channelListener = new Channel();
-		signListener = new SignListener(this, ccInfo);
-		chatListener = new ChatListener(this, ccInfo);
-		commandListener = new CommandListener(this, ccInfo, aaInfo);
+		signListener = new SignListener(ccInfo);
+		chatListener = new ChatListener(ccInfo);
+		commandListener = new CommandListener(ccInfo, aaInfo);
 
 		PluginManager pluginManager = getServer().getPluginManager();
 		pluginManager.registerEvents(channelListener, this);
 		pluginManager.registerEvents(chatListener, this);
 		pluginManager.registerEvents(signListener, this);
 		pluginManager.registerEvents(commandListener, this);
-		loginListener = new LoginListener(this, ccInfo);
+		loginListener = new LoginListener(ccInfo);
 		pluginManager.registerEvents(loginListener, this);
 		this.registerPacketListeners();
 		this.loadNMS();
@@ -524,9 +523,7 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 	}
 
 	private void registerPacketListeners() {
-		this.protocolManager = ProtocolLibrary.getProtocolManager();
-		this.packetListener = new PacketListener(this);
-		this.protocolManager.addPacketListener(this.packetListener);
+		ProtocolLibrary.getProtocolManager().addPacketListener(new PacketListener());
 	}
 	
 	public static String toPlainText(Object o, Class<?> c) { 
@@ -779,37 +776,32 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 			DataOutputStream out = new DataOutputStream(stream);
 			if(subchannel.equals("Chat")) {
 				String chatchannel = msgin.readUTF();
-				String chat = msgin.readUTF();
-				String playerName = msgin.readUTF();
-				String lastMessage = msgin.readUTF();
-				String f = msgin.readUTF();
-				String c = msgin.readUTF();
-				String json = msgin.readUTF();
+				String senderName = msgin.readUTF();
+				UUID senderUUID = UUID.fromString(msgin.readUTF());
+				int hash = msgin.readInt();
+				String consoleChat = msgin.readUTF();
+				String globalJSON = msgin.readUTF();
 				if(ccInfo.isChannel(chatchannel) && ccInfo.getChannelInfo(chatchannel).getBungee()) {
-					MineverseChat.lastChatMessage = new ChatMessage(playerName, lastMessage, lastMessage.hashCode(), f, c, chatchannel);
-					lastJson = json;
-					Bukkit.getConsoleSender().sendMessage(chat);
-					MineverseChatPlayer sender = MineverseChatAPI.getMineverseChatPlayer(playerName);
+					Bukkit.getConsoleSender().sendMessage(consoleChat);
 					for(MineverseChatPlayer p : MineverseChat.onlinePlayers) {
-						//System.out.println(p.getName() + " received chat message");
-						if(p.isOnline() && p.getListening().contains(ccInfo.getChannelInfo(chatchannel).getName())) {
-							if(!p.getBungeeToggle() && MineverseChatAPI.getOnlineMineverseChatPlayer(playerName) == null) {
+						System.out.println(p.getName() + " received chat message");
+						if(p.getListening().contains(ccInfo.getChannelInfo(chatchannel).getName())) {
+							if(!p.getBungeeToggle() && MineverseChatAPI.getOnlineMineverseChatPlayer(senderName) == null) {
 								continue;
 							}
+							
+							String json = Format.formatModerationGUI(globalJSON, p.getPlayer(), senderName, chatchannel, hash);
+							WrappedChatComponent chatComponent = WrappedChatComponent.fromJson(json);
+							PacketContainer packet = Format.createPacketPlayOutChat(chatComponent);
+							
 							if(plugin.getConfig().getBoolean("ignorechat", false)) {
-								// System.out.println(p.getIgnores());
-								if(sender == null) {
-									// System.out.println("null sender");
-									p.getPlayer().sendMessage(chat);
-									continue;
-								}
-								if(!p.getIgnores().contains(sender.getUUID())) {
+								if(!p.getIgnores().contains(senderUUID)) {
 									// System.out.println("Chat sent");
-									p.getPlayer().sendMessage(chat);
+									Format.sendPacketPlayOutChat(p.getPlayer(), packet);
 								}
 								continue;
 							}
-							p.getPlayer().sendMessage(chat);
+							Format.sendPacketPlayOutChat(p.getPlayer(), packet);
 						}
 					}
 				}

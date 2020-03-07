@@ -30,12 +30,11 @@ import org.bukkit.event.player.PlayerQuitEvent;
 //This class listens for when Players login or logout and manages their wrapped MineverseChatPlayer
 //and it's data.
 public class LoginListener implements Listener {
-	private MineverseChat plugin;
+	private MineverseChat plugin = MineverseChat.getInstance();
 	private ChatChannelInfo cc;
 	private FileConfiguration playerData = PlayerData.getPlayerData();
 
-	public LoginListener(MineverseChat plugin, ChatChannelInfo cc) {
-		this.plugin = plugin;
+	public LoginListener(ChatChannelInfo cc) {
 		this.cc = cc;
 	}
 

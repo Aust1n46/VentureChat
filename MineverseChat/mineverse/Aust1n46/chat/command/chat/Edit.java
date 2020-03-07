@@ -10,7 +10,6 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
-import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.wrappers.WrappedChatComponent;
 
@@ -21,13 +20,12 @@ import mineverse.Aust1n46.chat.command.MineverseCommand;
 import mineverse.Aust1n46.chat.utilities.Format;
 
 public class Edit extends MineverseCommand {
-	private PacketContainer emptyLinePacketContainer = createPacketPlayOutChat(WrappedChatComponent.fromJson("{\"extra\":[\" \"],\"text\":\"\"}"));
-	private MineverseChat plugin;
+	private PacketContainer emptyLinePacketContainer = Format.createPacketPlayOutChat(WrappedChatComponent.fromJson("{\"extra\":[\" \"],\"text\":\"\"}"));
+	private MineverseChat plugin = MineverseChat.getInstance();
 	private WrappedChatComponent messageDeletedComponentPlayer;
 
 	public Edit(String name) {
 		super(name);
-		this.plugin = MineverseChat.getInstance();
 	}
 
 	@Override
@@ -60,7 +58,7 @@ public class Edit extends MineverseCommand {
 							WrappedChatComponent removedComponent = p.getPlayer().hasPermission("venturechat.message.bypass") ? Edit.this.getMessageDeletedChatComponentAdmin(message) : Edit.this.getMessageDeletedChatComponentPlayer();
 							message.setComponent(removedComponent);
 							message.setHash(-1);
-							playerPackets.add(Edit.this.createPacketPlayOutChat(removedComponent));
+							playerPackets.add(Format.createPacketPlayOutChat(removedComponent));
 							resend = true;
 							continue;
 						}
@@ -70,12 +68,12 @@ public class Edit extends MineverseCommand {
 								WrappedChatComponent removedComponent = p.getPlayer().hasPermission("venturechat.message.bypass") ? Edit.this.getMessageDeletedChatComponentAdmin(message) : Edit.this.getMessageDeletedChatComponentPlayer();
 								message.setComponent(removedComponent);
 								message.setHash(-1);
-								playerPackets.add(Edit.this.createPacketPlayOutChat(removedComponent));
+								playerPackets.add(Format.createPacketPlayOutChat(removedComponent));
 								resend = true;
 								continue;
 							}
 						}
-						playerPackets.add(Edit.this.createPacketPlayOutChat(message.getComponent()));
+						playerPackets.add(Format.createPacketPlayOutChat(message.getComponent()));
 					}
 					if(resend) {
 						packets.put(p.getPlayer(), playerPackets);
@@ -86,28 +84,13 @@ public class Edit extends MineverseCommand {
 						for(Player p : packets.keySet()) {
 							List<PacketContainer> pPackets = packets.get(p);
 							for(PacketContainer c : pPackets) {
-								Edit.this.sendPacketPlayOutChat(p, c);
+								Format.sendPacketPlayOutChat(p, c);
 							}
 						}
 					}
 				}.runTask(plugin);
 			}
 		}.runTaskAsynchronously(plugin);
-	}
-
-	private PacketContainer createPacketPlayOutChat(WrappedChatComponent component) {
-		PacketContainer container = new PacketContainer(PacketType.Play.Server.CHAT);
-		container.getChatComponents().write(0, component);
-		return container;
-	}
-
-	private void sendPacketPlayOutChat(Player player, PacketContainer packet) {
-		try {
-			plugin.protocolManager.sendServerPacket(player, packet);
-		}
-		catch(Exception e) {
-			e.printStackTrace();
-		}
 	}
 
 	public WrappedChatComponent getMessageDeletedChatComponentPlayer() {
@@ -118,7 +101,7 @@ public class Edit extends MineverseCommand {
 	}
 
 	public WrappedChatComponent getMessageDeletedChatComponentAdmin(ChatMessage message) {
-		String oMessage = message.getOriginalComponent().getJson().substring(1, message.getOriginalComponent().getJson().length() - 11);
+		String oMessage = message.getComponent().getJson().substring(1, message.getComponent().getJson().length() - 11);
 		if(message.getMessage().contains(Format.FormatStringAll(plugin.getConfig().getString("messageremovericon")))) {
 			oMessage = oMessage.substring(0, oMessage.length() - plugin.getConfig().getString("messageremovericon").length() - 4) + "\"}]";
 		}
