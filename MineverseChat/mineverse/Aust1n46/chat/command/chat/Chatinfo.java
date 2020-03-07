@@ -68,12 +68,6 @@ public class Chatinfo extends MineverseCommand {
 					else {
 						mcp.getPlayer().sendMessage(ChatColor.GOLD + "Private conversation: " + ChatColor.RED + "N/A");
 					}
-					if(mcp.isAFK()) {
-						mcp.getPlayer().sendMessage(ChatColor.GOLD + "AFK: " + ChatColor.GREEN + "true");
-					}
-					else {
-						mcp.getPlayer().sendMessage(ChatColor.GOLD + "AFK: " + ChatColor.RED + "false");
-					}
 					if(mcp.isSpy()) {
 						mcp.getPlayer().sendMessage(ChatColor.GOLD + "Spy: " + ChatColor.GREEN + "true");
 					}
@@ -134,12 +128,6 @@ public class Chatinfo extends MineverseCommand {
 				}
 				else {
 					sender.sendMessage(ChatColor.GOLD + "Private conversation: " + ChatColor.RED + "N/A");
-				}
-				if(p.isAFK()) {
-					sender.sendMessage(ChatColor.GOLD + "AFK: " + ChatColor.GREEN + "true");
-				}
-				else {
-					sender.sendMessage(ChatColor.GOLD + "AFK: " + ChatColor.RED + "false");
 				}
 				if(p.isSpy()) {
 					sender.sendMessage(ChatColor.GOLD + "Spy: " + ChatColor.GREEN + "true");

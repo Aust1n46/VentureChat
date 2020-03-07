@@ -113,9 +113,6 @@ public class Reply extends MineverseCommand {
 					if(mcp.getPlayer().hasPermission("venturechat.format")) {
 						msg = Format.FormatString(msg);
 					}
-					if(player.isAFK()) {
-						mcp.getPlayer().sendMessage(ChatColor.GOLD + player.getNickname() + " is currently afk and might be unable to chat at this time.");
-					}
 					if(plugin.getConfig().getString("replyformatto").equalsIgnoreCase("Default")) {
 						echo = "You reply to " + player.getNickname() + ":" + ChatColor.valueOf(cc.tellColor.toUpperCase()) + msg;
 					}

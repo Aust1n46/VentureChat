@@ -76,7 +76,6 @@ import mineverse.Aust1n46.chat.command.chat.Setchannel;
 import mineverse.Aust1n46.chat.command.chat.Setchannelall;
 import mineverse.Aust1n46.chat.command.chat.VentureChatGui;
 import mineverse.Aust1n46.chat.command.chat.Venturechat;
-import mineverse.Aust1n46.chat.command.message.Afk;
 import mineverse.Aust1n46.chat.command.message.Ignore;
 import mineverse.Aust1n46.chat.command.message.Message;
 import mineverse.Aust1n46.chat.command.message.MessageToggle;
@@ -324,7 +323,6 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 		// this.loadCommandMap();
 		// this.unregister("msg");
 
-		commands.put("afk", new Afk("afk"));
 		commands.put("broadcast", new Broadcast("broadcast"));
 		commands.put("channel", new Channel("channel"));
 		commands.put("join", new Channel("join"));

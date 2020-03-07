@@ -17,7 +17,6 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
-import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.plugin.PluginManager;
 
 import com.comphenix.protocol.events.PacketContainer;
@@ -52,26 +51,20 @@ public class ChatListener implements Listener {
 
 	}
 
-	@EventHandler(priority = EventPriority.MONITOR)
-	public void onPlayerMove(PlayerMoveEvent event) {
-		/*
-		 * MineverseChatPlayer mcp =
-		 * MineverseChatAPI.getMineverseChatPlayer(event.getPlayer());
-		 * if(mcp.isAFK()) { mcp.setAFK(false);
-		 * mcp.getPlayer().sendMessage(ChatColor.GOLD + "You are no longer AFK."
-		 * ); if(plugin.getConfig().getBoolean("broadcastafk")) {
-		 * for(MineverseChatPlayer p : MineverseChat.players) { if(p.isOnline()
-		 * && !p.getName().equals(mcp.getName())) {
-		 * p.getPlayer().sendMessage(ChatColor.GOLD + mcp.getName() +
-		 * " is no longer AFK."); } } } }
-		 */
-	}
-
-	@EventHandler(priority = EventPriority.HIGHEST)
+	// this event isn't always asynchronous even though the event's name starts with "Async"
+    // blame md_5 for that one (•_•)
+	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
 	public void onAsyncPlayerChatEvent(AsyncPlayerChatEvent event) {
-		if(event.isCancelled()) {
-			return;
-		}
+		event.setCancelled(true);
+		Bukkit.getScheduler().runTaskAsynchronously(plugin, new Runnable() {
+			@Override
+			public void run() {
+				handleTrueAsyncPlayerChatEvent(event);
+			}
+		});
+	}
+	
+	public void handleTrueAsyncPlayerChatEvent(AsyncPlayerChatEvent event) {
 		boolean bungee = false;
 		String chat = event.getMessage();
 		String format;
@@ -82,24 +75,11 @@ public class ChatListener implements Listener {
 		if(mcp.isEditing()) {
 			mcp.getPlayer().sendMessage(Format.FormatStringAll(chat));
 			mcp.setEditing(false);
-			event.setCancelled(true);
 			return;
 		}
 		
 		if(mcp.isQuickChat()) {
 			eventChannel = mcp.getQuickChannel();
-		}
-		
-		if(mcp.isAFK()) {
-			mcp.setAFK(false);
-			mcp.getPlayer().sendMessage(ChatColor.GOLD + "You are no longer AFK.");
-			if(plugin.getConfig().getBoolean("broadcastafk")) {
-				for(MineverseChatPlayer p : MineverseChat.onlinePlayers) {
-					if(!p.getName().equals(mcp.getName())) {
-						p.getPlayer().sendMessage(ChatColor.GOLD + mcp.getName() + " is no longer AFK.");
-					}
-				}
-			}
 		}
 		
 		if(mcp.hasConversation() && !mcp.isQuickChat()) {
@@ -118,12 +98,10 @@ public class ChatListener implements Listener {
 			else {
 				if(tp.getIgnores().contains(mcp.getUUID())) {
 					mcp.getPlayer().sendMessage(ChatColor.GOLD + tp.getName() + " is currently ignoring your messages.");
-					event.setCancelled(true);
 					return;
 				}
 				if(!tp.getMessageToggle()) {
 					mcp.getPlayer().sendMessage(ChatColor.GOLD + tp.getName() + " is currently blocking messages.");
-					event.setCancelled(true);
 					return;
 				}
 				String filtered = chat;
@@ -185,7 +163,6 @@ public class ChatListener implements Listener {
 					DatabaseSender.writeToMySQL("ChatTime", "UUID", "Name", "Server", "Channel", "Text", "Type", date, mcp.getUUID().toString(), mcp.getName(), plugin.getServer().getName(), "Messaging_Component", chat.replace("'", "''"), "Chat");
 				}
 			}
-			event.setCancelled(true);
 			return;
 		}
 
@@ -228,11 +205,9 @@ public class ChatListener implements Listener {
 						e.printStackTrace();
 					}
 				}
-				event.setCancelled(true);
 				return;
 			}
 			mcp.getPlayer().sendMessage(ChatColor.RED + "You are not in a party.");
-			event.setCancelled(true);
 			return;
 		}
 		
@@ -261,7 +236,6 @@ public class ChatListener implements Listener {
 			}
 			mcp.getPlayer().sendMessage(ChatColor.RED + "You are muted in this channel: " + ChatColor.valueOf(eventChannel.getColor().toUpperCase()) + eventChannel.getName() + timedMute);
 			mcp.setQuickChat(false);
-			event.setCancelled(true);
 			return;
 		}
 		Double chDistance = (double) 0;
@@ -272,7 +246,6 @@ public class ChatListener implements Listener {
 			mcp.setQuickChat(false);
 			mcp.removeListening(eventChannel.getName());
 			mcp.setCurrentChannel(cc.getDefaultChannel());
-			event.setCancelled(true);
 			return;
 		}
 		curColor = eventChannel.getChatColor().toUpperCase();
@@ -292,7 +265,6 @@ public class ChatListener implements Listener {
 					if(remaining == 1) keyword = "second";
 					mcp.getPlayer().sendMessage(ChatColor.RED + "" + remaining + " " + keyword + " of cooldown remaining.");
 					mcp.setQuickChat(false);
-					event.setCancelled(true);
 					bungee = false;
 					return;
 				}
@@ -326,7 +298,6 @@ public class ChatListener implements Listener {
 					mcp.getSpam().get(eventChannel).set(0, 0);
 					mcp.getPlayer().sendMessage(ChatColor.RED + "You have been muted for spamming in: " + ChatColor.valueOf(eventChannel.getColor().toUpperCase()) + eventChannel.getName() + timedmute);
 					mcp.setQuickChat(false);
-					event.setCancelled(true);
 					return;
 				}
 				else {
@@ -491,11 +462,10 @@ public class ChatListener implements Listener {
 		
 		VentureChatEvent ventureChatEvent = new VentureChatEvent(mcp, eventChannel, recipients, format, chat, globalJSON, hash, bungee);
 		Bukkit.getServer().getPluginManager().callEvent(ventureChatEvent);
-		event.setCancelled(true);
+		handleVentureChatEvent(ventureChatEvent);
 	}
 	
-	@EventHandler(priority = EventPriority.NORMAL)
-	public void onVentureChatEvent(VentureChatEvent event) {
+	public void handleVentureChatEvent(VentureChatEvent event) {
 		MineverseChatPlayer mcp = event.getMineverseChatPlayer();
 		ChatChannel channel = event.getChannel();
 		Set<Player> recipients = event.getRecipients();

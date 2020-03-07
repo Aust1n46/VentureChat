@@ -37,7 +37,6 @@ public class MineverseChatPlayer {
 	private UUID conversation;
 	private boolean spy;
 	private boolean commandSpy;
-	private boolean afk;
 	private boolean quickChat;
 	private ChatChannel quickChannel;
 	private UUID replyPlayer;
@@ -76,7 +75,6 @@ public class MineverseChatPlayer {
 		this.spy = spy;
 		this.rangedSpy = rangedSpy;
 		this.commandSpy = commandSpy;
-		this.afk = false;
 		this.quickChat = false;
 		this.quickChannel = null;
 		this.replyPlayer = null;
@@ -111,7 +109,6 @@ public class MineverseChatPlayer {
 		this.spy = spy;
 		this.rangedSpy = rangedSpy;
 		this.commandSpy = commandSpy;
-		this.afk = false;
 		this.quickChat = false;
 		this.quickChannel = null;
 		this.replyPlayer = null;
@@ -385,14 +382,6 @@ public class MineverseChatPlayer {
 
 	public void setCommandSpy(boolean commandSpy) {
 		this.commandSpy = commandSpy;
-	}
-
-	public boolean isAFK() {
-		return this.afk;
-	}
-
-	public void setAFK(boolean afk) {
-		this.afk = afk;
 	}
 
 	public boolean isQuickChat() {

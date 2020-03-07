@@ -67,20 +67,6 @@ public class CommandListener implements CommandExecutor, Listener {
 			}
 		}
 
-		if(!event.getMessage().startsWith("/afk")) {
-			if(mcp.isAFK()) {
-				mcp.setAFK(false);
-				mcp.getPlayer().sendMessage(ChatColor.GOLD + "You are no longer AFK.");
-				if(plugin.getConfig().getBoolean("broadcastafk")) {
-					for(MineverseChatPlayer p : MineverseChat.players) {
-						if(p.isOnline() && mcp.getName() != p.getName()) {
-							p.getPlayer().sendMessage(ChatColor.GOLD + mcp.getName() + " is no longer AFK.");
-						}
-					}
-				}
-			}
-		}
-
 		String[] blocked = event.getMessage().split(" ");
 		if(mcp.getBlockedCommands().contains(blocked[0])) {
 			mcp.getPlayer().sendMessage(ChatColor.RED + "You are blocked from entering this command: " + event.getMessage());

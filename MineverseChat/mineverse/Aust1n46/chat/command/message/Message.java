@@ -136,9 +136,6 @@ public class Message extends MineverseCommand {
 				if(mcp.getPlayer().hasPermission("venturechat.format")) {
 					msg = Format.FormatString(msg);
 				}
-				if(player.isAFK()) {
-					mcp.getPlayer().sendMessage(ChatColor.GOLD + player.getName() + " is currently afk and might be unable to chat at this time.");
-				}
 				if(plugin.getConfig().getString("tellformatto").equalsIgnoreCase("Default")) {
 					echo = "You message " + player.getNickname() + ":" + ChatColor.valueOf(cc.tellColor.toUpperCase()) + msg;
 				}
