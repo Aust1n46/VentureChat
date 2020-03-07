@@ -39,6 +39,9 @@ public class Ignore extends MineverseCommand {
 				if(i != null) {
 					ignoreList += ChatColor.RED + i.getName() + ChatColor.WHITE + ", ";
 				}
+				else {
+					ignoreList += ChatColor.RED + ignore.toString() + ChatColor.WHITE + ", ";
+				}
 			}
 			mcp.getPlayer().sendMessage(ChatColor.GOLD + "You are currently ignoring these players:");
 			if(ignoreList.length() > 0) {
