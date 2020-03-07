@@ -36,12 +36,11 @@ public class Ignore extends MineverseCommand {
 			String ignoreList = "";
 			for(UUID ignore : mcp.getIgnores()) {
 				MineverseChatPlayer i = MineverseChatAPI.getMineverseChatPlayer(ignore);
+				String iName = ignore.toString();
 				if(i != null) {
-					ignoreList += ChatColor.RED + i.getName() + ChatColor.WHITE + ", ";
+					iName = i.getName();
 				}
-				else {
-					ignoreList += ChatColor.RED + ignore.toString() + ChatColor.WHITE + ", ";
-				}
+				ignoreList += ChatColor.RED + iName + ChatColor.WHITE + ", ";
 			}
 			mcp.getPlayer().sendMessage(ChatColor.GOLD + "You are currently ignoring these players:");
 			if(ignoreList.length() > 0) {
@@ -50,6 +49,10 @@ public class Ignore extends MineverseCommand {
 			return;
 		}
 		MineverseChatPlayer player = MineverseChatAPI.getMineverseChatPlayer(args[0]);
+		if(mcp.getName().equalsIgnoreCase(args[0])) {
+			mcp.getPlayer().sendMessage(ChatColor.RED + "You can not ignore yourself!");
+			return;
+		}
 		if(plugin.getConfig().getBoolean("bungeecordmessaging", true)) {
 			ByteArrayOutputStream byteOutStream = new ByteArrayOutputStream();
 			DataOutputStream out = new DataOutputStream(byteOutStream);
@@ -66,7 +69,7 @@ public class Ignore extends MineverseCommand {
 			}
 			return;
 		}
-		if(player == null) {
+		if(player == null || !player.isOnline()) {
 			mcp.getPlayer().sendMessage(ChatColor.RED + "Player: " + ChatColor.GOLD + args[0] + ChatColor.RED + " is not online.");
 			return;
 		}
@@ -75,15 +78,7 @@ public class Ignore extends MineverseCommand {
 			mcp.removeIgnore(player.getUUID());
 			plugin.synchronize(mcp, true);
 			return;
-		}
-		if(mcp.getName().equalsIgnoreCase(player.getName())) {
-			mcp.getPlayer().sendMessage(ChatColor.RED + "You can not ignore yourself!");
-			return;
 		}		
-		if(!player.isOnline()) {
-			mcp.getPlayer().sendMessage(ChatColor.RED + "Player: " + ChatColor.GOLD + player.getName() + ChatColor.RED + " is not online.");
-			return;
-		}
 		if(player.getPlayer().hasPermission("venturechat.ignore.bypass")) {
 			mcp.getPlayer().sendMessage(ChatColor.RED + "You cannot ignore player: " + ChatColor.GOLD + player.getName() + ChatColor.RED + ".");
 			return;

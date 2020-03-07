@@ -158,7 +158,11 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 	private boolean firstRun = true;
 	
 	// Plugin Messaging Channel
-	public static String PLUGIN_MESSAGING_CHANNEL = "venturechat:data";
+	public static final String PLUGIN_MESSAGING_CHANNEL = "venturechat:data";
+	
+	// Event constants
+	public static final boolean ASYNC = true;
+	public static final boolean SYNC = false;
 
 	// Vault --------------------------------
 	public static Permission permission = null;
@@ -949,7 +953,6 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 						player.sendPluginMessage(this, MineverseChat.PLUGIN_MESSAGING_CHANNEL, stream.toByteArray());
 						return;
 					}
-					p.setReplyPlayer(sender);
 					out.writeUTF("Ignore");
 					out.writeUTF("Echo");
 					out.writeUTF(server);

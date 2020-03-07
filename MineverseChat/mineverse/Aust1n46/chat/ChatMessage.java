@@ -8,16 +8,7 @@ public class ChatMessage {
 	private WrappedChatComponent component;
 	private String sender;
 	private String message;
-	private String format;
-	private String chat;
-	private String channel;
 	private int hash;
-
-	public ChatMessage(String sender, String message, int hash) {
-		this.sender = sender;
-		this.message = message;
-		this.hash = hash;
-	}
 
 	public ChatMessage(WrappedChatComponent component, String sender, String message, int hash) {
 		this.component = component;
@@ -48,17 +39,5 @@ public class ChatMessage {
 
 	public void setHash(int hash) {
 		this.hash = hash;
-	}
-	
-	public String getFormat() {
-		return this.format;
-	}
-	
-	public String getChat() {
-		return this.chat;
-	}
-	
-	public String getChannel() {
-		return this.channel;
 	}
 }

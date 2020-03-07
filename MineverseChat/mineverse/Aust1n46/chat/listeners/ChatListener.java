@@ -2,47 +2,35 @@ package mineverse.Aust1n46.chat.listeners;
 
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Set;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
-import org.bukkit.Material;
 import org.bukkit.Sound;
-import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
-import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
-import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.PluginManager;
-import org.bukkit.plugin.messaging.PluginMessageRecipient;
 
-import com.comphenix.protocol.PacketType;
-import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.wrappers.WrappedChatComponent;
 import com.massivecraft.factions.entity.MPlayer;
 import com.palmergames.bukkit.towny.object.Resident;
 import com.palmergames.bukkit.towny.object.TownyUniverse;
 
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.IllegalFormatException;
-
-import mineverse.Aust1n46.chat.ChatMessage;
 import mineverse.Aust1n46.chat.MineverseChat;
 import mineverse.Aust1n46.chat.api.MineverseChatAPI;
 import mineverse.Aust1n46.chat.api.MineverseChatPlayer;
 import mineverse.Aust1n46.chat.api.events.ChannelJoinEvent;
-import mineverse.Aust1n46.chat.api.events.ChatMessageEvent;
+import mineverse.Aust1n46.chat.api.events.VentureChatEvent;
 import mineverse.Aust1n46.chat.channel.ChatChannel;
 import mineverse.Aust1n46.chat.channel.ChatChannelInfo;
 import mineverse.Aust1n46.chat.database.DatabaseSender;
@@ -51,13 +39,11 @@ import mineverse.Aust1n46.chat.utilities.FormatTags;
 import mineverse.Aust1n46.chat.versions.VersionHandler;
 
 //This class listens to chat through the chat event and handles the bulk of the chat channels and formatting.
-@SuppressWarnings("unused")
 public class ChatListener implements Listener {
-	private MineverseChat plugin;
+	private MineverseChat plugin = MineverseChat.getInstance();
 	private ChatChannelInfo cc;
 
 	public ChatListener(ChatChannelInfo cc) {
-		this.plugin = MineverseChat.getInstance();
 		this.cc = cc;
 	}
 
@@ -83,23 +69,27 @@ public class ChatListener implements Listener {
 
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onAsyncPlayerChatEvent(AsyncPlayerChatEvent event) {
-		boolean bungee = false;
-		String chat;
-		String format;
 		if(event.isCancelled()) {
 			return;
 		}
+		boolean bungee = false;
+		String chat = event.getMessage();
+		String format;
+		Set<Player> recipients = event.getRecipients();
 		MineverseChatPlayer mcp = MineverseChatAPI.getOnlineMineverseChatPlayer(event.getPlayer());
 		ChatChannel eventChannel = mcp.getCurrentChannel();
+		
 		if(mcp.isEditing()) {
-			mcp.getPlayer().sendMessage(Format.FormatStringAll(event.getMessage()));
+			mcp.getPlayer().sendMessage(Format.FormatStringAll(chat));
 			mcp.setEditing(false);
 			event.setCancelled(true);
 			return;
 		}
+		
 		if(mcp.isQuickChat()) {
 			eventChannel = mcp.getQuickChannel();
 		}
+		
 		if(mcp.isAFK()) {
 			mcp.setAFK(false);
 			mcp.getPlayer().sendMessage(ChatColor.GOLD + "You are no longer AFK.");
@@ -111,6 +101,7 @@ public class ChatListener implements Listener {
 				}
 			}
 		}
+		
 		if(mcp.hasConversation() && !mcp.isQuickChat()) {
 			MineverseChatPlayer tp = MineverseChatAPI.getMineverseChatPlayer(mcp.getConversation());
 			if(!tp.isOnline()) {
@@ -135,18 +126,18 @@ public class ChatListener implements Listener {
 					event.setCancelled(true);
 					return;
 				}
-				String filtered = event.getMessage();
+				String filtered = chat;
 				String echo = "";
 				String send = "";
 				String spy = "";
 				if(mcp.hasFilter()) {
-					filtered = cc.FilterChat(event.getMessage());
+					filtered = cc.FilterChat(filtered);
 				}
 				if(mcp.getPlayer().hasPermission("venturechat.color")) {
-					//filtered = Format.FormatStringColor(filtered);
+					filtered = Format.FormatStringColor(filtered);
 				}
 				if(mcp.getPlayer().hasPermission("venturechat.format")) {
-					//filtered = Format.FormatString(filtered);
+					filtered = Format.FormatString(filtered);
 				}
 				filtered = " " + filtered;
 				if(plugin.getConfig().getString("tellformatto").equalsIgnoreCase("Default")) {
@@ -191,7 +182,7 @@ public class ChatListener implements Listener {
 					Calendar currentDate = Calendar.getInstance();
 					SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 					String date = formatter.format(currentDate.getTime());
-					DatabaseSender.writeToMySQL("ChatTime", "UUID", "Name", "Server", "Channel", "Text", "Type", date, mcp.getUUID().toString(), mcp.getName(), plugin.getServer().getName(), "Messaging_Component", event.getMessage().replace("'", "''"), "Chat");
+					DatabaseSender.writeToMySQL("ChatTime", "UUID", "Name", "Server", "Channel", "Text", "Type", date, mcp.getUUID().toString(), mcp.getName(), plugin.getServer().getName(), "Messaging_Component", chat.replace("'", "''"), "Chat");
 				}
 			}
 			event.setCancelled(true);
@@ -203,9 +194,9 @@ public class ChatListener implements Listener {
 				String partyformat = "";
 				for(MineverseChatPlayer p : MineverseChat.onlinePlayers) {
 					if((p.hasParty() && p.getParty().toString().equals(mcp.getParty().toString()) || p.isSpy())) {
-						String filtered = event.getMessage();
+						String filtered = chat;
 						if(mcp.hasFilter()) {
-							filtered = cc.FilterChat(event.getMessage());
+							filtered = cc.FilterChat(filtered);
 						}
 						if(mcp.getPlayer().hasPermission("venturechat.color")) {
 							filtered = Format.FormatStringColor(filtered);
@@ -231,7 +222,7 @@ public class ChatListener implements Listener {
 					String date = formatter.format(currentDate.getTime());
 					try {
 						statement = plugin.c.createStatement();
-						statement.executeUpdate("INSERT INTO `VentureChat` (`ChatTime`, `UUID`, `Name`, `Server`, `Channel`, `Text`, `Type`) VALUES ('" + date + "', '" + mcp.getUUID().toString() + "', '" + mcp.getName() + "', '" + plugin.getServer().getName() + "', 'Party_Component', '" + event.getMessage().replace("'", "''") + "', 'Chat');");
+						statement.executeUpdate("INSERT INTO `VentureChat` (`ChatTime`, `UUID`, `Name`, `Server`, `Channel`, `Text`, `Type`) VALUES ('" + date + "', '" + mcp.getUUID().toString() + "', '" + mcp.getName() + "', '" + plugin.getServer().getName() + "', 'Party_Component', '" + chat.replace("'", "''") + "', 'Chat');");
 					}
 					catch(SQLException e) {
 						e.printStackTrace();
@@ -245,18 +236,17 @@ public class ChatListener implements Listener {
 			return;
 		}
 
-		if(event.getMessage().startsWith("@")) {
+		if(chat.startsWith("@")) {
 			for(MineverseChatPlayer p : MineverseChat.onlinePlayers) {
-				if(p.isOnline() && event.getMessage().startsWith("@" + p.getPlayer().getDisplayName().replace("§r", ""))) {
+				if(p.isOnline() && chat.startsWith("@" + p.getPlayer().getDisplayName().replace("§r", "") + " ")) {
 					int add = 0;
 					if(p.getPlayer().getDisplayName().contains("§r")) add = 2;
-					String messageFormat = event.getMessage().substring(p.getPlayer().getDisplayName().length() + 1 - add);
-					if(event.getMessage().length() <= p.getPlayer().getDisplayName().length() + 1 - add) {
+					String messageFormat = chat.substring(p.getPlayer().getDisplayName().length() + 1 - add);
+					if(chat.length() <= p.getPlayer().getDisplayName().length() + 1 - add) {
 						mcp.getPlayer().sendMessage(ChatColor.RED + "You must include a message.");
 						event.setCancelled(true);
 						return;
 					}
-					PluginManager pluginManager = plugin.getServer().getPluginManager();
 					if(!mcp.getPlayer().canSee(p.getPlayer())) {
 						break;
 					}
@@ -325,9 +315,9 @@ public class ChatListener implements Listener {
 					event.setCancelled(true);
 					return;
 				}
-				if(event.getMessage().startsWith("@" + p.getName())) {
-					String messageFormat = event.getMessage().substring(p.getName().length() + 1);
-					if(event.getMessage().length() <= p.getName().length() + 1) {
+				if(chat.startsWith("@" + p.getName() + " ")) {
+					String messageFormat = chat.substring(p.getName().length() + 1);
+					if(chat.length() <= p.getName().length() + 1) {
 						mcp.getPlayer().sendMessage(ChatColor.RED + "You must include a message.");
 						event.setCancelled(true);
 						return;
@@ -401,7 +391,7 @@ public class ChatListener implements Listener {
 				}
 			}
 		}
-		chat = event.getMessage();
+		
 		Location locreceip;
 		Location locsender = mcp.getPlayer().getLocation();
 		Location diff;
@@ -433,7 +423,6 @@ public class ChatListener implements Listener {
 		Double chDistance = (double) 0;
 		int chCooldown = 0;
 		String curColor = "";
-		boolean irc = false;
 		if(eventChannel.hasPermission() && !mcp.getPlayer().hasPermission(eventChannel.getPermission())) {
 			mcp.getPlayer().sendMessage(ChatColor.RED + "You do not have permission for this channel.");
 			mcp.setQuickChat(false);
@@ -444,13 +433,6 @@ public class ChatListener implements Listener {
 		}
 		curColor = eventChannel.getChatColor().toUpperCase();
 		bungee = eventChannel.getBungee();
-		
-		Calendar currentDate = Calendar.getInstance();
-		SimpleDateFormat formatter = new SimpleDateFormat("dd:HH:mm:ss");
-		String date = formatter.format(currentDate.getTime());
-		//String[] datearray = date.split(":");
-		//int time = (Integer.parseInt(datearray[0]) * 86400) + (Integer.parseInt(datearray[1]) * 3600) + (Integer.parseInt(datearray[2]) * 60) + (Integer.parseInt(datearray[3]));
-		//int datetime = (Integer.parseInt(datearray[0]) * 1440) + (Integer.parseInt(datearray[1]) * 60) + (Integer.parseInt(datearray[2]));
 		
 		int time = (int) (System.currentTimeMillis() / 1000);
 		
@@ -525,9 +507,6 @@ public class ChatListener implements Listener {
 		if(eventChannel.hasDistance()) {
 			chDistance = eventChannel.getDistance();
 		}
-		if(eventChannel.isIRC()) {
-			irc = true;
-		}
 		if(plugin.getConfig().getConfigurationSection("channels." + eventChannel.getName()).getString("format").equalsIgnoreCase("Default")) {
 			if(curColor.equalsIgnoreCase("None")) {
 				format = FormatTags.ChatFormat(ChatColor.valueOf(eventChannel.getColor().toUpperCase()) + "[" + eventChannel.getName() + "] {prefix}{name}" + ChatColor.valueOf(eventChannel.getColor().toUpperCase()) + ":", mcp.getPlayer(), plugin, cc, eventChannel, plugin.getConfig().getBoolean("jsonFormat"));
@@ -549,19 +528,15 @@ public class ChatListener implements Listener {
 				chat = cc.FilterChat(chat);
 			}
 		}
-		Player[] pl = event.getRecipients().toArray(new Player[0]);
 		PluginManager pluginManager = plugin.getServer().getPluginManager();
-		int recipientSize = event.getRecipients().size();
 		for(MineverseChatPlayer p : MineverseChat.onlinePlayers) {
 			if(p.getPlayer() != mcp.getPlayer()) {
 				if(!p.getListening().contains(eventChannel.getName())) {
-					event.getRecipients().remove(p.getPlayer());
-					recipientSize--;
+					recipients.remove(p.getPlayer());
 					continue;
 				}
 				if(plugin.getConfig().getBoolean("ignorechat", false) && p.getIgnores().contains(mcp.getUUID())) {
-					event.getRecipients().remove(p.getPlayer());
-					recipientSize--;
+					recipients.remove(p.getPlayer());
 					continue;
 				}
 				if(plugin.getConfig().getBoolean("enable_towny_channel") && pluginManager.isPluginEnabled("Towny")) {
@@ -570,35 +545,29 @@ public class ChatListener implements Listener {
 						Resident pp = TownyUniverse.getDataSource().getResident(mcp.getName());
 						if(eventChannel.getName().equalsIgnoreCase("Town")) {
 							if(!pp.hasTown()) {
-								event.getRecipients().remove(p.getPlayer());
-								recipientSize--;
+								recipients.remove(p.getPlayer());
 								continue;
 							}
 							else if(!r.hasTown()) {
-								event.getRecipients().remove(p.getPlayer());
-								recipientSize--;
+								recipients.remove(p.getPlayer());
 								continue;
 							}
 							else if(!(r.getTown().getName().equals(pp.getTown().getName()))) {
-								event.getRecipients().remove(p.getPlayer());
-								recipientSize--;
+								recipients.remove(p.getPlayer());
 								continue;
 							}
 						}
 						if(eventChannel.getName().equalsIgnoreCase("Nation")) {
 							if(!pp.hasNation()) {
-								event.getRecipients().remove(p.getPlayer());
-								recipientSize--;
+								recipients.remove(p.getPlayer());
 								continue;
 							}
 							else if(!r.hasNation()) {
-								event.getRecipients().remove(p.getPlayer());
-								recipientSize--;
+								recipients.remove(p.getPlayer());
 								continue;
 							}
 							else if(!(r.getTown().getNation().getName().equals(pp.getTown().getNation().getName()))) {
-								event.getRecipients().remove(p.getPlayer());
-								recipientSize--;
+								recipients.remove(p.getPlayer());
 								continue;
 							}
 						}
@@ -614,13 +583,13 @@ public class ChatListener implements Listener {
 						MPlayer mplayerp = MPlayer.get(p.getPlayer());
 						if(eventChannel.getName().equalsIgnoreCase("Faction")) {
 							if(!mplayer.hasFaction()) {
-								event.getRecipients().remove(p.getPlayer());
+								recipients.remove(p.getPlayer());
 							}
 							else if(!mplayerp.hasFaction()) {
-								event.getRecipients().remove(p.getPlayer());
+								recipients.remove(p.getPlayer());
 							}
 							else if(!(mplayer.getFactionName().equals(mplayerp.getFactionName()))) {
-								event.getRecipients().remove(p.getPlayer());
+								recipients.remove(p.getPlayer());
 							}
 						}
 					}
@@ -634,31 +603,23 @@ public class ChatListener implements Listener {
 					if(locreceip.getWorld() == mcp.getPlayer().getWorld()) {
 						diff = locreceip.subtract(locsender);
 						if(Math.abs(diff.getX()) > chDistance || Math.abs(diff.getZ()) > chDistance) {
-							event.getRecipients().remove(p.getPlayer());
-							recipientSize--;
+							recipients.remove(p.getPlayer());
 							continue;
 						}
 						if(!mcp.getPlayer().canSee(p.getPlayer())) {
-							recipientSize--;
+							recipients.remove(p.getPlayer());
 							continue;
 						}
 					}
 					else {
-						event.getRecipients().remove(p.getPlayer());
-						recipientSize--;
+						recipients.remove(p.getPlayer());
 						continue;
 					}
 				}
 				if(!mcp.getPlayer().canSee(p.getPlayer())) {
-					event.getRecipients().remove(p.getPlayer());
-					recipientSize--;
+					recipients.remove(p.getPlayer());
 					continue;
 				}
-			}
-		}
-		if(recipientSize == 1 && !bungee) {
-			if(!plugin.getConfig().getString("emptychannelalert", "&6No one is listening to you.").equals("")) {
-				mcp.getPlayer().sendMessage(Format.FormatStringAll(plugin.getConfig().getString("emptychannelalert", "&6No one is listening to you.")));	
 			}
 		}
 		
@@ -682,20 +643,32 @@ public class ChatListener implements Listener {
 		String globalJSON = Format.convertToJson(mcp, format, chat);
 		String consoleChat = format + chat;
 		String message = consoleChat.replaceAll("(§([a-z0-9]))", "");
+		int hash = message.hashCode();
 		
-		/* Temp disabled for 1.14 
-		 * ChatMessageEvent chatMessageEvent = new ChatMessageEvent(mcp, eventChannel, bungee, MineverseChat.lastChatMessage, MineverseChat.lastJson);
-		Bukkit.getServer().getPluginManager().callEvent(chatMessageEvent);
-		*/
+		VentureChatEvent ventureChatEvent = new VentureChatEvent(mcp, eventChannel, recipients, format, chat, globalJSON, hash, bungee);
+		Bukkit.getServer().getPluginManager().callEvent(ventureChatEvent);
+		event.setCancelled(true);
+	}
+	
+	@EventHandler(priority = EventPriority.NORMAL)
+	public void onVentureChatEvent(VentureChatEvent event) {
+		MineverseChatPlayer mcp = event.getMineverseChatPlayer();
+		ChatChannel channel = event.getChannel();
+		Set<Player> recipients = event.getRecipients();
+		String chat = event.getChat();
+		String consoleChat = event.getConsoleChat();
+		String globalJSON = event.getGlobalJSON();
+		int hash = event.getHash();
+		boolean bungee = event.isBungee();
 		
 		if(plugin.mysql) {
 			Statement statement;
-			currentDate = Calendar.getInstance();
-			formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-			date = formatter.format(currentDate.getTime());
+			Calendar currentDate = Calendar.getInstance();
+			SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+			String date = formatter.format(currentDate.getTime());
 			try {
 				statement = plugin.c.createStatement();
-				statement.executeUpdate("INSERT INTO `VentureChat` (`ChatTime`, `UUID`, `Name`, `Server`, `Channel`, `Text`, `Type`) VALUES ('" + date + "', '" + mcp.getUUID().toString() + "', '" + mcp.getName() + "', '" + plugin.getServer().getName() + "', '" + eventChannel.getName() + "', '" + event.getMessage().replace("'", "''") + "', 'Chat');");
+				statement.executeUpdate("INSERT INTO `VentureChat` (`ChatTime`, `UUID`, `Name`, `Server`, `Channel`, `Text`, `Type`) VALUES ('" + date + "', '" + mcp.getUUID().toString() + "', '" + mcp.getName() + "', '" + plugin.getServer().getName() + "', '" + channel.getName() + "', '" + chat.replace("'", "''") + "', 'Chat');");
 			}
 			catch(SQLException e) {
 				e.printStackTrace();
@@ -703,14 +676,18 @@ public class ChatListener implements Listener {
 		}
 		
 		if(!bungee) {
-			for(Player p : event.getRecipients()) {
-				String json = Format.formatModerationGUI(globalJSON, p, mcp.getName(), eventChannel.getName(), message.hashCode());
+			if(recipients.size() == 1) {
+				if(!plugin.getConfig().getString("emptychannelalert", "&6No one is listening to you.").equals("")) {
+					mcp.getPlayer().sendMessage(Format.FormatStringAll(plugin.getConfig().getString("emptychannelalert", "&6No one is listening to you.")));	
+				}
+			}
+			for(Player p : recipients) {
+				String json = Format.formatModerationGUI(globalJSON, p, mcp.getName(), channel.getName(), hash);
 				WrappedChatComponent chatComponent = WrappedChatComponent.fromJson(json);
 				PacketContainer packet = Format.createPacketPlayOutChat(chatComponent);
 				Format.sendPacketPlayOutChat(p, packet);
 			}
 			Bukkit.getConsoleSender().sendMessage(consoleChat);
-			event.setCancelled(true);
 			return;
 		}
 		else {
@@ -718,11 +695,11 @@ public class ChatListener implements Listener {
 			DataOutputStream out = new DataOutputStream(byteOutStream);
 			try {
 				out.writeUTF("Chat");
-				out.writeUTF(eventChannel.getName());
+				out.writeUTF(channel.getName());
 				out.writeUTF(mcp.getName());
 				out.writeUTF(mcp.getUUID().toString());
 				out.writeBoolean(mcp.getBungeeToggle());
-				out.writeInt(message.hashCode());
+				out.writeInt(hash);
 				out.writeUTF(consoleChat);
 				if(plugin.getConfig().getString("loglevel", "info").equals("debug")) {
 					System.out.println(out.size() + " size bytes without json");
@@ -738,7 +715,6 @@ public class ChatListener implements Listener {
 			catch(Exception e) {
 				e.printStackTrace();
 			}
-			event.setCancelled(true);
 			return;
 		}
 	}
