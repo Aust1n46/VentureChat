@@ -47,20 +47,6 @@ public class Ignore extends MineverseCommand {
 			return;
 		}
 		MineverseChatPlayer player = MineverseChatAPI.getMineverseChatPlayer(args[0]);
-		if(player == null) {
-			mcp.getPlayer().sendMessage(ChatColor.RED + "Player: " + ChatColor.GOLD + args[0] + ChatColor.RED + " is not online.");
-			return;
-		}
-		if(mcp.getIgnores().contains(player.getUUID())) {
-			mcp.getPlayer().sendMessage(ChatColor.GOLD + "You are no longer ignoring player: " + ChatColor.RED + player.getName());
-			mcp.removeIgnore(player.getUUID());
-			plugin.synchronize(mcp, true);
-			return;
-		}
-		if(mcp.getName().equalsIgnoreCase(player.getName())) {
-			mcp.getPlayer().sendMessage(ChatColor.RED + "You can not ignore yourself!");
-			return;
-		}
 		if(plugin.getConfig().getBoolean("bungeecordmessaging", true)) {
 			ByteArrayOutputStream byteOutStream = new ByteArrayOutputStream();
 			DataOutputStream out = new DataOutputStream(byteOutStream);
@@ -75,6 +61,20 @@ public class Ignore extends MineverseCommand {
 			catch(Exception e) {
 				e.printStackTrace();
 			}
+			return;
+		}
+		if(player == null) {
+			mcp.getPlayer().sendMessage(ChatColor.RED + "Player: " + ChatColor.GOLD + args[0] + ChatColor.RED + " is not online.");
+			return;
+		}
+		if(mcp.getIgnores().contains(player.getUUID())) {
+			mcp.getPlayer().sendMessage(ChatColor.GOLD + "You are no longer ignoring player: " + ChatColor.RED + player.getName());
+			mcp.removeIgnore(player.getUUID());
+			plugin.synchronize(mcp, true);
+			return;
+		}
+		if(mcp.getName().equalsIgnoreCase(player.getName())) {
+			mcp.getPlayer().sendMessage(ChatColor.RED + "You can not ignore yourself!");
 			return;
 		}		
 		if(!player.isOnline()) {

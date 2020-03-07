@@ -784,7 +784,6 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 				if(ccInfo.isChannel(chatchannel) && ccInfo.getChannelInfo(chatchannel).getBungee()) {
 					Bukkit.getConsoleSender().sendMessage(consoleChat);
 					for(MineverseChatPlayer p : MineverseChat.onlinePlayers) {
-						System.out.println(p.getName() + " received chat message");
 						if(p.getListening().contains(ccInfo.getChannelInfo(chatchannel).getName())) {
 							if(!p.getBungeeToggle() && MineverseChatAPI.getOnlineMineverseChatPlayer(senderName) == null) {
 								continue;
@@ -974,6 +973,14 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 					if(r != null) {
 						rName = Format.FormatStringAll(r.getNickname());
 					}
+					
+					if(p.getIgnores().contains(receiver)) {
+						p.getPlayer().sendMessage(ChatColor.GOLD + "You are no longer ignoring player: " + ChatColor.RED + rName);
+						p.removeIgnore(receiver);
+						plugin.synchronize(p, true);
+						return;
+					}
+					
 					p.addIgnore(receiver);
 					p.getPlayer().sendMessage(ChatColor.GOLD + "You are now ignoring player: " + ChatColor.RED + rName);
 					this.synchronize(p, true);
