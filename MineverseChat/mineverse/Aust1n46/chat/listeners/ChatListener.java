@@ -460,8 +460,11 @@ public class ChatListener implements Listener {
 		String message = consoleChat.replaceAll("(§([a-z0-9]))", "");
 		int hash = message.hashCode();
 		
+		//Create VentureChatEvent
 		VentureChatEvent ventureChatEvent = new VentureChatEvent(mcp, eventChannel, recipients, format, chat, globalJSON, hash, bungee);
+		//Fire event and wait for other plugin listeners to act on it
 		Bukkit.getServer().getPluginManager().callEvent(ventureChatEvent);
+		//Call method to send the processed chat
 		handleVentureChatEvent(ventureChatEvent);
 	}
 	
