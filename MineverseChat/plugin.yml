@@ -111,11 +111,6 @@ commands:
         aliases: [cr,vchatreload]
         description: Reload the config file
         permission-message: You don't have <permission>
-    afk:
-        usage: /afk
-        aliases: [vafk]
-        description: Set yourself as afk
-        permission-message: You don't have <permission>
     reply:
         usage: /reply [msg]
         aliases: [r,vreply]
@@ -190,11 +185,6 @@ commands:
         usage: /notifications
         aliases: [notify,vnotify]
         description: Toggles your notifications
-        permission-message: You don't have <permission>
-    mail:
-        usage: /mail help
-        aliases: [vmail]
-        description: Mail commands
         permission-message: You don't have <permission>
     removemessage:
         usage: /removemessage [hashcode]
