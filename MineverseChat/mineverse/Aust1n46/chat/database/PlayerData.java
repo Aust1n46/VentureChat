@@ -94,11 +94,6 @@ public class PlayerData {
 						blockedCommands = blockedCommands.substring(0, blockedCommands.length() - 1);
 					}
 					cs.set("blockedcommands", blockedCommands);
-					String mail = "";
-					for(String s : p.getMail()) {
-						mail += s + "\n";
-					}
-					cs.set("mail", mail);
 					cs.set("host", p.isHost());
 					cs.set("party", p.hasParty() ? p.getParty().toString() : "");
 					cs.set("filter", p.hasFilter());

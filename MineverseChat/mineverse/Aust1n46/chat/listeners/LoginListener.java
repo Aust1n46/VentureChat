@@ -1,11 +1,9 @@
 package mineverse.Aust1n46.chat.listeners;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
@@ -75,9 +73,8 @@ public class LoginListener implements Listener {
 			listening.add(current.getName());
 			HashMap<String, Integer> mutes = new HashMap<String, Integer>();
 			Set<String> blockedCommands = new HashSet<String>();
-			List<String> mail = new ArrayList<String>();
 			String jsonFormat = "Default";
-			mcp = new MineverseChatPlayer(uuid, name, current, ignores, listening, mutes, blockedCommands, mail, false, null, true, true, name, jsonFormat, false, false, false, true, true);
+			mcp = new MineverseChatPlayer(uuid, name, current, ignores, listening, mutes, blockedCommands, false, null, true, true, name, jsonFormat, false, false, false, true, true);
 			MineverseChat.players.add(mcp);
 		}
 		mcp.setName(event.getPlayer().getName());
@@ -117,17 +114,6 @@ public class LoginListener implements Listener {
 		}
 		if(!plugin.getConfig().getConfigurationSection("login").getBoolean("enabled", true)) {
 			event.setJoinMessage("");
-		}
-		int counter = 0;
-		for(String s : mcp.getMail()) {
-			if(s.length() > 0) {
-				counter++;
-			}
-		}
-		if(counter > 0) {
-			String keyword = "messages";
-			if(counter == 1) keyword = "message";
-			mcp.getPlayer().sendMessage("You have " + counter + " unread " + keyword + ". /mail read");
 		}
 		/*
 		 * if(MineverseChat.onlinePlayers.size() == 1) {
@@ -186,11 +172,6 @@ public class LoginListener implements Listener {
 			blockedCommands = blockedCommands.substring(0, blockedCommands.length() - 1);
 		}
 		cs.set("blockedcommands", blockedCommands);
-		String mail = "";
-		for(String s : mcp.getMail()) {
-			mail += s + "\n";
-		}
-		cs.set("mail", mail);
 		cs.set("host", mcp.isHost());
 		cs.set("party", mcp.hasParty() ? mcp.getParty().toString() : "");
 		cs.set("filter", mcp.hasFilter());
