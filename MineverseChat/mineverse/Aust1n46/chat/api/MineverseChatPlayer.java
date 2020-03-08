@@ -12,7 +12,6 @@ import mineverse.Aust1n46.chat.channel.ChatChannel;
 import mineverse.Aust1n46.chat.json.JsonFormat;
 
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
 //Wrapper class for Player, this class stores additional information along with a players Player pointer.  
@@ -463,18 +462,6 @@ public class MineverseChatPlayer {
 			this.messages.remove(0);
 		}
 		this.messages.add(message);
-	}
-
-	public void removeMessage(ChatMessage message) {
-		this.messages.remove(message);
-	}
-
-	public void removeMessage(int hash) {
-		for(ChatMessage m : this.messages) {
-			if(m.getHash() == hash) {
-				m = new ChatMessage(m.getComponent(), m.getSender(), ChatColor.RED + "Message Removed", (ChatColor.RED + "Message Removed").hashCode());
-			}
-		}
 	}
 
 	public void clearMessages() {

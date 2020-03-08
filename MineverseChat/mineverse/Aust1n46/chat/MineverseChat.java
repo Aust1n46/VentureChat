@@ -298,25 +298,6 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 			}
 		}
 
-		/*
-		 * Future SQLite data storage option SQLite SQLite = new SQLite(this,
-		 * "PlayerData.db"); try { lite = SQLite.openConnection(); Statement
-		 * statement = lite.createStatement(); statement.executeUpdate(
-		 * "CREATE TABLE IF NOT EXISTS `PlayerData` (`Player` TEXT(100), `UUID` TEXT(100), `Default Channel` TEXT(100), `Ignores` TEXT(1000), `Channels` TEXT(1000), `Mutes` TEXT(1000), `Timed Mutes` TEXT(1000), `Blocked Commands` TEXT(1000), `Date` TEXT(100));"
-		 * ); //statement.executeUpdate(
-		 * "INSERT INTO `PlayerData` (`Player`, `UUID`, `Default Channel`, `Ignores`, `Channels`, `Mutes`, `Timed Mutes`, `Blocked Commands`, `Date`) VALUES ('bob', 'derp', 'dered', '"
-		 * +plugin.getServer().getServerName()+
-		 * "', 'Messaging_Component', 'COMMAND', 'Chat', 'HI', ':D');");
-		 * log.info(String.format("[" +
-		 * String.format(getConfig().getString("pluginname", "VentureChat") +
-		 * "]" + " - Connecting to SQLite Database",
-		 * getDescription().getName()))); } catch(ClassNotFoundException |
-		 * SQLException e) { e.printStackTrace(); }
-		 */
-
-		// this.loadCommandMap();
-		// this.unregister("msg");
-
 		commands.put("broadcast", new Broadcast("broadcast"));
 		commands.put("channel", new Channel("channel"));
 		commands.put("join", new Channel("join"));
@@ -454,15 +435,6 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 			@Override
 			public void run() {
 				for(MineverseChatPlayer p : MineverseChat.players) {
-					// Calendar currentDate = Calendar.getInstance();
-					// SimpleDateFormat formatter = new
-					// SimpleDateFormat("dd:HH:mm:ss");
-					// String date = formatter.format(currentDate.getTime());
-					// String[] datearray = date.split(":");
-					// int time = (Integer.parseInt(datearray[0]) * 1440) +
-					// (Integer.parseInt(datearray[1]) * 60) +
-					// (Integer.parseInt(datearray[2]));
-
 					int time = (int) (System.currentTimeMillis() / 60000);
 
 					for(String c : p.getMutes().keySet()) {
@@ -478,10 +450,7 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 					}
 				}
 				if(getConfig().getString("loglevel", "info").equals("debug")) {
-					// log.info(String.format("[" +
-					// String.format(getConfig().getString("pluginname",
-					// "VentureChat") + "]" + " - Updating Player Mutes",
-					// getDescription().getName())));
+					Bukkit.getConsoleSender().sendMessage(Format.FormatStringAll("&8[&eVentureChat&8]&e - Updating Player Mutes"));
 				}
 			}
 		}, 0L, 20L);
@@ -519,66 +488,6 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 
 	private void registerPacketListeners() {
 		ProtocolLibrary.getProtocolManager().addPacketListener(new PacketListener());
-	}
-	
-	public static String toPlainText(Object o, Class<?> c) { 
-		List<Object> finalList = new ArrayList<>();
-		StringBuilder stringbuilder = new StringBuilder();
-		try {
-			splitComponents(finalList, o, c);
-			for(Object component : finalList) {
-				if(VersionHandler.is1_7_10()) {
-					stringbuilder.append((String) component.getClass().getMethod("e").invoke(component));
-				}
-				else {
-					stringbuilder.append((String) component.getClass().getMethod("getText").invoke(component));
-				}
-			}
-		}
-		catch(Exception e) {
-			e.printStackTrace();
-		}
-		if(plugin.getConfig().getString("loglevel", "info").equals("debug")) {
-			System.out.println("my string");
-			System.out.println("my string");
-			System.out.println("my string");
-			System.out.println("my string");
-			System.out.println("my string");
-			System.out.println(stringbuilder.toString());
-		}
-		return stringbuilder.toString();
-	}
-	
-	private static void splitComponents(List<Object> finalList, Object o, Class<?> c) throws Exception {
-		if(plugin.getConfig().getString("loglevel", "info").equals("debug")) {
-			for(Method m : c.getMethods()) {
-				System.out.println(m.getName());
-			}
-		}
-		if(VersionHandler.is1_7() || VersionHandler.is1_8() || VersionHandler.is1_9() || VersionHandler.is1_10() || VersionHandler.is1_11() || VersionHandler.is1_12() || VersionHandler.is1_13() || (VersionHandler.is1_14() && !VersionHandler.is1_14_4())) {
-			ArrayList<?> list = (ArrayList<?>) c.getMethod("a").invoke(o, new Object[0]);
-			for(Object component : list) {
-				ArrayList<?> innerList = (ArrayList<?>) c.getMethod("a").invoke(component, new Object[0]);
-				if(innerList.size() > 0) {
-					splitComponents(finalList, component, c);
-				}
-				else {
-					finalList.add(component);
-				}
-			}
-		}
-		else {
-			ArrayList<?> list = (ArrayList<?>) c.getMethod("getSiblings").invoke(o, new Object[0]);
-			for(Object component : list) {
-				ArrayList<?> innerList = (ArrayList<?>) c.getMethod("getSiblings").invoke(component, new Object[0]);
-				if(innerList.size() > 0) {
-					splitComponents(finalList, component, c);
-				}
-				else {
-					finalList.add(component);
-				}
-			}
-		}
 	}
 
 	private void loadNMS() {	

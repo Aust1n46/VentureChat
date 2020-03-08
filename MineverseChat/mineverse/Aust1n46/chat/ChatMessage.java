@@ -6,13 +6,11 @@ import com.comphenix.protocol.wrappers.WrappedChatComponent;
 //that were sent to the player.  This is a main component in making the message remover work.
 public class ChatMessage {
 	private WrappedChatComponent component;
-	private String sender;
 	private String message;
 	private int hash;
 
-	public ChatMessage(WrappedChatComponent component, String sender, String message, int hash) {
+	public ChatMessage(WrappedChatComponent component, String message, int hash) {
 		this.component = component;
-		this.sender = sender;
 		this.message = message;
 		this.hash = hash;
 	}
@@ -23,10 +21,6 @@ public class ChatMessage {
 
 	public void setComponent(WrappedChatComponent component) {
 		this.component = component;
-	}
-
-	public String getSender() {
-		return this.sender;
 	}
 
 	public String getMessage() {

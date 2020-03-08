@@ -4,7 +4,7 @@ import mineverse.Aust1n46.chat.ChatMessage;
 import mineverse.Aust1n46.chat.MineverseChat;
 import mineverse.Aust1n46.chat.api.MineverseChatAPI;
 import mineverse.Aust1n46.chat.api.MineverseChatPlayer;
-import mineverse.Aust1n46.chat.versions.VersionHandler;
+import mineverse.Aust1n46.chat.utilities.Format;
 
 import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.events.ListenerPriority;
@@ -22,44 +22,22 @@ public class PacketListener extends PacketAdapter {
 
 	@Override
 	public void onPacketSending(PacketEvent event) {
-		if(event.isCancelled() || event.getPacketType() != PacketType.Play.Server.CHAT || event.getPacket().getChatComponents().read(0) == null) {
+		if(event.isCancelled() || event.getPacketType() != PacketType.Play.Server.CHAT) {
 			return;
 		}
-		
-		try {
-			if(VersionHandler.is1_7_10() || VersionHandler.is1_7_9() || VersionHandler.is1_7_2()) {
-				if((MineverseChat.posField != null) && !(((boolean) MineverseChat.posField.get(event.getPacket().getHandle())))) {
-					return;
-				}
-			}
-			else if(VersionHandler.is1_8()) {
-				if((MineverseChat.posField != null) && (((Byte) MineverseChat.posField.get(event.getPacket().getHandle())).intValue() > 1)) {
-					return;
-				}
-			}
-			else if(VersionHandler.is1_9() || VersionHandler.is1_10() || VersionHandler.is1_11()){
-				if((MineverseChat.posField != null) && (((Byte) MineverseChat.posField.get(event.getPacket().getHandle())).intValue() > 1)) {
-					return;
-				}
-			}
-			else {
-				if((MineverseChat.posField != null) && ((Object) MineverseChat.posField.get(event.getPacket().getHandle())) == MineverseChat.chatMessageType.getEnumConstants()[2]) {
-					return;
-				}
-			}
-		}
-		catch(IllegalArgumentException | IllegalAccessException e) {
-			e.printStackTrace();
-		}
-		
-		WrappedChatComponent chat = event.getPacket().getChatComponents().read(0);
-		String message = null;
-		int hash = -1;
-		message = MineverseChat.toPlainText(chat.getHandle(), chat.getHandleType());
-		hash = message != null ? message.hashCode() : -1;
 		MineverseChatPlayer mcp = MineverseChatAPI.getMineverseChatPlayer(event.getPlayer());
-		if((message != null) && (chat.getHandle() != null) && mcp != null) {
-			mcp.addMessage(new ChatMessage(chat, null, message, hash));
+		if(mcp == null) {
+			return;
 		}
+		WrappedChatComponent chat = event.getPacket().getChatComponents().read(0);
+		if(chat == null) {
+			return;
+		}
+		String message = Format.toPlainText(chat.getHandle(), chat.getHandleType());
+		if(message == null) {
+			return;
+		}
+		int hash = message.hashCode();
+		mcp.addMessage(new ChatMessage(chat, message, hash));
 	}
 }

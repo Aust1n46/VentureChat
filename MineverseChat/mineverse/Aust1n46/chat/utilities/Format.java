@@ -1,5 +1,8 @@
 package mineverse.Aust1n46.chat.utilities;
 
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -16,6 +19,7 @@ import me.clip.placeholderapi.PlaceholderAPI;
 import mineverse.Aust1n46.chat.MineverseChat;
 import mineverse.Aust1n46.chat.api.MineverseChatPlayer;
 import mineverse.Aust1n46.chat.json.JsonFormat;
+import mineverse.Aust1n46.chat.versions.VersionHandler;
 
 //This class is where all formatting methods are stored.
 public class Format { 
@@ -301,6 +305,66 @@ public class Format {
 		}
 		catch(Exception e) {
 			e.printStackTrace();
+		}
+	}
+	
+	public static String toPlainText(Object o, Class<?> c) { 
+		List<Object> finalList = new ArrayList<>();
+		StringBuilder stringbuilder = new StringBuilder();
+		try {
+			splitComponents(finalList, o, c);
+			for(Object component : finalList) {
+				if(VersionHandler.is1_7_10()) {
+					stringbuilder.append((String) component.getClass().getMethod("e").invoke(component));
+				}
+				else {
+					stringbuilder.append((String) component.getClass().getMethod("getText").invoke(component));
+				}
+			}
+		}
+		catch(Exception e) {
+			e.printStackTrace();
+		}
+		if(plugin.getConfig().getString("loglevel", "info").equals("debug")) {
+			System.out.println("my string");
+			System.out.println("my string");
+			System.out.println("my string");
+			System.out.println("my string");
+			System.out.println("my string");
+			System.out.println(stringbuilder.toString());
+		}
+		return stringbuilder.toString();
+	}
+	
+	private static void splitComponents(List<Object> finalList, Object o, Class<?> c) throws Exception {
+		if(plugin.getConfig().getString("loglevel", "info").equals("debug")) {
+			for(Method m : c.getMethods()) {
+				System.out.println(m.getName());
+			}
+		}
+		if(VersionHandler.is1_7() || VersionHandler.is1_8() || VersionHandler.is1_9() || VersionHandler.is1_10() || VersionHandler.is1_11() || VersionHandler.is1_12() || VersionHandler.is1_13() || (VersionHandler.is1_14() && !VersionHandler.is1_14_4())) {
+			ArrayList<?> list = (ArrayList<?>) c.getMethod("a").invoke(o, new Object[0]);
+			for(Object component : list) {
+				ArrayList<?> innerList = (ArrayList<?>) c.getMethod("a").invoke(component, new Object[0]);
+				if(innerList.size() > 0) {
+					splitComponents(finalList, component, c);
+				}
+				else {
+					finalList.add(component);
+				}
+			}
+		}
+		else {
+			ArrayList<?> list = (ArrayList<?>) c.getMethod("getSiblings").invoke(o, new Object[0]);
+			for(Object component : list) {
+				ArrayList<?> innerList = (ArrayList<?>) c.getMethod("getSiblings").invoke(component, new Object[0]);
+				if(innerList.size() > 0) {
+					splitComponents(finalList, component, c);
+				}
+				else {
+					finalList.add(component);
+				}
+			}
 		}
 	}
 	
