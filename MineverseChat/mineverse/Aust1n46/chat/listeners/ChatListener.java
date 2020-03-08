@@ -346,7 +346,7 @@ public class ChatListener implements Listener {
 		PluginManager pluginManager = plugin.getServer().getPluginManager();
 		for(MineverseChatPlayer p : MineverseChat.onlinePlayers) {
 			if(p.getPlayer() != mcp.getPlayer()) {
-				if(!p.getListening().contains(eventChannel.getName())) {
+				if(!p.isListening(eventChannel.getName())) {
 					recipients.remove(p.getPlayer());
 					continue;
 				}

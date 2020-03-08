@@ -688,7 +688,7 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 				if(ccInfo.isChannel(chatchannel) && ccInfo.getChannelInfo(chatchannel).getBungee()) {
 					Bukkit.getConsoleSender().sendMessage(consoleChat);
 					for(MineverseChatPlayer p : MineverseChat.onlinePlayers) {
-						if(p.getListening().contains(ccInfo.getChannelInfo(chatchannel).getName())) {
+						if(p.isListening(ccInfo.getChannelInfo(chatchannel).getName())) {
 							if(!p.getBungeeToggle() && MineverseChatAPI.getOnlineMineverseChatPlayer(senderName) == null) {
 								continue;
 							}
@@ -718,7 +718,7 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 					List<String> listening = new ArrayList<String>();
 					if(ccInfo.isChannel(chatchannel)) {
 						for(MineverseChatPlayer mcp : onlinePlayers) {
-							if(mcp.getListening().contains(chatchannel)) {
+							if(mcp.isListening(chatchannel)) {
 								String entry = "&f" + mcp.getName();
 								if(mcp.isMuted(chatchannel)) {
 									entry = "&c" + mcp.getName();

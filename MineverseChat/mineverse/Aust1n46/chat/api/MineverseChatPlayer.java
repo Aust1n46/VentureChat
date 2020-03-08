@@ -198,6 +198,10 @@ public class MineverseChatPlayer {
 	public Set<String> getListening() {
 		return this.listening;
 	}
+	
+	public boolean isListening(String channel) {
+		return this.listening.contains(channel);
+	}
 
 	public boolean addListening(String channel) {
 		if(channel != null) {
