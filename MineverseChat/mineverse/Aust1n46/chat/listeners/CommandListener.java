@@ -12,7 +12,6 @@ import mineverse.Aust1n46.chat.alias.AliasInfo;
 import mineverse.Aust1n46.chat.api.MineverseChatAPI;
 import mineverse.Aust1n46.chat.api.MineverseChatPlayer;
 import mineverse.Aust1n46.chat.channel.ChatChannel;
-import mineverse.Aust1n46.chat.channel.ChatChannelInfo;
 import mineverse.Aust1n46.chat.gui.GuiSlot;
 import mineverse.Aust1n46.chat.utilities.Format;
 import mineverse.Aust1n46.chat.versions.VersionHandler;
@@ -39,11 +38,9 @@ import me.clip.placeholderapi.PlaceholderAPI;
 //in the custom commands such as aliases.
 public class CommandListener implements CommandExecutor, Listener {
 	private MineverseChat plugin = MineverseChat.getInstance();
-	private ChatChannelInfo cc;
 	private AliasInfo aa;
 
-	public CommandListener(ChatChannelInfo cc, AliasInfo aa) {
-		this.cc = cc;
+	public CommandListener(AliasInfo aa) {
 		this.aa = aa;
 	}
 
@@ -153,7 +150,7 @@ public class CommandListener implements CommandExecutor, Listener {
 		}
 
 		if(!plugin.quickchat) {
-			for(ChatChannel channel : cc.getChannelsInfo()) {
+			for(ChatChannel channel : ChatChannel.getChannels()) {
 				if(!channel.hasPermission() || mcp.getPlayer().hasPermission(channel.getPermission())) {
 					if(message.equals("/" + channel.getAlias())) {
 						mcp.getPlayer().sendMessage("Channel Set: " + ChatColor.valueOf(channel.getColor().toUpperCase()) + "[" + channel.getName() + "]");
@@ -220,7 +217,7 @@ public class CommandListener implements CommandExecutor, Listener {
 			return true;
 		}
 		MineverseChatPlayer mcp = MineverseChatAPI.getMineverseChatPlayer((Player) sender);
-		for(ChatChannel channel : cc.getChannelsInfo()) {
+		for(ChatChannel channel : ChatChannel.getChannels()) {
 			if(command.getName().toLowerCase().equals(channel.getAlias())) {
 				if(args.length == 0) {
 					mcp.getPlayer().sendMessage(ChatColor.RED + "Invalid command: /" + channel.getAlias() + " message");
@@ -252,7 +249,7 @@ public class CommandListener implements CommandExecutor, Listener {
 		MineverseChatPlayer target = MineverseChatAPI.getMineverseChatPlayer(e.getView().getTitle().replace(" GUI", "").replace("VentureChat: ", ""));
 		ItemStack skull = e.getInventory().getItem(0);
 		SkullMeta skullMeta = (SkullMeta) skull.getItemMeta();
-		ChatChannel channel = MineverseChat.ccInfo.getChannelInfo(ChatColor.stripColor(skullMeta.getLore().get(0)).replace("Channel: ", ""));
+		ChatChannel channel = ChatChannel.getChannel(ChatColor.stripColor(skullMeta.getLore().get(0)).replace("Channel: ", ""));
 		int hash = Integer.parseInt(ChatColor.stripColor(skullMeta.getLore().get(1).replace("Hash: ", "")));
 		if(VersionHandler.is1_7_10()) {
 			if(item.getType() == Material.BEDROCK) {

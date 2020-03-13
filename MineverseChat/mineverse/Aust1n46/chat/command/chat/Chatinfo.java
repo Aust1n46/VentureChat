@@ -1,7 +1,5 @@
 package mineverse.Aust1n46.chat.command.chat;
 
-import java.util.List;
-
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -10,17 +8,13 @@ import mineverse.Aust1n46.chat.MineverseChat;
 import mineverse.Aust1n46.chat.api.MineverseChatAPI;
 import mineverse.Aust1n46.chat.api.MineverseChatPlayer;
 import mineverse.Aust1n46.chat.channel.ChatChannel;
-import mineverse.Aust1n46.chat.channel.ChatChannelInfo;
 import mineverse.Aust1n46.chat.command.MineverseCommand;
 
-@SuppressWarnings("unused")
 public class Chatinfo extends MineverseCommand {
-	private MineverseChat plugin;
-	private ChatChannelInfo cc = MineverseChat.ccInfo;
+	private MineverseChat plugin = MineverseChat.getInstance();;
 
 	public Chatinfo(String name) {
 		super(name);
-		this.plugin = MineverseChat.getInstance();
 	}
 
 	//@SuppressWarnings("unchecked")
@@ -39,11 +33,11 @@ public class Chatinfo extends MineverseCommand {
 				if(args.length < 1) {
 					mcp.getPlayer().sendMessage(ChatColor.GOLD + "Player: " + ChatColor.GREEN + mcp.getName());
 					for(String c : mcp.getListening()) {		
-						ChatChannel channel = MineverseChat.ccInfo.getChannelInfo(c);
+						ChatChannel channel = ChatChannel.getChannel(c);
 						listen += ChatColor.valueOf(channel.getColor().toUpperCase()) + channel.getName() + " ";						
 					}
 					for(String c : mcp.getMutes().keySet()) {
-						ChatChannel channel = MineverseChat.ccInfo.getChannelInfo(c);
+						ChatChannel channel = ChatChannel.getChannel(c);
 						mute += ChatColor.valueOf(channel.getColor().toUpperCase()) + channel.getName() + " ";						
 					}
 					for(String bc : mcp.getBlockedCommands()) {						
@@ -100,11 +94,11 @@ public class Chatinfo extends MineverseCommand {
 				}
 				sender.sendMessage(ChatColor.GOLD + "Player: " + ChatColor.GREEN + p.getName());
 				for(String c : p.getListening()) {		
-					ChatChannel channel = MineverseChat.ccInfo.getChannelInfo(c);
+					ChatChannel channel = ChatChannel.getChannel(c);
 					listen += ChatColor.valueOf(channel.getColor().toUpperCase()) + channel.getName() + " ";						
 				}
 				for(String c : p.getMutes().keySet()) {
-					ChatChannel channel = MineverseChat.ccInfo.getChannelInfo(c);
+					ChatChannel channel = ChatChannel.getChannel(c);
 					mute += ChatColor.valueOf(channel.getColor().toUpperCase()) + channel.getName() + " ";						
 				}
 				for(String bc : p.getBlockedCommands()) {						

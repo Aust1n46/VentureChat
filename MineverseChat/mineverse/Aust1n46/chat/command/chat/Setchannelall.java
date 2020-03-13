@@ -3,15 +3,12 @@ package mineverse.Aust1n46.chat.command.chat;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 
-import mineverse.Aust1n46.chat.MineverseChat;
 import mineverse.Aust1n46.chat.api.MineverseChatAPI;
 import mineverse.Aust1n46.chat.api.MineverseChatPlayer;
 import mineverse.Aust1n46.chat.channel.ChatChannel;
-import mineverse.Aust1n46.chat.channel.ChatChannelInfo;
 import mineverse.Aust1n46.chat.command.MineverseCommand;
 
 public class Setchannelall extends MineverseCommand {
-	private ChatChannelInfo cc = MineverseChat.ccInfo;
 
 	public Setchannelall(String name) {
 		super(name);
@@ -29,7 +26,7 @@ public class Setchannelall extends MineverseCommand {
 				sender.sendMessage(ChatColor.RED + "Player: " + ChatColor.GOLD + args[0] + ChatColor.RED + " is not online.");
 				return;
 			}
-			for(ChatChannel channel : cc.getChannelsInfo()) {
+			for(ChatChannel channel : ChatChannel.getChannels()) {
 				if(channel.hasPermission()) {
 					if(!player.isOnline()) {
 						sender.sendMessage(ChatColor.RED + "Can't run permission check on offline player.");

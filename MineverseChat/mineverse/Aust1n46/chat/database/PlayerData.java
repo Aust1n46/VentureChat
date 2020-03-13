@@ -70,12 +70,12 @@ public class PlayerData {
 					cs.set("ignores", ignores);
 					String listening = "";
 					for(String channel : p.getListening()) {
-						ChatChannel c = MineverseChat.ccInfo.getChannelInfo(channel);
+						ChatChannel c = ChatChannel.getChannel(channel);
 						listening += c.getName() + ",";
 					}
 					String mutes = "";
 					for(String channel : p.getMutes().keySet()) {		
-						ChatChannel c = MineverseChat.ccInfo.getChannelInfo(channel);
+						ChatChannel c = ChatChannel.getChannel(channel);
 						mutes += c.getName() + ":" + p.getMutes().get(c.getName()) + ",";
 					}
 					String blockedCommands = "";

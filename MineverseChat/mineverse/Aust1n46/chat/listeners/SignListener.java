@@ -8,17 +8,11 @@ import org.bukkit.event.block.SignChangeEvent;
 import mineverse.Aust1n46.chat.MineverseChat;
 import mineverse.Aust1n46.chat.api.MineverseChatAPI;
 import mineverse.Aust1n46.chat.api.MineverseChatPlayer;
-import mineverse.Aust1n46.chat.channel.ChatChannelInfo;
 import mineverse.Aust1n46.chat.utilities.Format;
 
 //This class listens for text being added to signs, and it formats them to allow colors and formatting.
 public class SignListener implements Listener {
 	MineverseChat plugin = MineverseChat.getInstance();
-	ChatChannelInfo cc;
-
-	public SignListener(ChatChannelInfo cc) {
-		this.cc = cc;
-	}
 
 	@EventHandler(priority = EventPriority.HIGH)
 	public void onSignChange(SignChangeEvent event) {

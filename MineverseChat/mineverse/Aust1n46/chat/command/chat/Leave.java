@@ -8,16 +8,13 @@ import mineverse.Aust1n46.chat.MineverseChat;
 import mineverse.Aust1n46.chat.api.MineverseChatAPI;
 import mineverse.Aust1n46.chat.api.MineverseChatPlayer;
 import mineverse.Aust1n46.chat.channel.ChatChannel;
-import mineverse.Aust1n46.chat.channel.ChatChannelInfo;
 import mineverse.Aust1n46.chat.command.MineverseCommand;
 
 public class Leave extends MineverseCommand {
-	private MineverseChat plugin;
-	private ChatChannelInfo cc = MineverseChat.ccInfo;
+	private MineverseChat plugin = MineverseChat.getInstance();;
 	
 	public Leave(String name) {
 		super(name);
-		this.plugin = MineverseChat.getInstance();
 	}
 
 	@Override
@@ -28,7 +25,7 @@ public class Leave extends MineverseCommand {
 		}		
 		MineverseChatPlayer mcp = MineverseChatAPI.getMineverseChatPlayer((Player) sender);
 		if(args.length > 0) {
-			ChatChannel channel = cc.getChannelInfo(args[0]);
+			ChatChannel channel = ChatChannel.getChannel(args[0]);
 			if(channel == null) {
 				mcp.getPlayer().sendMessage(ChatColor.RED + "Invalid channel: " + args[0]);
 				return;
@@ -37,10 +34,10 @@ public class Leave extends MineverseCommand {
 			String format = ChatColor.valueOf(channel.getColor().toUpperCase()) + "[" + channel.getName() + "]";
 			mcp.getPlayer().sendMessage("Leaving channel: " + format);				
 			if(mcp.getListening().size() == 0) {
-				mcp.addListening(cc.getDefaultChannel().getName());
-				mcp.setCurrentChannel(cc.getDefaultChannel());
+				mcp.addListening(ChatChannel.getDefaultChannel().getName());
+				mcp.setCurrentChannel(ChatChannel.getDefaultChannel());
 				mcp.getPlayer().sendMessage(ChatColor.RED + "You need to be listening on at least one channel, setting you into the default channel.");
-				mcp.getPlayer().sendMessage("Channel Set: " + ChatColor.valueOf(cc.defaultColor.toUpperCase()) + "[" + cc.getDefaultChannel().getName() + "]");
+				mcp.getPlayer().sendMessage("Channel Set: " + ChatColor.valueOf(ChatChannel.getDefaultColor().toUpperCase()) + "[" + ChatChannel.getDefaultChannel().getName() + "]");
 			}
 			if(channel.getBungee()) {
 				MineverseChat.getInstance().synchronize(mcp, true);

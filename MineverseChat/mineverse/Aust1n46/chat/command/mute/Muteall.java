@@ -7,17 +7,12 @@ import mineverse.Aust1n46.chat.MineverseChat;
 import mineverse.Aust1n46.chat.api.MineverseChatAPI;
 import mineverse.Aust1n46.chat.api.MineverseChatPlayer;
 import mineverse.Aust1n46.chat.channel.ChatChannel;
-import mineverse.Aust1n46.chat.channel.ChatChannelInfo;
 import mineverse.Aust1n46.chat.command.MineverseCommand;
 
 public class Muteall extends MineverseCommand {
-	@SuppressWarnings("unused")
-	private MineverseChat plugin;
-	private ChatChannelInfo cc = MineverseChat.ccInfo;
 
 	public Muteall(String name) {
 		super(name);
-		this.plugin = MineverseChat.getInstance();
 	}
 
 	@Override
@@ -33,7 +28,7 @@ public class Muteall extends MineverseCommand {
 				return;
 			}
 			boolean bungee = false;
-			for(ChatChannel channel : cc.getChannelsInfo()) {
+			for(ChatChannel channel : ChatChannel.getChannels()) {
 				if(channel.isMutable()) {
 					player.addMute(channel.getName(), 0);				
 					if(channel.getBungee()) {

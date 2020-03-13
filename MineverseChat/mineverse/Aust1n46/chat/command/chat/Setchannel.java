@@ -7,11 +7,9 @@ import mineverse.Aust1n46.chat.MineverseChat;
 import mineverse.Aust1n46.chat.api.MineverseChatAPI;
 import mineverse.Aust1n46.chat.api.MineverseChatPlayer;
 import mineverse.Aust1n46.chat.channel.ChatChannel;
-import mineverse.Aust1n46.chat.channel.ChatChannelInfo;
 import mineverse.Aust1n46.chat.command.MineverseCommand;
 
 public class Setchannel extends MineverseCommand {
-	private ChatChannelInfo cc = MineverseChat.ccInfo;
 
 	public Setchannel(String name) {
 		super(name);
@@ -25,7 +23,7 @@ public class Setchannel extends MineverseCommand {
 				return;
 			}
 			if(args[0].length() > 1) {
-				ChatChannel channel = cc.getChannelInfo(args[1]);
+				ChatChannel channel = ChatChannel.getChannel(args[1]);
 				MineverseChatPlayer player = MineverseChatAPI.getMineverseChatPlayer(args[0]);
 				if(player == null) {
 					sender.sendMessage(ChatColor.RED + "Player: " + ChatColor.GOLD + args[0] + ChatColor.RED + " is not online.");

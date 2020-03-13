@@ -3,13 +3,10 @@ package mineverse.Aust1n46.chat.command.chat;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 
-import mineverse.Aust1n46.chat.MineverseChat;
 import mineverse.Aust1n46.chat.channel.ChatChannel;
-import mineverse.Aust1n46.chat.channel.ChatChannelInfo;
 import mineverse.Aust1n46.chat.command.MineverseCommand;
 
 public class Channelinfo extends MineverseCommand {
-	private ChatChannelInfo cc = MineverseChat.ccInfo;
 
 	public Channelinfo(String name) {
 		super(name);
@@ -22,7 +19,7 @@ public class Channelinfo extends MineverseCommand {
 				sender.sendMessage(ChatColor.RED + "Invalid command: /channelinfo [channel]");
 				return;
 			}
-			ChatChannel chname = cc.getChannelInfo(args[0]);
+			ChatChannel chname = ChatChannel.getChannel(args[0]);
 			if(chname == null) {
 				sender.sendMessage(ChatColor.RED + "Invalid channel: " + args[0]);
 				return;

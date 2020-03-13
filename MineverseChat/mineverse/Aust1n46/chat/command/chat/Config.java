@@ -7,16 +7,14 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 
 import mineverse.Aust1n46.chat.MineverseChat;
-import mineverse.Aust1n46.chat.channel.ChatChannelInfo;
 import mineverse.Aust1n46.chat.command.MineverseCommand;
+import mineverse.Aust1n46.chat.utilities.Format;
 
 public class Config extends MineverseCommand {
-	private MineverseChat plugin;
-	private ChatChannelInfo cc = MineverseChat.ccInfo;
+	private MineverseChat plugin = MineverseChat.getInstance();
 
 	public Config(String name) {
 		super(name);
-		this.plugin = MineverseChat.getInstance();
 	}
 
 	@Override
@@ -521,7 +519,7 @@ public class Config extends MineverseCommand {
 				}
 				case "tellcolor": {
 					try {
-						if(cc.isValidColor(args[1])) {
+						if(Format.isValidColor(args[1])) {
 							plugin.getConfig().set("tellcolor", args[1].toLowerCase());
 							sender.sendMessage(ChatColor.GREEN + "tellcolor: has been set to " + args[1].toLowerCase());
 							plugin.saveConfig();
@@ -767,7 +765,7 @@ public class Config extends MineverseCommand {
 						switch(args[1]) {
 						case "color": {
 							try {
-								if(cc.isValidColor(args[2])) {
+								if(Format.isValidColor(args[2])) {
 									plugin.getConfig().getConfigurationSection("broadcast").set("color", args[2].toLowerCase());
 									sender.sendMessage(ChatColor.GREEN + "color: has been set to " + args[2].toLowerCase());
 									plugin.saveConfig();
@@ -834,7 +832,7 @@ public class Config extends MineverseCommand {
 								switch(args[2]) {
 								case "color": {
 									try {
-										if(cc.isValidColor(args[3])) {
+										if(Format.isValidColor(args[3])) {
 											plugin.getConfig().getConfigurationSection("channels." + args[1]).set("color", args[3].toLowerCase());
 											sender.sendMessage(ChatColor.GREEN + "color: has been set to " + args[3].toLowerCase());
 											plugin.saveConfig();
@@ -853,7 +851,7 @@ public class Config extends MineverseCommand {
 								}
 								case "chatcolor": {
 									try {
-										if(cc.isValidColor(args[3]) || args[3].equalsIgnoreCase("None")) {
+										if(Format.isValidColor(args[3]) || args[3].equalsIgnoreCase("None")) {
 											plugin.getConfig().getConfigurationSection("channels." + args[1]).set("chatcolor", args[3].toLowerCase());
 											sender.sendMessage(ChatColor.GREEN + "chatcolor: has been set to " + args[3].toLowerCase());
 											plugin.saveConfig();

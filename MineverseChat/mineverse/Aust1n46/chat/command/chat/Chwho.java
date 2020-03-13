@@ -17,16 +17,13 @@ import mineverse.Aust1n46.chat.MineverseChat;
 import mineverse.Aust1n46.chat.api.MineverseChatAPI;
 import mineverse.Aust1n46.chat.api.MineverseChatPlayer;
 import mineverse.Aust1n46.chat.channel.ChatChannel;
-import mineverse.Aust1n46.chat.channel.ChatChannelInfo;
 import mineverse.Aust1n46.chat.command.MineverseCommand;
 
 public class Chwho extends MineverseCommand {
-	private MineverseChat plugin;
-	private ChatChannelInfo cc = MineverseChat.ccInfo;
-
+	private MineverseChat plugin = MineverseChat.getInstance();
+	
 	public Chwho(String name) {
 		super(name);
-		this.plugin = MineverseChat.getInstance();
 	}
 
 	@Override
@@ -34,7 +31,7 @@ public class Chwho extends MineverseCommand {
 		String playerlist = "";
 		if(sender.hasPermission("venturechat.chwho")) {
 			if(args.length > 0) {
-				ChatChannel channel = cc.getChannelInfo(args[0]);
+				ChatChannel channel = ChatChannel.getChannel(args[0]);
 				if(channel != null) {
 					if(channel.hasPermission()) {
 						if(!sender.hasPermission(channel.getPermission())) {

@@ -7,11 +7,9 @@ import mineverse.Aust1n46.chat.MineverseChat;
 import mineverse.Aust1n46.chat.api.MineverseChatAPI;
 import mineverse.Aust1n46.chat.api.MineverseChatPlayer;
 import mineverse.Aust1n46.chat.channel.ChatChannel;
-import mineverse.Aust1n46.chat.channel.ChatChannelInfo;
 import mineverse.Aust1n46.chat.command.MineverseCommand;
 
 public class Mute extends MineverseCommand {
-	private ChatChannelInfo cc = MineverseChat.ccInfo;
 
 	public Mute(String name) {
 		super(name);
@@ -30,8 +28,8 @@ public class Mute extends MineverseCommand {
 				return;
 			}
 			if(args.length == 2) {
-				if(cc.isChannel(args[1])) {
-					ChatChannel channel = cc.getChannelInfo(args[1]);
+				if(ChatChannel.isChannel(args[1])) {
+					ChatChannel channel = ChatChannel.getChannel(args[1]);
 					if(player.isMuted(channel.getName())) {
 						sender.sendMessage(ChatColor.GOLD + player.getName() + ChatColor.RED + " is already muted in channel: " + ChatColor.valueOf(channel.getColor().toUpperCase()) + channel.getName());
 						return;
@@ -54,8 +52,8 @@ public class Mute extends MineverseCommand {
 				sender.sendMessage(ChatColor.RED + "Invalid channel: " + args[1]);
 				return;
 			}			
-			if(cc.isChannel(args[1])) {
-				ChatChannel channel = cc.getChannelInfo(args[1]);
+			if(ChatChannel.isChannel(args[1])) {
+				ChatChannel channel = ChatChannel.getChannel(args[1]);
 				if(player.isMuted(channel.getName())) {
 					sender.sendMessage(ChatColor.GOLD + player.getName() + ChatColor.RED + " is already muted in channel: " + ChatColor.valueOf(channel.getColor().toUpperCase()) + channel.getName());
 					return;

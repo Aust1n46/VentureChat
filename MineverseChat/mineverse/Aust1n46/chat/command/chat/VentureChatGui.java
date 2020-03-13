@@ -24,11 +24,10 @@ import mineverse.Aust1n46.chat.utilities.Format;
 import mineverse.Aust1n46.chat.versions.VersionHandler;
 
 public class VentureChatGui extends MineverseCommand {
-	private MineverseChat plugin;
+	private MineverseChat plugin = MineverseChat.getInstance();;
 
 	public VentureChatGui(String name) {
 		super(name);
-		this.plugin = MineverseChat.getInstance();
 	}
 
 	@Override
@@ -68,8 +67,8 @@ public class VentureChatGui extends MineverseCommand {
 				MineverseChat.players.add(target);
 				*/
 			}
-			if(MineverseChat.ccInfo.isChannel(args[1])) {
-				ChatChannel channel = MineverseChat.ccInfo.getChannelInfo(args[1]);
+			if(ChatChannel.isChannel(args[1])) {
+				ChatChannel channel = ChatChannel.getChannel(args[1]);
 				int hash = Integer.parseInt(args[2]);
 				this.openInventory(mcp, target, channel, hash);
 				return;

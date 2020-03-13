@@ -3,14 +3,12 @@ package mineverse.Aust1n46.chat.command.chat;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 
-import mineverse.Aust1n46.chat.MineverseChat;
 import mineverse.Aust1n46.chat.api.MineverseChatAPI;
 import mineverse.Aust1n46.chat.api.MineverseChatPlayer;
-import mineverse.Aust1n46.chat.channel.ChatChannelInfo;
+import mineverse.Aust1n46.chat.channel.ChatChannel;
 import mineverse.Aust1n46.chat.command.MineverseCommand;
 
 public class Kickchannelall extends MineverseCommand {
-	private ChatChannelInfo cc = MineverseChat.ccInfo;
 
 	public Kickchannelall(String name) {
 		super(name);
@@ -30,12 +28,12 @@ public class Kickchannelall extends MineverseCommand {
 			}
 			player.clearListening();
 			sender.sendMessage(ChatColor.GOLD + "Kicked player " + ChatColor.RED + player.getName() + ChatColor.GOLD + " from all channels.");
-			player.addListening(cc.getDefaultChannel().getName());
-			player.setCurrentChannel(cc.getDefaultChannel());
+			player.addListening(ChatChannel.getDefaultChannel().getName());
+			player.setCurrentChannel(ChatChannel.getDefaultChannel());
 			if(player.isOnline()) {
 				player.getPlayer().sendMessage(ChatColor.RED + "You have been kicked from all channels.");
 				player.getPlayer().sendMessage(ChatColor.RED + "You need to be listening on at least one channel, setting you into the default channel.");
-				player.getPlayer().sendMessage("Channel Set: " + ChatColor.valueOf(cc.defaultColor.toUpperCase()) + "[" + cc.getDefaultChannel().getName() + "]");
+				player.getPlayer().sendMessage("Channel Set: " + ChatColor.valueOf(ChatChannel.getDefaultColor().toUpperCase()) + "[" + ChatChannel.getDefaultChannel().getName() + "]");
 			}
 			else 
 				player.setModified(true);

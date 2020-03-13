@@ -6,17 +6,14 @@ import org.bukkit.entity.Player;
 
 import mineverse.Aust1n46.chat.MineverseChat;
 import mineverse.Aust1n46.chat.api.MineverseChatAPI;
-import mineverse.Aust1n46.chat.channel.ChatChannelInfo;
 import mineverse.Aust1n46.chat.command.MineverseCommand;
 import mineverse.Aust1n46.chat.utilities.Format;
 
 public class Me extends MineverseCommand {
-	private MineverseChat plugin;
-	private ChatChannelInfo cc = MineverseChat.ccInfo;
+	private MineverseChat plugin = MineverseChat.getInstance();
 
 	public Me(String name) {
 		super(name);
-		this.plugin = MineverseChat.getInstance();
 	}
 
 	@Override
@@ -31,7 +28,7 @@ public class Me extends MineverseCommand {
 					msg = Format.FormatStringColor(msg);
 				if(sender.hasPermission("venturechat.format")) 
 					msg = Format.FormatString(msg);
-				String filtered = cc.FilterChat(msg);
+				String filtered = Format.FilterChat(msg);
 				if(sender instanceof Player && MineverseChatAPI.getMineverseChatPlayer((Player) sender).hasFilter()) {
 					Player p = (Player) sender;
 					plugin.getServer().broadcastMessage("* " +p.getDisplayName() + filtered);

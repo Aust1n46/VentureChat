@@ -7,17 +7,14 @@ import org.bukkit.entity.Player;
 import mineverse.Aust1n46.chat.MineverseChat;
 import mineverse.Aust1n46.chat.api.MineverseChatAPI;
 import mineverse.Aust1n46.chat.api.MineverseChatPlayer;
-import mineverse.Aust1n46.chat.channel.ChatChannelInfo;
 import mineverse.Aust1n46.chat.command.MineverseCommand;
 import mineverse.Aust1n46.chat.utilities.Format;
 
 public class Party extends MineverseCommand {
-	private MineverseChat plugin;
-	private ChatChannelInfo cc = MineverseChat.ccInfo;
+	private MineverseChat plugin = MineverseChat.getInstance();
 
 	public Party(String name) {
 		super(name);
-		this.plugin = MineverseChat.getInstance();
 	}
 
 	@Override
@@ -286,7 +283,7 @@ public class Party extends MineverseCommand {
 							if(args[x].length() > 0) msg += " " + args[x];
 						}
 						if(mcp.hasFilter()) {
-							msg = cc.FilterChat(msg);
+							msg = Format.FilterChat(msg);
 						}
 						if(mcp.getPlayer().hasPermission("venturechat.color")) {
 							msg = Format.FormatStringColor(msg);

@@ -11,7 +11,6 @@ import mineverse.Aust1n46.chat.MineverseChat;
 import mineverse.Aust1n46.chat.api.MineverseChatAPI;
 import mineverse.Aust1n46.chat.api.MineverseChatPlayer;
 import mineverse.Aust1n46.chat.channel.ChatChannel;
-import mineverse.Aust1n46.chat.channel.ChatChannelInfo;
 import mineverse.Aust1n46.chat.database.PlayerData;
 import mineverse.Aust1n46.chat.utilities.Format;
 
@@ -29,12 +28,7 @@ import org.bukkit.event.player.PlayerQuitEvent;
 //and it's data.
 public class LoginListener implements Listener {
 	private MineverseChat plugin = MineverseChat.getInstance();
-	private ChatChannelInfo cc;
 	private FileConfiguration playerData = PlayerData.getPlayerData();
-
-	public LoginListener(ChatChannelInfo cc) {
-		this.cc = cc;
-	}
 
 	@EventHandler(priority = EventPriority.LOW)
 	public void onPlayerKick(PlayerKickEvent plog) {
@@ -67,7 +61,7 @@ public class LoginListener implements Listener {
 			// Disabling Mojang UUID Query
 			//UUID uuid = UUIDFetcher.getUUIDOf(name);
 			UUID uuid = player.getUniqueId();
-			ChatChannel current = cc.getDefaultChannel();
+			ChatChannel current = ChatChannel.getDefaultChannel();
 			Set<UUID> ignores = new HashSet<UUID>();
 			Set<String> listening = new HashSet<String>();
 			listening.add(current.getName());
@@ -93,7 +87,7 @@ public class LoginListener implements Listener {
 			}
 			mcp.getPlayer().setPlayerListName(Format.FormatStringAll(nick));
 		}	
-		for(ChatChannel ch : MineverseChat.ccInfo.getAutojoinList()) {
+		for(ChatChannel ch : ChatChannel.getAutojoinList()) {
 			if(ch.hasPermission()) {
 				if(mcp.getPlayer().hasPermission(ch.getPermission())) {
 					mcp.addListening(ch.getName());
@@ -148,12 +142,12 @@ public class LoginListener implements Listener {
 		cs.set("ignores", ignores);
 		String listening = "";
 		for(String channel : mcp.getListening()) {
-			ChatChannel c = MineverseChat.ccInfo.getChannelInfo(channel);
+			ChatChannel c = ChatChannel.getChannel(channel);
 			listening += c.getName() + ",";
 		}
 		String mutes = "";
 		for(String channel : mcp.getMutes().keySet()) {
-			ChatChannel c = MineverseChat.ccInfo.getChannelInfo(channel);
+			ChatChannel c = ChatChannel.getChannel(channel);
 			mutes += c.getName() + ":" + mcp.getMutes().get(c.getName()) + ",";
 		}
 		String blockedCommands = "";

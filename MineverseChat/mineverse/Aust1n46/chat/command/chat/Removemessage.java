@@ -10,6 +10,7 @@ import java.util.Map;
 import mineverse.Aust1n46.chat.ChatMessage;
 import mineverse.Aust1n46.chat.MineverseChat;
 import mineverse.Aust1n46.chat.api.MineverseChatPlayer;
+import mineverse.Aust1n46.chat.channel.ChatChannel;
 import mineverse.Aust1n46.chat.command.MineverseCommand;
 import mineverse.Aust1n46.chat.utilities.Format;
 
@@ -23,12 +24,11 @@ import com.comphenix.protocol.wrappers.WrappedChatComponent;
 
 public class Removemessage extends MineverseCommand {
 	private PacketContainer emptyLinePacketContainer = Format.createPacketPlayOutChat(WrappedChatComponent.fromJson("{\"extra\":[\" \"],\"text\":\"\"}"));
-	private MineverseChat plugin;
+	private MineverseChat plugin = MineverseChat.getInstance();
 	private WrappedChatComponent messageDeletedComponentPlayer;
 
 	public Removemessage(String name) {
 		super(name);
-		this.plugin = MineverseChat.getInstance();
 	}
 
 	@Override
@@ -46,7 +46,7 @@ public class Removemessage extends MineverseCommand {
 			sender.sendMessage(ChatColor.RED + "Invalid hashcode.");
 			return;
 		}
-		if(args.length > 1 && MineverseChat.ccInfo.isChannel(args[1]) && MineverseChat.ccInfo.getChannelInfo(args[1]).getBungee() && sender instanceof Player) {
+		if(args.length > 1 && ChatChannel.isChannel(args[1]) && ChatChannel.getChannel(args[1]).getBungee() && sender instanceof Player) {
 			ByteArrayOutputStream byteOutStream = new ByteArrayOutputStream();
 			DataOutputStream out = new DataOutputStream(byteOutStream);
 			try {

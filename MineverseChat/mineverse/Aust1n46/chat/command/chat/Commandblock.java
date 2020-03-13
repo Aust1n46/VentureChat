@@ -18,7 +18,6 @@ public class Commandblock extends MineverseCommand {
 		this.plugin = MineverseChat.getInstance();
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public void execute(CommandSender sender, String command, String[] args) {
 		if(sender.hasPermission("venturechat.commandblock")) {
@@ -29,7 +28,7 @@ public class Commandblock extends MineverseCommand {
 					return;
 				}
 				boolean match = false;
-				for(String cb : (List<String>) plugin.getConfig().getList("blockablecommands")) 
+				for(String cb : (List<String>) plugin.getConfig().getStringList("blockablecommands")) 
 					if(args[1].equals("/" + cb)) 
 						match = true;
 				if(match || player.isBlockedCommand(args[1])) {

@@ -3,15 +3,12 @@ package mineverse.Aust1n46.chat.command.chat;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 
-import mineverse.Aust1n46.chat.MineverseChat;
 import mineverse.Aust1n46.chat.api.MineverseChatAPI;
 import mineverse.Aust1n46.chat.api.MineverseChatPlayer;
 import mineverse.Aust1n46.chat.channel.ChatChannel;
-import mineverse.Aust1n46.chat.channel.ChatChannelInfo;
 import mineverse.Aust1n46.chat.command.MineverseCommand;
 
 public class Kickchannel extends MineverseCommand {
-	private ChatChannelInfo cc = MineverseChat.ccInfo;
 
 	public Kickchannel(String name) {
 		super(name);
@@ -29,7 +26,7 @@ public class Kickchannel extends MineverseCommand {
 				sender.sendMessage(ChatColor.RED + "Player: " + ChatColor.GOLD + args[0] + ChatColor.RED + " is not online.");
 				return;
 			}
-			ChatChannel channel = cc.getChannelInfo(args[1]);
+			ChatChannel channel = ChatChannel.getChannel(args[1]);
 			if(channel == null) {
 				sender.sendMessage(ChatColor.RED + "Invalid channel: " + args[1]);
 				return;
@@ -43,10 +40,10 @@ public class Kickchannel extends MineverseCommand {
 			else 
 				player.setModified(true);
 			if(player.getListening().size() == 0) {
-				player.setCurrentChannel(cc.getDefaultChannel());
+				player.setCurrentChannel(ChatChannel.getDefaultChannel());
 				if(player.isOnline()) {
 					player.getPlayer().sendMessage(ChatColor.RED + "You need to be listening on at least one channel, setting you into the default channel.");
-					player.getPlayer().sendMessage("Channel Set: " + ChatColor.valueOf(cc.defaultColor.toUpperCase()) + "[" + cc.getDefaultChannel().getName() + "]");
+					player.getPlayer().sendMessage("Channel Set: " + ChatColor.valueOf(ChatChannel.getDefaultColor().toUpperCase()) + "[" + ChatChannel.getDefaultChannel().getName() + "]");
 				}
 				else 
 					player.setModified(true);

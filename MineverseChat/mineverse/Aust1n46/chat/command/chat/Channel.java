@@ -12,18 +12,15 @@ import mineverse.Aust1n46.chat.api.MineverseChatAPI;
 import mineverse.Aust1n46.chat.api.MineverseChatPlayer;
 import mineverse.Aust1n46.chat.api.events.ChannelJoinEvent;
 import mineverse.Aust1n46.chat.channel.ChatChannel;
-import mineverse.Aust1n46.chat.channel.ChatChannelInfo;
 import mineverse.Aust1n46.chat.command.MineverseCommand;
 
 public class Channel extends MineverseCommand implements Listener {
-	private MineverseChat plugin;
-	private ChatChannelInfo cc = MineverseChat.ccInfo;
+	private MineverseChat plugin = MineverseChat.getInstance();
 	
 	public Channel() {}
 	
 	public Channel(String name) {
 		super(name);
-		this.plugin = MineverseChat.getInstance();
 	}
 
 	@Override
@@ -34,11 +31,11 @@ public class Channel extends MineverseCommand implements Listener {
 		}		
 		MineverseChatPlayer mcp = MineverseChatAPI.getMineverseChatPlayer((Player) sender);	
 		if(args.length > 0) {
-			if(!cc.isChannel(args[0])) {
+			if(!ChatChannel.isChannel(args[0])) {
 				mcp.getPlayer().sendMessage(ChatColor.RED + "Invalid channel: " + args[0]);
 				return;
 			}			
-			ChatChannel channel = cc.getChannelInfo(args[0]);						
+			ChatChannel channel = ChatChannel.getChannel(args[0]);						
 			plugin.getServer().getPluginManager().callEvent(new ChannelJoinEvent(mcp.getPlayer(), channel, "Channel Set: " + ChatColor.valueOf(channel.getColor().toUpperCase()) + "[" + channel.getName() + "]"));			
 			return;
 		}

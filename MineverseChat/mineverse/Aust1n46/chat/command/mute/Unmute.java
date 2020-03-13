@@ -7,11 +7,9 @@ import mineverse.Aust1n46.chat.MineverseChat;
 import mineverse.Aust1n46.chat.api.MineverseChatAPI;
 import mineverse.Aust1n46.chat.api.MineverseChatPlayer;
 import mineverse.Aust1n46.chat.channel.ChatChannel;
-import mineverse.Aust1n46.chat.channel.ChatChannelInfo;
 import mineverse.Aust1n46.chat.command.MineverseCommand;
 
 public class Unmute extends MineverseCommand {
-	private ChatChannelInfo cc = MineverseChat.ccInfo;
 
 	public Unmute(String name) {
 		super(name);
@@ -29,7 +27,7 @@ public class Unmute extends MineverseCommand {
 				sender.sendMessage(ChatColor.RED + "Player: " + ChatColor.GOLD + args[0] + ChatColor.RED + " is not online.");
 				return;
 			}
-			for(ChatChannel channel : cc.getChannelsInfo()) {
+			for(ChatChannel channel : ChatChannel.getChannels()) {
 				if(channel.getName().equalsIgnoreCase(args[1]) || channel.getAlias().equalsIgnoreCase(args[1])) {
 					if(!player.isMuted(channel.getName())) {
 						sender.sendMessage(ChatColor.GOLD + player.getName() + ChatColor.RED + " is not muted in channel: " + ChatColor.valueOf(channel.getColor().toUpperCase()) + channel.getName());

@@ -3,7 +3,6 @@ package mineverse.Aust1n46.chat.utilities;
 import me.clip.placeholderapi.PlaceholderAPI;
 import mineverse.Aust1n46.chat.MineverseChat;
 import mineverse.Aust1n46.chat.channel.ChatChannel;
-import mineverse.Aust1n46.chat.channel.ChatChannelInfo;
 
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -18,7 +17,7 @@ import com.palmergames.bukkit.towny.object.TownyUniverse;
 //This class formats the chat by replacing format place holders with their data.
 public class FormatTags {
 
-	public static String ChatFormat(String format, Player p, MineverseChat plugin, ChatChannelInfo cc, ChatChannel channel, boolean json) {
+	public static String ChatFormat(String format, Player p, MineverseChat plugin, ChatChannel channel, boolean json) {
 		PluginManager pluginManager = plugin.getServer().getPluginManager();
 		String town = "";
 		String name = p.getName();
@@ -152,7 +151,7 @@ public class FormatTags {
 	/** 
 	 * Unused
 	 * **/
-	public static String TabFormat(String format, Player p, MineverseChat plugin, ChatChannelInfo cc) {
+	public static String TabFormat(String format, Player p, MineverseChat plugin) {
 		PluginManager pluginManager = plugin.getServer().getPluginManager();
 		String town = "";
 		String name = p.getName();

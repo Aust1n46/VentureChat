@@ -3,6 +3,7 @@ package mineverse.Aust1n46.chat.utilities;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.StringTokenizer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -425,5 +426,34 @@ public class Format {
 		allFormated = chatResetPattern.matcher(allFormated).replaceAll("\u00A7$1");
 		allFormated = allFormated.replaceAll("%", "\\%");
 		return allFormated;
+	}
+	
+	public static String FilterChat(String msg) {
+		int t = 0;
+		List<String> filters = plugin.getConfig().getStringList("filters");
+		for(String s : filters) {
+			t = 0;
+			String[] pparse = new String[2];
+			pparse[0] = " ";
+			pparse[1] = " ";
+			StringTokenizer st = new StringTokenizer(s, ",");
+			while(st.hasMoreTokens()) {
+				if(t < 2) {
+					pparse[t++] = st.nextToken();
+				}
+			}
+			msg = msg.replaceAll("(?i)" + pparse[0], pparse[1]);
+		}
+		return msg;
+	}
+	
+	public static Boolean isValidColor(String color) {
+		Boolean bFound = false;
+		for(ChatColor bkColors : ChatColor.values()) {
+			if(color.equalsIgnoreCase(bkColors.name())) {
+				bFound = true;
+			}
+		}
+		return bFound;
 	}
 }
