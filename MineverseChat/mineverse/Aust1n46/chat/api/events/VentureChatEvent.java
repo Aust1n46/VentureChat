@@ -38,6 +38,18 @@ public class VentureChatEvent extends Event {
 		this.bungee = bungee;
 	}
 	
+	public VentureChatEvent(ChatChannel channel, Set<Player> recipients, String format, String chat, String globalJSON, int hash, boolean bungee) {
+		super(MineverseChat.ASYNC);
+		this.mcp = null;
+		this.channel = channel;
+		this.recipients = recipients;
+		this.format = format;
+		this.chat = chat;
+		this.globalJSON = globalJSON;
+		this.hash = hash;
+		this.bungee = bungee;
+	}
+	
 	public MineverseChatPlayer getMineverseChatPlayer() {
 		return this.mcp;
 	}
