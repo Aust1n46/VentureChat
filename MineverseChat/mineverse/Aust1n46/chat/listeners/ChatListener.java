@@ -467,6 +467,7 @@ public class ChatListener implements Listener {
 		MineverseChatPlayer mcp = event.getMineverseChatPlayer();
 		ChatChannel channel = event.getChannel();
 		Set<Player> recipients = event.getRecipients();
+		String format = event.getFormat();
 		String chat = event.getChat();
 		String consoleChat = event.getConsoleChat();
 		String globalJSON = event.getGlobalJSON();
@@ -512,17 +513,16 @@ public class ChatListener implements Listener {
 				out.writeUTF(mcp.getUUID().toString());
 				out.writeBoolean(mcp.getBungeeToggle());
 				out.writeInt(hash);
-				out.writeUTF(consoleChat);
+				out.writeUTF(format);
+				out.writeUTF(chat);
 				if(plugin.getConfig().getString("loglevel", "info").equals("debug")) {
 					System.out.println(out.size() + " size bytes without json");
 				}
-				out.writeBoolean(true);
 				out.writeUTF(globalJSON);
 				if(plugin.getConfig().getString("loglevel", "info").equals("debug")) {
 					System.out.println(out.size() + " bytes size with json");
 				}
 				mcp.getPlayer().sendPluginMessage(plugin, MineverseChat.PLUGIN_MESSAGING_CHANNEL, byteOutStream.toByteArray());
-				
 				out.close();
 			}
 			catch(Exception e) {

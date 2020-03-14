@@ -41,6 +41,7 @@ import mineverse.Aust1n46.chat.listeners.SignListener;
 import mineverse.Aust1n46.chat.alias.AliasInfo;
 import mineverse.Aust1n46.chat.api.MineverseChatAPI;
 import mineverse.Aust1n46.chat.api.MineverseChatPlayer;
+import mineverse.Aust1n46.chat.api.events.VentureChatEvent;
 import mineverse.Aust1n46.chat.channel.ChatChannel;
 //import mineverse.Aust1n46.chat.command.CCommand;
 import mineverse.Aust1n46.chat.command.MineverseCommand;
@@ -661,14 +662,33 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 			e.printStackTrace();
 		}
 	}
+	
+	public static void sendDiscordSRVPluginMessage(String chatChannel, String message) {
+		if(onlinePlayers.size() == 0) {
+			return;
+		}
+		Player host = onlinePlayers.iterator().next().getPlayer();
+		ByteArrayOutputStream byteOutStream = new ByteArrayOutputStream();
+		DataOutputStream out = new DataOutputStream(byteOutStream);
+		try {
+			out.writeUTF("DiscordSRV");
+			out.writeUTF(chatChannel);
+			out.writeUTF(message);
+			host.sendPluginMessage(plugin, MineverseChat.PLUGIN_MESSAGING_CHANNEL, byteOutStream.toByteArray());
+			out.close();
+		}
+		catch(Exception e) {
+			e.printStackTrace();
+		}
+	}
 
 	@Override
-	public void onPluginMessageReceived(String channel, Player player, byte[] message) {
+	public void onPluginMessageReceived(String channel, Player player, byte[] inputStream) {
 		if(!channel.equals(MineverseChat.PLUGIN_MESSAGING_CHANNEL)) {
 			return;
 		}
 		try {
-			DataInputStream msgin = new DataInputStream(new ByteArrayInputStream(message));
+			DataInputStream msgin = new DataInputStream(new ByteArrayInputStream(inputStream));
 			if(plugin.getConfig().getString("loglevel", "info").equals("debug")) {
 				System.out.println(msgin.available() + " size on receiving end");
 			}
@@ -680,46 +700,65 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 				String senderName = msgin.readUTF();
 				UUID senderUUID = UUID.fromString(msgin.readUTF());
 				int hash = msgin.readInt();
-				String consoleChat = msgin.readUTF();
-				boolean hasJSON = msgin.readBoolean();
-				String globalJSON = "";
-				if(hasJSON) {
-					globalJSON = msgin.readUTF();
+				String format = msgin.readUTF();
+				String chat = msgin.readUTF();
+				String consoleChat = format + chat;
+				String globalJSON = msgin.readUTF();
+				
+				if(!ChatChannel.isChannel(chatchannel)) {
+					return;
 				}
-				if(ChatChannel.isChannel(chatchannel) && ChatChannel.getChannel(chatchannel).getBungee()) {
-					Bukkit.getConsoleSender().sendMessage(consoleChat);
-					for(MineverseChatPlayer p : MineverseChat.onlinePlayers) {
-						if(p.isListening(ChatChannel.getChannel(chatchannel).getName())) {
-							if(!p.getBungeeToggle() && MineverseChatAPI.getOnlineMineverseChatPlayer(senderName) == null) {
-								continue;
-							}
-							
-							PacketContainer packet = null;
-							if(hasJSON) {
-								String json = Format.formatModerationGUI(globalJSON, p.getPlayer(), senderName, chatchannel, hash);
-								WrappedChatComponent chatComponent = WrappedChatComponent.fromJson(json);
-								packet = Format.createPacketPlayOutChat(chatComponent);
-							}
-							
-							if(plugin.getConfig().getBoolean("ignorechat", false)) {
-								if(!p.getIgnores().contains(senderUUID)) {
-									// System.out.println("Chat sent");
-									if(hasJSON) {
-										Format.sendPacketPlayOutChat(p.getPlayer(), packet);
-									}
-									else {
-										p.getPlayer().sendMessage(consoleChat);
-									}
-								}
-								continue;
-							}
-							if(hasJSON) {
-								Format.sendPacketPlayOutChat(p.getPlayer(), packet);
-							}
-							else {
-								p.getPlayer().sendMessage(consoleChat);
-							}
+				ChatChannel chatChannelObject = ChatChannel.getChannel(chatchannel);
+				
+				if(!chatChannelObject.getBungee()) {
+					return;
+				}
+				
+				Set<Player> recipients = new HashSet<Player>();
+				for(MineverseChatPlayer p : MineverseChat.onlinePlayers) {
+					if(p.isListening(chatChannelObject.getName())) {
+						recipients.add(p.getPlayer());
+					}
+				}
+				
+				Bukkit.getServer().getScheduler().runTaskAsynchronously(this, new Runnable() {
+					@Override
+					public void run() {
+						//Create VentureChatEvent
+						VentureChatEvent ventureChatEvent = new VentureChatEvent(onlinePlayers.iterator().next(), chatChannelObject, recipients, format, chat, globalJSON, hash, false);
+						//Fire event and wait for other plugin listeners to act on it
+						Bukkit.getServer().getPluginManager().callEvent(ventureChatEvent);
+					}
+				});
+
+				Bukkit.getConsoleSender().sendMessage(consoleChat);
+				for(MineverseChatPlayer p : MineverseChat.onlinePlayers) {
+					if(p.isListening(chatChannelObject.getName())) {
+						if(!p.getBungeeToggle() && MineverseChatAPI.getOnlineMineverseChatPlayer(senderName) == null) {
+							continue;
 						}
+						
+						String json = Format.formatModerationGUI(globalJSON, p.getPlayer(), senderName, chatchannel, hash);
+						WrappedChatComponent chatComponent = WrappedChatComponent.fromJson(json);
+						PacketContainer packet = Format.createPacketPlayOutChat(chatComponent);
+						
+						if(plugin.getConfig().getBoolean("ignorechat", false)) {
+							if(!p.getIgnores().contains(senderUUID)) {
+								// System.out.println("Chat sent");
+								Format.sendPacketPlayOutChat(p.getPlayer(), packet);							
+							}
+							continue;
+						}
+						Format.sendPacketPlayOutChat(p.getPlayer(), packet);	
+					}
+				}
+			}
+			if(subchannel.equals("DiscordSRV")) {
+				String chatchannel = msgin.readUTF();
+				String message = msgin.readUTF();
+				if(ChatChannel.isChannel(chatchannel) && ChatChannel.getChannel(chatchannel).getBungee()) {
+					for(MineverseChatPlayer p : MineverseChat.onlinePlayers) {
+						p.getPlayer().sendMessage(Format.FormatStringAll(message));
 					}
 				}
 			}
