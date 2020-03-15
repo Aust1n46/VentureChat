@@ -705,7 +705,6 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 				String globalJSON = msgin.readUTF();
 				String primaryGroup = msgin.readUTF();
 				String nickname = msgin.readUTF();
-				System.out.println(nickname);
 				
 				if(!ChatChannel.isChannel(chatchannel)) {
 					return;
@@ -727,7 +726,7 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 					@Override
 					public void run() {
 						//Create VentureChatEvent
-						VentureChatEvent ventureChatEvent = new VentureChatEvent(null, senderName, primaryGroup, chatChannelObject, recipients, format, chat, globalJSON, hash, false);
+						VentureChatEvent ventureChatEvent = new VentureChatEvent(null, senderName, nickname, primaryGroup, chatChannelObject, recipients, format, chat, globalJSON, hash, false);
 						//Fire event and wait for other plugin listeners to act on it
 						Bukkit.getServer().getPluginManager().callEvent(ventureChatEvent);
 					}
