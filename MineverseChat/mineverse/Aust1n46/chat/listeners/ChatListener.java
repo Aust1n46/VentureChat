@@ -456,7 +456,7 @@ public class ChatListener implements Listener {
 		int hash = message.hashCode();
 		
 		//Create VentureChatEvent
-		VentureChatEvent ventureChatEvent = new VentureChatEvent(mcp, eventChannel, recipients, format, chat, globalJSON, hash, bungee);
+		VentureChatEvent ventureChatEvent = new VentureChatEvent(mcp, mcp.getName(), MineverseChat.permission.getPrimaryGroup(mcp.getPlayer()), eventChannel, recipients, format, chat, globalJSON, hash, bungee);
 		//Fire event and wait for other plugin listeners to act on it
 		Bukkit.getServer().getPluginManager().callEvent(ventureChatEvent);
 		//Call method to send the processed chat
@@ -522,6 +522,8 @@ public class ChatListener implements Listener {
 				if(plugin.getConfig().getString("loglevel", "info").equals("debug")) {
 					System.out.println(out.size() + " bytes size with json");
 				}
+				out.writeUTF(MineverseChat.permission.getPrimaryGroup(mcp.getPlayer()));
+				out.writeUTF(mcp.getNickname());
 				mcp.getPlayer().sendPluginMessage(plugin, MineverseChat.PLUGIN_MESSAGING_CHANNEL, byteOutStream.toByteArray());
 				out.close();
 			}

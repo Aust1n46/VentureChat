@@ -76,8 +76,8 @@ public class LoginListener implements Listener {
 		mcp.setHasPlayed(false);
 		MineverseChat.onlinePlayers.add(mcp);
 		mcp.setJsonFormat();
-		if(mcp.getNickname().equals(mcp.getName())) {
-			mcp.setNickname(event.getPlayer().getName());
+		if(!mcp.getPlayer().getDisplayName().equals(mcp.getName())) {
+			mcp.setNickname(event.getPlayer().getDisplayName());
 		}
 		mcp.getPlayer().setDisplayName(Format.FormatStringAll(mcp.getNickname()));
 		if(plugin.getConfig().getBoolean("nickname-in-tablist", false)) {

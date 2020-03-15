@@ -300,7 +300,7 @@ public class MineverseChatPlayer {
 	}
 
 	public String getNickname() {
-		return this.nickname;
+		return this.online ? this.player.getDisplayName() : this.nickname;
 	}
 
 	public void setNickname(String nick) {
@@ -326,7 +326,7 @@ public class MineverseChatPlayer {
 	}
 
 	public Player getPlayer() {
-		return online ? this.player : null;
+		return this.online ? this.player : null;
 	}
 
 	public boolean hasPlayed() {

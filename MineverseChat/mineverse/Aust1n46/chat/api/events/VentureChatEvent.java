@@ -18,6 +18,8 @@ import mineverse.Aust1n46.chat.channel.ChatChannel;
 public class VentureChatEvent extends Event {
 	private static final HandlerList handlers = new HandlerList();
 	private final MineverseChatPlayer mcp;
+	private final String username;
+	private final String playerPrimaryGroup;
 	private final ChatChannel channel;
 	private final Set<Player> recipients;
 	private final String format;
@@ -26,21 +28,11 @@ public class VentureChatEvent extends Event {
 	private final int hash;
 	private final boolean bungee;
 	
-	public VentureChatEvent(MineverseChatPlayer mcp, ChatChannel channel, Set<Player> recipients, String format, String chat, String globalJSON, int hash, boolean bungee) {
+	public VentureChatEvent(MineverseChatPlayer mcp, String username, String playerPrimaryGroup, ChatChannel channel, Set<Player> recipients, String format, String chat, String globalJSON, int hash, boolean bungee) {
 		super(MineverseChat.ASYNC);
 		this.mcp = mcp;
-		this.channel = channel;
-		this.recipients = recipients;
-		this.format = format;
-		this.chat = chat;
-		this.globalJSON = globalJSON;
-		this.hash = hash;
-		this.bungee = bungee;
-	}
-	
-	public VentureChatEvent(ChatChannel channel, Set<Player> recipients, String format, String chat, String globalJSON, int hash, boolean bungee) {
-		super(MineverseChat.ASYNC);
-		this.mcp = null;
+		this.username = username;
+		this.playerPrimaryGroup = playerPrimaryGroup;
 		this.channel = channel;
 		this.recipients = recipients;
 		this.format = format;
@@ -52,6 +44,14 @@ public class VentureChatEvent extends Event {
 	
 	public MineverseChatPlayer getMineverseChatPlayer() {
 		return this.mcp;
+	}
+	
+	public String getUsername() {
+		return this.username;
+	}
+	
+	public String getPlayerPrimaryGroup() {
+		return this.playerPrimaryGroup;
 	}
 	
 	public ChatChannel getChannel() {

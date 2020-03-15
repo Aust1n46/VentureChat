@@ -160,6 +160,8 @@ public class MineverseChatBungee extends Plugin implements Listener {
 				String format = in.readUTF();
 				String chat = in.readUTF();
 				String json = in.readUTF();
+				String primaryGroup = in.readUTF();
+				String nickname = in.readUTF();
 				out.writeUTF("Chat");
 				out.writeUTF(chatchannel);
 				out.writeUTF(senderName);
@@ -168,6 +170,8 @@ public class MineverseChatBungee extends Plugin implements Listener {
 				out.writeUTF(format);
 				out.writeUTF(chat);
 				out.writeUTF(json);
+				out.writeUTF(primaryGroup);
+				out.writeUTF(nickname);
 				for(String send : getProxy().getServers().keySet()) {
 					if(getProxy().getServers().get(send).getPlayers().size() > 0) {
 						if(!bungeeToggle && !getProxy().getServers().get(send).getName().equalsIgnoreCase(ser.getInfo().getName())) {
