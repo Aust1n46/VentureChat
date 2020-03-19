@@ -1,6 +1,5 @@
 package mineverse.Aust1n46.chat.command.chat;
 
-import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -8,6 +7,7 @@ import mineverse.Aust1n46.chat.MineverseChat;
 import mineverse.Aust1n46.chat.api.MineverseChatAPI;
 import mineverse.Aust1n46.chat.channel.ChatChannelInfo;
 import mineverse.Aust1n46.chat.command.MineverseCommand;
+import mineverse.Aust1n46.chat.localization.LocalizedMessage;
 import mineverse.Aust1n46.chat.utilities.Format;
 
 public class Me extends MineverseCommand {
@@ -34,7 +34,7 @@ public class Me extends MineverseCommand {
 				String filtered = cc.FilterChat(msg);
 				if(sender instanceof Player && MineverseChatAPI.getMineverseChatPlayer((Player) sender).hasFilter()) {
 					Player p = (Player) sender;
-					plugin.getServer().broadcastMessage("* " +p.getDisplayName() + filtered);
+					plugin.getServer().broadcastMessage("* " + p.getDisplayName() + filtered);
 					return;
 				}
 				if(sender instanceof Player) {
@@ -45,9 +45,11 @@ public class Me extends MineverseCommand {
 				plugin.getServer().broadcastMessage("* " + sender.getName() + msg);
 				return;
 			}
-			sender.sendMessage(ChatColor.RED + "Invalid command: /me [msg]");
+			sender.sendMessage(LocalizedMessage.COMMAND_INVALID_ARGUMENTS.toString()
+					.replace("{command}", "/me")
+					.replace("{args}", "[message]"));
 			return;
 		}
-		sender.sendMessage(ChatColor.RED + "You do not have permission for this command.");
+		sender.sendMessage(LocalizedMessage.COMMAND_NO_PERMISSION.toString());
 	}
 }

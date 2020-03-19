@@ -159,7 +159,7 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 	private boolean firstRun = true;
 	
 	// Plugin Messaging Channel
-	public static String PLUGIN_MESSAGING_CHANNEL = "venturechat:data";
+	public static final String PLUGIN_MESSAGING_CHANNEL = "venturechat:data";
 
 	// Vault --------------------------------
 	public static Permission permission = null;

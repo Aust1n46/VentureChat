@@ -42,9 +42,10 @@ public class Listen extends MineverseCommand {
 					return;
 				}
 			}
-			String format = ChatColor.valueOf(channel.getColor().toUpperCase()) + "[" + channel.getName() + "]";
 			mcp.addListening(channel.getName());
-			mcp.getPlayer().sendMessage("Listening to Channel: " + format);
+			mcp.getPlayer().sendMessage(LocalizedMessage.LISTEN_CHANNEL.toString()
+			.replace("{channel_color}", ChatColor.valueOf(channel.getColor().toUpperCase()) + "")
+			.replace("{channel_name}", channel.getName()));
 			return;
 		}
 		mcp.getPlayer().sendMessage(LocalizedMessage.COMMAND_INVALID_ARGUMENTS.toString()

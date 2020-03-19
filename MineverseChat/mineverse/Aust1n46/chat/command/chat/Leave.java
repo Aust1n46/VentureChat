@@ -35,14 +35,17 @@ public class Leave extends MineverseCommand {
 						.replace("{args}", args[0]));
 				return;
 			}
-			mcp.removeListening(channel.getName());
-			String format = ChatColor.valueOf(channel.getColor().toUpperCase()) + "[" + channel.getName() + "]";
-			mcp.getPlayer().sendMessage("Leaving channel: " + format);				
+			mcp.removeListening(channel.getName());	
+			mcp.getPlayer().sendMessage(LocalizedMessage.LEAVE_CHANNEL.toString()
+					.replace("{channel_color}", ChatColor.valueOf(channel.getColor().toUpperCase()) + "")
+					.replace("{channel_name}", channel.getName()));
 			if(mcp.getListening().size() == 0) {
 				mcp.addListening(cc.getDefaultChannel().getName());
 				mcp.setCurrentChannel(cc.getDefaultChannel());
-				mcp.getPlayer().sendMessage(ChatColor.RED + "You need to be listening on at least one channel, setting you into the default channel.");
-				mcp.getPlayer().sendMessage("Channel Set: " + ChatColor.valueOf(cc.defaultColor.toUpperCase()) + "[" + cc.getDefaultChannel().getName() + "]");
+				mcp.getPlayer().sendMessage(LocalizedMessage.MUST_LISTEN_ONE_CHANNEL.toString());
+				mcp.getPlayer().sendMessage(LocalizedMessage.SET_CHANNEL.toString()
+						.replace("{channel_color}", ChatColor.valueOf(cc.defaultColor.toUpperCase()) + "")
+						.replace("{channel_name}", cc.getDefaultChannel().getName()));
 			}
 			if(channel.getBungee()) {
 				MineverseChat.getInstance().synchronize(mcp, true);

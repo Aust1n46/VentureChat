@@ -8,6 +8,7 @@ import mineverse.Aust1n46.chat.api.MineverseChatAPI;
 import mineverse.Aust1n46.chat.api.MineverseChatPlayer;
 import mineverse.Aust1n46.chat.channel.ChatChannelInfo;
 import mineverse.Aust1n46.chat.command.MineverseCommand;
+import mineverse.Aust1n46.chat.localization.LocalizedMessage;
 
 public class Kickchannelall extends MineverseCommand {
 	private ChatChannelInfo cc = MineverseChat.ccInfo;
@@ -20,27 +21,33 @@ public class Kickchannelall extends MineverseCommand {
 	public void execute(CommandSender sender, String command, String[] args) {
 		if(sender.hasPermission("venturechat.kickchannelall")) {
 			if(args.length < 1) {
-				sender.sendMessage(ChatColor.RED + "Invalid command: /kickchannelall [player]");
+				sender.sendMessage(LocalizedMessage.COMMAND_INVALID_ARGUMENTS.toString()
+						.replace("{command}", "/kickchannelall")
+						.replace("{args}", "[player]"));
 				return;
 			}
 			MineverseChatPlayer player = MineverseChatAPI.getMineverseChatPlayer(args[0]);
 			if(player == null) {
-				sender.sendMessage(ChatColor.RED + "Player: " + ChatColor.GOLD + args[0] + ChatColor.RED + " is not online.");
+				sender.sendMessage(LocalizedMessage.PLAYER_OFFLINE.toString()
+						.replace("{args}", args[0]));
 				return;
 			}
 			player.clearListening();
-			sender.sendMessage(ChatColor.GOLD + "Kicked player " + ChatColor.RED + player.getName() + ChatColor.GOLD + " from all channels.");
+			sender.sendMessage(LocalizedMessage.KICK_CHANNEL_ALL_SENDER.toString()
+					.replace("{player}", player.getName()));
 			player.addListening(cc.getDefaultChannel().getName());
 			player.setCurrentChannel(cc.getDefaultChannel());
 			if(player.isOnline()) {
-				player.getPlayer().sendMessage(ChatColor.RED + "You have been kicked from all channels.");
-				player.getPlayer().sendMessage(ChatColor.RED + "You need to be listening on at least one channel, setting you into the default channel.");
-				player.getPlayer().sendMessage("Channel Set: " + ChatColor.valueOf(cc.defaultColor.toUpperCase()) + "[" + cc.getDefaultChannel().getName() + "]");
+				player.getPlayer().sendMessage(LocalizedMessage.KICK_CHANNEL_ALL_PLAYER.toString());
+				player.getPlayer().sendMessage(LocalizedMessage.MUST_LISTEN_ONE_CHANNEL.toString());
+				player.getPlayer().sendMessage(LocalizedMessage.SET_CHANNEL.toString()
+						.replace("{channel_color}", ChatColor.valueOf(cc.defaultColor.toUpperCase()) + "")
+						.replace("{channel_name}", cc.getDefaultChannel().getName()));
 			}
 			else 
 				player.setModified(true);
 			return;
 		}
-		sender.sendMessage(ChatColor.RED + "You do not have permission for this command.");
+		sender.sendMessage(LocalizedMessage.COMMAND_NO_PERMISSION.toString());
 	}
 }

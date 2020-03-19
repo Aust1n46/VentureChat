@@ -41,7 +41,9 @@ public class Channel extends MineverseCommand implements Listener {
 				return;
 			}			
 			ChatChannel channel = cc.getChannelInfo(args[0]);						
-			plugin.getServer().getPluginManager().callEvent(new ChannelJoinEvent(mcp.getPlayer(), channel, "Channel Set: " + ChatColor.valueOf(channel.getColor().toUpperCase()) + "[" + channel.getName() + "]"));			
+			plugin.getServer().getPluginManager().callEvent(new ChannelJoinEvent(mcp.getPlayer(), channel, LocalizedMessage.SET_CHANNEL.toString()
+					.replace("{channel_color}", ChatColor.valueOf(channel.getColor().toUpperCase()) + "")
+					.replace("{channel_name}", channel.getName())));			
 			return;
 		}
 		mcp.getPlayer().sendMessage(LocalizedMessage.COMMAND_INVALID_ARGUMENTS.toString()
@@ -59,17 +61,20 @@ public class Channel extends MineverseCommand implements Listener {
 		if(channel.hasPermission()) {
 			if(!mcp.getPlayer().hasPermission(channel.getPermission())) {
 				mcp.removeListening(channel.getName());
-				mcp.getPlayer().sendMessage(ChatColor.RED + "You do not have permission for this channel.");
+				mcp.getPlayer().sendMessage(LocalizedMessage.CHANNEL_NO_PERMISSION.toString());
 				return;
 			}
 		}		
 		if(mcp.hasConversation()) {
 			for(MineverseChatPlayer p : MineverseChat.onlinePlayers) {
 				if(p.isSpy()) {
-					p.getPlayer().sendMessage(mcp.getName() + " is no longer in a private conversation with " + MineverseChatAPI.getMineverseChatPlayer(mcp.getConversation()).getName() + ".");
+					p.getPlayer().sendMessage(LocalizedMessage.EXIT_PRIVATE_CONVERSATION_SPY.toString()
+							.replace("{player_sender}", mcp.getName())
+							.replace("{player_receiver}", MineverseChatAPI.getMineverseChatPlayer(mcp.getConversation()).getName()));
 				}
 			}
-			mcp.getPlayer().sendMessage("You are no longer in private conversation with " + MineverseChatAPI.getMineverseChatPlayer(mcp.getConversation()).getName() + ".");
+			mcp.getPlayer().sendMessage(LocalizedMessage.EXIT_PRIVATE_CONVERSATION.toString()
+					.replace("{player_receiver}", MineverseChatAPI.getMineverseChatPlayer(mcp.getConversation()).getName()));
 			mcp.setConversation(null);
 		}
 		mcp.addListening(channel.getName());		

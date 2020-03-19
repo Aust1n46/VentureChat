@@ -20,6 +20,7 @@ import mineverse.Aust1n46.chat.api.MineverseChatPlayer;
 import mineverse.Aust1n46.chat.channel.ChatChannel;
 import mineverse.Aust1n46.chat.command.MineverseCommand;
 import mineverse.Aust1n46.chat.gui.GuiSlot;
+import mineverse.Aust1n46.chat.localization.LocalizedMessage;
 import mineverse.Aust1n46.chat.utilities.Format;
 import mineverse.Aust1n46.chat.versions.VersionHandler;
 
@@ -34,18 +35,21 @@ public class VentureChatGui extends MineverseCommand {
 	@Override
 	public void execute(CommandSender sender, String command, String[] args) {
 		if(!(sender instanceof Player)) {
-			plugin.getServer().getConsoleSender().sendMessage(ChatColor.RED + "This command must be run by a player.");
+			plugin.getServer().getConsoleSender().sendMessage(LocalizedMessage.COMMAND_MUST_BE_RUN_BY_PLAYER.toString());
 			return;
 		}
 		if(args.length < 3) {
-			sender.sendMessage(ChatColor.RED + "Invalid command: " + command + " [player] [channel] [hash]");
+			sender.sendMessage(LocalizedMessage.COMMAND_INVALID_ARGUMENTS.toString()
+					.replace("{command}", "/venturechatgui")
+					.replace("{args}", "[player] [channel] [hashcode]"));
 			return;
 		}
 		MineverseChatPlayer mcp = MineverseChatAPI.getMineverseChatPlayer((Player) sender);
 		if(mcp.getPlayer().hasPermission("venturechat.gui")) {
 			MineverseChatPlayer target = MineverseChatAPI.getMineverseChatPlayer(args[0]);
 			if(target == null) {
-				mcp.getPlayer().sendMessage(ChatColor.RED + "Player: " + ChatColor.GOLD + args[0] + ChatColor.RED + " is not online.");
+				mcp.getPlayer().sendMessage(LocalizedMessage.PLAYER_OFFLINE.toString()
+						.replace("{args}", args[0]));
 				return;
 				/*
 				UUID uuid = null;
@@ -70,14 +74,22 @@ public class VentureChatGui extends MineverseCommand {
 			}
 			if(MineverseChat.ccInfo.isChannel(args[1])) {
 				ChatChannel channel = MineverseChat.ccInfo.getChannelInfo(args[1]);
-				int hash = Integer.parseInt(args[2]);
+				final int hash;
+				try {
+					hash = Integer.parseInt(args[2]);
+				}
+				catch(Exception e) {
+					sender.sendMessage(LocalizedMessage.INVALID_HASH.toString());
+					return;
+				}
 				this.openInventory(mcp, target, channel, hash);
 				return;
 			}
-			mcp.getPlayer().sendMessage(ChatColor.RED + "Invalid channel: " + args[1]);
+			mcp.getPlayer().sendMessage(LocalizedMessage.INVALID_CHANNEL.toString()
+					.replace("{args}", args[1]));
 			return;
 		}
-		mcp.getPlayer().sendMessage(ChatColor.RED + "You do not have permission for this command.");
+		mcp.getPlayer().sendMessage(LocalizedMessage.COMMAND_NO_PERMISSION.toString());
 		return;
 	}
 	
