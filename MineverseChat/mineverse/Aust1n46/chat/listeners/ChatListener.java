@@ -25,6 +25,7 @@ import com.massivecraft.factions.entity.MPlayer;
 import com.palmergames.bukkit.towny.object.Resident;
 import com.palmergames.bukkit.towny.object.TownyUniverse;
 
+import me.clip.placeholderapi.PlaceholderAPI;
 import mineverse.Aust1n46.chat.MineverseChat;
 import mineverse.Aust1n46.chat.api.MineverseChatAPI;
 import mineverse.Aust1n46.chat.api.MineverseChatPlayer;
@@ -33,7 +34,6 @@ import mineverse.Aust1n46.chat.api.events.VentureChatEvent;
 import mineverse.Aust1n46.chat.channel.ChatChannel;
 import mineverse.Aust1n46.chat.database.DatabaseSender;
 import mineverse.Aust1n46.chat.utilities.Format;
-import mineverse.Aust1n46.chat.utilities.FormatTags;
 import mineverse.Aust1n46.chat.versions.VersionHandler;
 
 //This class listens to chat through the chat event and handles the bulk of the chat channels and formatting.
@@ -317,21 +317,13 @@ public class ChatListener implements Listener {
 		if(eventChannel.hasDistance()) {
 			chDistance = eventChannel.getDistance();
 		}
-		if(plugin.getConfig().getConfigurationSection("channels." + eventChannel.getName()).getString("format").equalsIgnoreCase("Default")) {
-			if(curColor.equalsIgnoreCase("None")) {
-				format = FormatTags.ChatFormat(ChatColor.valueOf(eventChannel.getColor().toUpperCase()) + "[" + eventChannel.getName() + "] {prefix}{name}" + ChatColor.valueOf(eventChannel.getColor().toUpperCase()) + ":", mcp.getPlayer(), plugin, eventChannel, plugin.getConfig().getBoolean("jsonFormat"));
-			}
-			else {
-				format = FormatTags.ChatFormat(ChatColor.valueOf(eventChannel.getColor().toUpperCase()) + "[" + eventChannel.getName() + "] {prefix}{name}" + ChatColor.valueOf(eventChannel.getColor().toUpperCase()) + ":" + ChatColor.valueOf(eventChannel.getChatColor().toUpperCase()), mcp.getPlayer(), plugin, eventChannel, plugin.getConfig().getBoolean("jsonFormat"));
-			}
+		
+		format = PlaceholderAPI.setBracketPlaceholders(mcp.getPlayer(), Format.FormatStringAll(plugin.getConfig().getConfigurationSection("channels." + eventChannel.getName()).getString("format")));
+		if(plugin.getConfig().getBoolean("formatcleaner", false)) {
+			format = format.replace("[]", " ");
+			format = format.replace("    ", " ").replace("   ", " ").replace("  ", " ");
 		}
-		else {
-			format = FormatTags.ChatFormat(plugin.getConfig().getConfigurationSection("channels." + eventChannel.getName()).getString("format"), mcp.getPlayer(), plugin, eventChannel, plugin.getConfig().getBoolean("jsonFormat"));
-			if(plugin.getConfig().getBoolean("formatcleaner", false)) {
-				format = format.replace("[]", " ");
-				format = format.replace("    ", " ").replace("   ", " ").replace("  ", " ");
-			}
-		}
+		
 		filterthis = eventChannel.isFiltered();
 		if(filterthis) {
 			if(mcp.hasFilter()) {
