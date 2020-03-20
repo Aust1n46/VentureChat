@@ -2,7 +2,7 @@ package mineverse.Aust1n46.chat.command.chat;
 
 import mineverse.Aust1n46.chat.MineverseChat;
 import mineverse.Aust1n46.chat.command.MineverseCommand;
-import mineverse.Aust1n46.chat.localization.LocalizedMessage;
+import mineverse.Aust1n46.chat.localization.InternalMessage;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.chat.HoverEvent;
@@ -22,9 +22,9 @@ public class Venturechat extends MineverseCommand {
 
 	@Override
 	public void execute(CommandSender sender, String command, String[] args) {
-		sender.sendMessage(LocalizedMessage.VENTURECHAT_VERSION.toString()
+		sender.sendMessage(InternalMessage.VENTURECHAT_VERSION.toString()
 				.replace("{version}", plugin.getDescription().getVersion()));
-		sender.sendMessage(LocalizedMessage.VENTURECHAT_AUTHOR + " " + plugin.getDescription().getAuthors().get(0));
+		sender.sendMessage(InternalMessage.VENTURECHAT_AUTHOR.toString());
 		if (sender instanceof Player && plugin.getConfig().getString("loglevel", "info").equals("debug")) {
 			Player player = (Player) sender;
 			String title = ChatColor.GOLD + " | " + ChatColor.BLUE.toString() + ChatColor.BOLD + "Click here to begin..." + ChatColor.RESET + ChatColor.GOLD + " | ";

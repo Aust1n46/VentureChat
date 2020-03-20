@@ -5,7 +5,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -18,6 +17,7 @@ import mineverse.Aust1n46.chat.ChatMessage;
 import mineverse.Aust1n46.chat.MineverseChat;
 import mineverse.Aust1n46.chat.api.MineverseChatPlayer;
 import mineverse.Aust1n46.chat.command.MineverseCommand;
+import mineverse.Aust1n46.chat.localization.LocalizedMessage;
 import mineverse.Aust1n46.chat.utilities.Format;
 
 public class Edit extends MineverseCommand {
@@ -34,7 +34,9 @@ public class Edit extends MineverseCommand {
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public void execute(CommandSender sender, String command, String[] args) {
 		if(args.length == 0) {
-			sender.sendMessage(ChatColor.RED + "Invalid command: /edit [hashcode]");
+			sender.sendMessage(LocalizedMessage.COMMAND_INVALID_ARGUMENTS.toString()
+					.replace("{command}", "/edit")
+					.replace("{args}", "[hashcode]"));
 			return;
 		}
 		final int hash;
@@ -42,7 +44,7 @@ public class Edit extends MineverseCommand {
 			hash = Integer.parseInt(args[0]);
 		}
 		catch(Exception e) {
-			sender.sendMessage(ChatColor.RED + "Invalid hashcode.");
+			sender.sendMessage(LocalizedMessage.INVALID_HASH.toString());
 			return;
 		}
 		new BukkitRunnable() {

@@ -108,19 +108,23 @@ public class Message extends MineverseCommand {
 			}
 		}
 		if(player == null || !player.isOnline()) {
-			mcp.getPlayer().sendMessage(ChatColor.RED + "Player: " + ChatColor.GOLD + args[0] + ChatColor.RED + " is not online.");
+			mcp.getPlayer().sendMessage(LocalizedMessage.PLAYER_OFFLINE.toString()
+					.replace("{args}", args[0]));
 			return;
 		}
 		if(!mcp.getPlayer().canSee(player.getPlayer())) {
-			mcp.getPlayer().sendMessage(ChatColor.RED + "Player: " + ChatColor.GOLD + args[0] + ChatColor.RED + " is not online.");
+			mcp.getPlayer().sendMessage(LocalizedMessage.PLAYER_OFFLINE.toString()
+					.replace("{args}", args[0]));
 			return;
 		}
 		if(player.getIgnores().contains(mcp.getUUID())) {
-			mcp.getPlayer().sendMessage(LocalizedMessage.IGNORING_MESSAGE.toString());
+			mcp.getPlayer().sendMessage(LocalizedMessage.IGNORING_MESSAGE.toString()
+					.replace("{player}", player.getName()));
 			return;
 		}
 		if(!player.getMessageToggle()) {
-			mcp.getPlayer().sendMessage(LocalizedMessage.BLOCKING_MESSAGE.toString());
+			mcp.getPlayer().sendMessage(LocalizedMessage.BLOCKING_MESSAGE.toString()
+					.replace("{player}", player.getName()));
 			return;
 		}
 		if(args.length >= 2) {
@@ -190,22 +194,28 @@ public class Message extends MineverseCommand {
 					if(!mcp.getPlayer().hasPermission("venturechat.spy.override")) {
 						for(MineverseChatPlayer sp : MineverseChat.onlinePlayers) {
 							if(sp.isSpy()) {
-								sp.getPlayer().sendMessage(mcp.getName() + " started a private conversation with " + player.getName() + ".");
+								sp.getPlayer().sendMessage(LocalizedMessage.ENTER_PRIVATE_CONVERSATION_SPY.toString()
+										.replace("{player_sender}", mcp.getName())
+										.replace("{player_receiver}", player.getName()));
 							}
 						}
 					}
-					mcp.getPlayer().sendMessage("You are now in private conversation with " + player.getNickname() + ".");
+					mcp.getPlayer().sendMessage(LocalizedMessage.ENTER_PRIVATE_CONVERSATION.toString()
+							.replace("{player_receiver}", player.getName()));
 				}
 				else {
 					mcp.setConversation(null);
 					if(!mcp.getPlayer().hasPermission("venturechat.spy.override")) {
 						for(MineverseChatPlayer sp : MineverseChat.onlinePlayers) {
 							if(sp.isSpy()) {
-								sp.getPlayer().sendMessage(mcp.getName() + " is no longer in a private conversation with " + player.getName() + ".");
+								sp.getPlayer().sendMessage(LocalizedMessage.EXIT_PRIVATE_CONVERSATION_SPY.toString()
+										.replace("{player_sender}", mcp.getName())
+										.replace("{player_receiver}", player.getName()));
 							}
 						}
 					}
-					mcp.getPlayer().sendMessage("You are no longer in private conversation with " + player.getNickname() + ".");
+					mcp.getPlayer().sendMessage(LocalizedMessage.EXIT_PRIVATE_CONVERSATION.toString()
+							.replace("{player_receiver}", player.getName()));
 				}
 			}
 		}

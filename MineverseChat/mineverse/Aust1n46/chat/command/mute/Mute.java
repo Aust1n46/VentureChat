@@ -9,6 +9,7 @@ import mineverse.Aust1n46.chat.api.MineverseChatPlayer;
 import mineverse.Aust1n46.chat.channel.ChatChannel;
 import mineverse.Aust1n46.chat.channel.ChatChannelInfo;
 import mineverse.Aust1n46.chat.command.MineverseCommand;
+import mineverse.Aust1n46.chat.localization.LocalizedMessage;
 
 public class Mute extends MineverseCommand {
 	private ChatChannelInfo cc = MineverseChat.ccInfo;
@@ -21,26 +22,37 @@ public class Mute extends MineverseCommand {
 	public void execute(CommandSender sender, String command, String[] args) {
 		if(sender.hasPermission("venturechat.mute")) {
 			if(args.length < 2) {
-				sender.sendMessage(ChatColor.RED + "Invalid command: /mute [player] [channel] {time}");
+				sender.sendMessage(LocalizedMessage.COMMAND_INVALID_ARGUMENTS.toString()
+						.replace("{command}", "/mute")
+						.replace("{args}", "[player] [channel] {time}"));
 				return;
 			}
 			MineverseChatPlayer player = MineverseChatAPI.getMineverseChatPlayer(args[0]);
 			if(player == null || (!player.isOnline() && !sender.hasPermission("venturechat.mute.offline"))) {
-				sender.sendMessage(ChatColor.RED + "Player: " + ChatColor.GOLD + args[0] + ChatColor.RED + " is not online.");
+				sender.sendMessage(LocalizedMessage.PLAYER_OFFLINE.toString()
+						.replace("{args}", args[0]));
 				return;
 			}
 			if(args.length == 2) {
 				if(cc.isChannel(args[1])) {
 					ChatChannel channel = cc.getChannelInfo(args[1]);
 					if(player.isMuted(channel.getName())) {
-						sender.sendMessage(ChatColor.GOLD + player.getName() + ChatColor.RED + " is already muted in channel: " + ChatColor.valueOf(channel.getColor().toUpperCase()) + channel.getName());
+						sender.sendMessage(LocalizedMessage.PLAYER_ALREADY_MUTED.toString()
+								.replace("{player}", player.getName())
+								.replace("{channel_color}", ChatColor.valueOf(channel.getColor().toUpperCase()) + "")
+								.replace("{channel_name}", channel.getName()));
 						return;
 					}
 					if(channel.isMutable()) {
 						player.addMute(channel.getName(), 0);
-						sender.sendMessage(ChatColor.RED + "Muted player " + ChatColor.GOLD + player.getName() + ChatColor.RED + " in: " + ChatColor.valueOf(channel.getColor().toUpperCase()) + channel.getName());
+						sender.sendMessage(LocalizedMessage.MUTE_PLAYER_SENDER.toString()
+								.replace("{player}", player.getName())
+								.replace("{channel_color}", ChatColor.valueOf(channel.getColor().toUpperCase()) + "")
+								.replace("{channel_name}", channel.getName()));
 						if(player.isOnline()) 
-							player.getPlayer().sendMessage(ChatColor.RED + "You have just been muted in: " + ChatColor.valueOf(channel.getColor().toUpperCase()) + channel.getName());
+							player.getPlayer().sendMessage(LocalizedMessage.MUTE_PLAYER_PLAYER.toString()
+									.replace("{channel_color}", ChatColor.valueOf(channel.getColor().toUpperCase()) + "")
+									.replace("{channel_name}", channel.getName()));
 						else 
 							player.setModified(true);
 						if(channel.getBungee()) {
@@ -48,16 +60,22 @@ public class Mute extends MineverseCommand {
 						}
 						return;
 					}
-					sender.sendMessage(ChatColor.RED + "You cannot mute players in this channel: " + ChatColor.valueOf(channel.getColor().toUpperCase()) + channel.getName());
+					sender.sendMessage(LocalizedMessage.CHANNEL_CANNOT_MUTE.toString()
+							.replace("{channel_color}", ChatColor.valueOf(channel.getColor().toUpperCase()) + "")
+							.replace("{channel_name}", channel.getName()));
 					return;
 				}
-				sender.sendMessage(ChatColor.RED + "Invalid channel: " + args[1]);
+				sender.sendMessage(LocalizedMessage.INVALID_CHANNEL.toString()
+						.replace("{args}", args[1]));
 				return;
 			}			
 			if(cc.isChannel(args[1])) {
 				ChatChannel channel = cc.getChannelInfo(args[1]);
 				if(player.isMuted(channel.getName())) {
-					sender.sendMessage(ChatColor.GOLD + player.getName() + ChatColor.RED + " is already muted in channel: " + ChatColor.valueOf(channel.getColor().toUpperCase()) + channel.getName());
+					sender.sendMessage(LocalizedMessage.PLAYER_ALREADY_MUTED.toString()
+							.replace("{player}", player.getName())
+							.replace("{channel_color}", ChatColor.valueOf(channel.getColor().toUpperCase()) + "")
+							.replace("{channel_name}", channel.getName()));
 					return;
 				}
 				if(channel.isMutable()) {
@@ -76,9 +94,18 @@ public class Mute extends MineverseCommand {
 							String keyword = "minutes";
 							if(time == 1) 
 								keyword = "minute";
-							sender.sendMessage(ChatColor.RED + "Muted player " + ChatColor.GOLD + player.getName() + ChatColor.RED + " in: " + ChatColor.valueOf(channel.getColor().toUpperCase()) + channel.getName() + ChatColor.RED + " for " + time + " " + keyword);
+							sender.sendMessage(LocalizedMessage.MUTE_PLAYER_SENDER_TIME.toString()
+									.replace("{player}", player.getName())
+									.replace("{channel_color}", ChatColor.valueOf(channel.getColor().toUpperCase()) + "")
+									.replace("{channel_name}", channel.getName())
+									.replace("{time}", time + "")
+									.replace("{units}", keyword));
 							if(player.isOnline())
-								player.getPlayer().sendMessage(ChatColor.RED + "You have just been muted in: " + ChatColor.valueOf(channel.getColor().toUpperCase()) + channel.getName() + ChatColor.RED + " for " + time + " " + keyword);
+								player.getPlayer().sendMessage(LocalizedMessage.MUTE_PLAYER_PLAYER_TIME.toString()
+										.replace("{channel_color}", ChatColor.valueOf(channel.getColor().toUpperCase()) + "")
+										.replace("{channel_name}", channel.getName())
+										.replace("{time}", time + "")
+										.replace("{units}", keyword));
 							else
 								player.setModified(true);
 							if(channel.getBungee()) {
@@ -86,19 +113,24 @@ public class Mute extends MineverseCommand {
 							}
 							return;
 						}
-						sender.sendMessage(ChatColor.RED + "Invalid time: " + args[2]);
+						sender.sendMessage(LocalizedMessage.INVALID_TIME.toString()
+								.replace("{args}", args[2]));
 					}
 					catch(Exception e) {
-						sender.sendMessage(ChatColor.RED + "Invalid time: " + args[2]);
+						sender.sendMessage(LocalizedMessage.INVALID_TIME.toString()
+								.replace("{args}", args[2]));
 					}
 					return;
 				}
-				sender.sendMessage(ChatColor.RED + "You cannot mute players in this channel: " + ChatColor.valueOf(channel.getColor().toUpperCase()) + channel.getName());
+				sender.sendMessage(LocalizedMessage.CHANNEL_CANNOT_MUTE.toString()
+						.replace("{channel_color}", ChatColor.valueOf(channel.getColor().toUpperCase()) + "")
+						.replace("{channel_name}", channel.getName()));
 				return;
 			}
-			sender.sendMessage(ChatColor.RED + "Invalid channel: " + args[1]);
+			sender.sendMessage(LocalizedMessage.INVALID_CHANNEL.toString()
+					.replace("{args}", args[1]));
 			return;
 		}
-		sender.sendMessage(ChatColor.RED + "You do not have permission for this command.");
+		sender.sendMessage(LocalizedMessage.COMMAND_NO_PERMISSION.toString());
 	}
 }
