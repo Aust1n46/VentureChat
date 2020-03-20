@@ -43,6 +43,7 @@ import mineverse.Aust1n46.chat.api.MineverseChatAPI;
 import mineverse.Aust1n46.chat.api.MineverseChatPlayer;
 import mineverse.Aust1n46.chat.api.events.VentureChatEvent;
 import mineverse.Aust1n46.chat.channel.ChatChannel;
+import mineverse.Aust1n46.chat.channel.ChatChannelInfo;
 //import mineverse.Aust1n46.chat.command.CCommand;
 import mineverse.Aust1n46.chat.command.MineverseCommand;
 import mineverse.Aust1n46.chat.command.MineverseCommandExecutor;
@@ -172,9 +173,14 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 	private LogLevels curLogLevel;
 
 	public long LINELENGTH = 40;
-
+	
+	// DiscordSRV backwards compatibility
+	@Deprecated
+	public static ChatChannelInfo ccInfo;
+	
 	@Override
 	public void onEnable() {
+		ccInfo = new ChatChannelInfo();
 		try {
 			Bukkit.getConsoleSender().sendMessage(Format.FormatStringAll("&8[&eVentureChat&8]&e - Initializing..."));
 			if(!getDataFolder().exists()) {
