@@ -56,11 +56,11 @@ public class CommandListener implements CommandExecutor, Listener {
 		for(MineverseChatPlayer p : MineverseChat.onlinePlayers) {
 			if(p.hasCommandSpy()) {
 				if(wec) {
-					p.getPlayer().sendMessage(ChatColor.GOLD + mcp.getName() + ": " + event.getMessage());
+					p.getPlayer().sendMessage(Format.FormatStringAll(cs.getString("format").replace("{player}", mcp.getName()).replace("{command}", event.getMessage())));
 				}
 				else {
 					if(!(event.getMessage().toLowerCase().startsWith("//"))) {
-						p.getPlayer().sendMessage(ChatColor.GOLD + mcp.getName() + ": " + event.getMessage());
+						p.getPlayer().sendMessage(Format.FormatStringAll(cs.getString("format").replace("{player}", mcp.getName()).replace("{command}", event.getMessage())));
 					}
 				}
 			}
