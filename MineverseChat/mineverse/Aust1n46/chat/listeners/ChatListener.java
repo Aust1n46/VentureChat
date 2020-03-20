@@ -41,6 +41,7 @@ import mineverse.Aust1n46.chat.api.events.ChatMessageEvent;
 import mineverse.Aust1n46.chat.channel.ChatChannel;
 import mineverse.Aust1n46.chat.channel.ChatChannelInfo;
 import mineverse.Aust1n46.chat.database.DatabaseSender;
+import mineverse.Aust1n46.chat.localization.LocalizedMessage;
 import mineverse.Aust1n46.chat.utilities.Format;
 import mineverse.Aust1n46.chat.utilities.FormatTags;
 import mineverse.Aust1n46.chat.versions.VersionHandler;
@@ -115,7 +116,9 @@ public class ChatListener implements Listener {
 				if(!mcp.getPlayer().hasPermission("venturechat.spy.override")) {
 					for(MineverseChatPlayer p : MineverseChat.onlinePlayers) {
 						if(p.isSpy()) {
-							p.getPlayer().sendMessage(mcp.getName() + " is no longer in a private conversation with " + tp.getName() + ".");
+							p.getPlayer().sendMessage(LocalizedMessage.EXIT_PRIVATE_CONVERSATION_SPY.toString()
+									.replace("{player_sender}", mcp.getName())
+									.replace("{player_receiver}", tp.getName()));
 						}
 					}
 				}
@@ -123,12 +126,14 @@ public class ChatListener implements Listener {
 			}
 			else {
 				if(tp.getIgnores().contains(mcp.getUUID())) {
-					mcp.getPlayer().sendMessage(ChatColor.GOLD + tp.getName() + " is currently ignoring your messages.");
+					mcp.getPlayer().sendMessage(LocalizedMessage.IGNORING_MESSAGE.toString()
+							.replace("{player}", tp.getName()));
 					event.setCancelled(true);
 					return;
 				}
 				if(!tp.getMessageToggle()) {
-					mcp.getPlayer().sendMessage(ChatColor.GOLD + tp.getName() + " is currently blocking messages.");
+					mcp.getPlayer().sendMessage(LocalizedMessage.BLOCKING_MESSAGE.toString()
+							.replace("{player}", tp.getName()));
 					event.setCancelled(true);
 					return;
 				}
@@ -420,9 +425,12 @@ public class ChatListener implements Listener {
 				int remaining = timemark - time;
 				if(remaining <= 0) remaining = 1;
 				if(remaining == 1) keyword = "minute";
-				timedMute = ChatColor.RED + " for " + remaining + " more " + keyword;
+				timedMute = " for " + remaining + " more " + keyword;
 			}
-			mcp.getPlayer().sendMessage(ChatColor.RED + "You are muted in this channel: " + ChatColor.valueOf(eventChannel.getColor().toUpperCase()) + eventChannel.getName() + timedMute);
+			mcp.getPlayer().sendMessage(LocalizedMessage.CHANNEL_MUTED.toString()
+					.replace("{channel_color}", ChatColor.valueOf(eventChannel.getColor().toUpperCase()) + "")
+					.replace("{channel_name}", eventChannel.getName())
+					.replace("{time}", timedMute));
 			mcp.setQuickChat(false);
 			event.setCancelled(true);
 			return;
@@ -433,7 +441,7 @@ public class ChatListener implements Listener {
 		String Channelformat;
 		boolean irc = false;
 		if(eventChannel.hasPermission() && !mcp.getPlayer().hasPermission(eventChannel.getPermission())) {
-			mcp.getPlayer().sendMessage(ChatColor.RED + "You do not have permission for this channel.");
+			mcp.getPlayer().sendMessage(LocalizedMessage.CHANNEL_NO_PERMISSION.toString());
 			mcp.setQuickChat(false);
 			mcp.removeListening(eventChannel.getName());
 			mcp.setCurrentChannel(cc.getDefaultChannel());
@@ -462,7 +470,9 @@ public class ChatListener implements Listener {
 					int remaining = timemark - time;
 					String keyword = "seconds";
 					if(remaining == 1) keyword = "second";
-					mcp.getPlayer().sendMessage(ChatColor.RED + "" + remaining + " " + keyword + " of cooldown remaining.");
+					mcp.getPlayer().sendMessage(LocalizedMessage.CHANNEL_COOLDOWN.toString()
+							.replace("{cooldown}", remaining + "")
+							.replace("{units}", keyword));
 					mcp.setQuickChat(false);
 					event.setCancelled(true);
 					bungee = false;
@@ -493,17 +503,20 @@ public class ChatListener implements Listener {
 					if(mutedfor > 0) {
 						String keyword = "minutes";
 						if(mutedfor == 1) keyword = "minute";
-						timedmute = ChatColor.RED + " for " + mutedfor + " " + keyword;
+						timedmute = " for " + mutedfor + " " + keyword;
 					}
 					mcp.getSpam().get(eventChannel).set(0, 0);
-					mcp.getPlayer().sendMessage(ChatColor.RED + "You have been muted for spamming in: " + ChatColor.valueOf(eventChannel.getColor().toUpperCase()) + eventChannel.getName() + timedmute);
+					mcp.getPlayer().sendMessage(LocalizedMessage.MUTE_PLAYER_SPAM.toString()
+							.replace("{channel_color}", ChatColor.valueOf(eventChannel.getColor().toUpperCase()) + "")
+							.replace("{channel_name}", eventChannel.getName())
+							.replace("{time}", timedmute));
 					mcp.setQuickChat(false);
 					event.setCancelled(true);
 				}
 				else {
 					if(spamtimeconfig % 2 != 0) spamtimeconfig++;
 					if(spamcount + 1 == spamtimeconfig / 2) {
-						mcp.getPlayer().sendMessage(ChatColor.RED + "Slow down your chat! You're halfway to being muted for spam!");
+						mcp.getPlayer().sendMessage(LocalizedMessage.SPAM_WARNING.toString());
 					}
 					mcp.getSpam().get(eventChannel).set(0, spamcount + 1);
 				}
