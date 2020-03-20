@@ -1,6 +1,5 @@
 package mineverse.Aust1n46.chat.command.mute;
 
-import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 
 import mineverse.Aust1n46.chat.MineverseChat;
@@ -8,6 +7,7 @@ import mineverse.Aust1n46.chat.api.MineverseChatAPI;
 import mineverse.Aust1n46.chat.api.MineverseChatPlayer;
 import mineverse.Aust1n46.chat.channel.ChatChannel;
 import mineverse.Aust1n46.chat.command.MineverseCommand;
+import mineverse.Aust1n46.chat.localization.LocalizedMessage;
 
 public class Unmuteall extends MineverseCommand {
 
@@ -19,12 +19,15 @@ public class Unmuteall extends MineverseCommand {
 	public void execute(CommandSender sender, String command, String[] args) {
 		if(sender.hasPermission("venturechat.mute")) {
 			if(args.length < 1) {
-				sender.sendMessage(ChatColor.RED + "Invalid command: /unmuteall [player]");
+				sender.sendMessage(LocalizedMessage.COMMAND_INVALID_ARGUMENTS.toString()
+						.replace("{command}", "/unmuteall")
+						.replace("{args}", "[player]"));
 				return;
 			}
 			MineverseChatPlayer player = MineverseChatAPI.getMineverseChatPlayer(args[0]);
 			if(player == null || (!player.isOnline() && !sender.hasPermission("venturechat.mute.offline"))) {
-				sender.sendMessage(ChatColor.RED + "Player: " + ChatColor.GOLD + args[0] + ChatColor.RED + " is not online.");
+				sender.sendMessage(LocalizedMessage.PLAYER_OFFLINE.toString()
+						.replace("{args}", args[0]));
 				return;
 			}
 			boolean bungee = false;
@@ -37,16 +40,17 @@ public class Unmuteall extends MineverseCommand {
 			if(bungee) {
 				MineverseChat.getInstance().synchronize(player, true);
 			}
-			sender.sendMessage(ChatColor.RED + "Unmuted player " + ChatColor.GOLD + player.getName() + ChatColor.RED + " in all channels.");
+			sender.sendMessage(LocalizedMessage.UNMUTE_PLAYER_ALL_SENDER.toString()
+					.replace("{player}", player.getName()));
 			if(player.isOnline()) {
-				player.getPlayer().sendMessage(ChatColor.RED + "You have just been unmuted in all channels.");
+				player.getPlayer().sendMessage(LocalizedMessage.UNMUTE_PLAYER_ALL_PLAYER.toString());
 			}
 			else 
 				player.setModified(true);
 			return;
 		}
 		else {
-			sender.sendMessage(ChatColor.RED + "You do not have permission for this command.");
+			sender.sendMessage(LocalizedMessage.COMMAND_NO_PERMISSION.toString());
 			return;
 		}
 	}

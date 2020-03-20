@@ -13,6 +13,7 @@ import mineverse.Aust1n46.chat.api.MineverseChatPlayer;
 import mineverse.Aust1n46.chat.api.events.ChannelJoinEvent;
 import mineverse.Aust1n46.chat.channel.ChatChannel;
 import mineverse.Aust1n46.chat.command.MineverseCommand;
+import mineverse.Aust1n46.chat.localization.LocalizedMessage;
 
 public class Channel extends MineverseCommand implements Listener {
 	private MineverseChat plugin = MineverseChat.getInstance();
@@ -26,20 +27,25 @@ public class Channel extends MineverseCommand implements Listener {
 	@Override
 	public void execute(CommandSender sender, String command, String[] args) {
 		if(!(sender instanceof Player)) {
-			plugin.getServer().getConsoleSender().sendMessage(ChatColor.RED + "This command must be run by a player.");
+			plugin.getServer().getConsoleSender().sendMessage(LocalizedMessage.COMMAND_MUST_BE_RUN_BY_PLAYER.toString());
 			return;
 		}		
 		MineverseChatPlayer mcp = MineverseChatAPI.getMineverseChatPlayer((Player) sender);	
 		if(args.length > 0) {
 			if(!ChatChannel.isChannel(args[0])) {
-				mcp.getPlayer().sendMessage(ChatColor.RED + "Invalid channel: " + args[0]);
+				mcp.getPlayer().sendMessage(LocalizedMessage.INVALID_CHANNEL.toString()
+						.replace("{args}", args[0]));
 				return;
 			}			
-			ChatChannel channel = ChatChannel.getChannel(args[0]);						
-			plugin.getServer().getPluginManager().callEvent(new ChannelJoinEvent(mcp.getPlayer(), channel, "Channel Set: " + ChatColor.valueOf(channel.getColor().toUpperCase()) + "[" + channel.getName() + "]"));			
+			ChatChannel channel = ChatChannel.getChannel(args[0]);							
+			plugin.getServer().getPluginManager().callEvent(new ChannelJoinEvent(mcp.getPlayer(), channel, LocalizedMessage.SET_CHANNEL.toString()
+					.replace("{channel_color}", ChatColor.valueOf(channel.getColor().toUpperCase()) + "")
+					.replace("{channel_name}", channel.getName())));			
 			return;
 		}
-		mcp.getPlayer().sendMessage(ChatColor.RED + "Invalid command: /" + command + " [channel]");
+		mcp.getPlayer().sendMessage(LocalizedMessage.COMMAND_INVALID_ARGUMENTS.toString()
+				.replace("{command}", "/channel")
+				.replace("{args}", "[channel]"));
 		return;
 	}
 	
@@ -52,17 +58,20 @@ public class Channel extends MineverseCommand implements Listener {
 		if(channel.hasPermission()) {
 			if(!mcp.getPlayer().hasPermission(channel.getPermission())) {
 				mcp.removeListening(channel.getName());
-				mcp.getPlayer().sendMessage(ChatColor.RED + "You do not have permission for this channel.");
+				mcp.getPlayer().sendMessage(LocalizedMessage.CHANNEL_NO_PERMISSION.toString());
 				return;
 			}
 		}		
 		if(mcp.hasConversation()) {
 			for(MineverseChatPlayer p : MineverseChat.onlinePlayers) {
 				if(p.isSpy()) {
-					p.getPlayer().sendMessage(mcp.getName() + " is no longer in a private conversation with " + MineverseChatAPI.getMineverseChatPlayer(mcp.getConversation()).getName() + ".");
+					p.getPlayer().sendMessage(LocalizedMessage.EXIT_PRIVATE_CONVERSATION_SPY.toString()
+							.replace("{player_sender}", mcp.getName())
+							.replace("{player_receiver}", MineverseChatAPI.getMineverseChatPlayer(mcp.getConversation()).getName()));
 				}
 			}
-			mcp.getPlayer().sendMessage("You are no longer in private conversation with " + MineverseChatAPI.getMineverseChatPlayer(mcp.getConversation()).getName() + ".");
+			mcp.getPlayer().sendMessage(LocalizedMessage.EXIT_PRIVATE_CONVERSATION.toString()
+					.replace("{player_receiver}", MineverseChatAPI.getMineverseChatPlayer(mcp.getConversation()).getName()));
 			mcp.setConversation(null);
 		}
 		mcp.addListening(channel.getName());		

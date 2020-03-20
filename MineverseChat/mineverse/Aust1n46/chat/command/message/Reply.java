@@ -12,6 +12,7 @@ import mineverse.Aust1n46.chat.MineverseChat;
 import mineverse.Aust1n46.chat.api.MineverseChatAPI;
 import mineverse.Aust1n46.chat.api.MineverseChatPlayer;
 import mineverse.Aust1n46.chat.command.MineverseCommand;
+import mineverse.Aust1n46.chat.localization.LocalizedMessage;
 import mineverse.Aust1n46.chat.utilities.Format;
 import mineverse.Aust1n46.chat.versions.VersionHandler;
 
@@ -25,7 +26,7 @@ public class Reply extends MineverseCommand {
 	@Override
 	public void execute(CommandSender sender, String command, String[] args) {
 		if(!(sender instanceof Player)) {
-			plugin.getServer().getConsoleSender().sendMessage(ChatColor.RED + "This command must be run by a player.");
+			plugin.getServer().getConsoleSender().sendMessage(LocalizedMessage.COMMAND_MUST_BE_RUN_BY_PLAYER.toString());
 			return;
 		}
 		MineverseChatPlayer mcp = MineverseChatAPI.getMineverseChatPlayer((Player) sender);
@@ -80,19 +81,21 @@ public class Reply extends MineverseCommand {
 					return;
 				}
 				if(player == null || !player.isOnline()) {
-					mcp.getPlayer().sendMessage(ChatColor.RED + "You do not have anyone to reply to.");
+					mcp.getPlayer().sendMessage(LocalizedMessage.NO_PLAYER_TO_REPLY_TO.toString());
 					return;
 				}
 				if(!mcp.getPlayer().canSee(player.getPlayer())) {
-					mcp.getPlayer().sendMessage(ChatColor.RED + "You do not have anyone to reply to.");
+					mcp.getPlayer().sendMessage(LocalizedMessage.NO_PLAYER_TO_REPLY_TO.toString());
 					return;
 				}
 				if(player.getIgnores().contains(mcp.getUUID())) {
-					mcp.getPlayer().sendMessage(ChatColor.GOLD + player.getNickname() + " is currently ignoring your replies.");
+					mcp.getPlayer().sendMessage(LocalizedMessage.IGNORING_MESSAGE.toString()
+							.replace("{player}", player.getName()));
 					return;
 				}
 				if(!player.getMessageToggle()) {
-					mcp.getPlayer().sendMessage(ChatColor.GOLD + player.getNickname() + " is currently blocking messages.");
+					mcp.getPlayer().sendMessage(LocalizedMessage.BLOCKING_MESSAGE.toString()
+							.replace("{player}", player.getName()));
 					return;
 				}
 				String msg = "";
@@ -151,9 +154,11 @@ public class Reply extends MineverseCommand {
 					return;
 				}
 			}
-			mcp.getPlayer().sendMessage(ChatColor.RED + "You do not have anyone to reply to.");
+			mcp.getPlayer().sendMessage(LocalizedMessage.NO_PLAYER_TO_REPLY_TO.toString());
 			return;
 		}
-		mcp.getPlayer().sendMessage(ChatColor.RED + "Invalid command: /reply [msg]");
+		mcp.getPlayer().sendMessage(LocalizedMessage.COMMAND_INVALID_ARGUMENTS.toString()
+				.replace("{command}", "/reply")
+				.replace("{args}", "[message]"));
 	}
 }

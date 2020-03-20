@@ -7,6 +7,7 @@ import mineverse.Aust1n46.chat.api.MineverseChatAPI;
 import mineverse.Aust1n46.chat.api.MineverseChatPlayer;
 import mineverse.Aust1n46.chat.channel.ChatChannel;
 import mineverse.Aust1n46.chat.command.MineverseCommand;
+import mineverse.Aust1n46.chat.localization.LocalizedMessage;
 
 public class Kickchannel extends MineverseCommand {
 
@@ -18,38 +19,48 @@ public class Kickchannel extends MineverseCommand {
 	public void execute(CommandSender sender, String command, String[] args) {
 		if(sender.hasPermission("venturechat.kickchannel")) {
 			if(args.length < 2) {
-				sender.sendMessage(ChatColor.RED + "Invalid command: /kickchannel [player] [channelname]");
+				sender.sendMessage(LocalizedMessage.COMMAND_INVALID_ARGUMENTS.toString()
+						.replace("{command}", "/kickchannel")
+						.replace("{args}", "[player] [channel]"));
 				return;
 			}
 			MineverseChatPlayer player = MineverseChatAPI.getMineverseChatPlayer(args[0]);
 			if(player == null) {
-				sender.sendMessage(ChatColor.RED + "Player: " + ChatColor.GOLD + args[0] + ChatColor.RED + " is not online.");
+				sender.sendMessage(LocalizedMessage.PLAYER_OFFLINE.toString()
+						.replace("{args}", args[0]));
 				return;
 			}
 			ChatChannel channel = ChatChannel.getChannel(args[1]);
 			if(channel == null) {
-				sender.sendMessage(ChatColor.RED + "Invalid channel: " + args[1]);
+				sender.sendMessage(LocalizedMessage.INVALID_CHANNEL.toString()
+						.replace("{args}", args[1]));
 				return;
 			}			
-			sender.sendMessage(ChatColor.GOLD + "Kicked player " + ChatColor.RED + args[0] + ChatColor.GOLD + " from channel: " + ChatColor.valueOf(channel.getColor().toUpperCase()) + channel.getName());
-			String format = ChatColor.valueOf(channel.getColor().toUpperCase()) + "[" + channel.getName() + "] " + ChatColor.valueOf(channel.getColor().toUpperCase());
+			sender.sendMessage(LocalizedMessage.KICK_CHANNEL.toString()
+					.replace("{player}", args[0])
+					.replace("{channel_color}", ChatColor.valueOf(channel.getColor().toUpperCase()) + "")
+					.replace("{channel_name}", channel.getName()));
 			player.removeListening(channel.getName());
 			if(player.isOnline()) {
-				player.getPlayer().sendMessage("Leaving Channel: " + format);
+				player.getPlayer().sendMessage(LocalizedMessage.LEAVE_CHANNEL.toString()
+						.replace("{channel_color}", ChatColor.valueOf(channel.getColor().toUpperCase()) + "")
+						.replace("{channel_name}", channel.getName()));
 			}
 			else 
 				player.setModified(true);
 			if(player.getListening().size() == 0) {
 				player.setCurrentChannel(ChatChannel.getDefaultChannel());
 				if(player.isOnline()) {
-					player.getPlayer().sendMessage(ChatColor.RED + "You need to be listening on at least one channel, setting you into the default channel.");
-					player.getPlayer().sendMessage("Channel Set: " + ChatColor.valueOf(ChatChannel.getDefaultColor().toUpperCase()) + "[" + ChatChannel.getDefaultChannel().getName() + "]");
+					player.getPlayer().sendMessage(LocalizedMessage.MUST_LISTEN_ONE_CHANNEL.toString());
+					player.getPlayer().sendMessage(LocalizedMessage.SET_CHANNEL.toString()
+							.replace("{channel_color}", ChatColor.valueOf(ChatChannel.getDefaultColor().toUpperCase()) + "")
+							.replace("{channel_name}", ChatChannel.getDefaultChannel().getName()));
 				}
 				else 
 					player.setModified(true);
 			}
 			return;
 		}
-		sender.sendMessage(ChatColor.RED + "You do not have permission for this command.");
+		sender.sendMessage(LocalizedMessage.COMMAND_NO_PERMISSION.toString());
 	}
 }

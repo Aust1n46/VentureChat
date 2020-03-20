@@ -1,12 +1,12 @@
 package mineverse.Aust1n46.chat.command.chat;
 
-import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 
 import mineverse.Aust1n46.chat.api.MineverseChatAPI;
 import mineverse.Aust1n46.chat.api.MineverseChatPlayer;
 import mineverse.Aust1n46.chat.channel.ChatChannel;
 import mineverse.Aust1n46.chat.command.MineverseCommand;
+import mineverse.Aust1n46.chat.localization.LocalizedMessage;
 
 public class Setchannelall extends MineverseCommand {
 
@@ -18,18 +18,21 @@ public class Setchannelall extends MineverseCommand {
 	public void execute(CommandSender sender, String command, String[] args) {
 		if(sender.hasPermission("venturechat.setchannelall")) {
 			if(args.length < 1) {
-				sender.sendMessage(ChatColor.RED + "Invalid command: /setchannelall [player]");
+				sender.sendMessage(LocalizedMessage.COMMAND_INVALID_ARGUMENTS.toString()
+						.replace("{command}", "/setchannelall")
+						.replace("{args}", "[player]"));
 				return;
 			}
 			MineverseChatPlayer player = MineverseChatAPI.getMineverseChatPlayer(args[0]);
 			if(player == null) {
-				sender.sendMessage(ChatColor.RED + "Player: " + ChatColor.GOLD + args[0] + ChatColor.RED + " is not online.");
+				sender.sendMessage(LocalizedMessage.PLAYER_OFFLINE.toString()
+						.replace("{args}", args[0]));
 				return;
 			}
 			for(ChatChannel channel : ChatChannel.getChannels()) {
 				if(channel.hasPermission()) {
 					if(!player.isOnline()) {
-						sender.sendMessage(ChatColor.RED + "Can't run permission check on offline player.");
+						sender.sendMessage(LocalizedMessage.PLAYER_OFFLINE_NO_PERMISSIONS_CHECK.toString());
 						return;
 					}
 					if(!player.getPlayer().hasPermission(channel.getPermission())) {
@@ -43,13 +46,14 @@ public class Setchannelall extends MineverseCommand {
 					player.addListening(channel.getName());
 				}
 			}
-			sender.sendMessage(ChatColor.GOLD + "Set player " + ChatColor.RED + args[0] + ChatColor.GOLD + " into all channels.");
+			sender.sendMessage(LocalizedMessage.SET_CHANNEL_ALL_SENDER.toString()
+					.replace("{player}", player.getName()));
 			if(player.isOnline()) 
-				player.getPlayer().sendMessage(ChatColor.RED + "You have been set into all channels.");
+				player.getPlayer().sendMessage(LocalizedMessage.SET_CHANNEL_ALL_PLAYER.toString());
 			else
 				player.setModified(true);
 			return;
 		}
-		sender.sendMessage(ChatColor.RED + "You do not have permission for this command.");
+		sender.sendMessage(LocalizedMessage.COMMAND_NO_PERMISSION.toString());
 	}
 }

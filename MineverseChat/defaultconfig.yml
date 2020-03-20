@@ -47,6 +47,7 @@ nicknames:
 nickname-in-tablist: true
 
 commandspy:
+  format: '&6{player}: {command}'
   worldeditcommands: true
   
 antispam:

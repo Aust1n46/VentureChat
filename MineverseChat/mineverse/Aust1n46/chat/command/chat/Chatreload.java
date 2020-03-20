@@ -1,12 +1,12 @@
 package mineverse.Aust1n46.chat.command.chat;
 
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 
 import mineverse.Aust1n46.chat.MineverseChat;
 import mineverse.Aust1n46.chat.api.MineverseChatPlayer;
 import mineverse.Aust1n46.chat.command.MineverseCommand;
+import mineverse.Aust1n46.chat.localization.LocalizedMessage;
 
 public class Chatreload extends MineverseCommand {
 	private MineverseChat plugin;
@@ -25,12 +25,12 @@ public class Chatreload extends MineverseCommand {
 			plugin.getServer().getLogger().info("[VentureChat] Config reloaded");		
 			for(MineverseChatPlayer player : MineverseChat.players) {
 				if(player.isOnline() && player.getPlayer().hasPermission("venturechat.reload")) {
-					player.getPlayer().sendMessage(ChatColor.GOLD + "VentureChat config reloaded.");
+					player.getPlayer().sendMessage(LocalizedMessage.CONFIG_RELOADED.toString());
 				}
 			}
 			return;
 		}
-		sender.sendMessage(ChatColor.RED + "You do not have permission for this command.");
+		sender.sendMessage(LocalizedMessage.COMMAND_NO_PERMISSION.toString());
 		return;
 	}
 }

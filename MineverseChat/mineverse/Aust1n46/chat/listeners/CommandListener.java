@@ -13,6 +13,7 @@ import mineverse.Aust1n46.chat.api.MineverseChatAPI;
 import mineverse.Aust1n46.chat.api.MineverseChatPlayer;
 import mineverse.Aust1n46.chat.channel.ChatChannel;
 import mineverse.Aust1n46.chat.gui.GuiSlot;
+import mineverse.Aust1n46.chat.localization.LocalizedMessage;
 import mineverse.Aust1n46.chat.utilities.Format;
 import mineverse.Aust1n46.chat.versions.VersionHandler;
 
@@ -49,11 +50,14 @@ public class CommandListener implements CommandExecutor, Listener {
 		ConfigurationSection cs = plugin.getConfig().getConfigurationSection("commandspy");
 		Boolean wec = cs.getBoolean("worldeditcommands", true);
 		MineverseChatPlayer mcp = MineverseChatAPI.getOnlineMineverseChatPlayer(event.getPlayer());
-		if(!mcp.getPlayer().hasPermission("venturechat.commandspy.hide")) {
-			for(MineverseChatPlayer p : MineverseChat.onlinePlayers) {
-				if(p.hasCommandSpy()) {
-					if(wec) {
-						p.getPlayer().sendMessage(ChatColor.GOLD + mcp.getName() + ": " + event.getMessage());
+		for(MineverseChatPlayer p : MineverseChat.onlinePlayers) {
+			if(p.hasCommandSpy()) {
+				if(wec) {
+					p.getPlayer().sendMessage(Format.FormatStringAll(cs.getString("format").replace("{player}", mcp.getName()).replace("{command}", event.getMessage())));
+				}
+				else {
+					if(!(event.getMessage().toLowerCase().startsWith("//"))) {
+						p.getPlayer().sendMessage(Format.FormatStringAll(cs.getString("format").replace("{player}", mcp.getName()).replace("{command}", event.getMessage())));
 					}
 					else {
 						if(!(event.getMessage().toLowerCase().startsWith("//"))) {
@@ -66,7 +70,8 @@ public class CommandListener implements CommandExecutor, Listener {
 
 		String[] blocked = event.getMessage().split(" ");
 		if(mcp.getBlockedCommands().contains(blocked[0])) {
-			mcp.getPlayer().sendMessage(ChatColor.RED + "You are blocked from entering this command: " + event.getMessage());
+			mcp.getPlayer().sendMessage(LocalizedMessage.BLOCKED_COMMAND.toString()
+					.replace("{command}", event.getMessage()));
 			event.setCancelled(true);
 			return;
 		}
@@ -153,14 +158,19 @@ public class CommandListener implements CommandExecutor, Listener {
 			for(ChatChannel channel : ChatChannel.getChannels()) {
 				if(!channel.hasPermission() || mcp.getPlayer().hasPermission(channel.getPermission())) {
 					if(message.equals("/" + channel.getAlias())) {
-						mcp.getPlayer().sendMessage("Channel Set: " + ChatColor.valueOf(channel.getColor().toUpperCase()) + "[" + channel.getName() + "]");
+						mcp.getPlayer().sendMessage(LocalizedMessage.SET_CHANNEL.toString()
+								.replace("{channel_color}", ChatColor.valueOf(channel.getColor().toUpperCase()) + "")
+								.replace("{channel_name}", channel.getName()));
 						if(mcp.hasConversation()) {
 							for(MineverseChatPlayer p : MineverseChat.onlinePlayers) {
 								if(p.isSpy()) {
-									p.getPlayer().sendMessage(mcp.getName() + " is no longer in a private conversation with " + MineverseChatAPI.getMineverseChatPlayer(mcp.getConversation()).getName() + ".");
+									p.getPlayer().sendMessage(LocalizedMessage.EXIT_PRIVATE_CONVERSATION_SPY.toString()
+											.replace("{player_sender}", mcp.getName())
+											.replace("{player_receiver}", MineverseChatAPI.getMineverseChatPlayer(mcp.getConversation()).getName()));
 								}
 							}
-							mcp.getPlayer().sendMessage("You are no longer in private conversation with " + MineverseChatAPI.getMineverseChatPlayer(mcp.getConversation()).getName() + ".");
+							mcp.getPlayer().sendMessage(LocalizedMessage.EXIT_PRIVATE_CONVERSATION.toString()
+									.replace("{player_receiver}", MineverseChatAPI.getMineverseChatPlayer(mcp.getConversation()).getName()));
 							mcp.setConversation(null);
 						}
 						mcp.addListening(channel.getName());

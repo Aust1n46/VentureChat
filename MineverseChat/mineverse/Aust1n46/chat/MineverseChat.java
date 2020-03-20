@@ -36,7 +36,8 @@ import mineverse.Aust1n46.chat.listeners.LoginListener;
 import mineverse.Aust1n46.chat.listeners.ChatListener;
 import mineverse.Aust1n46.chat.listeners.PacketListener;
 import mineverse.Aust1n46.chat.listeners.SignListener;
-//import mineverse.Aust1n46.chat.localization.Localization;
+import mineverse.Aust1n46.chat.localization.Localization;
+import mineverse.Aust1n46.chat.localization.LocalizedMessage;
 //import mineverse.Aust1n46.chat.alias.Alias;
 import mineverse.Aust1n46.chat.alias.AliasInfo;
 import mineverse.Aust1n46.chat.api.MineverseChatAPI;
@@ -217,7 +218,8 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 		Bukkit.getConsoleSender().sendMessage(Format.FormatStringAll("&8[&eVentureChat&8]&e - Enabled Successfully"));
 		// Get config and handle
 		// Configuration
-		//Localization.initialize();
+
+		Localization.initialize();
 		
 		Bukkit.getConsoleSender().sendMessage(Format.FormatStringAll("&8[&eVentureChat&8]&e - Registering Listeners"));
 		// Channel information reference
@@ -811,7 +813,9 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 					if(playerList.length() > 2) {
 						playerList = playerList.substring(0, playerList.length() - 2);
 					}
-					mcp.getPlayer().sendMessage(ChatColor.GOLD + "Players in Channel: " + ChatColor.valueOf(chatchannel.getColor().toUpperCase()) + chatchannel.getName());
+					mcp.getPlayer().sendMessage(LocalizedMessage.CHANNEL_PLAYER_LIST_HEADER.toString()
+							.replace("{channel_color}", (ChatColor.valueOf(chatchannel.getColor().toUpperCase())).toString())
+							.replace("{channel_name}", chatchannel.getName()));
 					mcp.getPlayer().sendMessage(Format.FormatStringAll(playerList));
 				}
 			}
@@ -925,7 +929,8 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 					String receiver = msgin.readUTF();
 					UUID sender = UUID.fromString(msgin.readUTF());
 					MineverseChatPlayer p = MineverseChatAPI.getOnlineMineverseChatPlayer(sender);
-					p.getPlayer().sendMessage(ChatColor.RED + "Player: " + ChatColor.GOLD + receiver + ChatColor.RED + " is not online.");
+					p.getPlayer().sendMessage(LocalizedMessage.PLAYER_OFFLINE.toString()
+							.replace("{args}", receiver));
 				}
 				if(identifier.equals("Echo")) {
 					UUID receiver = UUID.fromString(msgin.readUTF());
@@ -945,7 +950,8 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 					}
 					
 					p.addIgnore(receiver);
-					p.getPlayer().sendMessage(ChatColor.GOLD + "You are now ignoring player: " + ChatColor.RED + rName);
+					p.getPlayer().sendMessage(LocalizedMessage.IGNORE_PLAYER_ON.toString()
+							.replace("{player}", rName));
 					this.synchronize(p, true);
 				}
 			}
@@ -1033,20 +1039,23 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 					String receiver = msgin.readUTF();
 					UUID sender = UUID.fromString(msgin.readUTF());
 					MineverseChatPlayer p = MineverseChatAPI.getOnlineMineverseChatPlayer(sender);
-					p.getPlayer().sendMessage(ChatColor.RED + "Player: " + ChatColor.GOLD + receiver + ChatColor.RED + " is not online.");
+					p.getPlayer().sendMessage(LocalizedMessage.PLAYER_OFFLINE.toString()
+							.replace("{args}", receiver));
 					p.setReplyPlayer(null);
 				}
 				if(identifier.equals("Ignore")) {
 					String receiver = msgin.readUTF();
 					UUID sender = UUID.fromString(msgin.readUTF());
 					MineverseChatPlayer p = MineverseChatAPI.getOnlineMineverseChatPlayer(sender);
-					p.getPlayer().sendMessage(ChatColor.GOLD + receiver + " is currently ignoring your messages.");
+					p.getPlayer().sendMessage(LocalizedMessage.IGNORING_MESSAGE.toString()
+							.replace("{player}", receiver));
 				}
 				if(identifier.equals("Blocked")) {
 					String receiver = msgin.readUTF();
 					UUID sender = UUID.fromString(msgin.readUTF());
 					MineverseChatPlayer p = MineverseChatAPI.getOnlineMineverseChatPlayer(sender);
-					p.getPlayer().sendMessage(ChatColor.GOLD + receiver + " is currently blocking messages.");
+					p.getPlayer().sendMessage(LocalizedMessage.BLOCKING_MESSAGE.toString()
+							.replace("{player}", receiver));
 				}
 				if(identifier.equals("Echo")) {
 					String receiver = msgin.readUTF();

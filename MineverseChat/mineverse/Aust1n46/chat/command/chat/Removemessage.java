@@ -12,6 +12,7 @@ import mineverse.Aust1n46.chat.MineverseChat;
 import mineverse.Aust1n46.chat.api.MineverseChatPlayer;
 import mineverse.Aust1n46.chat.channel.ChatChannel;
 import mineverse.Aust1n46.chat.command.MineverseCommand;
+import mineverse.Aust1n46.chat.localization.LocalizedMessage;
 import mineverse.Aust1n46.chat.utilities.Format;
 
 import org.bukkit.ChatColor;
@@ -35,7 +36,9 @@ public class Removemessage extends MineverseCommand {
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public void execute(CommandSender sender, String command, String[] args) {
 		if(args.length == 0) {
-			sender.sendMessage(ChatColor.RED + "Invalid command: /removemessage [hashcode]");
+			sender.sendMessage(LocalizedMessage.COMMAND_INVALID_ARGUMENTS.toString()
+					.replace("{command}", "/removemessage")
+					.replace("{args}", "[hashcode] {channel}"));
 			return;
 		}
 		final int hash;
@@ -43,7 +46,7 @@ public class Removemessage extends MineverseCommand {
 			hash = Integer.parseInt(args[0]);
 		}
 		catch(Exception e) {
-			sender.sendMessage(ChatColor.RED + "Invalid hashcode.");
+			sender.sendMessage(LocalizedMessage.INVALID_HASH.toString());
 			return;
 		}
 		if(args.length > 1 && ChatChannel.isChannel(args[1]) && ChatChannel.getChannel(args[1]).getBungee() && sender instanceof Player) {
