@@ -23,17 +23,14 @@ public class Me extends MineverseCommand {
 				String msg = "";
 				for(int x = 0; x < args.length; x++) 
 					if(args[x].length() > 0) 
-						msg += " " + args[x];				
+						msg += " " + args[x];	
+				if(sender instanceof Player && MineverseChatAPI.getMineverseChatPlayer((Player) sender).hasFilter()) {
+					msg = Format.FilterChat(msg);
+				}
 				if(sender.hasPermission("venturechat.color")) 
 					msg = Format.FormatStringColor(msg);
 				if(sender.hasPermission("venturechat.format")) 
 					msg = Format.FormatString(msg);
-				String filtered = Format.FilterChat(msg);
-				if(sender instanceof Player && MineverseChatAPI.getMineverseChatPlayer((Player) sender).hasFilter()) {
-					Player p = (Player) sender;
-					plugin.getServer().broadcastMessage("* " + p.getDisplayName() + filtered);
-					return;
-				}
 				if(sender instanceof Player) {
 					Player p = (Player) sender;
 					plugin.getServer().broadcastMessage("* " + p.getDisplayName() + msg);
