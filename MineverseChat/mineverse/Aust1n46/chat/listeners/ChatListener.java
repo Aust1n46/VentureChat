@@ -2,8 +2,6 @@ package mineverse.Aust1n46.chat.listeners;
 
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
-import java.sql.SQLException;
-import java.sql.Statement;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Set;
@@ -32,7 +30,6 @@ import mineverse.Aust1n46.chat.api.MineverseChatPlayer;
 import mineverse.Aust1n46.chat.api.events.ChannelJoinEvent;
 import mineverse.Aust1n46.chat.api.events.VentureChatEvent;
 import mineverse.Aust1n46.chat.channel.ChatChannel;
-import mineverse.Aust1n46.chat.database.DatabaseSender;
 import mineverse.Aust1n46.chat.localization.LocalizedMessage;
 import mineverse.Aust1n46.chat.utilities.Format;
 import mineverse.Aust1n46.chat.versions.VersionHandler;
@@ -158,11 +155,11 @@ public class ChatListener implements Listener {
 				mcp.setReplyPlayer(tp.getUUID());
 				tp.setReplyPlayer(mcp.getUUID());
 				Bukkit.getConsoleSender().sendMessage(mcp.getName() + " messages " + tp.getName() + ":" + ChatColor.valueOf(tellColor.toUpperCase()) + filtered);
-				if(plugin.mysql) {
+				if(plugin.db != null) {
 					Calendar currentDate = Calendar.getInstance();
 					SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 					String date = formatter.format(currentDate.getTime());
-					DatabaseSender.writeToMySQL("ChatTime", "UUID", "Name", "Server", "Channel", "Text", "Type", date, mcp.getUUID().toString(), mcp.getName(), plugin.getServer().getName(), "Messaging_Component", chat.replace("'", "''"), "Chat");
+					plugin.db.writeVentureChat(date, mcp.getUUID().toString(), mcp.getName(), plugin.getServer().getName(), "Messaging_Component", chat.replace("'", "''"), "Chat");
 				}
 			}
 			return;
@@ -194,18 +191,11 @@ public class ChatListener implements Listener {
 					}
 				}
 				Bukkit.getConsoleSender().sendMessage(partyformat);
-				if(plugin.mysql) {
-					Statement statement;
+				if(plugin.db != null) {
 					Calendar currentDate = Calendar.getInstance();
 					SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 					String date = formatter.format(currentDate.getTime());
-					try {
-						statement = plugin.c.createStatement();
-						statement.executeUpdate("INSERT INTO `VentureChat` (`ChatTime`, `UUID`, `Name`, `Server`, `Channel`, `Text`, `Type`) VALUES ('" + date + "', '" + mcp.getUUID().toString() + "', '" + mcp.getName() + "', '" + plugin.getServer().getName() + "', 'Party_Component', '" + chat.replace("'", "''") + "', 'Chat');");
-					}
-					catch(SQLException e) {
-						e.printStackTrace();
-					}
+					plugin.db.writeVentureChat(date, mcp.getUUID().toString(), mcp.getName(), plugin.getServer().getName(), "Party_Component", chat.replace("'", "''"), "Chat");
 				}
 				return;
 			}
@@ -481,18 +471,11 @@ public class ChatListener implements Listener {
 		int hash = event.getHash();
 		boolean bungee = event.isBungee();
 		
-		if(plugin.mysql) {
-			Statement statement;
+		if(plugin.db != null) {
 			Calendar currentDate = Calendar.getInstance();
 			SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 			String date = formatter.format(currentDate.getTime());
-			try {
-				statement = plugin.c.createStatement();
-				statement.executeUpdate("INSERT INTO `VentureChat` (`ChatTime`, `UUID`, `Name`, `Server`, `Channel`, `Text`, `Type`) VALUES ('" + date + "', '" + mcp.getUUID().toString() + "', '" + mcp.getName() + "', '" + plugin.getServer().getName() + "', '" + channel.getName() + "', '" + chat.replace("'", "''") + "', 'Chat');");
-			}
-			catch(SQLException e) {
-				e.printStackTrace();
-			}
+			plugin.db.writeVentureChat(date, mcp.getUUID().toString(), mcp.getName(), plugin.getServer().getName(), channel.getName(), chat.replace("'", "''"), "Chat");
 		}
 		
 		if(!bungee) {

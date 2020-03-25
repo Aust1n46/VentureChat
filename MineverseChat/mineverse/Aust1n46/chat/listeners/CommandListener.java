@@ -1,8 +1,6 @@
 package mineverse.Aust1n46.chat.listeners;
 
 import java.io.FileNotFoundException;
-import java.sql.SQLException;
-import java.sql.Statement;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
@@ -96,18 +94,11 @@ public class CommandListener implements CommandExecutor, Listener {
 		 * event.setCancelled(true); return; } }
 		 */
 
-		if(plugin.mysql) {
-			Statement statement;
+		if(plugin.db != null) {
 			Calendar currentDate = Calendar.getInstance();
 			SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 			String date = formatter.format(currentDate.getTime());
-			try {
-				statement = plugin.c.createStatement();
-				statement.executeUpdate("INSERT INTO `VentureChat` (`ChatTime`, `UUID`, `Name`, `Server`, `Channel`, `Text`, `Type`) VALUES ('" + date + "', '" + mcp.getUUID().toString() + "', '" + mcp.getName() + "', '" + plugin.getServer().getName() + "', 'Command_Component', '" + event.getMessage().replace("'", "''") + "', 'Command');");
-			}
-			catch(SQLException error) {
-				error.printStackTrace();
-			}
+			plugin.db.writeVentureChat(date, mcp.getUUID().toString(), mcp.getName(), plugin.getServer().getName(), "Command_Component", event.getMessage().replace("'", "''"), "Command");
 		}
 
 		for(Alias a : aa.getAliases()) {
@@ -205,18 +196,11 @@ public class CommandListener implements CommandExecutor, Listener {
 	//old 1.8 command map
 	@EventHandler
 	public void onServerCommand(ServerCommandEvent event) {
-		if(plugin.mysql) {
-			Statement statement;
+		if (plugin.db != null) {
 			Calendar currentDate = Calendar.getInstance();
 			SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 			String date = formatter.format(currentDate.getTime());
-			try {
-				statement = plugin.c.createStatement();
-				statement.executeUpdate("INSERT INTO `VentureChat` (`ChatTime`, `UUID`, `Name`, `Server`, `Channel`, `Text`, `Type`) VALUES ('" + date + "', 'N/A', 'Console', '" + plugin.getServer().getName() + "', 'Command_Component', '" + event.getCommand().replace("'", "''") + "', 'Command');");
-			}
-			catch(SQLException error) {
-				error.printStackTrace();
-			}
+			plugin.db.writeVentureChat(date, "N/A", "Console", plugin.getServer().getName(), "Command_Component", event.getCommand().replace("'", "''") , "Command");
 		}
 	}
 

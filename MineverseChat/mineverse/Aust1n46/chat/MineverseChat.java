@@ -12,9 +12,6 @@ import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.sql.Statement;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -87,6 +84,7 @@ import mineverse.Aust1n46.chat.command.mute.Mute;
 import mineverse.Aust1n46.chat.command.mute.Muteall;
 import mineverse.Aust1n46.chat.command.mute.Unmute;
 import mineverse.Aust1n46.chat.command.mute.Unmuteall;
+import mineverse.Aust1n46.chat.database.Database;
 import mineverse.Aust1n46.chat.database.MySQL;
 import mineverse.Aust1n46.chat.database.PlayerData;
 import mineverse.Aust1n46.chat.gui.GuiSlotInfo;
@@ -99,6 +97,8 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandMap;
 import org.bukkit.command.SimpleCommandMap;
+import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.RegisteredServiceProvider;
@@ -136,13 +136,8 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 	private MineverseCommandExecutor commandExecutor;
 	private Map<String, MineverseCommand> commands = new HashMap<String, MineverseCommand>();
 
-	// MySQL ------------------------------------
-	public Connection c = null;
-	public MySQL MySQL;
-	public boolean mysql = false;
-
-	// SQLite -------------------------------------
-	// public Connection lite = null;
+	// Database ------------------------------------
+	public Database db = null;
 
 	// Misc --------------------------------
 	public static AliasInfo aaInfo;
@@ -178,6 +173,8 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 	// DiscordSRV backwards compatibility
 	@Deprecated
 	public static ChatChannelInfo ccInfo;
+	
+	public static void main(String[] args) {}
 	
 	@Override
 	public void onEnable() {
@@ -287,19 +284,16 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 			onlinePlayers.add(mcp);
 		}
 
-		if(this.getConfig().getConfigurationSection("mysql").getBoolean("enabled")) {
-			this.MySQL = new MySQL(this, getConfig().getConfigurationSection("mysql").getString("host"), getConfig().getConfigurationSection("mysql").getString("port"), getConfig().getConfigurationSection("mysql").getString("database"), getConfig().getConfigurationSection("mysql").getString("user"), getConfig().getConfigurationSection("mysql").getString("password"));
-			this.mysql = true;
-			try {
-				c = MySQL.openConnection();
-				Statement statement = c.createStatement();
-				statement.executeUpdate("CREATE TABLE IF NOT EXISTS `VentureChat` (`rowid` INT(7) NOT NULL AUTO_INCREMENT, `ChatTime` TEXT(100), `UUID` TEXT(100), `Name` TEXT(100), `Server` TEXT(100), `Channel` TEXT(100), `Text` TEXT(300), `Type` TEXT(100), PRIMARY KEY (rowid));");
-				Bukkit.getConsoleSender().sendMessage(Format.FormatStringAll("&8[&eVentureChat&8]&e - Connecting to MySQL Database"));
-			}
-			catch(ClassNotFoundException | SQLException e) {
-				Bukkit.getConsoleSender().sendMessage(Format.FormatStringAll("&8[&eVentureChat&8]&e - &cFailed to connect to MySQL Database, Reason: " + e));
-				this.mysql = false;
-			}
+		FileConfiguration config = getConfig();
+		ConfigurationSection mysqlConfig = config.getConfigurationSection("mysql");
+		if (this.getConfig().getConfigurationSection("mysql").getBoolean("enabled")) {
+			String host = mysqlConfig.getString("host");
+			int port = mysqlConfig.getInt("port");
+			String database = mysqlConfig.getString("database");
+			String user = mysqlConfig.getString("user");
+			String password = mysqlConfig.getString("password");
+			db = new MySQL(host, port, database, user, password);
+			db.init();
 		}
 
 		commands.put("broadcast", new Broadcast("broadcast"));
