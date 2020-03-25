@@ -193,9 +193,7 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 				Bukkit.getConsoleSender().sendMessage(Format.FormatStringAll("&8[&eVentureChat&8]&e - Config found! Loading file."));
 			}
 
-			if(!new File(getDataFolder(), "defaultconfig.yml").exists()) {
-				saveResource("defaultconfig.yml", false);
-			}
+			saveResource("defaultconfig.yml", true);
 		}
 		catch(Exception ex) {
 			log.severe(String.format("[" + String.format("VentureChat") + "]" + " - Could not load configuration!\n " + ex, getDescription().getName()));
