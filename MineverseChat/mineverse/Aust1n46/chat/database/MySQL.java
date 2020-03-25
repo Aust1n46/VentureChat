@@ -38,7 +38,6 @@ public class MySQL extends Database {
 		dataSource = new HikariDataSource(config);
 		try {
 			Connection conn = dataSource.getConnection();
-			conn.setAutoCommit(false);
 			Statement statement = conn.createStatement();
 			statement.executeUpdate("CREATE TABLE IF NOT EXISTS VentureChat " +
 				"(ID SERIAL PRIMARY KEY, ChatTime TEXT, UUID TEXT, Name TEXT, " +

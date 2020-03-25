@@ -22,7 +22,6 @@ public abstract class Database {
 		Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
 			try {
 				final Connection conn = dataSource.getConnection();
-				conn.setAutoCommit(false);
 				final PreparedStatement statement = conn.prepareStatement(
 					"INSERT INTO VentureChat " +
 					"(ChatTime, UUID, Name, Server, Channel, Text, Type) " +
@@ -35,7 +34,6 @@ public abstract class Database {
 				statement.setString(6, text);
 				statement.setString(7, type);
 				statement.executeUpdate();
-				conn.commit();
 			} catch(SQLException e) {
 				throw new RuntimeException(e);
 			}
