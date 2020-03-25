@@ -27,7 +27,7 @@ public class Localization {
 		
 		if(!fileVersion.equals(currentVersion)) {
 			Bukkit.getConsoleSender().sendMessage(Format.FormatStringAll("&8[&eVentureChat&8]&e - Version Change Detected!  Saving Old Messages.yml and Generating Latest File"));
-			localizationFile.renameTo(new File(plugin.getDataFolder().getAbsolutePath(), "Messages_Old.yml"));
+			localizationFile.renameTo(new File(plugin.getDataFolder().getAbsolutePath(), "Messages_Old_" + fileVersion + ".yml"));
 			plugin.saveResource("Messages.yml", true);
 			localization = YamlConfiguration.loadConfiguration(localizationFile);
 		}
