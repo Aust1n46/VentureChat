@@ -114,18 +114,11 @@ replyformatto: Default
 replyformatfrom: Default
 replyformatspy: Default
 
-# {sender} : player sendings name
-# {player} : player receivings name
-# {time} : time mail was sent
-# use Default for the basic formatting
-mailformat: Default
-
 # {host} : party hosts name
 # {player} : player name
 # use Default for the basic formatting
 partyformat: Default
 
-broadcastafk: false
 formatcleaner: true
 
 # If true, /ignore will block chat from the ignored player as well as PM's
@@ -274,39 +267,6 @@ alias:
     permissions: None
     components:
     - 'Command: /vmessage$'
-    
-# Valid modes are:
-# * Everyone
-# v Voice and up
-# h HalfOp and up
-# q Owner
-# o Op and up
-# Enter components like console commands
-# Arguments are accepted
-irc:
-  enabled: false
-  nick: 'VentureChatBot'
-  login: 'VentureChatbot'
-  server: 'irc.freenode.net'
-  port: 6667
-  channel: '#venturechat'
-  trustallcertificates: true
-  # the delay before the bot logs into the channel in seconds
-  # increase the time if the bot fails to login
-  channeldelay: 60
-  commands:
-    mute:
-      mode: 'v'
-      components:
-      - 'mute'
-    ban:
-      mode: 'o'
-      components:
-      - 'ban'
-    kick:
-      mode: 'v'
-      components:
-      - 'kick'
   
 # Enables the creation of special Towny channels: Town and Nation
 # To create these channels, simply name two channels below "Town" and "Nation"
