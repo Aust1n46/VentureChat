@@ -291,7 +291,6 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 			String user = mysqlConfig.getString("user");
 			String password = mysqlConfig.getString("password");
 			db = new MySQL(host, port, database, user, password);
-			db.init();
 		}
 
 		commands.put("broadcast", new Broadcast("broadcast"));

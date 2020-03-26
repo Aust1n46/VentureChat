@@ -10,14 +10,8 @@ import mineverse.Aust1n46.chat.MineverseChat;
 
 //This class initializes the connection to a SQLite database, which has no implementations currently in the plugin.
 public class SQLite extends Database {
-	private final String dbLocation;
 
 	public SQLite(String dbLocation) {
-		this.dbLocation = dbLocation;
-	}
-
-	@Override
-	public void init() {
 		File dataFolder = MineverseChat.getInstance().getDataFolder();
 		if (!dataFolder.exists()) dataFolder.mkdirs();
 		File databaseFile = new File(dataFolder, dbLocation);

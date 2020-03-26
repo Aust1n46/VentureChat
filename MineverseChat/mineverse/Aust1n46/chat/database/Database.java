@@ -15,8 +15,6 @@ public abstract class Database {
 
 	protected HikariDataSource dataSource = null;
 
-	public abstract void init();
-
 	public void writeVentureChat(String time, String uuid, String name, String server, String channel, String text, String type) {
 		MineverseChat plugin = MineverseChat.getInstance();
 		Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
