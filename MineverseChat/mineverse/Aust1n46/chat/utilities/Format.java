@@ -34,8 +34,8 @@ public class Format {
 		String prefix = "";
 		String suffix = "";
 		try {
-			prefix = FormatStringAll(MineverseChat.chat.getPlayerPrefix(sender.getPlayer()).replace("|", "").replace("+", "").replace("*", ""));
-			suffix = FormatStringAll(MineverseChat.chat.getPlayerSuffix(sender.getPlayer()).replace("|", "").replace("+", "").replace("*", ""));
+			prefix = FormatStringAll(MineverseChat.chat.getPlayerPrefix(sender.getPlayer()));
+			suffix = FormatStringAll(MineverseChat.chat.getPlayerSuffix(sender.getPlayer()));
 			if(suffix.equals("")) {
 				suffix = "venturechat_no_suffix_code";
 			}
@@ -44,6 +44,7 @@ public class Format {
 			}
 		}
 		catch(Exception e) {
+			System.out.println("Exception?" + e.getLocalizedMessage());
 			if(plugin.getConfig().getString("loglevel", "info").equals("debug")) {
 				Bukkit.getConsoleSender().sendMessage(Format.FormatStringAll("&8[&eVentureChat&8]&e - Prefix and / or suffix don't exist, setting to nothing."));
 			}
@@ -52,7 +53,7 @@ public class Format {
 		}	
 		String nickname = "";
 		if(sender.getPlayer() != null) {
-			nickname = FormatStringAll(sender.getPlayer().getDisplayName().replace("|", "").replace("+", "").replace("*", ""));
+			nickname = FormatStringAll(sender.getPlayer().getDisplayName());
 		}
 		json += convertPlaceholders(f, JSONformat, prefix, nickname, suffix, sender);
 		json += "]}";
@@ -77,7 +78,7 @@ public class Format {
 		String placeholder = "";
 		String lastCode = "§f";
 		do {
-			Pattern pattern = Pattern.compile("(" + prefix.replace("[", "\\[").replace("]", "\\]").replace("{", "\\{").replace("}", "\\}").replace("(", "\\(").replace(")", "\\)") + "|" + nickname.replace("[", "\\[").replace("]", "\\]").replace("{", "\\{").replace("}", "\\}").replace("(", "\\(").replace(")", "\\)") + "|" + suffix.replace("[", "\\[").replace("]", "\\]").replace("{", "\\{").replace("}", "\\}").replace("(", "\\(").replace(")", "\\)") + ")");
+			Pattern pattern = Pattern.compile("(" + escapeAllRegex(prefix) + "|" + escapeAllRegex(nickname) + "|" + escapeAllRegex(suffix) + ")");
 			Matcher matcher = pattern.matcher(remaining);
 			if(matcher.find()) {
 				indexStart = matcher.start();
@@ -455,5 +456,9 @@ public class Format {
 			}
 		}
 		return bFound;
+	}
+	
+	public static String escapeAllRegex(String input) {
+		return input.replace("[", "\\[").replace("]", "\\]").replace("{", "\\{").replace("}", "\\}").replace("(", "\\(").replace(")", "\\)").replace("|", "\\|").replace("+", "\\+").replace("*", "\\*");
 	}
 }

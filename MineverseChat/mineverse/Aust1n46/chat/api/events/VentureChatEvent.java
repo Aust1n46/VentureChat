@@ -23,13 +23,14 @@ public class VentureChatEvent extends Event {
 	private final String playerPrimaryGroup;
 	private final ChatChannel channel;
 	private final Set<Player> recipients;
+	private final int recipientCount; //For not counting vanished players
 	private final String format;
 	private final String chat;
 	private final String globalJSON;
 	private final int hash;
 	private final boolean bungee;
 	
-	public VentureChatEvent(MineverseChatPlayer mcp, String username, String nickname, String playerPrimaryGroup, ChatChannel channel, Set<Player> recipients, String format, String chat, String globalJSON, int hash, boolean bungee) {
+	public VentureChatEvent(MineverseChatPlayer mcp, String username, String nickname, String playerPrimaryGroup, ChatChannel channel, Set<Player> recipients, int recipientCount, String format, String chat, String globalJSON, int hash, boolean bungee) {
 		super(MineverseChat.ASYNC);
 		this.mcp = mcp;
 		this.username = username;
@@ -37,6 +38,7 @@ public class VentureChatEvent extends Event {
 		this.playerPrimaryGroup = playerPrimaryGroup;
 		this.channel = channel;
 		this.recipients = recipients;
+		this.recipientCount = recipientCount;
 		this.format = format;
 		this.chat = chat;
 		this.globalJSON = globalJSON;
@@ -66,6 +68,11 @@ public class VentureChatEvent extends Event {
 	
 	public Set<Player> getRecipients() {
 		return this.recipients;
+	}
+	
+	//Could be lower than the total number of recipients because vanished players are not counted
+	public int getRecipientCount() {
+		return this.recipientCount;
 	}
 	
 	public String getFormat() {

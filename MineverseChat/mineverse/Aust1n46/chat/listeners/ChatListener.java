@@ -61,6 +61,7 @@ public class ChatListener implements Listener {
 		String chat = event.getMessage();
 		String format;
 		Set<Player> recipients = event.getRecipients();
+		int recipientCount = recipients.size(); // Don't count vanished players
 		MineverseChatPlayer mcp = MineverseChatAPI.getOnlineMineverseChatPlayer(event.getPlayer());
 		ChatChannel eventChannel = mcp.getCurrentChannel();
 		
@@ -340,10 +341,12 @@ public class ChatListener implements Listener {
 			if(p.getPlayer() != mcp.getPlayer()) {
 				if(!p.isListening(eventChannel.getName())) {
 					recipients.remove(p.getPlayer());
+					recipientCount--;
 					continue;
 				}
 				if(plugin.getConfig().getBoolean("ignorechat", false) && p.getIgnores().contains(mcp.getUUID())) {
 					recipients.remove(p.getPlayer());
+					recipientCount--;
 					continue;
 				}
 				if(plugin.getConfig().getBoolean("enable_towny_channel") && pluginManager.isPluginEnabled("Towny")) {
@@ -353,28 +356,34 @@ public class ChatListener implements Listener {
 						if(eventChannel.getName().equalsIgnoreCase("Town")) {
 							if(!pp.hasTown()) {
 								recipients.remove(p.getPlayer());
+								recipientCount--;
 								continue;
 							}
 							else if(!r.hasTown()) {
 								recipients.remove(p.getPlayer());
+								recipientCount--;
 								continue;
 							}
 							else if(!(r.getTown().getName().equals(pp.getTown().getName()))) {
 								recipients.remove(p.getPlayer());
+								recipientCount--;
 								continue;
 							}
 						}
 						if(eventChannel.getName().equalsIgnoreCase("Nation")) {
 							if(!pp.hasNation()) {
 								recipients.remove(p.getPlayer());
+								recipientCount--;
 								continue;
 							}
 							else if(!r.hasNation()) {
 								recipients.remove(p.getPlayer());
+								recipientCount--;
 								continue;
 							}
 							else if(!(r.getTown().getNation().getName().equals(pp.getTown().getNation().getName()))) {
 								recipients.remove(p.getPlayer());
+								recipientCount--;
 								continue;
 							}
 						}
@@ -391,12 +400,15 @@ public class ChatListener implements Listener {
 						if(eventChannel.getName().equalsIgnoreCase("Faction")) {
 							if(!mplayer.hasFaction()) {
 								recipients.remove(p.getPlayer());
+								recipientCount--;
 							}
 							else if(!mplayerp.hasFaction()) {
 								recipients.remove(p.getPlayer());
+								recipientCount--;
 							}
 							else if(!(mplayer.getFactionName().equals(mplayerp.getFactionName()))) {
 								recipients.remove(p.getPlayer());
+								recipientCount--;
 							}
 						}
 					}
@@ -411,20 +423,21 @@ public class ChatListener implements Listener {
 						diff = locreceip.subtract(locsender);
 						if(Math.abs(diff.getX()) > chDistance || Math.abs(diff.getZ()) > chDistance) {
 							recipients.remove(p.getPlayer());
+							recipientCount--;
 							continue;
 						}
 						if(!mcp.getPlayer().canSee(p.getPlayer())) {
-							recipients.remove(p.getPlayer());
+							recipientCount--;
 							continue;
 						}
 					}
 					else {
-						recipients.remove(p.getPlayer());
+						recipientCount--;
 						continue;
 					}
 				}
 				if(!mcp.getPlayer().canSee(p.getPlayer())) {
-					recipients.remove(p.getPlayer());
+					recipientCount--;
 					continue;
 				}
 			}
@@ -453,7 +466,7 @@ public class ChatListener implements Listener {
 		int hash = message.hashCode();
 		
 		//Create VentureChatEvent
-		VentureChatEvent ventureChatEvent = new VentureChatEvent(mcp, mcp.getName(), mcp.getNickname(), MineverseChat.permission.getPrimaryGroup(mcp.getPlayer()), eventChannel, recipients, format, chat, globalJSON, hash, bungee);
+		VentureChatEvent ventureChatEvent = new VentureChatEvent(mcp, mcp.getName(), mcp.getNickname(), MineverseChat.permission.getPrimaryGroup(mcp.getPlayer()), eventChannel, recipients, recipientCount, format, chat, globalJSON, hash, bungee);
 		//Fire event and wait for other plugin listeners to act on it
 		Bukkit.getServer().getPluginManager().callEvent(ventureChatEvent);
 		//Call method to send the processed chat
@@ -464,6 +477,7 @@ public class ChatListener implements Listener {
 		MineverseChatPlayer mcp = event.getMineverseChatPlayer();
 		ChatChannel channel = event.getChannel();
 		Set<Player> recipients = event.getRecipients();
+		int recipientCount = event.getRecipientCount();
 		String format = event.getFormat();
 		String chat = event.getChat();
 		String consoleChat = event.getConsoleChat();
@@ -479,7 +493,7 @@ public class ChatListener implements Listener {
 		}
 		
 		if(!bungee) {
-			if(recipients.size() == 1) {
+			if(recipientCount == 1) {
 				if(!plugin.getConfig().getString("emptychannelalert", "&6No one is listening to you.").equals("")) {
 					mcp.getPlayer().sendMessage(Format.FormatStringAll(plugin.getConfig().getString("emptychannelalert", "&6No one is listening to you.")));	
 				}
