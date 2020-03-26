@@ -34,8 +34,8 @@ public class Format {
 		String prefix = "";
 		String suffix = "";
 		try {
-			prefix = FormatStringAll(MineverseChat.chat.getPlayerPrefix(sender.getPlayer()).replace("|", ""));
-			suffix = FormatStringAll(MineverseChat.chat.getPlayerSuffix(sender.getPlayer()).replace("|", ""));
+			prefix = FormatStringAll(MineverseChat.chat.getPlayerPrefix(sender.getPlayer()).replace("|", "").replace("+", "").replace("*", ""));
+			suffix = FormatStringAll(MineverseChat.chat.getPlayerSuffix(sender.getPlayer()).replace("|", "").replace("+", "").replace("*", ""));
 			if(suffix.equals("")) {
 				suffix = "venturechat_no_suffix_code";
 			}
@@ -52,7 +52,7 @@ public class Format {
 		}	
 		String nickname = "";
 		if(sender.getPlayer() != null) {
-			nickname = FormatStringAll(sender.getPlayer().getDisplayName().replace("|", ""));
+			nickname = FormatStringAll(sender.getPlayer().getDisplayName().replace("|", "").replace("+", "").replace("*", ""));
 		}
 		json += convertPlaceholders(f, JSONformat, prefix, nickname, suffix, sender);
 		json += "]}";

@@ -20,12 +20,11 @@ public abstract class Database {
 	public void writeVentureChat(String time, String uuid, String name, String server, String channel, String text, String type) {
 		MineverseChat plugin = MineverseChat.getInstance();
 		Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
-			try {
-				final Connection conn = dataSource.getConnection();
-				final PreparedStatement statement = conn.prepareStatement(
-					"INSERT INTO VentureChat " +
-					"(ChatTime, UUID, Name, Server, Channel, Text, Type) " +
-					"VALUES (?, ?, ?, ?, ?, ?, ?)");
+			try(final Connection conn = dataSource.getConnection();
+					final PreparedStatement statement = conn.prepareStatement(
+							"INSERT INTO VentureChat " + 
+							"(ChatTime, UUID, Name, Server, Channel, Text, Type) " + 
+							"VALUES (?, ?, ?, ?, ?, ?, ?)")) {
 				statement.setString(1, time);
 				statement.setString(2, uuid);
 				statement.setString(3, name);
@@ -34,7 +33,8 @@ public abstract class Database {
 				statement.setString(6, text);
 				statement.setString(7, type);
 				statement.executeUpdate();
-			} catch(SQLException e) {
+			} 
+			catch(SQLException e) {
 				throw new RuntimeException(e);
 			}
 		});

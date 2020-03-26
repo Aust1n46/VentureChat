@@ -1,5 +1,5 @@
 name: VentureChat
-version: 2.18.0
+version: 2.18.1
 api-version: 1.13
 main: mineverse.Aust1n46.chat.MineverseChat
 depend: [Vault, ProtocolLib, PlaceholderAPI]
