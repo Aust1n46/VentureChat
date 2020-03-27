@@ -160,7 +160,7 @@ public class ChatListener implements Listener {
 					Calendar currentDate = Calendar.getInstance();
 					SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 					String date = formatter.format(currentDate.getTime());
-					plugin.db.writeVentureChat(date, mcp.getUUID().toString(), mcp.getName(), plugin.getServer().getName(), "Messaging_Component", chat.replace("'", "''"), "Chat");
+					plugin.db.writeVentureChat(date, mcp.getUUID().toString(), mcp.getName(), "Local", "Messaging_Component", chat.replace("'", "''"), "Chat");
 				}
 			}
 			return;
@@ -196,7 +196,7 @@ public class ChatListener implements Listener {
 					Calendar currentDate = Calendar.getInstance();
 					SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 					String date = formatter.format(currentDate.getTime());
-					plugin.db.writeVentureChat(date, mcp.getUUID().toString(), mcp.getName(), plugin.getServer().getName(), "Party_Component", chat.replace("'", "''"), "Chat");
+					plugin.db.writeVentureChat(date, mcp.getUUID().toString(), mcp.getName(), "Local", "Party_Component", chat.replace("'", "''"), "Chat");
 				}
 				return;
 			}
@@ -485,14 +485,14 @@ public class ChatListener implements Listener {
 		int hash = event.getHash();
 		boolean bungee = event.isBungee();
 		
-		if(plugin.db != null) {
-			Calendar currentDate = Calendar.getInstance();
-			SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-			String date = formatter.format(currentDate.getTime());
-			plugin.db.writeVentureChat(date, mcp.getUUID().toString(), mcp.getName(), plugin.getServer().getName(), channel.getName(), chat.replace("'", "''"), "Chat");
-		}
-		
 		if(!bungee) {
+			if(plugin.db != null) {
+				Calendar currentDate = Calendar.getInstance();
+				SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+				String date = formatter.format(currentDate.getTime());
+				plugin.db.writeVentureChat(date, mcp.getUUID().toString(), mcp.getName(), "Local", channel.getName(), chat.replace("'", "''"), "Chat");
+			}
+			
 			if(recipientCount == 1) {
 				if(!plugin.getConfig().getString("emptychannelalert", "&6No one is listening to you.").equals("")) {
 					mcp.getPlayer().sendMessage(Format.FormatStringAll(plugin.getConfig().getString("emptychannelalert", "&6No one is listening to you.")));	

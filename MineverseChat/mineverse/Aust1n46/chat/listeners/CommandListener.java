@@ -98,7 +98,7 @@ public class CommandListener implements CommandExecutor, Listener {
 			Calendar currentDate = Calendar.getInstance();
 			SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 			String date = formatter.format(currentDate.getTime());
-			plugin.db.writeVentureChat(date, mcp.getUUID().toString(), mcp.getName(), plugin.getServer().getName(), "Command_Component", event.getMessage().replace("'", "''"), "Command");
+			plugin.db.writeVentureChat(date, mcp.getUUID().toString(), mcp.getName(), "Local", "Command_Component", event.getMessage().replace("'", "''"), "Command");
 		}
 
 		for(Alias a : aa.getAliases()) {
@@ -200,7 +200,7 @@ public class CommandListener implements CommandExecutor, Listener {
 			Calendar currentDate = Calendar.getInstance();
 			SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 			String date = formatter.format(currentDate.getTime());
-			plugin.db.writeVentureChat(date, "N/A", "Console", plugin.getServer().getName(), "Command_Component", event.getCommand().replace("'", "''") , "Command");
+			plugin.db.writeVentureChat(date, "N/A", "Console", "Local", "Command_Component", event.getCommand().replace("'", "''") , "Command");
 		}
 	}
 

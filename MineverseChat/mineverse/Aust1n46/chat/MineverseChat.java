@@ -694,6 +694,7 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 			ByteArrayOutputStream stream = new ByteArrayOutputStream();
 			DataOutputStream out = new DataOutputStream(stream);
 			if(subchannel.equals("Chat")) {
+				String server = msgin.readUTF();
 				String chatchannel = msgin.readUTF();
 				String senderName = msgin.readUTF();
 				UUID senderUUID = UUID.fromString(msgin.readUTF());
@@ -732,6 +733,14 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 				});
 				
 				Bukkit.getConsoleSender().sendMessage(consoleChat);
+				
+				if(db != null) {
+					Calendar currentDate = Calendar.getInstance();
+					SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+					String date = formatter.format(currentDate.getTime());
+					db.writeVentureChat(date, senderUUID.toString(), senderName, server, chatchannel, chat.replace("'", "''"), "Chat");
+				}
+				
 				for(MineverseChatPlayer p : MineverseChat.onlinePlayers) {
 					if(p.isListening(chatChannelObject.getName())) {
 						if(!p.getBungeeToggle() && MineverseChatAPI.getOnlineMineverseChatPlayer(senderName) == null) {

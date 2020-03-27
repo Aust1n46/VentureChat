@@ -163,6 +163,7 @@ public class MineverseChatBungee extends Plugin implements Listener {
 				String primaryGroup = in.readUTF();
 				String nickname = in.readUTF();
 				out.writeUTF("Chat");
+				out.writeUTF(ser.getInfo().getName());
 				out.writeUTF(chatchannel);
 				out.writeUTF(senderName);
 				out.writeUTF(senderUUID);
