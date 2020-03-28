@@ -432,6 +432,7 @@ public class ChatListener implements Listener {
 						}
 					}
 					else {
+						recipients.remove(p.getPlayer());
 						recipientCount--;
 						continue;
 					}
