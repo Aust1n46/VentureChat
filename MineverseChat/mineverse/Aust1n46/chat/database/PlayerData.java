@@ -3,9 +3,7 @@ package mineverse.Aust1n46.chat.database;
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.List;
 import java.util.UUID;
 
 import mineverse.Aust1n46.chat.MineverseChat;
@@ -37,19 +35,6 @@ public class PlayerData {
 	
 	public static void savePlayerData() {
 		try {
-			List<String> mapmail = new ArrayList<String>(plugin.mail.keySet());
-			for(int a = 0; a < mapmail.size(); a ++) {
-				ConfigurationSection cs = playerData.getConfigurationSection("players." + mapmail.get(a));
-				if(cs == null) {
-					cs = playerData.createSection("players." + mapmail.get(a));
-				}
-				String mail = cs.getString("mail", "");
-				for(String s : plugin.mail.get(mapmail.get(a))) {
-					mail += s + "\n";
-				}
-				cs.set("mail", mail);
-				plugin.mail.remove(mapmail.get(a));			
-			}	
 			for(MineverseChatPlayer p : MineverseChat.players) {
 				if(p.wasModified() || p.isOnline()) {
 					ConfigurationSection cs = playerData.getConfigurationSection("players." + p.getUUID().toString());

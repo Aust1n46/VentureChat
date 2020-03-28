@@ -164,7 +164,6 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 
 	// Offline data ----------------------------
 	public Map<String, String> mutes = new HashMap<String, String>();
-	public Map<String, List<String>> mail = new HashMap<String, List<String>>();
 
 	private LogLevels curLogLevel;
 
