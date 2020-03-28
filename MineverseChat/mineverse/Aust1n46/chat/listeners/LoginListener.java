@@ -72,14 +72,14 @@ public class LoginListener implements Listener {
 			MineverseChat.players.add(mcp);
 		}
 		mcp.setName(event.getPlayer().getName());
+		if(!event.getPlayer().getDisplayName().equals(mcp.getName())) {
+			mcp.setNickname(event.getPlayer().getDisplayName());
+		}
+		event.getPlayer().setDisplayName(Format.FormatStringAll(mcp.getNickname()));
 		mcp.setOnline(true);
 		mcp.setHasPlayed(false);
 		MineverseChat.onlinePlayers.add(mcp);
 		mcp.setJsonFormat();
-		if(!mcp.getPlayer().getDisplayName().equals(mcp.getName())) {
-			mcp.setNickname(event.getPlayer().getDisplayName());
-		}
-		mcp.getPlayer().setDisplayName(Format.FormatStringAll(mcp.getNickname()));
 		if(plugin.getConfig().getBoolean("nickname-in-tablist", false)) {
 			String nick = mcp.getNickname();
 			if(nick.length() >= 16) {
@@ -171,6 +171,7 @@ public class LoginListener implements Listener {
 		cs.set("filter", mcp.hasFilter());
 		cs.set("notifications", mcp.hasNotifications());
 		cs.set("nickname", mcp.getPlayer().getDisplayName());
+		mcp.setNickname(mcp.getPlayer().getDisplayName());
 		Calendar currentDate = Calendar.getInstance();
 		SimpleDateFormat formatter = new SimpleDateFormat("yyyy/MMM/dd HH:mm:ss");
 		String dateNow = formatter.format(currentDate.getTime());
