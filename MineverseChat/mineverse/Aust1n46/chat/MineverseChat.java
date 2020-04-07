@@ -110,7 +110,6 @@ import org.bukkit.Sound;
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.utility.MinecraftReflection;
-import com.comphenix.protocol.wrappers.WrappedChatComponent;
 
 import me.clip.placeholderapi.PlaceholderAPI;
 
@@ -747,8 +746,7 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 						}
 						
 						String json = Format.formatModerationGUI(globalJSON, p.getPlayer(), senderName, chatchannel, hash);
-						WrappedChatComponent chatComponent = WrappedChatComponent.fromJson(json);
-						PacketContainer packet = Format.createPacketPlayOutChat(chatComponent);
+						PacketContainer packet = Format.createPacketPlayOutChat(json);
 						
 						if(this.getConfig().getBoolean("ignorechat", false)) {
 							if(!p.getIgnores().contains(senderUUID)) {

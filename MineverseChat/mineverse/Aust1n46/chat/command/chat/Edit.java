@@ -20,7 +20,7 @@ import mineverse.Aust1n46.chat.localization.LocalizedMessage;
 import mineverse.Aust1n46.chat.utilities.Format;
 
 public class Edit extends MineverseCommand {
-	private PacketContainer emptyLinePacketContainer = Format.createPacketPlayOutChat(WrappedChatComponent.fromJson("{\"extra\":[\" \"],\"text\":\"\"}"));
+	private PacketContainer emptyLinePacketContainer = Format.createPacketPlayOutChat("{\"extra\":[\" \"],\"text\":\"\"}");
 	private MineverseChat plugin = MineverseChat.getInstance();
 	private WrappedChatComponent messageDeletedComponentPlayer;
 

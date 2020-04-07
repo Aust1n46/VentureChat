@@ -124,7 +124,7 @@ public class Format {
 		return temp;
 	}
 	
-	private static String convertLinks(String s) {
+	public static String convertLinks(String s) {
 		String remaining = s;
 		String temp = "";
 		int indexLink = -1;
@@ -292,6 +292,14 @@ public class Format {
 			json += "," + Format.convertToJsonColors(Format.FormatStringAll(plugin.getConfig().getString("guiicon")), ",\"clickEvent\":{\"action\":\"run_command\",\"value\":\"/vchatgui " + sender + " " + channelName + " " + hash +"\"},\"hoverEvent\":{\"action\":\"show_text\",\"value\":{\"text\":\"\",\"extra\":[" + Format.convertToJsonColors(Format.FormatStringAll(plugin.getConfig().getString("guitext"))) + "]}}") + "]";
 		}
 		return json;
+	}
+	
+	public static PacketContainer createPacketPlayOutChat(String json) {
+		WrappedChatComponent component = WrappedChatComponent.fromJson(json);
+		PacketContainer container = new PacketContainer(PacketType.Play.Server.CHAT);
+		container.getModifier().writeDefaults();
+		container.getChatComponents().write(0, component);
+		return container;
 	}
 	
 	public static PacketContainer createPacketPlayOutChat(WrappedChatComponent component) {

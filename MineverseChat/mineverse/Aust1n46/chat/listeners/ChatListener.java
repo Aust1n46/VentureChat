@@ -18,7 +18,6 @@ import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.plugin.PluginManager;
 
 import com.comphenix.protocol.events.PacketContainer;
-import com.comphenix.protocol.wrappers.WrappedChatComponent;
 import com.massivecraft.factions.entity.MPlayer;
 import com.palmergames.bukkit.towny.object.Resident;
 import com.palmergames.bukkit.towny.object.TownyUniverse;
@@ -501,8 +500,7 @@ public class ChatListener implements Listener {
 			}
 			for(Player p : recipients) {
 				String json = Format.formatModerationGUI(globalJSON, p, mcp.getName(), channel.getName(), hash);
-				WrappedChatComponent chatComponent = WrappedChatComponent.fromJson(json);
-				PacketContainer packet = Format.createPacketPlayOutChat(chatComponent);
+				PacketContainer packet = Format.createPacketPlayOutChat(json);
 				Format.sendPacketPlayOutChat(p, packet);
 			}
 			Bukkit.getConsoleSender().sendMessage(consoleChat);

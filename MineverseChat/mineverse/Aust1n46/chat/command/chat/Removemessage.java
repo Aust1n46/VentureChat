@@ -24,7 +24,7 @@ import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.wrappers.WrappedChatComponent;
 
 public class Removemessage extends MineverseCommand {
-	private PacketContainer emptyLinePacketContainer = Format.createPacketPlayOutChat(WrappedChatComponent.fromJson("{\"extra\":[\" \"],\"text\":\"\"}"));
+	private PacketContainer emptyLinePacketContainer = Format.createPacketPlayOutChat("{\"extra\":[\" \"],\"text\":\"\"}");
 	private MineverseChat plugin = MineverseChat.getInstance();
 	private WrappedChatComponent messageDeletedComponentPlayer;
 
