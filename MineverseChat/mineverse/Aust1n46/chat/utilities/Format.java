@@ -124,7 +124,7 @@ public class Format {
 		return temp;
 	}
 	
-	public static String convertLinks(String s) {
+	private static String convertLinks(String s) {
 		String remaining = s;
 		String temp = "";
 		int indexLink = -1;
@@ -170,11 +170,11 @@ public class Format {
 		return ts;
 	}
 	
-	public static String convertToJsonColors(String s) {
+	private static String convertToJsonColors(String s) {
 		return convertToJsonColors(s, "");
 	}
 	
-	public static String convertToJsonColors(String s, String extensions) {
+	private static String convertToJsonColors(String s, String extensions) {
 		String remaining = s;
 		String temp = "";
 		int indexColor = -1;
@@ -284,6 +284,15 @@ public class Format {
 			case "f": return "white";
 		}
 		return "";
+	}
+	
+	public static String convertPlainTextToJson(String s, boolean convertURL) {
+		if(convertURL) {
+			return "[" + Format.convertLinks(s) + "]";
+		}
+		else {
+			return "[" + convertToJsonColors("§f" + s) + "]";
+		}
 	}
 	
 	public static String formatModerationGUI(String json, Player player, String sender, String channelName, int hash) {

@@ -240,7 +240,8 @@ public class CommandListener implements CommandExecutor, Listener {
 		}
 		e.setCancelled(true);
 		MineverseChatPlayer mcp = MineverseChatAPI.getOnlineMineverseChatPlayer((Player) e.getWhoClicked());
-		MineverseChatPlayer target = MineverseChatAPI.getMineverseChatPlayer(e.getView().getTitle().replace(" GUI", "").replace("VentureChat: ", ""));
+		String playerName = e.getView().getTitle().replace(" GUI", "").replace("VentureChat: ", "");
+		MineverseChatPlayer target = MineverseChatAPI.getMineverseChatPlayer(playerName);
 		ItemStack skull = e.getInventory().getItem(0);
 		SkullMeta skullMeta = (SkullMeta) skull.getItemMeta();
 		ChatChannel channel = ChatChannel.getChannel(ChatColor.stripColor(skullMeta.getLore().get(0)).replace("Channel: ", ""));
@@ -257,9 +258,15 @@ public class CommandListener implements CommandExecutor, Listener {
 		}
 		for(GuiSlot g : MineverseChat.gsInfo.getGuiSlots()) {
 			if(g.getIcon() == item.getType() && g.getDurability() == item.getDurability() && g.getSlot() == e.getSlot()) {
-				String command = g.getCommand().replace("{channel}", channel.getName()).replace("{hash}", hash + "").replace("{player_name}", target.getName());
-				if(target.isOnline()) {
-					command = PlaceholderAPI.setBracketPlaceholders(target.getPlayer(), command);
+				String command = g.getCommand().replace("{channel}", channel.getName()).replace("{hash}", hash + "");
+				if(target != null) {
+					command = command.replace("{player_name}", target.getName());
+					if(target.isOnline()) {
+						command = PlaceholderAPI.setBracketPlaceholders(target.getPlayer(), command);
+					}
+				}
+				else {
+					command = command.replace("{player_name}", "Discord_Message");
 				}
 				mcp.getPlayer().chat(command);
 			}
