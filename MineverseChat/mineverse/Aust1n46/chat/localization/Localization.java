@@ -14,6 +14,8 @@ public class Localization {
 	private static MineverseChat plugin = MineverseChat.getInstance();
 	private static FileConfiguration localization;
 	
+	private static final String VERSION = "2.18.2";
+	
 	public static void initialize() {
 		File localizationFile = new File(plugin.getDataFolder().getAbsolutePath(), "Messages.yml");
 		if(!localizationFile.isFile()) {
@@ -23,9 +25,8 @@ public class Localization {
 		localization = YamlConfiguration.loadConfiguration(localizationFile);
 		
 		String fileVersion = localization.getString("Version", "null");
-		String currentVersion = plugin.getDescription().getVersion();
 		
-		if(!fileVersion.equals(currentVersion)) {
+		if(!fileVersion.equals(VERSION)) {
 			Bukkit.getConsoleSender().sendMessage(Format.FormatStringAll("&8[&eVentureChat&8]&e - Version Change Detected!  Saving Old Messages.yml and Generating Latest File"));
 			localizationFile.renameTo(new File(plugin.getDataFolder().getAbsolutePath(), "Messages_Old_" + fileVersion + ".yml"));
 			plugin.saveResource("Messages.yml", true);
