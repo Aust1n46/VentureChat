@@ -760,13 +760,24 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 				}
 			}
 			if(subchannel.equals("DiscordSRV")) {
-				String chatchannel = msgin.readUTF();
+				String chatChannel = msgin.readUTF();
 				String message = msgin.readUTF();
-				if(ChatChannel.isChannel(chatchannel) && ChatChannel.getChannel(chatchannel).getBungee()) {
-					for(MineverseChatPlayer p : MineverseChat.onlinePlayers) {
-						p.getPlayer().sendMessage(Format.FormatStringAll(message));
-					}
+				if(!ChatChannel.isChannel(chatChannel)) {
+					return;
 				}
+				ChatChannel chatChannelObj = ChatChannel.getChannel(chatChannel);
+				if(!chatChannelObj.getBungee()) {
+					return;
+				}	
+				
+				String json = Format.convertPlainTextToJson(message, true);
+				int hash = (message.replaceAll("([§]([a-z0-9]))", "")).hashCode();
+				
+				for(MineverseChatPlayer p : MineverseChat.onlinePlayers) {
+					String finalJSON = Format.formatModerationGUI(json, p.getPlayer(), "Discord", chatChannelObj.getName(), hash);
+					PacketContainer packet = Format.createPacketPlayOutChat(finalJSON);
+					Format.sendPacketPlayOutChat(p.getPlayer(), packet);
+				}	
 			}
 			if(subchannel.equals("Chwho")) {
 				String identifier = msgin.readUTF();
