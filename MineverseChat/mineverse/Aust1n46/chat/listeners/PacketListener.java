@@ -5,10 +5,12 @@ import mineverse.Aust1n46.chat.MineverseChat;
 import mineverse.Aust1n46.chat.api.MineverseChatAPI;
 import mineverse.Aust1n46.chat.api.MineverseChatPlayer;
 import mineverse.Aust1n46.chat.utilities.Format;
+import mineverse.Aust1n46.chat.versions.VersionHandler;
 
 import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.events.ListenerPriority;
 import com.comphenix.protocol.events.PacketAdapter;
+import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.events.PacketEvent;
 import com.comphenix.protocol.wrappers.WrappedChatComponent;
 
@@ -25,14 +27,43 @@ public class PacketListener extends PacketAdapter {
 		if(event.isCancelled() || event.getPacketType() != PacketType.Play.Server.CHAT) {
 			return;
 		}
+		
 		MineverseChatPlayer mcp = MineverseChatAPI.getMineverseChatPlayer(event.getPlayer());
 		if(mcp == null) {
 			return;
 		}
-		WrappedChatComponent chat = event.getPacket().getChatComponents().read(0);
+		
+		PacketContainer packet = event.getPacket();
+		WrappedChatComponent chat = packet.getChatComponents().read(0);
 		if(chat == null) {
 			return;
 		}
+		
+		if(MineverseChat.posField == null) {
+			return;
+		}
+		
+		try {
+			if(VersionHandler.is1_7_2() || VersionHandler.is1_7_10() || VersionHandler.is1_7_9()) {
+				if(!(((boolean) MineverseChat.posField.get(packet.getHandle())))) {
+					return;
+				}
+			}
+			else if(VersionHandler.is1_8() || VersionHandler.is1_9() || VersionHandler.is1_10() || VersionHandler.is1_11()){
+				if(((Byte) MineverseChat.posField.get(packet.getHandle())).intValue() > 1) {
+					return;
+				}
+			}
+			else {
+				if(((Object) MineverseChat.posField.get(packet.getHandle())) == MineverseChat.chatMessageType.getEnumConstants()[2]) {
+					return;
+				}
+			}
+		}
+		catch(Exception e) {
+			e.printStackTrace();
+		}
+		
 		String message = Format.toPlainText(chat.getHandle(), chat.getHandleType());
 		if(message == null) {
 			return;

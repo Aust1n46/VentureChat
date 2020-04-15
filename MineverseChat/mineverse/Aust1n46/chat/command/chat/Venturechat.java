@@ -7,9 +7,12 @@ import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.TextComponent;
+//import net.minecraft.server.v1_15_R1.IChatBaseComponent;
+//import net.minecraft.server.v1_15_R1.PacketPlayOutChat;
 
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
+//import org.bukkit.craftbukkit.v1_15_R1.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 
 public class Venturechat extends MineverseCommand {
@@ -35,6 +38,23 @@ public class Venturechat extends MineverseCommand {
 			message.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/rules 1"));
 			tcSpaces.addExtra(message);
 			player.spigot().sendMessage(tcSpaces);
+			
+			//sendActionBar(player, "NMS message");
 		}
 	}
+	
+//	public static void sendActionBar(Player player, String message) {
+//        message= message.replaceAll("%player%", player.getDisplayName());
+//        message = ChatColor.translateAlternateColorCodes('&', message);
+//        CraftPlayer p = (CraftPlayer) player;
+//        IChatBaseComponent cbc = IChatBaseComponent.ChatSerializer.a("{\"text\": \"" + message + "\"}");
+//        PacketPlayOutChat ppoc = new PacketPlayOutChat(cbc);
+//        try {
+//        	MineverseChat.posField.set(ppoc, MineverseChat.chatMessageType.getEnumConstants()[2]);
+//		} 
+//        catch (Exception e) {
+//			e.printStackTrace();
+//        }
+//        p.getHandle().playerConnection.sendPacket(ppoc);
+//    }
 }
