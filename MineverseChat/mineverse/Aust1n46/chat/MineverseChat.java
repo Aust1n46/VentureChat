@@ -415,7 +415,7 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 		}
 		Bukkit.getConsoleSender().sendMessage(Format.FormatStringAll("&8[&eVentureChat&8]&e - Loading player data"));
 		BukkitScheduler scheduler = Bukkit.getServer().getScheduler();
-		scheduler.scheduleSyncRepeatingTask(this, new Runnable() {
+		scheduler.runTaskTimerAsynchronously(this, new Runnable() {
 			@Override
 			public void run() {
 				PlayerData.savePlayerData();
@@ -423,8 +423,8 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 					Bukkit.getConsoleSender().sendMessage(Format.FormatStringAll("&8[&eVentureChat&8]&e - Saving Player Data"));
 				}
 			}
-		}, 0L, getConfig().getInt("saveinterval") * 1200);
-		scheduler.scheduleSyncRepeatingTask(this, new Runnable() {
+		}, 0L, getConfig().getInt("saveinterval") * 1200); //one minute * save interval
+		scheduler.runTaskTimerAsynchronously(this, new Runnable() {
 			@Override
 			public void run() {
 				for(MineverseChatPlayer p : MineverseChat.players) {
@@ -446,7 +446,7 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 					Bukkit.getConsoleSender().sendMessage(Format.FormatStringAll("&8[&eVentureChat&8]&e - Updating Player Mutes"));
 				}
 			}
-		}, 0L, 20L);
+		}, 0L, 1200L); //one minute interval
 		this.firstRun = false;
 	}
 

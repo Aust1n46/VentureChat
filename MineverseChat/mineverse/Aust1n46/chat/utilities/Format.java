@@ -1,6 +1,6 @@
 package mineverse.Aust1n46.chat.utilities;
 
-import java.lang.reflect.Method;
+//import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.StringTokenizer;
@@ -344,23 +344,23 @@ public class Format {
 		catch(Exception e) {
 			e.printStackTrace();
 		}
-		if(plugin.getConfig().getString("loglevel", "info").equals("debug")) {
-			System.out.println("my string");
-			System.out.println("my string");
-			System.out.println("my string");
-			System.out.println("my string");
-			System.out.println("my string");
-			System.out.println(stringbuilder.toString());
-		}
+//		if(plugin.getConfig().getString("loglevel", "info").equals("debug")) {
+//			System.out.println("my string");
+//			System.out.println("my string");
+//			System.out.println("my string");
+//			System.out.println("my string");
+//			System.out.println("my string");
+//			System.out.println(stringbuilder.toString());
+//		}
 		return stringbuilder.toString();
 	}
 	
 	private static void splitComponents(List<Object> finalList, Object o, Class<?> c) throws Exception {
-		if(plugin.getConfig().getString("loglevel", "info").equals("debug")) {
-			for(Method m : c.getMethods()) {
-				System.out.println(m.getName());
-			}
-		}
+//		if(plugin.getConfig().getString("loglevel", "info").equals("debug")) {
+//			for(Method m : c.getMethods()) {
+//				System.out.println(m.getName());
+//			}
+//		}
 		if(VersionHandler.is1_7() || VersionHandler.is1_8() || VersionHandler.is1_9() || VersionHandler.is1_10() || VersionHandler.is1_11() || VersionHandler.is1_12() || VersionHandler.is1_13() || (VersionHandler.is1_14() && !VersionHandler.is1_14_4())) {
 			ArrayList<?> list = (ArrayList<?>) c.getMethod("a").invoke(o, new Object[0]);
 			for(Object component : list) {
