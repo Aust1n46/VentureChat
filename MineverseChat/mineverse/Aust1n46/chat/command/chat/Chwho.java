@@ -76,11 +76,11 @@ public class Chwho extends MineverseCommand {
 									continue;
 								}
 							}
-							if(pluginManager.isPluginEnabled("Towny") && sender instanceof Player) {
+							if(plugin.getConfig().getBoolean("enable_towny_channel") && pluginManager.isPluginEnabled("Towny") && sender instanceof Player) {
 								try {
-									Resident r = TownyUniverse.getDataSource().getResident(p.getName());
-									Resident pp = TownyUniverse.getDataSource().getResident(((Player) sender).getName());
 									if(channel.getName().equalsIgnoreCase("Town")) {
+										Resident r = TownyUniverse.getDataSource().getResident(p.getName());
+										Resident pp = TownyUniverse.getDataSource().getResident(((Player) sender).getName());
 										if(!pp.hasTown()) {
 											if(playerlist.length() + p.getName().length() > linecount) {
 												playerlist += "\n";
@@ -103,6 +103,8 @@ public class Chwho extends MineverseCommand {
 										}
 									}
 									if(channel.getName().equalsIgnoreCase("Nation")) {
+										Resident r = TownyUniverse.getDataSource().getResident(p.getName());
+										Resident pp = TownyUniverse.getDataSource().getResident(((Player) sender).getName());
 										if(!pp.hasNation()) {
 											if(playerlist.length() + p.getName().length() > linecount) {
 												playerlist += "\n";
@@ -129,11 +131,11 @@ public class Chwho extends MineverseCommand {
 									ex.printStackTrace();
 								}
 							}
-							if(pluginManager.isPluginEnabled("Factions") && sender instanceof Player) {
+							if(plugin.getConfig().getBoolean("enable_factions_channel") && pluginManager.isPluginEnabled("Factions") && sender instanceof Player) {
 								try {
-									MPlayer mplayer = MPlayer.get(p.getPlayer());
-									MPlayer mplayerp = MPlayer.get((Player) sender);
 									if(channel.getName().equalsIgnoreCase("Faction")) {
+										MPlayer mplayer = MPlayer.get(p.getPlayer());
+										MPlayer mplayerp = MPlayer.get((Player) sender);
 										if(!mplayerp.hasFaction()) {
 											if(playerlist.length() + p.getName().length() > linecount) {
 												playerlist += "\n";

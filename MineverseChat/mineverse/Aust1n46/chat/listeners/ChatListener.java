@@ -350,9 +350,9 @@ public class ChatListener implements Listener {
 				}
 				if(plugin.getConfig().getBoolean("enable_towny_channel") && pluginManager.isPluginEnabled("Towny")) {
 					try {
-						Resident r = TownyUniverse.getDataSource().getResident(p.getName());
-						Resident pp = TownyUniverse.getDataSource().getResident(mcp.getName());
 						if(eventChannel.getName().equalsIgnoreCase("Town")) {
+							Resident r = TownyUniverse.getDataSource().getResident(p.getName());
+							Resident pp = TownyUniverse.getDataSource().getResident(mcp.getName());
 							if(!pp.hasTown()) {
 								recipients.remove(p.getPlayer());
 								recipientCount--;
@@ -370,6 +370,8 @@ public class ChatListener implements Listener {
 							}
 						}
 						if(eventChannel.getName().equalsIgnoreCase("Nation")) {
+							Resident r = TownyUniverse.getDataSource().getResident(p.getName());
+							Resident pp = TownyUniverse.getDataSource().getResident(mcp.getName());
 							if(!pp.hasNation()) {
 								recipients.remove(p.getPlayer());
 								recipientCount--;
@@ -394,9 +396,9 @@ public class ChatListener implements Listener {
 
 				if(plugin.getConfig().getBoolean("enable_factions_channel") && pluginManager.isPluginEnabled("Factions")) {
 					try {
-						MPlayer mplayer = MPlayer.get(mcp.getPlayer());
-						MPlayer mplayerp = MPlayer.get(p.getPlayer());
 						if(eventChannel.getName().equalsIgnoreCase("Faction")) {
+							MPlayer mplayer = MPlayer.get(mcp.getPlayer());
+							MPlayer mplayerp = MPlayer.get(p.getPlayer());
 							if(!mplayer.hasFaction()) {
 								recipients.remove(p.getPlayer());
 								recipientCount--;
