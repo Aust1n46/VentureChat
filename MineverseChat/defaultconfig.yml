@@ -97,7 +97,7 @@ unmuteinterval: 60
 tellcolor: white
 
 # Enables or disabled BungeeCord messaging
-bungeecordmessaging: true
+bungeecordmessaging: false
 
 # This will allow vanished players to be exempt from being sent private messages, and will act as if they aren't online
 vanishsupport: true
