@@ -319,7 +319,7 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 		commands.put("venturechat", new Venturechat("venturechat"));
 		commands.put("mute", new Mute("mute"));
 		commands.put("muteall", new Muteall("muteall"));
-		commands.put("nick", new Nick("nick"));
+		commands.put("setnickname", new Nick("setnickname"));
 		commands.put("notifications", new Notifications("notifications"));
 		commands.put("party", new Party("party"));
 		commands.put("rangedspy", new RangedSpy("rangedspy"));
