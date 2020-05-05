@@ -143,7 +143,7 @@ public class Format {
 				String https = "";
 				if(ChatColor.stripColor(link).contains("https://")) 
 					https = "s";
-				temp += convertToJsonColors(lastCode + link, ",\"underlined\":\"" + plugin.getConfig().getBoolean("underlineurls", true) + "\",\"clickEvent\":{\"action\":\"open_url\",\"value\":\"http" + https + "://" + ChatColor.stripColor(link.replace("http://", "").replace("https://", "")) + "\"},\"hoverEvent\":{\"action\":\"show_text\",\"value\":{\"text\":\"\",\"extra\":[" + convertToJsonColors(lastCode + link) + "]}}") + ",";
+				temp += convertToJsonColors(lastCode + link, ",\"underlined\":\"" + underlineURLs() + "\",\"clickEvent\":{\"action\":\"open_url\",\"value\":\"http" + https + "://" + ChatColor.stripColor(link.replace("http://", "").replace("https://", "")) + "\"},\"hoverEvent\":{\"action\":\"show_text\",\"value\":{\"text\":\"\",\"extra\":[" + convertToJsonColors(lastCode + link) + "]}}") + ",";
 				lastCode = getLastCode(lastCode + link);
 				remaining = remaining.substring(indexLinkEnd);
 			}
@@ -477,5 +477,9 @@ public class Format {
 	
 	public static String escapeAllRegex(String input) {
 		return input.replace("[", "\\[").replace("]", "\\]").replace("{", "\\{").replace("}", "\\}").replace("(", "\\(").replace(")", "\\)").replace("|", "\\|").replace("+", "\\+").replace("*", "\\*");
+	}
+	
+	public static boolean underlineURLs() {
+		return plugin.getConfig().getBoolean("underlineurls", true);
 	}
 }
