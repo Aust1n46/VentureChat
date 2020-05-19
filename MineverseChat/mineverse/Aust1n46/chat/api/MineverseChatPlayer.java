@@ -477,8 +477,9 @@ public class MineverseChatPlayer {
 	}
 
 	public void setJsonFormat() {
+		this.jsonFormat = "Default";
 		for(JsonFormat j : MineverseChat.jfInfo.getJsonFormats()) {
-			if(this.getPlayer().hasPermission("venturechat.json." + j.getName())) {
+			if(this.getPlayer().isPermissionSet("venturechat.json." + j.getName())) {
 				if(MineverseChat.jfInfo.getJsonFormat(this.getJsonFormat()).getPriority() > j.getPriority()) {
 					this.jsonFormat = j.getName();
 				}
