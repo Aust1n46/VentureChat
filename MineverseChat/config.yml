@@ -306,7 +306,6 @@ channels:
     autojoin: true
     default: true
     distance: 0
-    distanceIsCube: false
     cooldown: 0
     bungeecord: false
     alias: g
@@ -320,7 +319,6 @@ channels:
     autojoin: true
     default: false
     distance: 0
-    distanceIsCube: false
     cooldown: 0
     bungeecord: false
     alias: st
@@ -334,7 +332,6 @@ channels:
     autojoin: true
     default: false
     distance: 0
-    distanceIsCube: false
     cooldown: 0
     bungeecord: false
     alias: a
@@ -348,7 +345,6 @@ channels:
     autojoin: true
     default: false
     distance: 0
-    distanceIsCube: false
     cooldown: 0
     bungeecord: false
     alias: d
@@ -362,7 +358,6 @@ channels:
     autojoin: true
     default: false
     distance: 0
-    distanceIsCube: false
     cooldown: 0
     bungeecord: false
     alias: h
@@ -376,7 +371,6 @@ channels:
     autojoin: true
     default: false
     distance: 0
-    distanceIsCube: false
     cooldown: 0
     bungeecord: false
     alias: t
@@ -390,7 +384,6 @@ channels:
     autojoin: true
     default: false
     distance: 230
-    distanceIsCube: false
     cooldown: 0
     bungeecord: false
     alias: l
@@ -404,7 +397,6 @@ channels:
     autojoin: true
     default: false
     distance: 0
-    distanceIsCube: false
     cooldown: 60
     bungeecord: true
     alias: n

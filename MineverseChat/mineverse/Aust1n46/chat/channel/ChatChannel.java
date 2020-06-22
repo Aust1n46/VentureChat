@@ -20,7 +20,6 @@ public class ChatChannel {
 	private Boolean autojoin;
 	private String alias;
 	private Double distance;
-	private Boolean distanceIsCube;
 	private Boolean filter;
 	private Boolean bungee;
 	private String format;
@@ -42,7 +41,6 @@ public class ChatChannel {
 		Boolean _defaultchannel = false;
 		String _alias = "";
 		Double _distance = (double) 0;
-		Boolean _distanceIsCube = false;
 		Boolean _autojoin = false;
 		Boolean _bungee = false;
 		String _format = "";
@@ -71,10 +69,9 @@ public class ChatChannel {
 			_defaultchannel = (Boolean) cs.getBoolean(key + ".default", false);
 			_alias = (String) cs.getString(key + ".alias", "None");
 			_distance = (Double) cs.getDouble(key + ".distance", (double) 0);
-			_distanceIsCube = (Boolean) cs.getBoolean(key + ".distanceIsCube", false);
 			_cooldown = (int) cs.getInt(key + ".cooldown", 0);
 			_autojoin = (Boolean) cs.getBoolean(key + ".autojoin", false);
-			ChatChannel c = new ChatChannel(_name, _color, _chatcolor, _permission, _mutable, _filter, _defaultchannel, _alias, _distance, _distanceIsCube, _autojoin, _bungee, _cooldown, _format);
+			ChatChannel c = new ChatChannel(_name, _color, _chatcolor, _permission, _mutable, _filter, _defaultchannel, _alias, _distance, _autojoin, _bungee, _cooldown, _format);
 			channels[x++] = c;
 			if(_defaultchannel) {
 				defaultChatChannel = c;
@@ -118,7 +115,7 @@ public class ChatChannel {
 		return joinlist;
 	}
 
-	public ChatChannel(String _Name, String _color, String _chatcolor, String _Permission, Boolean _mutable, Boolean _filter, Boolean _defaultchannel, String _alias, Double _distance, Boolean _distanceIsCube, Boolean _autojoin, Boolean _bungee, int _cooldown, String _format) {
+	public ChatChannel(String _Name, String _color, String _chatcolor, String _Permission, Boolean _mutable, Boolean _filter, Boolean _defaultchannel, String _alias, Double _distance, Boolean _autojoin, Boolean _bungee, int _cooldown, String _format) {
 		name = _Name;
 		permission = "venturechat." + _Permission;
 		mutable = _mutable;
@@ -127,7 +124,6 @@ public class ChatChannel {
 		setDefaultChannel(_defaultchannel);
 		setAlias(_alias);
 		setDistance(_distance);
-		setDistanceIsCube(_distanceIsCube);
 		setFilter(_filter);
 		setAutojoin(_autojoin);
 		setBungee(_bungee);
@@ -218,10 +214,6 @@ public class ChatChannel {
 	public void setDistance(Double distance) {
 		this.distance = distance;
 	}
-
-	public void setDistanceIsCube(Boolean distanceIsCube) { this.distanceIsCube = distanceIsCube; }
-
-	public Boolean getDistanceIsCube() { return distanceIsCube; }
 
 	public Boolean hasDistance() {
 		return distance > 0;

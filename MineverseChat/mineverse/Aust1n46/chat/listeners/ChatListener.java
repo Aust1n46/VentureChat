@@ -234,7 +234,6 @@ public class ChatListener implements Listener {
 			return;
 		}
 		Double chDistance = (double) 0;
-		boolean chDistanceIsCube = false;
 		int chCooldown = 0;
 		String curColor = "";
 		if(eventChannel.hasPermission() && !mcp.getPlayer().hasPermission(eventChannel.getPermission())) {
@@ -322,7 +321,6 @@ public class ChatListener implements Listener {
 		
 		if(eventChannel.hasDistance()) {
 			chDistance = eventChannel.getDistance();
-			chDistanceIsCube = eventChannel.getDistanceIsCube();
 		}
 		
 		format = PlaceholderAPI.setBracketPlaceholders(mcp.getPlayer(), Format.FormatStringAll(plugin.getConfig().getConfigurationSection("channels." + eventChannel.getName()).getString("format")));
@@ -424,7 +422,7 @@ public class ChatListener implements Listener {
 					locreceip = p.getPlayer().getLocation();
 					if(locreceip.getWorld() == mcp.getPlayer().getWorld()) {
 						diff = locreceip.subtract(locsender);
-						if(Math.abs(diff.getX()) > chDistance || Math.abs(diff.getZ()) > chDistance || (chDistanceIsCube && Math.abs(diff.getY()) > chDistance)) {
+						if(Math.abs(diff.getX()) > chDistance || Math.abs(diff.getZ()) > chDistance || Math.abs(diff.getY()) > chDistance) {
 							recipients.remove(p.getPlayer());
 							recipientCount--;
 							continue;
