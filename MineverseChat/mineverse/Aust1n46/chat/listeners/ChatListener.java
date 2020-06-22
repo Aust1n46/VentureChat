@@ -43,7 +43,7 @@ public class ChatListener implements Listener {
 	}
 
 	// this event isn't always asynchronous even though the event's name starts with "Async"
-    // blame md_5 for that one (ï¿½_ï¿½)
+    // blame md_5 for that one (•_•)
 	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
 	public void onAsyncPlayerChatEvent(AsyncPlayerChatEvent event) {
 		event.setCancelled(true);
@@ -464,7 +464,7 @@ public class ChatListener implements Listener {
 		
 		String globalJSON = Format.convertToJson(mcp, format, chat);
 		String consoleChat = format + chat;
-		String message = consoleChat.replaceAll("(ï¿½([a-z0-9]))", "");
+		String message = consoleChat.replaceAll("(§([a-z0-9]))", "");
 		int hash = message.hashCode();
 		
 		//Create VentureChatEvent
