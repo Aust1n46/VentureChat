@@ -72,7 +72,7 @@ public class Chwho extends MineverseCommand {
 								}
 							}
 							if(channel.hasDistance() && sender instanceof Player) {
-								if(!this.isPlayerWithinDistance((Player) sender, p.getPlayer(), channel.getDistance())) {
+								if(!this.isPlayerWithinDistance((Player) sender, p.getPlayer(), channel.getDistance(), channel.getDistanceIsCube())) {
 									continue;
 								}
 							}
@@ -203,8 +203,9 @@ public class Chwho extends MineverseCommand {
 		}
 	}
 
-	private boolean isPlayerWithinDistance(Player p1, Player p2, double Distance) {
+	private boolean isPlayerWithinDistance(Player p1, Player p2, double Distance, boolean DistanceIsCube) {
 		Double chDistance = Distance;
+		boolean chDistanceIsCube = DistanceIsCube;
 		Location locreceip;
 		Location locsender = p1.getLocation();
 		Location diff;
@@ -212,7 +213,7 @@ public class Chwho extends MineverseCommand {
 			locreceip = p2.getLocation();
 			if(locreceip.getWorld() == p1.getWorld()) {
 				diff = locreceip.subtract(locsender);
-				if(Math.abs(diff.getX()) > chDistance || Math.abs(diff.getZ()) > chDistance) {
+				if(Math.abs(diff.getX()) > chDistance || Math.abs(diff.getZ()) > chDistance || (chDistanceIsCube && Math.abs(diff.getY()) > chDistance)) {
 					return false;
 				}
 			}

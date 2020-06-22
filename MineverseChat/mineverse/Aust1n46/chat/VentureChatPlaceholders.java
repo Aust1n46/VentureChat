@@ -43,6 +43,8 @@ public class VentureChatPlaceholders extends PlaceholderHook {
 				return mcp.getCurrentChannel().getCooldown() + "";
 			case "channel_distance":
 				return mcp.getCurrentChannel().getDistance() + "";
+			case "channel_distance_is_cube":
+				return mcp.getCurrentChannel().getDistanceIsCube() ? PlaceholderAPIPlugin.booleanTrue() : PlaceholderAPIPlugin.booleanFalse();
 			}
 		}
 		return null;

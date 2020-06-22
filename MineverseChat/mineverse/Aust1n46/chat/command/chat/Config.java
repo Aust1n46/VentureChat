@@ -1049,6 +1049,38 @@ public class Config extends MineverseCommand {
 										break;
 									}
 								}
+								case "distanceIsCube": {
+									try {
+										switch(args[3]) {
+											case "true": {
+												plugin.getConfig().getConfigurationSection("channels." + args[1]).set("distanceIsCube", true);
+												sender.sendMessage(ChatColor.GREEN + "distanceIsCube: has been set to true");
+												plugin.saveConfig();
+												plugin.reloadConfig();
+												Bukkit.getPluginManager().disablePlugin(plugin);
+												Bukkit.getPluginManager().enablePlugin(plugin);
+												break;
+											}
+											case "false": {
+												plugin.getConfig().getConfigurationSection("channels." + args[1]).set("distanceIsCube", false);
+												sender.sendMessage(ChatColor.GREEN + "distanceIsCube: has been set to false");
+												plugin.saveConfig();
+												plugin.reloadConfig();
+												Bukkit.getPluginManager().disablePlugin(plugin);
+												Bukkit.getPluginManager().enablePlugin(plugin);
+												break;
+											}
+											default: {
+												sender.sendMessage(ChatColor.RED + "Invalid arguments, /config channels [channel] distanceIsCube [true/false]");
+												break;
+											}
+										}
+									}
+									catch(Exception e) {
+										sender.sendMessage(ChatColor.GREEN + "distanceIsCube: " + plugin.getConfig().getConfigurationSection("channels." + args[1]).getBoolean("distanceIsCube"));
+									}
+									break;
+								}
 								case "cooldown": {
 									try {
 										if(Integer.parseInt(args[3]) >= 0) {
@@ -1125,13 +1157,13 @@ public class Config extends MineverseCommand {
 									}
 								}
 								default: {
-									sender.sendMessage(ChatColor.RED + "Invalid arguments, /config channels " + args[1] + " [color, chatcolor, mutable, alias, default, autojoin, distance, cooldown, bungeecord, format]");
+									sender.sendMessage(ChatColor.RED + "Invalid arguments, /config channels " + args[1] + " [color, chatcolor, mutable, alias, default, autojoin, distance, distanceIsCube, cooldown, bungeecord, format]");
 									break;
 								}
 								}
 							}
 							catch(Exception e) {
-								sender.sendMessage(ChatColor.RED + "Invalid arguments, /config channels " + args[1] + " [color, chatcolor, mutable, alias, default, autojoin, distance, cooldown, bungeecord, format]");
+								sender.sendMessage(ChatColor.RED + "Invalid arguments, /config channels " + args[1] + " [color, chatcolor, mutable, alias, default, autojoin, distance, distanceIsCube, cooldown, bungeecord, format]");
 							}
 							break;
 						}
@@ -1150,6 +1182,7 @@ public class Config extends MineverseCommand {
 									plugin.getConfig().getConfigurationSection("channels." + args[2]).set("default", false);
 									plugin.getConfig().getConfigurationSection("channels." + args[2]).set("autojoin", true);
 									plugin.getConfig().getConfigurationSection("channels." + args[2]).set("distance", 0.0);
+									plugin.getConfig().getConfigurationSection("channels." + args[2]).set("distanceIsCube", false);
 									plugin.getConfig().getConfigurationSection("channels." + args[2]).set("cooldown", 0);
 									plugin.getConfig().getConfigurationSection("channels." + args[2]).set("bungeecord", false);
 									plugin.getConfig().getConfigurationSection("channels." + args[2]).set("servername", false);
@@ -1218,7 +1251,7 @@ public class Config extends MineverseCommand {
 					sender.sendMessage(ChatColor.GREEN + "/config broadcastafk [true/false]");
 					sender.sendMessage(ChatColor.GREEN + "/config formatcleaner [true/false]");
 					sender.sendMessage(ChatColor.GREEN + "/config broadcast [color, permissions, displaytag]");
-					sender.sendMessage(ChatColor.GREEN + "/config channels [channel] [chatcolor, mutable, permissions, alias, default, autojoin, distance, cooldown, bungeecord, format, create , delete]");
+					sender.sendMessage(ChatColor.GREEN + "/config channels [channel] [chatcolor, mutable, permissions, alias, default, autojoin, distance, distanceIsCube, cooldown, bungeecord, format, create , delete]");
 					sender.sendMessage(ChatColor.GREEN + "/config help");
 					break;
 				}

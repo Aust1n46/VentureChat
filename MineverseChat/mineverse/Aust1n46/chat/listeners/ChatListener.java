@@ -43,7 +43,7 @@ public class ChatListener implements Listener {
 	}
 
 	// this event isn't always asynchronous even though the event's name starts with "Async"
-    // blame md_5 for that one (•_•)
+    // blame md_5 for that one (ï¿½_ï¿½)
 	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
 	public void onAsyncPlayerChatEvent(AsyncPlayerChatEvent event) {
 		event.setCancelled(true);
@@ -234,6 +234,7 @@ public class ChatListener implements Listener {
 			return;
 		}
 		Double chDistance = (double) 0;
+		boolean chDistanceIsCube = false;
 		int chCooldown = 0;
 		String curColor = "";
 		if(eventChannel.hasPermission() && !mcp.getPlayer().hasPermission(eventChannel.getPermission())) {
@@ -321,6 +322,7 @@ public class ChatListener implements Listener {
 		
 		if(eventChannel.hasDistance()) {
 			chDistance = eventChannel.getDistance();
+			chDistanceIsCube = eventChannel.getDistanceIsCube();
 		}
 		
 		format = PlaceholderAPI.setBracketPlaceholders(mcp.getPlayer(), Format.FormatStringAll(plugin.getConfig().getConfigurationSection("channels." + eventChannel.getName()).getString("format")));
@@ -422,7 +424,7 @@ public class ChatListener implements Listener {
 					locreceip = p.getPlayer().getLocation();
 					if(locreceip.getWorld() == mcp.getPlayer().getWorld()) {
 						diff = locreceip.subtract(locsender);
-						if(Math.abs(diff.getX()) > chDistance || Math.abs(diff.getZ()) > chDistance) {
+						if(Math.abs(diff.getX()) > chDistance || Math.abs(diff.getZ()) > chDistance || (chDistanceIsCube && Math.abs(diff.getY()) > chDistance)) {
 							recipients.remove(p.getPlayer());
 							recipientCount--;
 							continue;
@@ -464,7 +466,7 @@ public class ChatListener implements Listener {
 		
 		String globalJSON = Format.convertToJson(mcp, format, chat);
 		String consoleChat = format + chat;
-		String message = consoleChat.replaceAll("(§([a-z0-9]))", "");
+		String message = consoleChat.replaceAll("(ï¿½([a-z0-9]))", "");
 		int hash = message.hashCode();
 		
 		//Create VentureChatEvent
