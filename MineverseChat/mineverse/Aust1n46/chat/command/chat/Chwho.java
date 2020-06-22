@@ -212,7 +212,7 @@ public class Chwho extends MineverseCommand {
 			locreceip = p2.getLocation();
 			if(locreceip.getWorld() == p1.getWorld()) {
 				diff = locreceip.subtract(locsender);
-				if(Math.abs(diff.getX()) > chDistance || Math.abs(diff.getZ()) > chDistance) {
+				if(Math.abs(diff.getX()) > chDistance || Math.abs(diff.getZ()) > chDistance || Math.abs(diff.getY()) > chDistance) {
 					return false;
 				}
 			}
