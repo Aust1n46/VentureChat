@@ -93,9 +93,6 @@ saveinterval: 30
 # The time in seconds between each check to remove timed mutes
 unmuteinterval: 60
 
-# The color of the private messages
-tellcolor: white
-
 # Enables or disabled BungeeCord messaging
 bungeecordmessaging: false
 
