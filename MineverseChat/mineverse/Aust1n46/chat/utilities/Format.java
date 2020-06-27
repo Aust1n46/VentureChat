@@ -163,20 +163,6 @@ public class Format {
 		return temp;
 	}
 	
-//	public static String getLastCode(String s) {
-//		String ts = "";
-//		char[] ch = s.toCharArray();
-//		for(int a = 0; a < s.length() - 1; a ++) {
-//			if(String.valueOf(ch[a + 1]).matches("[lkonmr0123456789abcdef]") && ch[a] == '§') {
-//				ts += String.valueOf(ch[a]) + ch[a + 1];
-//				if(String.valueOf(ch[a + 1]).matches("[0123456789abcdefr]")) {
-//					ts = String.valueOf(ch[a]) + ch[a + 1];
-//				}
-//			}				
-//		}
-//		return ts;
-//	}
-	
 	public static String getLastCode(String s) {
 		String ts = "";
 		char[] ch = s.toCharArray();
