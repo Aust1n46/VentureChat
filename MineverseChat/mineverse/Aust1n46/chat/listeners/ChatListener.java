@@ -227,7 +227,7 @@ public class ChatListener implements Listener {
 				timedMute = " for " + remaining + " more " + keyword;
 			}
 			mcp.getPlayer().sendMessage(LocalizedMessage.CHANNEL_MUTED.toString()
-					.replace("{channel_color}", ChatColor.valueOf(eventChannel.getColor().toUpperCase()) + "")
+					.replace("{channel_color}", eventChannel.getColor() + "")
 					.replace("{channel_name}", eventChannel.getName())
 					.replace("{time}", timedMute));
 			mcp.setQuickChat(false);
@@ -243,7 +243,7 @@ public class ChatListener implements Listener {
 			mcp.setCurrentChannel(ChatChannel.getDefaultChannel());
 			return;
 		}
-		curColor = eventChannel.getChatColor().toUpperCase();
+		curColor = eventChannel.getChatColor();
 		bungee = eventChannel.getBungee();
 		
 		int time = (int) (System.currentTimeMillis() / 1000);
@@ -294,7 +294,7 @@ public class ChatListener implements Listener {
 					}
 					mcp.getSpam().get(eventChannel).set(0, 0);
 					mcp.getPlayer().sendMessage(LocalizedMessage.MUTE_PLAYER_SPAM.toString()
-							.replace("{channel_color}", ChatColor.valueOf(eventChannel.getColor().toUpperCase()) + "")
+							.replace("{channel_color}", eventChannel.getColor() + "")
 							.replace("{channel_name}", eventChannel.getName())
 							.replace("{time}", timedmute));
 					mcp.setQuickChat(false);
@@ -459,7 +459,7 @@ public class ChatListener implements Listener {
 			chat = Format.getLastCode(format) + chat;
 		}
 		else {
-			chat = ChatColor.valueOf(curColor) + chat;
+			chat = curColor + chat;
 		}
 		
 		String globalJSON = Format.convertToJson(mcp, format, chat);

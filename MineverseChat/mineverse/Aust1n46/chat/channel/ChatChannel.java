@@ -3,6 +3,7 @@ package mineverse.Aust1n46.chat.channel;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.bukkit.ChatColor;
 import org.bukkit.configuration.ConfigurationSection;
 
 import mineverse.Aust1n46.chat.MineverseChat;
@@ -52,14 +53,6 @@ public class ChatChannel {
 		for(String key : cs.getKeys(false)) {
 			_color = (String) cs.getString(key + ".color", "white");
 			_chatcolor = (String) cs.getString(key + ".chatcolor", "white");
-			if(!(Format.isValidColor(_color))) {
-				plugin.getServer().getLogger().info("[" + plugin.getName() + "] " + _color + " is not valid. Changing to white.");
-				_color = "white";
-			}
-			if(!(Format.isValidColor(_chatcolor)) && !_chatcolor.equalsIgnoreCase("None")) {
-				plugin.getServer().getLogger().info("[" + plugin.getName() + "] " + _chatcolor + " is not valid. Changing to white.");
-				_chatcolor = "white";
-			}
 			_name = key;
 			_permission = (String) cs.getString(key + ".permissions", "None");
 			_mutable = (Boolean) cs.getBoolean(key + ".mutable", false);
@@ -176,6 +169,16 @@ public class ChatChannel {
 	}
 
 	public String getColor() {
+		if(Format.isValidColor(color)) {
+			return String.valueOf(ChatColor.valueOf(color.toUpperCase()));
+		}
+		if(Format.isValidHexColor(color)) {
+			return Format.convertHexColorCodeToBukkitColorCode(color);
+		}
+		return Format.DEFAULT_COLOR_CODE;
+	}
+	
+	public String getColorRaw() {
 		return color;
 	}
 
@@ -184,6 +187,19 @@ public class ChatChannel {
 	}
 
 	public String getChatColor() {
+		if(chatcolor.equalsIgnoreCase("None")) {
+			return chatcolor;
+		}
+		if(Format.isValidColor(chatcolor)) {
+			return String.valueOf(ChatColor.valueOf(chatcolor.toUpperCase()));
+		}
+		if(Format.isValidHexColor(chatcolor)) {
+			return Format.convertHexColorCodeToBukkitColorCode(chatcolor);
+		}
+		return Format.DEFAULT_COLOR_CODE;
+	}
+	
+	public String getChatColorRaw() {
 		return chatcolor;
 	}
 

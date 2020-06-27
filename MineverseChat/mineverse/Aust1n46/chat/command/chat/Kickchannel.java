@@ -38,12 +38,12 @@ public class Kickchannel extends MineverseCommand {
 			}			
 			sender.sendMessage(LocalizedMessage.KICK_CHANNEL.toString()
 					.replace("{player}", args[0])
-					.replace("{channel_color}", ChatColor.valueOf(channel.getColor().toUpperCase()) + "")
+					.replace("{channel_color}", channel.getColor() + "")
 					.replace("{channel_name}", channel.getName()));
 			player.removeListening(channel.getName());
 			if(player.isOnline()) {
 				player.getPlayer().sendMessage(LocalizedMessage.LEAVE_CHANNEL.toString()
-						.replace("{channel_color}", ChatColor.valueOf(channel.getColor().toUpperCase()) + "")
+						.replace("{channel_color}", channel.getColor() + "")
 						.replace("{channel_name}", channel.getName()));
 			}
 			else 

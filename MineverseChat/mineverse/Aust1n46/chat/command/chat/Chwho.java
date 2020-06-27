@@ -179,7 +179,7 @@ public class Chwho extends MineverseCommand {
 						playerlist = playerlist.substring(0, playerlist.length() - 2);
 					}
 					sender.sendMessage(LocalizedMessage.CHANNEL_PLAYER_LIST_HEADER.toString()
-							.replace("{channel_color}", (ChatColor.valueOf(channel.getColor().toUpperCase())).toString())
+							.replace("{channel_color}", (channel.getColor()).toString())
 							.replace("{channel_name}", channel.getName()));
 					sender.sendMessage(playerlist);
 					return;

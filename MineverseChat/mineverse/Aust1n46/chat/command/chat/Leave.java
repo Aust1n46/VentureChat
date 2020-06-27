@@ -34,7 +34,7 @@ public class Leave extends MineverseCommand {
 			}
 			mcp.removeListening(channel.getName());	
 			mcp.getPlayer().sendMessage(LocalizedMessage.LEAVE_CHANNEL.toString()
-					.replace("{channel_color}", ChatColor.valueOf(channel.getColor().toUpperCase()) + "")
+					.replace("{channel_color}", channel.getColor() + "")
 					.replace("{channel_name}", channel.getName()));
 			if(mcp.getListening().size() == 0) {
 				mcp.addListening(ChatChannel.getDefaultChannel().getName());

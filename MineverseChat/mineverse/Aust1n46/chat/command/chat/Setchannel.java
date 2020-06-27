@@ -1,6 +1,5 @@
 package mineverse.Aust1n46.chat.command.chat;
 
-import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 
 import mineverse.Aust1n46.chat.MineverseChat;
@@ -46,7 +45,7 @@ public class Setchannel extends MineverseCommand {
 					player.removeListening(channel.getName());
 					sender.sendMessage(LocalizedMessage.SET_CHANNEL_PLAYER_CHANNEL_NO_PERMISSION.toString()
 							.replace("{player}", player.getName())
-							.replace("{channel_color}", ChatColor.valueOf(channel.getColor().toUpperCase()) + "")
+							.replace("{channel_color}", channel.getColor() + "")
 							.replace("{channel_name}", channel.getName()));
 					return;
 				}
@@ -55,7 +54,7 @@ public class Setchannel extends MineverseCommand {
 			player.setCurrentChannel(channel);
 			sender.sendMessage(LocalizedMessage.SET_CHANNEL_SENDER.toString()
 					.replace("{player}", player.getName())
-					.replace("{channel_color}", ChatColor.valueOf(channel.getColor().toUpperCase()) + "")
+					.replace("{channel_color}", channel.getColor() + "")
 					.replace("{channel_name}", channel.getName()));
 			if(player.hasConversation()) {					
 				for(MineverseChatPlayer p : MineverseChat.onlinePlayers) {
@@ -74,7 +73,7 @@ public class Setchannel extends MineverseCommand {
 			}
 			if(player.isOnline()) 
 				player.getPlayer().sendMessage(LocalizedMessage.SET_CHANNEL.toString()
-						.replace("{channel_color}", ChatColor.valueOf(channel.getColor().toUpperCase()) + "")
+						.replace("{channel_color}", channel.getColor() + "")
 						.replace("{channel_name}", channel.getName()));
 			else 
 				player.setModified(true);

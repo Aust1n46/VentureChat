@@ -34,11 +34,11 @@ public class Chatinfo extends MineverseCommand {
 					mcp.getPlayer().sendMessage(ChatColor.GOLD + "Player: " + ChatColor.GREEN + mcp.getName());
 					for(String c : mcp.getListening()) {		
 						ChatChannel channel = ChatChannel.getChannel(c);
-						listen += ChatColor.valueOf(channel.getColor().toUpperCase()) + channel.getName() + " ";						
+						listen += channel.getColor() + channel.getName() + " ";						
 					}
 					for(String c : mcp.getMutes().keySet()) {
 						ChatChannel channel = ChatChannel.getChannel(c);
-						mute += ChatColor.valueOf(channel.getColor().toUpperCase()) + channel.getName() + " ";						
+						mute += channel.getColor() + channel.getName() + " ";						
 					}
 					for(String bc : mcp.getBlockedCommands()) {						
 						blockedcommands += bc + " ";
@@ -95,11 +95,11 @@ public class Chatinfo extends MineverseCommand {
 				sender.sendMessage(ChatColor.GOLD + "Player: " + ChatColor.GREEN + p.getName());
 				for(String c : p.getListening()) {		
 					ChatChannel channel = ChatChannel.getChannel(c);
-					listen += ChatColor.valueOf(channel.getColor().toUpperCase()) + channel.getName() + " ";						
+					listen += channel.getColor() + channel.getName() + " ";						
 				}
 				for(String c : p.getMutes().keySet()) {
 					ChatChannel channel = ChatChannel.getChannel(c);
-					mute += ChatColor.valueOf(channel.getColor().toUpperCase()) + channel.getName() + " ";						
+					mute += channel.getColor() + channel.getName() + " ";						
 				}
 				for(String bc : p.getBlockedCommands()) {						
 					blockedcommands += bc + " ";

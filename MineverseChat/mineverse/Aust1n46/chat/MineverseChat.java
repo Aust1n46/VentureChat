@@ -438,7 +438,7 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 						// System.out.println(time + " " + timemark);
 						if(time > timemark) {
 							p.removeMute(channel.getName());
-							if(p.isOnline()) p.getPlayer().sendMessage(ChatColor.RED + "You have just been unmuted in: " + ChatColor.valueOf(channel.getColor().toUpperCase()) + channel.getName());
+							if(p.isOnline()) p.getPlayer().sendMessage(ChatColor.RED + "You have just been unmuted in: " + channel.getColor() + channel.getName());
 							else p.setModified(true);
 						}
 					}
@@ -823,7 +823,7 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 						playerList = playerList.substring(0, playerList.length() - 2);
 					}
 					mcp.getPlayer().sendMessage(LocalizedMessage.CHANNEL_PLAYER_LIST_HEADER.toString()
-							.replace("{channel_color}", (ChatColor.valueOf(chatchannel.getColor().toUpperCase())).toString())
+							.replace("{channel_color}", chatchannel.getColor().toString())
 							.replace("{channel_name}", chatchannel.getName()));
 					mcp.getPlayer().sendMessage(Format.FormatStringAll(playerList));
 				}

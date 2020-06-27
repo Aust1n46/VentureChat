@@ -293,6 +293,19 @@ enable_factions_channel: false
 # You must have prefixes and suffixes set in a Vault compatible permissions plugin to avoid errors
 # Use "" as the prefix or suffix to have none
 channels:
+  HexExample:
+    color: '#ff0000'
+    chatcolor: '#ff0000'
+    mutable: true
+    filter: true
+    autojoin: true
+    default: false
+    distance: 0
+    cooldown: 0
+    bungeecord: false
+    alias: he
+    permissions: None
+    format: '&f[&x&f&f&0&0&0&0Hex&f] {vault_prefix} {player_displayname}&x&f&f&0&0&0&0:'
   Global:
     color: dark_green
     chatcolor: dark_green

@@ -1,6 +1,5 @@
 package mineverse.Aust1n46.chat.command.mute;
 
-import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 
 import mineverse.Aust1n46.chat.MineverseChat;
@@ -36,19 +35,19 @@ public class Unmute extends MineverseCommand {
 					if(!player.isMuted(channel.getName())) {
 						sender.sendMessage(LocalizedMessage.PLAYER_NOT_MUTED.toString()
 								.replace("{player}", player.getName())
-								.replace("{channel_color}", ChatColor.valueOf(channel.getColor().toUpperCase()) + "")
+								.replace("{channel_color}", channel.getColor() + "")
 								.replace("{channel_name}", channel.getName()));
 						return;
 					}
 					player.removeMute(channel.getName());					
 					sender.sendMessage(LocalizedMessage.UNMUTE_PLAYER_SENDER.toString()
 							.replace("{player}", player.getName())
-							.replace("{channel_color}", ChatColor.valueOf(channel.getColor().toUpperCase()) + "")
+							.replace("{channel_color}", channel.getColor() + "")
 							.replace("{channel_name}", channel.getName()));
 					if(player.isOnline()) {
 						player.getPlayer().sendMessage(LocalizedMessage.UNMUTE_PLAYER_PLAYER.toString()
 								.replace("{player}", player.getName())
-								.replace("{channel_color}", ChatColor.valueOf(channel.getColor().toUpperCase()) + "")
+								.replace("{channel_color}", channel.getColor() + "")
 								.replace("{channel_name}", channel.getName()));
 					}
 					else {
