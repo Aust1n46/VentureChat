@@ -434,6 +434,8 @@ public class Format {
 		allFormated = chatColorPattern.matcher(allFormated).replaceAll("\u00A7$1");
 		allFormated = chatHexColorPattern.matcher(allFormated).replaceAll("\u00A7$1");
 		allFormated = allFormated.replaceAll("%", "\\%");
+		
+		allFormated = convertHexColorCodeStringToBukkitColorCodeString(allFormated);
 		return allFormated;
 	}
 
@@ -515,6 +517,20 @@ public class Format {
 			bukkitColorCode.append(BUKKIT_COLOR_CODE_PREFIX + color.charAt(a));
 		}
 		return bukkitColorCode.toString();
+	}
+	
+	public static String convertHexColorCodeStringToBukkitColorCodeString(String string) {
+		Pattern pattern = Pattern.compile("(#[0-9a-fA-F]{6})");
+		Matcher matcher = pattern.matcher(string);
+		while(matcher.find()) {
+			int indexStart = matcher.start();
+			int indexEnd = matcher.end();
+			String hexColor = string.substring(indexStart, indexEnd);	
+			String bukkitColor = convertHexColorCodeToBukkitColorCode(hexColor);
+			string = string.replaceAll(hexColor, bukkitColor);
+			matcher.reset(string);
+		}
+		return string;
 	}
 	
 	public static String escapeAllRegex(String input) {
