@@ -462,7 +462,7 @@ public class ChatListener implements Listener {
 			chat = curColor + chat;
 		}
 		
-		String globalJSON = Format.convertToJson(mcp, format, chat);
+		String globalJSON = Format.convertToJson(mcp, format, chat); 
 		String consoleChat = format + chat;
 		String message = consoleChat.replaceAll("(§([a-z0-9]))", "");
 		int hash = message.hashCode();

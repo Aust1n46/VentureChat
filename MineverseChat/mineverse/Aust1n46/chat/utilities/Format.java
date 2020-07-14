@@ -167,17 +167,17 @@ public class Format {
 		String ts = "";
 		char[] ch = s.toCharArray();
 		for(int a = 0; a < s.length() - 1; a ++) {
-			if(String.valueOf(ch[a + 1]).matches("[lkomn]") && ch[a] == '§') {
+			if(String.valueOf(ch[a + 1]).matches("[lkomnLKOMN]") && ch[a] == '§') {
 				ts += String.valueOf(ch[a]) + ch[a + 1];
 				a ++;
 			}
-			else if(String.valueOf(ch[a + 1]).matches("[0123456789abcdefr]") && ch[a] == '§') {
+			else if(String.valueOf(ch[a + 1]).matches("[0123456789abcdefrABCDEFR]") && ch[a] == '§') {
 				ts = String.valueOf(ch[a]) + ch[a + 1];
 				a ++;
 			}
 			else if(ch[a + 1] == 'x' && ch[a] == '§') {
 				if(ch.length > a + 13) {
-					if(String.valueOf(ch[a + 3]).matches("[0123456789abcdef]") && String.valueOf(ch[a + 5]).matches("[0123456789abcdef]") && String.valueOf(ch[a + 7]).matches("[0123456789abcdef]") && String.valueOf(ch[a + 9]).matches("[0123456789abcdef]") && String.valueOf(ch[a + 11]).matches("[0123456789abcdef]") && String.valueOf(ch[a + 13]).matches("[0123456789abcdef]") && ch[a + 2] == '§' && ch[a + 4] == '§' && ch[a + 6] == '§' && ch[a + 8] == '§' && ch[a + 10] == '§' && ch[a + 12] == '§') {
+					if(String.valueOf(ch[a + 3]).matches("[0123456789abcdefABCDEF]") && String.valueOf(ch[a + 5]).matches("[0123456789abcdefABCDEF]") && String.valueOf(ch[a + 7]).matches("[0123456789abcdefABCDEF]") && String.valueOf(ch[a + 9]).matches("[0123456789abcdefABCDEF]") && String.valueOf(ch[a + 11]).matches("[0123456789abcdefABCDEF]") && String.valueOf(ch[a + 13]).matches("[0123456789abcdefABCDEF]") && ch[a + 2] == '§' && ch[a + 4] == '§' && ch[a + 6] == '§' && ch[a + 8] == '§' && ch[a + 10] == '§' && ch[a + 12] == '§') {
 						ts = String.valueOf(ch[a]) + ch[a + 1] + ch[a + 2] + ch[a + 3] + ch[a + 4] + ch[a + 5] + ch[a + 6] + ch[a + 7] + ch[a + 8] + ch[a + 9] + ch[a + 10] + ch[a + 11] + ch[a + 12] + ch[a + 13];
 						a += 13;
 					}
@@ -226,29 +226,35 @@ public class Format {
 					underlined = false;
 				}
 			}
-			else if(!color.matches("[0123456789abcdef]")) {				
+			else if(!color.matches("[0123456789abcdefABCDEF]")) {				
 				switch(color) {
-					case "l": {
+					case "l":
+					case "L": {
 						bold = true;
 						break;
 					}
-					case "k": {
+					case "k":
+					case "K": {
 						obfuscated = true;
 						break;
 					}
-					case "o": {
+					case "o":
+					case "O": {
 						italic = true;
 						break;
 					}
-					case "m": {
+					case "m":
+					case "M": {
 						strikethrough = true;
 						break;
 					}
-					case "n": {
+					case "n":
+					case "N": {
 						underlined = true;
 						break;
 					}
-					case "r": {
+					case "r":
+					case "R": {
 						bold = false;
 						obfuscated = false;
 						italic = false;
@@ -308,15 +314,25 @@ public class Format {
 				case "7": return "gray";
 				case "8": return "dark_gray";
 				case "9": return "blue";
-				case "a": return "green";
-				case "b": return "aqua";
-				case "c": return "red";
-				case "d": return "light_purple";
-				case "e": return "yellow";
-				case "f": return "white";
+				case "a":
+				case "A": return "green";
+				case "b":
+				case "B": return "aqua";
+				case "c":
+				case "C": return "red";
+				case "d":
+				case "D": return "light_purple";
+				case "e":
+				case "E": return "yellow";
+				case "f":
+				case "F": return "white";
+				default: return "white";
 			}
 		}
-		return c;
+		if(isValidHexColor(c)) {
+			return c;
+		}
+		return "white";
 	}
 	
 	public static String convertPlainTextToJson(String s, boolean convertURL) {

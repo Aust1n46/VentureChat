@@ -1,11 +1,14 @@
 package mineverse.Aust1n46.chat.utilities;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
 import java.util.ArrayList;
 import java.util.List;
 
 import org.bukkit.configuration.file.FileConfiguration;
 import org.junit.After;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -53,7 +56,7 @@ public class FormatTest {
 		
 		String result = Format.getLastCode(input);
 		
-		Assert.assertEquals(expectedResult, result);
+		assertEquals(expectedResult, result);
 	}
 	
 	@Test
@@ -63,7 +66,7 @@ public class FormatTest {
 		
 		String result = Format.getLastCode(input);
 		
-		Assert.assertEquals(expectedResult, result);
+		assertEquals(expectedResult, result);
 	}
 	
 	@Test
@@ -73,7 +76,7 @@ public class FormatTest {
 		
 		String result = Format.getLastCode(input);
 		
-		Assert.assertEquals(expectedResult, result);
+		assertEquals(expectedResult, result);
 	}
 	
 	@Test
@@ -82,7 +85,7 @@ public class FormatTest {
 		String expectedResult = "I am an donut";
 		
 		String result = Format.FilterChat(test);
-		Assert.assertEquals(expectedResult, result);
+		assertEquals(expectedResult, result);
 	}
 	
 	@Test
@@ -90,7 +93,7 @@ public class FormatTest {
 		String color = "red";
 		
 		boolean result = Format.isValidColor(color);
-		Assert.assertTrue(result);
+		assertTrue(result);
 	}
 	
 	@Test
@@ -98,6 +101,40 @@ public class FormatTest {
 		String color = "randomString";
 		
 		boolean result = Format.isValidColor(color);
-		Assert.assertFalse(result);
+		assertFalse(result);
+	}
+	
+	@Test
+	public void testIsValidHexColor() {
+		String hexColor = "#ff00ff";
+		
+		boolean result = Format.isValidHexColor(hexColor);
+		assertTrue(result);
+	}
+	
+	@Test
+	public void testIsInvalidHexColor() {
+		String hexColor = "#random";
+		
+		boolean result = Format.isValidHexColor(hexColor);
+		assertFalse(result);
+	}
+	
+	@Test
+	public void testConvertHexColorCodeToBukkitColorCode() {
+		String hexColor = "#ff00ff";
+		String expectedResult = "񖶄";
+		
+		String result = Format.convertHexColorCodeToBukkitColorCode(hexColor);
+		assertEquals(expectedResult, result);
+	}
+	
+	@Test
+	public void testConvertHexColorCodeStringToBukkitColorCodeString() {
+		String input = "#ff00ffHelloThere#00ff00Austin";
+		String expectedResult = "񖶄HelloThere񖶄񖶄Austin";
+		
+		String result = Format.convertHexColorCodeStringToBukkitColorCodeString(input);
+		assertEquals(expectedResult, result);
 	}
 }
