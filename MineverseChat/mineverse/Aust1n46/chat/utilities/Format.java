@@ -98,26 +98,26 @@ public class Format {
 				String hover = "";
 				if(placeholder.contains(prefix)) {
 					action = format.getClickPrefix();
-					text = PlaceholderAPI.setBracketPlaceholders(icp.getPlayer(), format.getClickPrefixText());
+					text = Format.FormatStringAll(PlaceholderAPI.setBracketPlaceholders(icp.getOfflinePlayer(), format.getClickPrefixText()));
 					for(String st : format.getHoverTextPrefix()) {
 						hover += Format.FormatStringAll(st) + "\n";
 					}
 				}
 				if(placeholder.contains(nickname)) {
 					action = format.getClickName();
-					text = PlaceholderAPI.setBracketPlaceholders(icp.getPlayer(), format.getClickNameText());
+					text = Format.FormatStringAll(PlaceholderAPI.setBracketPlaceholders(icp.getOfflinePlayer(), format.getClickNameText()));
 					for(String st : format.getHoverTextName()) {
 						hover += Format.FormatStringAll(st) + "\n";
 					}
 				}
 				if(placeholder.contains(suffix)) {
 					action = format.getClickSuffix(); 
-					text = PlaceholderAPI.setBracketPlaceholders(icp.getPlayer(), format.getClickSuffixText());
+					text = Format.FormatStringAll(PlaceholderAPI.setBracketPlaceholders(icp.getOfflinePlayer(), format.getClickSuffixText()));
 					for(String st : format.getHoverTextSuffix()) {
 						hover += Format.FormatStringAll(st) + "\n";
 					}
 				}
-				hover = PlaceholderAPI.setBracketPlaceholders(icp.getPlayer(), hover.substring(0, hover.length() - 1));
+				hover = Format.FormatStringAll(PlaceholderAPI.setBracketPlaceholders(icp.getOfflinePlayer(), hover.substring(0, hover.length() - 1)));
 				temp += convertToJsonColors(lastCode + placeholder, ",\"clickEvent\":{\"action\":\"" + action + "\",\"value\":\"" + text + "\"},\"hoverEvent\":{\"action\":\"show_text\",\"value\":{\"text\":\"\",\"extra\":[" + convertToJsonColors(hover) + "]}}") + ",";
 				lastCode = getLastCode(lastCode + placeholder);
 				remaining = remaining.substring(indexEnd);
@@ -436,19 +436,20 @@ public class Format {
 		}
 	}
 	
-	protected static Pattern chatHexColorPattern = Pattern.compile("(?i)&([X])");
-	protected static Pattern chatColorPattern = Pattern.compile("(?i)&([0-9A-F])");
-	protected static Pattern chatMagicPattern = Pattern.compile("(?i)&([K])");
-	protected static Pattern chatBoldPattern = Pattern.compile("(?i)&([L])");
-	protected static Pattern chatStrikethroughPattern = Pattern.compile("(?i)&([M])");
-	protected static Pattern chatUnderlinePattern = Pattern.compile("(?i)&([N])");
-	protected static Pattern chatItalicPattern = Pattern.compile("(?i)&([O])");
-	protected static Pattern chatResetPattern = Pattern.compile("(?i)&([R])");
+	protected static Pattern chatColorPattern = Pattern.compile("(?i)&([0-9])");
 
 	public static String FormatStringColor(String string) {
 		String allFormated = string;
 		allFormated = chatColorPattern.matcher(allFormated).replaceAll("\u00A7$1");
-		allFormated = chatHexColorPattern.matcher(allFormated).replaceAll("\u00A7$1");
+		
+		allFormated = allFormated.replaceAll("&[x]", "§x");
+		allFormated = allFormated.replaceAll("&[aA]", "§a");
+		allFormated = allFormated.replaceAll("&[bB]", "§b");
+		allFormated = allFormated.replaceAll("&[cC]", "§c");
+		allFormated = allFormated.replaceAll("&[dD]", "§d");
+		allFormated = allFormated.replaceAll("&[eE]", "§e");
+		allFormated = allFormated.replaceAll("&[fF]", "§f");
+		
 		allFormated = allFormated.replaceAll("%", "\\%");
 		
 		allFormated = convertHexColorCodeStringToBukkitColorCodeString(allFormated);
@@ -457,12 +458,13 @@ public class Format {
 
 	public static String FormatString(String string) {
 		String allFormated = string;
-		allFormated = chatMagicPattern.matcher(allFormated).replaceAll("\u00A7$1");
-		allFormated = chatBoldPattern.matcher(allFormated).replaceAll("\u00A7$1");
-		allFormated = chatStrikethroughPattern.matcher(allFormated).replaceAll("\u00A7$1");
-		allFormated = chatUnderlinePattern.matcher(allFormated).replaceAll("\u00A7$1");
-		allFormated = chatItalicPattern.matcher(allFormated).replaceAll("\u00A7$1");
-		allFormated = chatResetPattern.matcher(allFormated).replaceAll("\u00A7$1");
+		allFormated = allFormated.replaceAll("&[kK]", "§k");
+		allFormated = allFormated.replaceAll("&[lL]", "§l");
+		allFormated = allFormated.replaceAll("&[mM]", "§m");
+		allFormated = allFormated.replaceAll("&[nN]", "§n");
+		allFormated = allFormated.replaceAll("&[oO]", "§o");
+		allFormated = allFormated.replaceAll("&[rR]", "§r");
+		
 		allFormated = allFormated.replaceAll("%", "\\%");
 		return allFormated;
 	}
@@ -471,25 +473,6 @@ public class Format {
 		String allFormated = Format.FormatString(string);
 		allFormated = Format.FormatStringColor(allFormated);
 		return allFormated;
-	}
-
-	public static String FormatPlayerName(String playerPrefix, String playerDisplayName, String playerSuffix) {
-		playerPrefix = chatColorPattern.matcher(playerPrefix).replaceAll("\u00A7$1");
-		playerPrefix = chatMagicPattern.matcher(playerPrefix).replaceAll("\u00A7$1");
-		playerPrefix = chatBoldPattern.matcher(playerPrefix).replaceAll("\u00A7$1");
-		playerPrefix = chatStrikethroughPattern.matcher(playerPrefix).replaceAll("\u00A7$1");
-		playerPrefix = chatUnderlinePattern.matcher(playerPrefix).replaceAll("\u00A7$1");
-		playerPrefix = chatItalicPattern.matcher(playerPrefix).replaceAll("\u00A7$1");
-		playerPrefix = chatResetPattern.matcher(playerPrefix).replaceAll("\u00A7$1");
-
-		playerSuffix = chatColorPattern.matcher(playerSuffix).replaceAll("\u00A7$1");
-		playerSuffix = chatMagicPattern.matcher(playerSuffix).replaceAll("\u00A7$1");
-		playerSuffix = chatBoldPattern.matcher(playerSuffix).replaceAll("\u00A7$1");
-		playerSuffix = chatStrikethroughPattern.matcher(playerSuffix).replaceAll("\u00A7$1");
-		playerSuffix = chatUnderlinePattern.matcher(playerSuffix).replaceAll("\u00A7$1");
-		playerSuffix = chatItalicPattern.matcher(playerSuffix).replaceAll("\u00A7$1");
-		playerSuffix = chatResetPattern.matcher(playerSuffix).replaceAll("\u00A7$1");
-		return playerPrefix + playerDisplayName.trim() + playerSuffix;
 	}
 	
 	public static String FilterChat(String msg) {
@@ -532,7 +515,7 @@ public class Format {
 		for(int a = 1; a < color.length(); a++) {
 			bukkitColorCode.append(BUKKIT_COLOR_CODE_PREFIX + color.charAt(a));
 		}
-		return bukkitColorCode.toString();
+		return bukkitColorCode.toString().toLowerCase();
 	}
 	
 	public static String convertHexColorCodeStringToBukkitColorCodeString(String string) {

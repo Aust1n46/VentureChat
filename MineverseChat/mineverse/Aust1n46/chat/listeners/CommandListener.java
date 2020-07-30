@@ -262,7 +262,7 @@ public class CommandListener implements CommandExecutor, Listener {
 				if(target != null) {
 					command = command.replace("{player_name}", target.getName());
 					if(target.isOnline()) {
-						command = PlaceholderAPI.setBracketPlaceholders(target.getPlayer(), command);
+						command = Format.FormatStringAll(PlaceholderAPI.setBracketPlaceholders(target.getPlayer(), command));
 					}
 				}
 				else {

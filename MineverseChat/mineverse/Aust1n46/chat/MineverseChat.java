@@ -111,7 +111,7 @@ import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.utility.MinecraftReflection;
 
-import me.clip.placeholderapi.PlaceholderAPI;
+import me.clip.placeholderapi.PlaceholderAPIPlugin;
 
 public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 	// Listeners --------------------------------
@@ -406,14 +406,7 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 		if(pluginManager.isPluginEnabled("PlaceholderAPI")) {
 			Bukkit.getConsoleSender().sendMessage(Format.FormatStringAll("&8[&eVentureChat&8]&e - Enabling PlaceholderAPI Hook"));
 		}
-		/*boolean hooked = */PlaceholderAPI.registerPlaceholderHook("venturechat", new VentureChatPlaceholders());
-		//Tired of people reporting this non issue...
-//		if(hooked) {
-//			Bukkit.getConsoleSender().sendMessage(Format.FormatStringAll("&8[&eVentureChat&8]&e - Added placeholders to PlaceholderAPI!"));
-//		}
-//		else {
-//			Bukkit.getConsoleSender().sendMessage(Format.FormatStringAll("&8[&eVentureChat&8]&e - &cPlaceholders were not added to PlaceholderAPI!"));
-//		}
+		PlaceholderAPIPlugin.getInstance().getLocalExpansionManager().register(new VentureChatPlaceholders());
 		Bukkit.getConsoleSender().sendMessage(Format.FormatStringAll("&8[&eVentureChat&8]&e - Loading player data"));
 		BukkitScheduler scheduler = Bukkit.getServer().getScheduler();
 		scheduler.scheduleSyncRepeatingTask(this, new Runnable() {
