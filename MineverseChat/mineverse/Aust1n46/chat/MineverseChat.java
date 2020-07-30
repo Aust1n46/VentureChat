@@ -406,7 +406,9 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 		if(pluginManager.isPluginEnabled("PlaceholderAPI")) {
 			Bukkit.getConsoleSender().sendMessage(Format.FormatStringAll("&8[&eVentureChat&8]&e - Enabling PlaceholderAPI Hook"));
 		}
-		PlaceholderAPIPlugin.getInstance().getLocalExpansionManager().register(new VentureChatPlaceholders());
+		//PlaceholderAPIPlugin.getInstance().getLocalExpansionManager().register(new VentureChatPlaceholders());
+		//Deprecated because reasons...???
+		new VentureChatPlaceholders().register();
 		Bukkit.getConsoleSender().sendMessage(Format.FormatStringAll("&8[&eVentureChat&8]&e - Loading player data"));
 		BukkitScheduler scheduler = Bukkit.getServer().getScheduler();
 		scheduler.scheduleSyncRepeatingTask(this, new Runnable() {
