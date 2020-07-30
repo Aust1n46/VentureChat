@@ -464,6 +464,7 @@ public class ChatListener implements Listener {
 		
 		String globalJSON = Format.convertToJson(mcp, format, chat); 
 		String consoleChat = format + chat;
+		System.out.println(consoleChat);
 		String message = consoleChat.replaceAll("(§([a-z0-9]))", "");
 		int hash = message.hashCode();
 		

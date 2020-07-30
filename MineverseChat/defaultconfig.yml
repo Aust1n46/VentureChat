@@ -46,6 +46,8 @@ nicknames:
 
 nickname-in-tablist: true
 
+# {player} : player sending command
+# {command} : command typed
 commandspy:
   format: '&6{player}: {command}'
   worldeditcommands: true
@@ -292,7 +294,22 @@ enable_factions_channel: false
 # Use '' or "" around format, example: '[&2global&f] {vault_prefix} {player_displayname}&2:'
 # You must have prefixes and suffixes set in a Vault compatible permissions plugin to avoid errors
 # Use "" as the prefix or suffix to have none
+
+#Set chatcolor to 'None' to have a group based chat color! Don't forget to put a suffix or other placeholder at the end of the format!
 channels:
+  GroupChatColorExample:
+    color: '#706C1E'
+    chatcolor: 'None'
+    mutable: true
+    filter: true
+    autojoin: true
+    default: false
+    distance: 0
+    cooldown: 0
+    bungeecord: false
+    alias: ge
+    permissions: None
+    format: '&f[#706C1EGroupColorChat&f] {vault_prefix} {player_displayname}#706C1E:{vault_suffix}'
   HexExample:
     color: '#ff0000'
     chatcolor: '#ff0000'
@@ -305,7 +322,20 @@ channels:
     bungeecord: false
     alias: he
     permissions: None
-    format: '&f[&x&f&f&0&0&0&0Hex&f] {vault_prefix} {player_displayname}&x&f&f&0&0&0&0:'
+    format: '&f[#ff0000Hex&f] {vault_prefix} {player_displayname}#ff0000:'
+  BungeeExample:
+    color: gold
+    chatcolor: gold
+    mutable: true
+    filter: true
+    autojoin: true
+    default: false
+    distance: 0
+    cooldown: 3
+    bungeecord: true
+    alias: be
+    permissions: None
+    format: '&f[&6Network&f] {vault_prefix} {player_displayname}&6:'
   Global:
     color: dark_green
     chatcolor: dark_green
@@ -332,19 +362,6 @@ channels:
     alias: st
     permissions: staffchannel
     format: '&f[&aStaff&f] {vault_prefix} {player_displayname}&a:'
-  Admin:
-    color: red
-    chatcolor: red
-    mutable: false
-    filter: false
-    autojoin: true
-    default: false
-    distance: 0
-    cooldown: 0
-    bungeecord: false
-    alias: a
-    permissions: adminchannel
-    format: '&f[&cAdmin&f] {vault_prefix} {player_displayname}&c:'
   Donator:
     color: light_purple
     chatcolor: light_purple
@@ -397,16 +414,3 @@ channels:
     alias: l
     permissions: None
     format: '&f[&eLocal&f] {vault_prefix} {player_displayname}&e:'
-  Network:
-    color: gold
-    chatcolor: gold
-    mutable: true
-    filter: true
-    autojoin: true
-    default: false
-    distance: 0
-    cooldown: 60
-    bungeecord: true
-    alias: n
-    permissions: None
-    format: '&f[&6Network&f] {vault_prefix} {player_displayname}&6:'
