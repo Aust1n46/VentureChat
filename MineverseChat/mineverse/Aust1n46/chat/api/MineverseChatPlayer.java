@@ -12,7 +12,6 @@ import mineverse.Aust1n46.chat.channel.ChatChannel;
 import mineverse.Aust1n46.chat.json.JsonFormat;
 
 import org.bukkit.Bukkit;
-import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 
 //Wrapper class for Player, this class stores additional information along with a players Player pointer.  
@@ -328,10 +327,6 @@ public class MineverseChatPlayer {
 
 	public Player getPlayer() {
 		return this.online ? this.player : null;
-	}
-	
-	public OfflinePlayer getOfflinePlayer() {
-		return Bukkit.getOfflinePlayer(uuid);
 	}
 
 	public boolean hasPlayed() {

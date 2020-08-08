@@ -111,8 +111,6 @@ import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.utility.MinecraftReflection;
 
-import me.clip.placeholderapi.PlaceholderAPIPlugin;
-
 public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 	// Listeners --------------------------------
 	private ChatListener chatListener;
@@ -406,8 +404,6 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 		if(pluginManager.isPluginEnabled("PlaceholderAPI")) {
 			Bukkit.getConsoleSender().sendMessage(Format.FormatStringAll("&8[&eVentureChat&8]&e - Enabling PlaceholderAPI Hook"));
 		}
-		//PlaceholderAPIPlugin.getInstance().getLocalExpansionManager().register(new VentureChatPlaceholders());
-		//Deprecated because reasons...???
 		new VentureChatPlaceholders().register();
 		Bukkit.getConsoleSender().sendMessage(Format.FormatStringAll("&8[&eVentureChat&8]&e - Loading player data"));
 		BukkitScheduler scheduler = Bukkit.getServer().getScheduler();

@@ -99,26 +99,26 @@ public class Format {
 				String hover = "";
 				if(placeholder.contains(prefix)) {
 					action = format.getClickPrefix();
-					text = Format.FormatStringAll(PlaceholderAPI.setBracketPlaceholders(icp.getOfflinePlayer(), format.getClickPrefixText()));
+					text = Format.FormatStringAll(PlaceholderAPI.setBracketPlaceholders(icp.getPlayer(), format.getClickPrefixText()));
 					for(String st : format.getHoverTextPrefix()) {
 						hover += Format.FormatStringAll(st) + "\n";
 					}
 				}
 				if(placeholder.contains(nickname)) {
 					action = format.getClickName();
-					text = Format.FormatStringAll(PlaceholderAPI.setBracketPlaceholders(icp.getOfflinePlayer(), format.getClickNameText()));
+					text = Format.FormatStringAll(PlaceholderAPI.setBracketPlaceholders(icp.getPlayer(), format.getClickNameText()));
 					for(String st : format.getHoverTextName()) {
 						hover += Format.FormatStringAll(st) + "\n";
 					}
 				}
 				if(placeholder.contains(suffix)) {
 					action = format.getClickSuffix(); 
-					text = Format.FormatStringAll(PlaceholderAPI.setBracketPlaceholders(icp.getOfflinePlayer(), format.getClickSuffixText()));
+					text = Format.FormatStringAll(PlaceholderAPI.setBracketPlaceholders(icp.getPlayer(), format.getClickSuffixText()));
 					for(String st : format.getHoverTextSuffix()) {
 						hover += Format.FormatStringAll(st) + "\n";
 					}
 				}
-				hover = Format.FormatStringAll(PlaceholderAPI.setBracketPlaceholders(icp.getOfflinePlayer(), hover.substring(0, hover.length() - 1)));
+				hover = Format.FormatStringAll(PlaceholderAPI.setBracketPlaceholders(icp.getPlayer(), hover.substring(0, hover.length() - 1)));
 				temp += convertToJsonColors(lastCode + placeholder, ",\"clickEvent\":{\"action\":\"" + action + "\",\"value\":\"" + text + "\"},\"hoverEvent\":{\"action\":\"show_text\",\"value\":{\"text\":\"\",\"extra\":[" + convertToJsonColors(hover) + "]}}") + ",";
 				lastCode = getLastCode(lastCode + placeholder);
 				remaining = remaining.substring(indexEnd);
