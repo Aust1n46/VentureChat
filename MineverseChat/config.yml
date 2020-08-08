@@ -103,13 +103,12 @@ vanishsupport: true
 
 # {playerto} : player receivings name
 # {playerfrom} : player sendings name
-# use Default for the basic formatting
-tellformatto: Default
-tellformatfrom: Default
-tellformatspy: Default
-replyformatto: Default
-replyformatfrom: Default
-replyformatspy: Default
+tellformatto: 'You message {playerto}:&7'
+tellformatfrom: '{playerfrom} messages you:&7'
+tellformatspy: '{playerfrom} messages {playerto}:&7'
+replyformatto: 'You reply to {playerto}:&7'
+replyformatfrom: '{playerfrom} replies to you:&7'
+replyformatspy: '{playerfrom} replied to {playerto}:&7'
 
 # {host} : party hosts name
 # {player} : player name
