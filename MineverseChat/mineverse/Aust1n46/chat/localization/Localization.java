@@ -14,7 +14,7 @@ public class Localization {
 	private static MineverseChat plugin = MineverseChat.getInstance();
 	private static FileConfiguration localization;
 	
-	private static final String VERSION = "2.18.2";
+	private static final String VERSION = "2.20.0";
 	
 	public static void initialize() {
 		File localizationFile = new File(plugin.getDataFolder().getAbsolutePath(), "Messages.yml");

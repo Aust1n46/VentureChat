@@ -294,7 +294,11 @@ enable_factions_channel: false
 # You must have prefixes and suffixes set in a Vault compatible permissions plugin to avoid errors
 # Use "" as the prefix or suffix to have none
 
-#Set chatcolor to 'None' to have a group based chat color! Don't forget to put a suffix or other placeholder at the end of the format!
+# Set chatcolor to 'None' to have a group based chat color! Don't forget to put a suffix or other placeholder at the end of the format!
+
+# Important!!!
+# Important!!!
+# If you delete a channel, restart the server! Do not use /chatreload!!!
 channels:
   GroupChatColorExample:
     color: '#706C1E'
@@ -308,6 +312,7 @@ channels:
     bungeecord: false
     alias: ge
     permissions: None
+    speak_permissions: None
     format: '&f[#706C1EGroupColorChat&f] {vault_prefix} {player_displayname}#706C1E:{vault_suffix}'
   HexExample:
     color: '#ff0000'
@@ -321,6 +326,7 @@ channels:
     bungeecord: false
     alias: he
     permissions: None
+    speak_permissions: None
     format: '&f[#ff0000Hex&f] {vault_prefix} {player_displayname}#ff0000:'
   BungeeExample:
     color: gold
@@ -334,7 +340,22 @@ channels:
     bungeecord: true
     alias: be
     permissions: None
+    speak_permissions: None
     format: '&f[&6Network&f] {vault_prefix} {player_displayname}&6:'
+  AnnouncementExample:
+    color: red
+    chatcolor: red
+    mutable: false
+    filter: false
+    autojoin: true
+    default: false
+    distance: 0
+    cooldown: 0
+    bungeecord: true
+    alias: announce
+    permissions: None
+    speak_permissions: announcement
+    format: '&f[&aServer Announcement&f] {vault_prefix} {player_displayname}&c:'
   Global:
     color: dark_green
     chatcolor: dark_green
@@ -347,6 +368,7 @@ channels:
     bungeecord: false
     alias: g
     permissions: None
+    speak_permissions: None
     format: '&f[&2Global&f] {vault_prefix} {player_displayname}&2:'
   Staff:
     color: green
@@ -360,6 +382,7 @@ channels:
     bungeecord: false
     alias: st
     permissions: staffchannel
+    speak_permissions: None
     format: '&f[&aStaff&f] {vault_prefix} {player_displayname}&a:'
   Donator:
     color: light_purple
@@ -373,6 +396,7 @@ channels:
     bungeecord: false
     alias: d
     permissions: donatorchannel
+    speak_permissions: None
     format: '&f[&dDonator&f] {vault_prefix} {player_displayname}&d:'
   Help:
     color: aqua
@@ -386,6 +410,7 @@ channels:
     bungeecord: false
     alias: h
     permissions: None
+    speak_permissions: None
     format: '&f[&bHelp&f] {vault_prefix} {player_displayname}&b:'
   Trade:
     color: dark_aqua
@@ -399,6 +424,7 @@ channels:
     bungeecord: false
     alias: t
     permissions: None
+    speak_permissions: None
     format: '&f[&3Trade&f] {vault_prefix} {player_displayname}&3:'
   Local:
     color: yellow
@@ -412,4 +438,5 @@ channels:
     bungeecord: false
     alias: l
     permissions: None
+    speak_permissions: None
     format: '&f[&eLocal&f] {vault_prefix} {player_displayname}&e:'

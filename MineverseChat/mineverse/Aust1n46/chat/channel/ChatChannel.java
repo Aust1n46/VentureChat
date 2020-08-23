@@ -12,11 +12,20 @@ import mineverse.Aust1n46.chat.utilities.Format;
 //This class is used to create ChatChannel objects, which store all the information for a channel.  This
 //information is read in from the config file when the server starts up.
 public class ChatChannel {
+	private static final String PERMISSION_PREFIX = "venturechat.";
+	private static final String NO_PERMISSIONS = "venturechat.none";
+	
+	private static MineverseChat plugin = MineverseChat.getInstance();
+	private static ChatChannel defaultChatChannel;
+	private static ChatChannel[] channels;
+	private static String defaultColor;
+	
 	private String name;
 	private String permission;
+	private String speakPermission;
 	private Boolean mutable;
 	private String color;
-	private String chatcolor;
+	private String chatColor;
 	private Boolean defaultChannel;
 	private Boolean autojoin;
 	private String alias;
@@ -25,50 +34,32 @@ public class ChatChannel {
 	private Boolean bungee;
 	private String format;
 	private int cooldown;
-	private boolean irc;
-	
-	private static MineverseChat plugin = MineverseChat.getInstance();
-	private static ChatChannel defaultChatChannel;
-	private static ChatChannel[] channels;
-	private static String defaultColor;
 	
 	public static void initialize() {
-		String _color = "";
-		String _chatcolor = "";
-		String _name = "";
-		String _permission = "";
-		Boolean _mutable = false;
-		Boolean _filter = false;
-		Boolean _defaultchannel = false;
-		String _alias = "";
-		Double _distance = (double) 0;
-		Boolean _autojoin = false;
-		Boolean _bungee = false;
-		String _format = "";
-		int _cooldown = 0;
 		ConfigurationSection cs = plugin.getConfig().getConfigurationSection("channels");
 		int len = (cs.getKeys(false)).size();
 		channels = new ChatChannel[len];
-		int x = 0;
+		int counter = 0;
 		for(String key : cs.getKeys(false)) {
-			_color = (String) cs.getString(key + ".color", "white");
-			_chatcolor = (String) cs.getString(key + ".chatcolor", "white");
-			_name = key;
-			_permission = (String) cs.getString(key + ".permissions", "None");
-			_mutable = (Boolean) cs.getBoolean(key + ".mutable", false);
-			_filter = (Boolean) cs.getBoolean(key + ".filter", true);
-			_bungee = (Boolean) cs.getBoolean(key + ".bungeecord", false);
-			_format = cs.getString(key + ".format", "Default");
-			_defaultchannel = (Boolean) cs.getBoolean(key + ".default", false);
-			_alias = (String) cs.getString(key + ".alias", "None");
-			_distance = (Double) cs.getDouble(key + ".distance", (double) 0);
-			_cooldown = (int) cs.getInt(key + ".cooldown", 0);
-			_autojoin = (Boolean) cs.getBoolean(key + ".autojoin", false);
-			ChatChannel c = new ChatChannel(_name, _color, _chatcolor, _permission, _mutable, _filter, _defaultchannel, _alias, _distance, _autojoin, _bungee, _cooldown, _format);
-			channels[x++] = c;
-			if(_defaultchannel) {
-				defaultChatChannel = c;
-				defaultColor = _color;
+			String color = cs.getString(key + ".color", "white");
+			String chatColor = cs.getString(key + ".chatcolor", "white");
+			String name = key;
+			String permission = cs.getString(key + ".permissions", "None");
+			String speakPermission = cs.getString(key + ".speak_permissions", "None");
+			boolean mutable = cs.getBoolean(key + ".mutable", false);
+			boolean filter = cs.getBoolean(key + ".filter", true);
+			boolean bungee = cs.getBoolean(key + ".bungeecord", false);
+			String format = cs.getString(key + ".format", "Default");
+			boolean defaultChannel = cs.getBoolean(key + ".default", false);
+			String alias = cs.getString(key + ".alias", "None");
+			double distance = cs.getDouble(key + ".distance", (double) 0);
+			int cooldown = cs.getInt(key + ".cooldown", 0);
+			boolean autojoin = cs.getBoolean(key + ".autojoin", false);
+			ChatChannel chatChannel = new ChatChannel(name, color, chatColor, permission, speakPermission, mutable, filter, defaultChannel, alias, distance, autojoin, bungee, cooldown, format);
+			channels[counter++] = chatChannel;
+			if(defaultChannel) {
+				defaultChatChannel = chatChannel;
+				defaultColor = color;
 			}
 		}
 	}
@@ -108,44 +99,33 @@ public class ChatChannel {
 		return joinlist;
 	}
 
-	public ChatChannel(String _Name, String _color, String _chatcolor, String _Permission, Boolean _mutable, Boolean _filter, Boolean _defaultchannel, String _alias, Double _distance, Boolean _autojoin, Boolean _bungee, int _cooldown, String _format) {
-		name = _Name;
-		permission = "venturechat." + _Permission;
-		mutable = _mutable;
-		setColor(_color);
-		setChatColor(_chatcolor);
-		setDefaultChannel(_defaultchannel);
-		setAlias(_alias);
-		setDistance(_distance);
-		setFilter(_filter);
-		setAutojoin(_autojoin);
-		setBungee(_bungee);
-		setCooldown(_cooldown);
-		setFormat(_format);
+	public ChatChannel(String name, String color, String chatColor, String permission, String speakPermission, Boolean mutable, Boolean filter, Boolean defaultChannel, String alias, Double distance, Boolean autojoin, Boolean bungee, int cooldown, String format) {
+		this.name = name;
+		this.color = color;
+		this.chatColor = chatColor;
+		this.permission = PERMISSION_PREFIX + permission;
+		this.speakPermission = PERMISSION_PREFIX + speakPermission;
+		this.mutable = mutable;
+		this.filter = filter;
+		this.defaultChannel = defaultChannel;
+		this.alias = alias;
+		this.distance = distance;
+		this.autojoin = autojoin;
+		this.bungee = bungee;
+		this.cooldown = cooldown;
+		this.format = format;
 	}
 
 	public String getName() {
 		return name;
 	}
 
-	public void setFormat(String _format) {
-		format = _format;
-	}
-
 	public String getFormat() {
 		return format;
 	}
 
-	public void setCooldown(int _cooldown) {
-		cooldown = _cooldown;
-	}
-
 	public int getCooldown() {
 		return cooldown;
-	}
-
-	public void setBungee(Boolean _bungee) {
-		bungee = _bungee;
 	}
 
 	public Boolean getBungee() {
@@ -158,10 +138,6 @@ public class ChatChannel {
 
 	public Boolean getAutojoin() {
 		return autojoin;
-	}
-
-	public void setAutojoin(Boolean _autojoin) {
-		autojoin = _autojoin;
 	}
 
 	public Boolean isMutable() {
@@ -182,53 +158,33 @@ public class ChatChannel {
 		return color;
 	}
 
-	public void setColor(String color) {
-		this.color = color;
-	}
-
 	public String getChatColor() {
-		if(chatcolor.equalsIgnoreCase("None")) {
-			return chatcolor;
+		if(chatColor.equalsIgnoreCase("None")) {
+			return chatColor;
 		}
-		if(Format.isValidColor(chatcolor)) {
-			return String.valueOf(ChatColor.valueOf(chatcolor.toUpperCase()));
+		if(Format.isValidColor(chatColor)) {
+			return String.valueOf(ChatColor.valueOf(chatColor.toUpperCase()));
 		}
-		if(Format.isValidHexColor(chatcolor)) {
-			return Format.convertHexColorCodeToBukkitColorCode(chatcolor);
+		if(Format.isValidHexColor(chatColor)) {
+			return Format.convertHexColorCodeToBukkitColorCode(chatColor);
 		}
 		return Format.DEFAULT_COLOR_CODE;
 	}
 	
 	public String getChatColorRaw() {
-		return chatcolor;
-	}
-
-	public void setChatColor(String chatcolor) {
-		this.chatcolor = chatcolor;
+		return chatColor;
 	}
 
 	public Boolean isDefaultchannel() {
 		return defaultChannel;
 	}
 
-	public void setDefaultChannel(Boolean defaultChannel) {
-		this.defaultChannel = defaultChannel;
-	}
-
 	public String getAlias() {
 		return alias;
 	}
 
-	public void setAlias(String alias) {
-		this.alias = alias;
-	}
-
 	public Double getDistance() {
 		return distance;
-	}
-
-	public void setDistance(Double distance) {
-		this.distance = distance;
 	}
 
 	public Boolean hasDistance() {
@@ -240,19 +196,19 @@ public class ChatChannel {
 	}
 
 	public Boolean hasPermission() {
-		return !permission.equalsIgnoreCase("venturechat.none");
+		return !permission.equalsIgnoreCase(NO_PERMISSIONS);
+	}
+	
+	public boolean hasSpeakPermission() {
+		return !speakPermission.equalsIgnoreCase(NO_PERMISSIONS);
+	}
+	
+	public String getSpeakPermission() {
+		return speakPermission;
 	}
 
 	public Boolean isFiltered() {
 		return filter;
-	}
-
-	public void setFilter(Boolean filter) {
-		this.filter = filter;
-	}
-
-	public boolean isIRC() {
-		return irc;
 	}
 	
 	@Override

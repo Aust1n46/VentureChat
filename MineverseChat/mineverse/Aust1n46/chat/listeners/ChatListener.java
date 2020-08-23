@@ -243,6 +243,11 @@ public class ChatListener implements Listener {
 			mcp.setCurrentChannel(ChatChannel.getDefaultChannel());
 			return;
 		}
+		if(eventChannel.hasSpeakPermission() && !mcp.getPlayer().hasPermission(eventChannel.getSpeakPermission())) {
+			mcp.getPlayer().sendMessage(LocalizedMessage.CHANNEL_NO_SPEAK_PERMISSIONS.toString());
+			mcp.setQuickChat(false);
+			return;
+		}
 		curColor = eventChannel.getChatColor();
 		bungee = eventChannel.getBungee();
 		
