@@ -1,5 +1,5 @@
 name: VentureChat
-version: 2.18.4
+version: 2.20.0
 api-version: 1.13
 main: mineverse.Aust1n46.chat.MineverseChat
 depend: [Vault, ProtocolLib, PlaceholderAPI]
@@ -162,8 +162,8 @@ commands:
         aliases: [cb,vcommandblock]
         description: Toggle a player blocked from entering a command
         permission-message: You don't have <permission>
-    nick:
-        usage: /nick {player} [nickname]
+    setnickname:
+        usage: /setnickname {player} [nickname]
         aliases: [vnick]
         description: Set a players nickname
         permission-message: You don't have <permission>

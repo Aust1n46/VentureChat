@@ -26,6 +26,13 @@ import mineverse.Aust1n46.chat.versions.VersionHandler;
 public class Format { 
 	private static MineverseChat plugin = MineverseChat.getInstance();
 	
+	public static final int LEGACY_COLOR_CODE_LENGTH = 2;
+	public static final int HEX_COLOR_CODE_LENGTH = 14;
+	public static final String DEFAULT_COLOR_CODE = String.valueOf(ChatColor.WHITE);
+	public static final String HEX_COLOR_CODE_PREFIX = "#";
+	public static final String BUKKIT_COLOR_CODE_PREFIX = "§";
+	public static final String BUKKIT_HEX_COLOR_CODE_PREFIX = "x";
+	
 	public static String convertToJson(MineverseChatPlayer sender, String format, String chat) {
 		JsonFormat JSONformat = MineverseChat.jfInfo.getJsonFormat(sender.getJsonFormat());
 		String f = format.replace("\\", "\\\\").replace("\"", "\\\"");
@@ -36,10 +43,11 @@ public class Format {
 		try {
 			prefix = FormatStringAll(MineverseChat.chat.getPlayerPrefix(sender.getPlayer()));
 			suffix = FormatStringAll(MineverseChat.chat.getPlayerSuffix(sender.getPlayer()));
-			if(suffix.equals("")) {
+			//Don't apply JSON if the prefix or suffix is just a color code
+			if(suffix.isEmpty() || (suffix.length() == 2 && suffix.substring(1).matches("[0-9a-fA-F]"))) {
 				suffix = "venturechat_no_suffix_code";
 			}
-			if(prefix.equals("")) {
+			if(prefix.isEmpty() || (prefix.length() == 2 && prefix.substring(1).matches("[0-9a-fA-F]"))) {
 				prefix = "venturechat_no_prefix_code";
 			}
 		}
@@ -91,26 +99,26 @@ public class Format {
 				String hover = "";
 				if(placeholder.contains(prefix)) {
 					action = format.getClickPrefix();
-					text = PlaceholderAPI.setBracketPlaceholders(icp.getPlayer(), format.getClickPrefixText());
+					text = Format.FormatStringAll(PlaceholderAPI.setBracketPlaceholders(icp.getPlayer(), format.getClickPrefixText()));
 					for(String st : format.getHoverTextPrefix()) {
 						hover += Format.FormatStringAll(st) + "\n";
 					}
 				}
 				if(placeholder.contains(nickname)) {
 					action = format.getClickName();
-					text = PlaceholderAPI.setBracketPlaceholders(icp.getPlayer(), format.getClickNameText());
+					text = Format.FormatStringAll(PlaceholderAPI.setBracketPlaceholders(icp.getPlayer(), format.getClickNameText()));
 					for(String st : format.getHoverTextName()) {
 						hover += Format.FormatStringAll(st) + "\n";
 					}
 				}
 				if(placeholder.contains(suffix)) {
 					action = format.getClickSuffix(); 
-					text = PlaceholderAPI.setBracketPlaceholders(icp.getPlayer(), format.getClickSuffixText());
+					text = Format.FormatStringAll(PlaceholderAPI.setBracketPlaceholders(icp.getPlayer(), format.getClickSuffixText()));
 					for(String st : format.getHoverTextSuffix()) {
 						hover += Format.FormatStringAll(st) + "\n";
 					}
 				}
-				hover = PlaceholderAPI.setBracketPlaceholders(icp.getPlayer(), hover.substring(0, hover.length() - 1));
+				hover = Format.FormatStringAll(PlaceholderAPI.setBracketPlaceholders(icp.getPlayer(), hover.substring(0, hover.length() - 1)));
 				temp += convertToJsonColors(lastCode + placeholder, ",\"clickEvent\":{\"action\":\"" + action + "\",\"value\":\"" + text + "\"},\"hoverEvent\":{\"action\":\"show_text\",\"value\":{\"text\":\"\",\"extra\":[" + convertToJsonColors(hover) + "]}}") + ",";
 				lastCode = getLastCode(lastCode + placeholder);
 				remaining = remaining.substring(indexEnd);
@@ -143,7 +151,7 @@ public class Format {
 				String https = "";
 				if(ChatColor.stripColor(link).contains("https://")) 
 					https = "s";
-				temp += convertToJsonColors(lastCode + link, ",\"underlined\":\"" + plugin.getConfig().getBoolean("underlineurls", true) + "\",\"clickEvent\":{\"action\":\"open_url\",\"value\":\"http" + https + "://" + ChatColor.stripColor(link.replace("http://", "").replace("https://", "")) + "\"},\"hoverEvent\":{\"action\":\"show_text\",\"value\":{\"text\":\"\",\"extra\":[" + convertToJsonColors(lastCode + link) + "]}}") + ",";
+				temp += convertToJsonColors(lastCode + link, ",\"underlined\":\"" + underlineURLs() + "\",\"clickEvent\":{\"action\":\"open_url\",\"value\":\"http" + https + "://" + ChatColor.stripColor(link.replace("http://", "").replace("https://", "")) + "\"},\"hoverEvent\":{\"action\":\"show_text\",\"value\":{\"text\":\"\",\"extra\":[" + convertToJsonColors(lastCode + link) + "]}}") + ",";
 				lastCode = getLastCode(lastCode + link);
 				remaining = remaining.substring(indexLinkEnd);
 			}
@@ -160,16 +168,26 @@ public class Format {
 		String ts = "";
 		char[] ch = s.toCharArray();
 		for(int a = 0; a < s.length() - 1; a ++) {
-			if(String.valueOf(ch[a + 1]).matches("[lkonmr0123456789abcdef]") && ch[a] == '§') {
+			if(String.valueOf(ch[a + 1]).matches("[lkomnLKOMN]") && ch[a] == '§') {
 				ts += String.valueOf(ch[a]) + ch[a + 1];
-				if(String.valueOf(ch[a + 1]).matches("[0123456789abcdefr]")) {
-					ts = String.valueOf(ch[a]) + ch[a + 1];
+				a ++;
+			}
+			else if(String.valueOf(ch[a + 1]).matches("[0123456789abcdefrABCDEFR]") && ch[a] == '§') {
+				ts = String.valueOf(ch[a]) + ch[a + 1];
+				a ++;
+			}
+			else if(ch[a + 1] == 'x' && ch[a] == '§') {
+				if(ch.length > a + 13) {
+					if(String.valueOf(ch[a + 3]).matches("[0123456789abcdefABCDEF]") && String.valueOf(ch[a + 5]).matches("[0123456789abcdefABCDEF]") && String.valueOf(ch[a + 7]).matches("[0123456789abcdefABCDEF]") && String.valueOf(ch[a + 9]).matches("[0123456789abcdefABCDEF]") && String.valueOf(ch[a + 11]).matches("[0123456789abcdefABCDEF]") && String.valueOf(ch[a + 13]).matches("[0123456789abcdefABCDEF]") && ch[a + 2] == '§' && ch[a + 4] == '§' && ch[a + 6] == '§' && ch[a + 8] == '§' && ch[a + 10] == '§' && ch[a + 12] == '§') {
+						ts = String.valueOf(ch[a]) + ch[a + 1] + ch[a + 2] + ch[a + 3] + ch[a + 4] + ch[a + 5] + ch[a + 6] + ch[a + 7] + ch[a + 8] + ch[a + 9] + ch[a + 10] + ch[a + 11] + ch[a + 12] + ch[a + 13];
+						a += 13;
+					}
 				}
-			}				
+			}
 		}
 		return ts;
 	}
-	
+	 
 	private static String convertToJsonColors(String s) {
 		return convertToJsonColors(s, "");
 	}
@@ -184,46 +202,65 @@ public class Format {
 		boolean bold = false;
 		boolean obfuscated = false;
 		boolean italic = false;
-		boolean underlined = false;
 		boolean strikethrough = false;
+		boolean underlined = false;
 		String previousColor = "";
+		int colorLength = LEGACY_COLOR_CODE_LENGTH;
 		do {
-			if(remaining.length() < 2) {
+			if(remaining.length() < LEGACY_COLOR_CODE_LENGTH) {
 				temp = "{\"text\":\"" + remaining + "\"},";
 				break;
 			}
 			modifier = "";
-			indexColor = remaining.indexOf("§");	
+			indexColor = remaining.indexOf(BUKKIT_COLOR_CODE_PREFIX);	
 			previousColor = color;			
-			color = remaining.substring(1, indexColor + 2);
-			if(!color.matches("[0123456789abcdef]")) {				
+			
+			color = remaining.substring(1, indexColor + LEGACY_COLOR_CODE_LENGTH);
+			if(color.equals(BUKKIT_HEX_COLOR_CODE_PREFIX)) {
+				if(remaining.length() >= HEX_COLOR_CODE_LENGTH) {
+					color = HEX_COLOR_CODE_PREFIX + remaining.substring(LEGACY_COLOR_CODE_LENGTH, indexColor + HEX_COLOR_CODE_LENGTH).replace(BUKKIT_COLOR_CODE_PREFIX, "");
+					colorLength = HEX_COLOR_CODE_LENGTH;
+					bold = false;
+					obfuscated = false;
+					italic = false;
+					strikethrough = false;
+					underlined = false;
+				}
+			}
+			else if(!color.matches("[0123456789abcdefABCDEF]")) {				
 				switch(color) {
-					case "l": {
+					case "l":
+					case "L": {
 						bold = true;
 						break;
 					}
-					case "k": {
+					case "k":
+					case "K": {
 						obfuscated = true;
 						break;
 					}
-					case "o": {
+					case "o":
+					case "O": {
 						italic = true;
 						break;
 					}
-					case "n": {
-						underlined = true;
-						break;
-					}
-					case "m": {
+					case "m":
+					case "M": {
 						strikethrough = true;
 						break;
 					}
-					case "r": {
+					case "n":
+					case "N": {
+						underlined = true;
+						break;
+					}
+					case "r":
+					case "R": {
 						bold = false;
 						obfuscated = false;
 						italic = false;
-						underlined = false;
 						strikethrough = false;
+						underlined = false;
 						color = "f";
 						break;
 					}
@@ -237,8 +274,8 @@ public class Format {
 				bold = false;
 				obfuscated = false;
 				italic = false;
-				underlined = false;
 				strikethrough = false;
+				underlined = false;
 			}		
 			if(bold)
 				modifier += ",\"bold\":\"true\"";	
@@ -250,12 +287,13 @@ public class Format {
 				modifier += ",\"underlined\":\"true\"";		
 			if(strikethrough)
 				modifier += ",\"strikethrough\":\"true\"";	
-			remaining = remaining.substring(2);
-			indexNextColor = remaining.indexOf("§");
+			remaining = remaining.substring(colorLength);
+			colorLength = LEGACY_COLOR_CODE_LENGTH;
+			indexNextColor = remaining.indexOf(BUKKIT_COLOR_CODE_PREFIX);
 			if(indexNextColor == -1) {
 				indexNextColor = remaining.length();
 			}
-			temp += "{\"text\":\"" + remaining.substring(0, indexNextColor) + "\",\"color\":\"" + hexidecimalToJsonColor(color) + "\"" + modifier + extensions + "},";
+			temp += "{\"text\":\"" + remaining.substring(0, indexNextColor) + "\",\"color\":\"" + hexidecimalToJsonColorRGB(color) + "\"" + modifier + extensions + "},";
 			remaining = remaining.substring(indexNextColor);
 		} 
 		while(remaining.length() > 1 && indexColor != -1); 
@@ -264,26 +302,38 @@ public class Format {
 		return temp;
 	}
 	
-	private static String hexidecimalToJsonColor(String c) {
-		switch(c) {
-			case "0": return "black";
-			case "1": return "dark_blue";
-			case "2": return "dark_green";
-			case "3": return "dark_aqua";
-			case "4": return "dark_red";
-			case "5": return "dark_purple";
-			case "6": return "gold";
-			case "7": return "gray";
-			case "8": return "dark_gray";
-			case "9": return "blue";
-			case "a": return "green";
-			case "b": return "aqua";
-			case "c": return "red";
-			case "d": return "light_purple";
-			case "e": return "yellow";
-			case "f": return "white";
+	private static String hexidecimalToJsonColorRGB(String c) {
+		if(c.length() == 1) {
+			switch(c) {
+				case "0": return "black";
+				case "1": return "dark_blue";
+				case "2": return "dark_green";
+				case "3": return "dark_aqua";
+				case "4": return "dark_red";
+				case "5": return "dark_purple";
+				case "6": return "gold";
+				case "7": return "gray";
+				case "8": return "dark_gray";
+				case "9": return "blue";
+				case "a":
+				case "A": return "green";
+				case "b":
+				case "B": return "aqua";
+				case "c":
+				case "C": return "red";
+				case "d":
+				case "D": return "light_purple";
+				case "e":
+				case "E": return "yellow";
+				case "f":
+				case "F": return "white";
+				default: return "white";
+			}
 		}
-		return "";
+		if(isValidHexColor(c)) {
+			return c;
+		}
+		return "white";
 	}
 	
 	public static String convertPlainTextToJson(String s, boolean convertURL) {
@@ -387,62 +437,42 @@ public class Format {
 		}
 	}
 	
-	protected static Pattern chatColorPattern = Pattern.compile("(?i)&([0-9A-F])");
-	protected static Pattern chatMagicPattern = Pattern.compile("(?i)&([K])");
-	protected static Pattern chatBoldPattern = Pattern.compile("(?i)&([L])");
-	protected static Pattern chatStrikethroughPattern = Pattern.compile("(?i)&([M])");
-	protected static Pattern chatUnderlinePattern = Pattern.compile("(?i)&([N])");
-	protected static Pattern chatItalicPattern = Pattern.compile("(?i)&([O])");
-	protected static Pattern chatResetPattern = Pattern.compile("(?i)&([R])");
+	protected static Pattern chatColorPattern = Pattern.compile("(?i)&([0-9])");
 
 	public static String FormatStringColor(String string) {
 		String allFormated = string;
 		allFormated = chatColorPattern.matcher(allFormated).replaceAll("\u00A7$1");
+		
+		allFormated = allFormated.replaceAll("&[x]", "§x");
+		allFormated = allFormated.replaceAll("&[aA]", "§a");
+		allFormated = allFormated.replaceAll("&[bB]", "§b");
+		allFormated = allFormated.replaceAll("&[cC]", "§c");
+		allFormated = allFormated.replaceAll("&[dD]", "§d");
+		allFormated = allFormated.replaceAll("&[eE]", "§e");
+		allFormated = allFormated.replaceAll("&[fF]", "§f");
+		
 		allFormated = allFormated.replaceAll("%", "\\%");
+		
+		allFormated = convertHexColorCodeStringToBukkitColorCodeString(allFormated);
 		return allFormated;
 	}
 
 	public static String FormatString(String string) {
 		String allFormated = string;
-		allFormated = chatMagicPattern.matcher(allFormated).replaceAll("\u00A7$1");
-		allFormated = chatBoldPattern.matcher(allFormated).replaceAll("\u00A7$1");
-		allFormated = chatStrikethroughPattern.matcher(allFormated).replaceAll("\u00A7$1");
-		allFormated = chatUnderlinePattern.matcher(allFormated).replaceAll("\u00A7$1");
-		allFormated = chatItalicPattern.matcher(allFormated).replaceAll("\u00A7$1");
-		allFormated = chatResetPattern.matcher(allFormated).replaceAll("\u00A7$1");
+		allFormated = allFormated.replaceAll("&[kK]", "§k");
+		allFormated = allFormated.replaceAll("&[lL]", "§l");
+		allFormated = allFormated.replaceAll("&[mM]", "§m");
+		allFormated = allFormated.replaceAll("&[nN]", "§n");
+		allFormated = allFormated.replaceAll("&[oO]", "§o");
+		allFormated = allFormated.replaceAll("&[rR]", "§r");
+		
 		allFormated = allFormated.replaceAll("%", "\\%");
 		return allFormated;
 	}
-
-	public static String FormatPlayerName(String playerPrefix, String playerDisplayName, String playerSuffix) {
-		playerPrefix = chatColorPattern.matcher(playerPrefix).replaceAll("\u00A7$1");
-		playerPrefix = chatMagicPattern.matcher(playerPrefix).replaceAll("\u00A7$1");
-		playerPrefix = chatBoldPattern.matcher(playerPrefix).replaceAll("\u00A7$1");
-		playerPrefix = chatStrikethroughPattern.matcher(playerPrefix).replaceAll("\u00A7$1");
-		playerPrefix = chatUnderlinePattern.matcher(playerPrefix).replaceAll("\u00A7$1");
-		playerPrefix = chatItalicPattern.matcher(playerPrefix).replaceAll("\u00A7$1");
-		playerPrefix = chatResetPattern.matcher(playerPrefix).replaceAll("\u00A7$1");
-
-		playerSuffix = chatColorPattern.matcher(playerSuffix).replaceAll("\u00A7$1");
-		playerSuffix = chatMagicPattern.matcher(playerSuffix).replaceAll("\u00A7$1");
-		playerSuffix = chatBoldPattern.matcher(playerSuffix).replaceAll("\u00A7$1");
-		playerSuffix = chatStrikethroughPattern.matcher(playerSuffix).replaceAll("\u00A7$1");
-		playerSuffix = chatUnderlinePattern.matcher(playerSuffix).replaceAll("\u00A7$1");
-		playerSuffix = chatItalicPattern.matcher(playerSuffix).replaceAll("\u00A7$1");
-		playerSuffix = chatResetPattern.matcher(playerSuffix).replaceAll("\u00A7$1");
-		return playerPrefix + playerDisplayName.trim() + playerSuffix;
-	}
-
+	
 	public static String FormatStringAll(String string) {
-		String allFormated = string;
-		allFormated = chatColorPattern.matcher(allFormated).replaceAll("\u00A7$1");
-		allFormated = chatMagicPattern.matcher(allFormated).replaceAll("\u00A7$1");
-		allFormated = chatBoldPattern.matcher(allFormated).replaceAll("\u00A7$1");
-		allFormated = chatStrikethroughPattern.matcher(allFormated).replaceAll("\u00A7$1");
-		allFormated = chatUnderlinePattern.matcher(allFormated).replaceAll("\u00A7$1");
-		allFormated = chatItalicPattern.matcher(allFormated).replaceAll("\u00A7$1");
-		allFormated = chatResetPattern.matcher(allFormated).replaceAll("\u00A7$1");
-		allFormated = allFormated.replaceAll("%", "\\%");
+		String allFormated = Format.FormatString(string);
+		allFormated = Format.FormatStringColor(allFormated);
 		return allFormated;
 	}
 	
@@ -465,7 +495,7 @@ public class Format {
 		return msg;
 	}
 	
-	public static Boolean isValidColor(String color) {
+	public static boolean isValidColor(String color) {
 		Boolean bFound = false;
 		for(ChatColor bkColors : ChatColor.values()) {
 			if(color.equalsIgnoreCase(bkColors.name())) {
@@ -475,7 +505,39 @@ public class Format {
 		return bFound;
 	}
 	
+	public static boolean isValidHexColor(String color) {
+		Pattern pattern = Pattern.compile("(^#[0-9a-fA-F]{6}\\b)");
+		Matcher matcher = pattern.matcher(color);
+		return matcher.find();
+	}
+	
+	public static String convertHexColorCodeToBukkitColorCode(String color) {
+		StringBuilder bukkitColorCode = new StringBuilder(BUKKIT_COLOR_CODE_PREFIX + BUKKIT_HEX_COLOR_CODE_PREFIX);
+		for(int a = 1; a < color.length(); a++) {
+			bukkitColorCode.append(BUKKIT_COLOR_CODE_PREFIX + color.charAt(a));
+		}
+		return bukkitColorCode.toString().toLowerCase();
+	}
+	
+	public static String convertHexColorCodeStringToBukkitColorCodeString(String string) {
+		Pattern pattern = Pattern.compile("(#[0-9a-fA-F]{6})");
+		Matcher matcher = pattern.matcher(string);
+		while(matcher.find()) {
+			int indexStart = matcher.start();
+			int indexEnd = matcher.end();
+			String hexColor = string.substring(indexStart, indexEnd);	
+			String bukkitColor = convertHexColorCodeToBukkitColorCode(hexColor);
+			string = string.replaceAll(hexColor, bukkitColor);
+			matcher.reset(string);
+		}
+		return string;
+	}
+	
 	public static String escapeAllRegex(String input) {
 		return input.replace("[", "\\[").replace("]", "\\]").replace("{", "\\{").replace("}", "\\}").replace("(", "\\(").replace(")", "\\)").replace("|", "\\|").replace("+", "\\+").replace("*", "\\*");
+	}
+	
+	public static boolean underlineURLs() {
+		return plugin.getConfig().getBoolean("underlineurls", true);
 	}
 }

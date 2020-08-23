@@ -1,4 +1,4 @@
-Version: 2.18.2
+Version: 2.20.0
 BlockCommandPlayer: '&cYou have been blocked from entering command {command}.'
 BlockCommandSender: '&cBlocked player &6{player} &cfrom entering command {command}.'
 BlockedCommand: '&cYou are blocked from entering this command: {command}'
@@ -14,6 +14,7 @@ ChannelListHeader: '&6Channel List : Alias'
 ChannelListWithPermissions: '{channel_color}{channel_name} : {channel_alias} - Permission Required'
 ChannelNoPermission: '&cYou do not have permission for this channel.'
 ChannelNoPermissionView: '&cYou do not have permission to look at this channel.'
+ChannelNoSpeakPermissions: '&cYou do not have permission to speak in this channel.'
 ChannelPlayerListHeader: '&6Players in Channel: {channel_color}{channel_name}'
 ChannelMuted: '&cYou are muted in this channel: {channel_color}{channel_name}&c{time}'
 CommandInvalidArguments: '&cInvalid command: {command} {args}'

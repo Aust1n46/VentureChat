@@ -227,7 +227,7 @@ public class ChatListener implements Listener {
 				timedMute = " for " + remaining + " more " + keyword;
 			}
 			mcp.getPlayer().sendMessage(LocalizedMessage.CHANNEL_MUTED.toString()
-					.replace("{channel_color}", ChatColor.valueOf(eventChannel.getColor().toUpperCase()) + "")
+					.replace("{channel_color}", eventChannel.getColor() + "")
 					.replace("{channel_name}", eventChannel.getName())
 					.replace("{time}", timedMute));
 			mcp.setQuickChat(false);
@@ -243,7 +243,12 @@ public class ChatListener implements Listener {
 			mcp.setCurrentChannel(ChatChannel.getDefaultChannel());
 			return;
 		}
-		curColor = eventChannel.getChatColor().toUpperCase();
+		if(eventChannel.hasSpeakPermission() && !mcp.getPlayer().hasPermission(eventChannel.getSpeakPermission())) {
+			mcp.getPlayer().sendMessage(LocalizedMessage.CHANNEL_NO_SPEAK_PERMISSIONS.toString());
+			mcp.setQuickChat(false);
+			return;
+		}
+		curColor = eventChannel.getChatColor();
 		bungee = eventChannel.getBungee();
 		
 		int time = (int) (System.currentTimeMillis() / 1000);
@@ -294,7 +299,7 @@ public class ChatListener implements Listener {
 					}
 					mcp.getSpam().get(eventChannel).set(0, 0);
 					mcp.getPlayer().sendMessage(LocalizedMessage.MUTE_PLAYER_SPAM.toString()
-							.replace("{channel_color}", ChatColor.valueOf(eventChannel.getColor().toUpperCase()) + "")
+							.replace("{channel_color}", eventChannel.getColor() + "")
 							.replace("{channel_name}", eventChannel.getName())
 							.replace("{time}", timedmute));
 					mcp.setQuickChat(false);
@@ -323,7 +328,7 @@ public class ChatListener implements Listener {
 			chDistance = eventChannel.getDistance();
 		}
 		
-		format = PlaceholderAPI.setBracketPlaceholders(mcp.getPlayer(), Format.FormatStringAll(plugin.getConfig().getConfigurationSection("channels." + eventChannel.getName()).getString("format")));
+		format = Format.FormatStringAll(PlaceholderAPI.setBracketPlaceholders(mcp.getPlayer(), Format.FormatStringAll(plugin.getConfig().getConfigurationSection("channels." + eventChannel.getName()).getString("format"))));
 		if(plugin.getConfig().getBoolean("formatcleaner", false)) {
 			format = format.replace("[]", " ");
 			format = format.replace("    ", " ").replace("   ", " ").replace("  ", " ");
@@ -350,9 +355,9 @@ public class ChatListener implements Listener {
 				}
 				if(plugin.getConfig().getBoolean("enable_towny_channel") && pluginManager.isPluginEnabled("Towny")) {
 					try {
-						Resident r = TownyUniverse.getDataSource().getResident(p.getName());
-						Resident pp = TownyUniverse.getDataSource().getResident(mcp.getName());
 						if(eventChannel.getName().equalsIgnoreCase("Town")) {
+							Resident r = TownyUniverse.getDataSource().getResident(p.getName());
+							Resident pp = TownyUniverse.getDataSource().getResident(mcp.getName());
 							if(!pp.hasTown()) {
 								recipients.remove(p.getPlayer());
 								recipientCount--;
@@ -370,6 +375,8 @@ public class ChatListener implements Listener {
 							}
 						}
 						if(eventChannel.getName().equalsIgnoreCase("Nation")) {
+							Resident r = TownyUniverse.getDataSource().getResident(p.getName());
+							Resident pp = TownyUniverse.getDataSource().getResident(mcp.getName());
 							if(!pp.hasNation()) {
 								recipients.remove(p.getPlayer());
 								recipientCount--;
@@ -394,9 +401,9 @@ public class ChatListener implements Listener {
 
 				if(plugin.getConfig().getBoolean("enable_factions_channel") && pluginManager.isPluginEnabled("Factions")) {
 					try {
-						MPlayer mplayer = MPlayer.get(mcp.getPlayer());
-						MPlayer mplayerp = MPlayer.get(p.getPlayer());
 						if(eventChannel.getName().equalsIgnoreCase("Faction")) {
+							MPlayer mplayer = MPlayer.get(mcp.getPlayer());
+							MPlayer mplayerp = MPlayer.get(p.getPlayer());
 							if(!mplayer.hasFaction()) {
 								recipients.remove(p.getPlayer());
 								recipientCount--;
@@ -420,7 +427,7 @@ public class ChatListener implements Listener {
 					locreceip = p.getPlayer().getLocation();
 					if(locreceip.getWorld() == mcp.getPlayer().getWorld()) {
 						diff = locreceip.subtract(locsender);
-						if(Math.abs(diff.getX()) > chDistance || Math.abs(diff.getZ()) > chDistance) {
+						if(Math.abs(diff.getX()) > chDistance || Math.abs(diff.getZ()) > chDistance || Math.abs(diff.getY()) > chDistance) {
 							recipients.remove(p.getPlayer());
 							recipientCount--;
 							continue;
@@ -457,10 +464,10 @@ public class ChatListener implements Listener {
 			chat = Format.getLastCode(format) + chat;
 		}
 		else {
-			chat = ChatColor.valueOf(curColor) + chat;
+			chat = curColor + chat;
 		}
 		
-		String globalJSON = Format.convertToJson(mcp, format, chat);
+		String globalJSON = Format.convertToJson(mcp, format, chat); 
 		String consoleChat = format + chat;
 		String message = consoleChat.replaceAll("(§([a-z0-9]))", "");
 		int hash = message.hashCode();

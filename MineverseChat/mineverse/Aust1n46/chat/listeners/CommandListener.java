@@ -150,7 +150,7 @@ public class CommandListener implements CommandExecutor, Listener {
 				if(!channel.hasPermission() || mcp.getPlayer().hasPermission(channel.getPermission())) {
 					if(message.equals("/" + channel.getAlias())) {
 						mcp.getPlayer().sendMessage(LocalizedMessage.SET_CHANNEL.toString()
-								.replace("{channel_color}", ChatColor.valueOf(channel.getColor().toUpperCase()) + "")
+								.replace("{channel_color}", channel.getColor() + "")
 								.replace("{channel_name}", channel.getName()));
 						if(mcp.hasConversation()) {
 							for(MineverseChatPlayer p : MineverseChat.onlinePlayers) {
@@ -262,7 +262,7 @@ public class CommandListener implements CommandExecutor, Listener {
 				if(target != null) {
 					command = command.replace("{player_name}", target.getName());
 					if(target.isOnline()) {
-						command = PlaceholderAPI.setBracketPlaceholders(target.getPlayer(), command);
+						command = Format.FormatStringAll(PlaceholderAPI.setBracketPlaceholders(target.getPlayer(), command));
 					}
 				}
 				else {

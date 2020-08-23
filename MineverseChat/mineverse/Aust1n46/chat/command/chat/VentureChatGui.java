@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -103,8 +102,8 @@ public class VentureChatGui extends MineverseCommand {
 		skullMeta.setOwner(target.getName()); 
 		skullMeta.setDisplayName("§b" + target.getName());
 		List<String> skullLore = new ArrayList<String>();
-		skullLore.add("§7Channel: " + ChatColor.valueOf(channel.getColor().toUpperCase()) + channel.getName());
-		skullLore.add("§7Hash: " + ChatColor.valueOf(channel.getColor().toUpperCase()) + hash);
+		skullLore.add("§7Channel: " + channel.getColor() + channel.getName());
+		skullLore.add("§7Hash: " + channel.getColor() + hash);
 		skullMeta.setLore(skullLore);
 		skull.setItemMeta(skullMeta); 
 		skull.setDurability((short) 3);
@@ -162,8 +161,8 @@ public class VentureChatGui extends MineverseCommand {
 		skullMeta.setOwner("Scarsz");
 		skullMeta.setDisplayName("§bDiscord_Message");
 		List<String> skullLore = new ArrayList<String>();
-		skullLore.add("§7Channel: " + ChatColor.valueOf(channel.getColor().toUpperCase()) + channel.getName());
-		skullLore.add("§7Hash: " + ChatColor.valueOf(channel.getColor().toUpperCase()) + hash);
+		skullLore.add("§7Channel: " + channel.getColor() + channel.getName());
+		skullLore.add("§7Hash: " + channel.getColor() + hash);
 		skullMeta.setLore(skullLore);
 		skull.setItemMeta(skullMeta); 
 		skull.setDurability((short) 3);

@@ -3,12 +3,11 @@ package mineverse.Aust1n46.chat;
 import org.bukkit.entity.Player;
 
 import me.clip.placeholderapi.PlaceholderAPIPlugin;
-import me.clip.placeholderapi.PlaceholderHook;
-
+import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 import mineverse.Aust1n46.chat.api.MineverseChatAPI;
 import mineverse.Aust1n46.chat.api.MineverseChatPlayer;
 
-public class VentureChatPlaceholders extends PlaceholderHook {
+public class VentureChatPlaceholders extends PlaceholderExpansion {
 	@Override
 	public String onPlaceholderRequest(Player p, String identifier) {
 		if(p == null) {
@@ -66,5 +65,30 @@ public class VentureChatPlaceholders extends PlaceholderHook {
 		if(color.equalsIgnoreCase("yellow")) return "e";
 		if(color.equalsIgnoreCase("white")) return "f";
 		return "f";
+	}
+	
+	@Override
+    public boolean persist(){
+        return true;
+    }
+	
+	@Override
+	public boolean canRegister(){
+		return true;
+	}
+
+	@Override
+	public String getAuthor() {
+		return "Aust1n46";
+	}
+
+	@Override
+	public String getIdentifier() {
+		return "venturechat";
+	}
+
+	@Override
+	public String getVersion() {
+		return MineverseChat.getInstance().getDescription().getVersion();
 	}
 }

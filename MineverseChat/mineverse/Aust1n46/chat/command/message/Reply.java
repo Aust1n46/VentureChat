@@ -40,28 +40,12 @@ public class Reply extends MineverseCommand {
 					String send = "";
 					String echo = "";
 					String spy = "";
-					String tellColor = plugin.getConfig().getString("tellcolor", "gray");
 					for(int r = 0; r < args.length; r++) {
 						msg += " " + args[r];
 					}
-					if(plugin.getConfig().getString("tellformatfrom").equalsIgnoreCase("Default")) {
-						send = "{playerfrom} replies to you:" + ChatColor.valueOf(tellColor.toUpperCase()) + msg;
-					}
-					else {
-						send = Format.FormatStringAll(plugin.getConfig().getString("tellformatfrom")) + msg;
-					}
-					if(plugin.getConfig().getString("tellformatto").equalsIgnoreCase("Default")) {
-						echo = "You reply to {playerto}:" + ChatColor.valueOf(tellColor.toUpperCase()) + msg;
-					}
-					else {
-						echo = Format.FormatStringAll(plugin.getConfig().getString("tellformatto")) + msg;
-					}
-					if(plugin.getConfig().getString("tellformatspy").equalsIgnoreCase("Default")) {
-						spy = "{playerfrom} replied to {playerto}:" + ChatColor.valueOf(tellColor.toUpperCase()) + msg;
-					}
-					else {
-						spy = Format.FormatStringAll(plugin.getConfig().getString("tellformatspy")) + msg;
-					}
+					send = Format.FormatStringAll(plugin.getConfig().getString("replyformatfrom")) + msg;
+					echo = Format.FormatStringAll(plugin.getConfig().getString("replyformatto")) + msg;
+					spy = Format.FormatStringAll(plugin.getConfig().getString("replyformatspy")) + msg;
 					try {
 						out.writeUTF("Message");
 						out.writeUTF("Send");

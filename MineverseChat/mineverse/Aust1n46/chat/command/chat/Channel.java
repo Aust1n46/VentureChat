@@ -1,6 +1,5 @@
 package mineverse.Aust1n46.chat.command.chat;
 
-import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -39,7 +38,7 @@ public class Channel extends MineverseCommand implements Listener {
 			}			
 			ChatChannel channel = ChatChannel.getChannel(args[0]);							
 			plugin.getServer().getPluginManager().callEvent(new ChannelJoinEvent(mcp.getPlayer(), channel, LocalizedMessage.SET_CHANNEL.toString()
-					.replace("{channel_color}", ChatColor.valueOf(channel.getColor().toUpperCase()) + "")
+					.replace("{channel_color}", channel.getColor() + "")
 					.replace("{channel_name}", channel.getName())));			
 			return;
 		}

@@ -5,6 +5,7 @@ import org.bukkit.command.CommandSender;
 
 import mineverse.Aust1n46.chat.channel.ChatChannel;
 import mineverse.Aust1n46.chat.command.MineverseCommand;
+import mineverse.Aust1n46.chat.utilities.Format;
 
 public class Channelinfo extends MineverseCommand {
 
@@ -30,27 +31,38 @@ public class Channelinfo extends MineverseCommand {
 					return;
 				}
 			}
-			sender.sendMessage(ChatColor.GOLD + "Channel: " + ChatColor.valueOf(chname.getColor().toUpperCase()) + chname.getName());
-			sender.sendMessage(ChatColor.GOLD + "Alias: " + ChatColor.valueOf(chname.getColor().toUpperCase()) + chname.getAlias());
-			sender.sendMessage(ChatColor.GOLD + "Color: " + ChatColor.valueOf(chname.getColor().toUpperCase()) + chname.getColor());
-			sender.sendMessage(ChatColor.GOLD + "ChatColor: " + ChatColor.valueOf(chname.getChatColor().toUpperCase()) + chname.getChatColor());
-			sender.sendMessage(ChatColor.GOLD + "Permission: " + ChatColor.valueOf(chname.getColor().toUpperCase()) + chname.getPermission());
-			sender.sendMessage(ChatColor.GOLD + "Autojoin: " + ChatColor.valueOf(chname.getColor().toUpperCase()) + chname.getAutojoin());
-			sender.sendMessage(ChatColor.GOLD + "Default: " + ChatColor.valueOf(chname.getColor().toUpperCase()) + chname.hasDistance());
+			sender.sendMessage(ChatColor.GOLD + "Channel: " + chname.getColor() + chname.getName());
+			sender.sendMessage(ChatColor.GOLD + "Alias: " + chname.getColor() + chname.getAlias());
+			sender.sendMessage(ChatColor.GOLD + "Color: " + chname.getColor() + chname.getColorRaw());
+			sender.sendMessage(ChatColor.GOLD + "ChatColor: " + (chname.getChatColor().equalsIgnoreCase("None") ? Format.DEFAULT_COLOR_CODE : chname.getChatColor()) + chname.getChatColorRaw());
+			if(chname.hasPermission()) {
+				sender.sendMessage(ChatColor.GOLD + "Permission: " + chname.getColor() + chname.getPermission());
+			}
+			else {
+				sender.sendMessage(ChatColor.GOLD + "Permission: " + chname.getColor() + "None");
+			}
+			if(chname.hasSpeakPermission()) {
+				sender.sendMessage(ChatColor.GOLD + "Speak Permission: " + chname.getColor() + chname.getSpeakPermission());
+			}
+			else {
+				sender.sendMessage(ChatColor.GOLD + "Speak Permission: " + chname.getColor() + "None");
+			}
+			sender.sendMessage(ChatColor.GOLD + "Autojoin: " + chname.getColor() + chname.getAutojoin());
+			sender.sendMessage(ChatColor.GOLD + "Default: " + chname.getColor() + chname.hasDistance());
 			if(!chname.hasDistance() || chname.getBungee()) {
 				sender.sendMessage(ChatColor.GOLD + "Distance: " + ChatColor.RED + "N/A");
 			}
 			else {
-				sender.sendMessage(ChatColor.GOLD + "Distance: " + ChatColor.valueOf(chname.getColor().toUpperCase()) + chname.getDistance().toString());
+				sender.sendMessage(ChatColor.GOLD + "Distance: " + chname.getColor() + chname.getDistance());
 			}
 			if(!chname.hasCooldown()) {
 				sender.sendMessage(ChatColor.GOLD + "Cooldown: " + ChatColor.RED + "N/A");
 			}
 			else {
-				sender.sendMessage(ChatColor.GOLD + "Cooldown: " + ChatColor.valueOf(chname.getColor().toUpperCase()) + chname.getCooldown());
+				sender.sendMessage(ChatColor.GOLD + "Cooldown: " + chname.getColor() + chname.getCooldown());
 			}
-			sender.sendMessage(ChatColor.GOLD + "Bungeecord: " + ChatColor.valueOf(chname.getColor().toUpperCase()) + chname.getBungee().toString());
-			sender.sendMessage(ChatColor.GOLD + "Format: " + ChatColor.valueOf(chname.getColor().toUpperCase()) + chname.getFormat());
+			sender.sendMessage(ChatColor.GOLD + "Bungeecord: " + chname.getColor() + chname.getBungee());
+			sender.sendMessage(ChatColor.GOLD + "Format: " + chname.getColor() + chname.getFormat());
 			return;
 		}
 		else {

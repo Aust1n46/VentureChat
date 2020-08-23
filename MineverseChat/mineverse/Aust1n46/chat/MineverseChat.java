@@ -111,8 +111,6 @@ import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.utility.MinecraftReflection;
 
-import me.clip.placeholderapi.PlaceholderAPI;
-
 public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 	// Listeners --------------------------------
 	private ChatListener chatListener;
@@ -319,7 +317,7 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 		commands.put("venturechat", new Venturechat("venturechat"));
 		commands.put("mute", new Mute("mute"));
 		commands.put("muteall", new Muteall("muteall"));
-		commands.put("nick", new Nick("nick"));
+		commands.put("setnickname", new Nick("setnickname"));
 		commands.put("notifications", new Notifications("notifications"));
 		commands.put("party", new Party("party"));
 		commands.put("rangedspy", new RangedSpy("rangedspy"));
@@ -406,13 +404,7 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 		if(pluginManager.isPluginEnabled("PlaceholderAPI")) {
 			Bukkit.getConsoleSender().sendMessage(Format.FormatStringAll("&8[&eVentureChat&8]&e - Enabling PlaceholderAPI Hook"));
 		}
-		boolean hooked = PlaceholderAPI.registerPlaceholderHook("venturechat", new VentureChatPlaceholders());
-		if(hooked) {
-			Bukkit.getConsoleSender().sendMessage(Format.FormatStringAll("&8[&eVentureChat&8]&e - Added placeholders to PlaceholderAPI!"));
-		}
-		else {
-			Bukkit.getConsoleSender().sendMessage(Format.FormatStringAll("&8[&eVentureChat&8]&e - &cPlaceholders were not added to PlaceholderAPI!"));
-		}
+		new VentureChatPlaceholders().register();
 		Bukkit.getConsoleSender().sendMessage(Format.FormatStringAll("&8[&eVentureChat&8]&e - Loading player data"));
 		BukkitScheduler scheduler = Bukkit.getServer().getScheduler();
 		scheduler.runTaskTimerAsynchronously(this, new Runnable() {
@@ -437,7 +429,7 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 						// System.out.println(time + " " + timemark);
 						if(time > timemark) {
 							p.removeMute(channel.getName());
-							if(p.isOnline()) p.getPlayer().sendMessage(ChatColor.RED + "You have just been unmuted in: " + ChatColor.valueOf(channel.getColor().toUpperCase()) + channel.getName());
+							if(p.isOnline()) p.getPlayer().sendMessage(ChatColor.RED + "You have just been unmuted in: " + channel.getColor() + channel.getName());
 							else p.setModified(true);
 						}
 					}
@@ -822,7 +814,7 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 						playerList = playerList.substring(0, playerList.length() - 2);
 					}
 					mcp.getPlayer().sendMessage(LocalizedMessage.CHANNEL_PLAYER_LIST_HEADER.toString()
-							.replace("{channel_color}", (ChatColor.valueOf(chatchannel.getColor().toUpperCase())).toString())
+							.replace("{channel_color}", chatchannel.getColor().toString())
 							.replace("{channel_name}", chatchannel.getName()));
 					mcp.getPlayer().sendMessage(Format.FormatStringAll(playerList));
 				}

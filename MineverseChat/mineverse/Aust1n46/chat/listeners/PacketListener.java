@@ -28,7 +28,7 @@ public class PacketListener extends PacketAdapter {
 			return;
 		}
 		
-		MineverseChatPlayer mcp = MineverseChatAPI.getMineverseChatPlayer(event.getPlayer());
+		MineverseChatPlayer mcp = MineverseChatAPI.getOnlineMineverseChatPlayer(event.getPlayer());
 		if(mcp == null) {
 			return;
 		}

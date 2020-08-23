@@ -21,6 +21,7 @@ public enum LocalizedMessage {
     CHANNEL_LIST_WITH_PERMISSIONS("ChannelListWithPermissions"),
     CHANNEL_NO_PERMISSION("ChannelNoPermission"),
     CHANNEL_NO_PERMISSION_VIEW("ChannelNoPermissionView"),
+    CHANNEL_NO_SPEAK_PERMISSIONS("ChannelNoSpeakPermissions"),
     CHANNEL_PLAYER_LIST_HEADER("ChannelPlayerListHeader"),
     CHANNEL_MUTED("ChannelMuted"),
     COMMAND_INVALID_ARGUMENTS("CommandInvalidArguments"),

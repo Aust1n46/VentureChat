@@ -81,6 +81,10 @@ public class VersionHandler {
 		return Bukkit.getVersion().contains("1.15");
 	}
 	
+	public static boolean is1_16() {
+		return Bukkit.getVersion().contains("1.16");
+	}
+	
 	public static boolean isCauldron() {
 		return false;
 	}

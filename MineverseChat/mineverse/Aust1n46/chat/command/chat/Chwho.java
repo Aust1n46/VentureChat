@@ -76,11 +76,11 @@ public class Chwho extends MineverseCommand {
 									continue;
 								}
 							}
-							if(pluginManager.isPluginEnabled("Towny") && sender instanceof Player) {
+							if(plugin.getConfig().getBoolean("enable_towny_channel") && pluginManager.isPluginEnabled("Towny") && sender instanceof Player) {
 								try {
-									Resident r = TownyUniverse.getDataSource().getResident(p.getName());
-									Resident pp = TownyUniverse.getDataSource().getResident(((Player) sender).getName());
 									if(channel.getName().equalsIgnoreCase("Town")) {
+										Resident r = TownyUniverse.getDataSource().getResident(p.getName());
+										Resident pp = TownyUniverse.getDataSource().getResident(((Player) sender).getName());
 										if(!pp.hasTown()) {
 											if(playerlist.length() + p.getName().length() > linecount) {
 												playerlist += "\n";
@@ -103,6 +103,8 @@ public class Chwho extends MineverseCommand {
 										}
 									}
 									if(channel.getName().equalsIgnoreCase("Nation")) {
+										Resident r = TownyUniverse.getDataSource().getResident(p.getName());
+										Resident pp = TownyUniverse.getDataSource().getResident(((Player) sender).getName());
 										if(!pp.hasNation()) {
 											if(playerlist.length() + p.getName().length() > linecount) {
 												playerlist += "\n";
@@ -129,11 +131,11 @@ public class Chwho extends MineverseCommand {
 									ex.printStackTrace();
 								}
 							}
-							if(pluginManager.isPluginEnabled("Factions") && sender instanceof Player) {
+							if(plugin.getConfig().getBoolean("enable_factions_channel") && pluginManager.isPluginEnabled("Factions") && sender instanceof Player) {
 								try {
-									MPlayer mplayer = MPlayer.get(p.getPlayer());
-									MPlayer mplayerp = MPlayer.get((Player) sender);
 									if(channel.getName().equalsIgnoreCase("Faction")) {
+										MPlayer mplayer = MPlayer.get(p.getPlayer());
+										MPlayer mplayerp = MPlayer.get((Player) sender);
 										if(!mplayerp.hasFaction()) {
 											if(playerlist.length() + p.getName().length() > linecount) {
 												playerlist += "\n";
@@ -177,7 +179,7 @@ public class Chwho extends MineverseCommand {
 						playerlist = playerlist.substring(0, playerlist.length() - 2);
 					}
 					sender.sendMessage(LocalizedMessage.CHANNEL_PLAYER_LIST_HEADER.toString()
-							.replace("{channel_color}", (ChatColor.valueOf(channel.getColor().toUpperCase())).toString())
+							.replace("{channel_color}", (channel.getColor()).toString())
 							.replace("{channel_name}", channel.getName()));
 					sender.sendMessage(playerlist);
 					return;
@@ -210,7 +212,7 @@ public class Chwho extends MineverseCommand {
 			locreceip = p2.getLocation();
 			if(locreceip.getWorld() == p1.getWorld()) {
 				diff = locreceip.subtract(locsender);
-				if(Math.abs(diff.getX()) > chDistance || Math.abs(diff.getZ()) > chDistance) {
+				if(Math.abs(diff.getX()) > chDistance || Math.abs(diff.getZ()) > chDistance || Math.abs(diff.getY()) > chDistance) {
 					return false;
 				}
 			}
