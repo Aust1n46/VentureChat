@@ -438,7 +438,7 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 					Bukkit.getConsoleSender().sendMessage(Format.FormatStringAll("&8[&eVentureChat&8]&e - Updating Player Mutes"));
 				}
 			}
-		}, 0L, 20L);
+		}, 0L, 1200L);
 		this.firstRun = false;
 	}
 
