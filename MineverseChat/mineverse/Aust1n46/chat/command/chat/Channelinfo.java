@@ -36,13 +36,14 @@ public class Channelinfo extends MineverseCommand {
 			sender.sendMessage(ChatColor.GOLD + "Color: " + chname.getColor() + chname.getColorRaw());
 			sender.sendMessage(ChatColor.GOLD + "ChatColor: " + (chname.getChatColor().equalsIgnoreCase("None") ? Format.DEFAULT_COLOR_CODE : chname.getChatColor()) + chname.getChatColorRaw());
 			sender.sendMessage(ChatColor.GOLD + "Permission: " + chname.getColor() + chname.getPermission());
+			sender.sendMessage(ChatColor.GOLD + "Speak Permission: " + chname.getColor() + chname.getSpeakPermission());
 			sender.sendMessage(ChatColor.GOLD + "Autojoin: " + chname.getColor() + chname.getAutojoin());
 			sender.sendMessage(ChatColor.GOLD + "Default: " + chname.getColor() + chname.hasDistance());
 			if(!chname.hasDistance() || chname.getBungee()) {
 				sender.sendMessage(ChatColor.GOLD + "Distance: " + ChatColor.RED + "N/A");
 			}
 			else {
-				sender.sendMessage(ChatColor.GOLD + "Distance: " + chname.getColor() + chname.getDistance().toString());
+				sender.sendMessage(ChatColor.GOLD + "Distance: " + chname.getColor() + chname.getDistance());
 			}
 			if(!chname.hasCooldown()) {
 				sender.sendMessage(ChatColor.GOLD + "Cooldown: " + ChatColor.RED + "N/A");
@@ -50,7 +51,7 @@ public class Channelinfo extends MineverseCommand {
 			else {
 				sender.sendMessage(ChatColor.GOLD + "Cooldown: " + chname.getColor() + chname.getCooldown());
 			}
-			sender.sendMessage(ChatColor.GOLD + "Bungeecord: " + chname.getColor() + chname.getBungee().toString());
+			sender.sendMessage(ChatColor.GOLD + "Bungeecord: " + chname.getColor() + chname.getBungee());
 			sender.sendMessage(ChatColor.GOLD + "Format: " + chname.getColor() + chname.getFormat());
 			return;
 		}
