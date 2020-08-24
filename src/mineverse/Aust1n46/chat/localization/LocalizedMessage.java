@@ -83,6 +83,8 @@ public enum LocalizedMessage {
 	SPY_ON("SpyOn"),
 	UNBLOCK_COMMAND_PLAYER("UnblockCommandPlayer"),
 	UNBLOCK_COMMAND_SENDER("UnblockCommandSender"),
+	UNITS_PLURAL("UnitsPlural"),
+	UNITS_SINGULAR("UnitsSingular"),
 	UNMUTE_PLAYER_ALL_PLAYER("UnmutePlayerAllPlayer"),
 	UNMUTE_PLAYER_ALL_SENDER("UnmutePlayerAllSender"),
 	UNMUTE_PLAYER_PLAYER("UnmutePlayerPlayer"),

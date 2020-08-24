@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -419,26 +420,36 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 		scheduler.runTaskTimerAsynchronously(this, new Runnable() {
 			@Override
 			public void run() {
-				for(MineverseChatPlayer p : MineverseChat.players) {
-					int time = (int) (System.currentTimeMillis() / 60000);
-
-					for(String c : p.getMutes().keySet()) {
-						ChatChannel channel = ChatChannel.getChannel(c);
+				for (MineverseChatPlayer p : MineverseChat.onlinePlayers) {
+					int time = (int) System.currentTimeMillis();
+					Iterator<String> iterator = p.getMutes().keySet().iterator();
+					while (iterator.hasNext()) {
+						ChatChannel channel = ChatChannel.getChannel(iterator.next());
 						int timemark = p.getMutes().get(channel.getName());
-						if(timemark == 0) return;
-						// System.out.println(time + " " + timemark);
-						if(time > timemark) {
-							p.removeMute(channel.getName());
-							if(p.isOnline()) p.getPlayer().sendMessage(ChatColor.RED + "You have just been unmuted in: " + channel.getColor() + channel.getName());
-							else p.setModified(true);
+						if (timemark == 0) {
+							return;
+						}
+						if (getConfig().getString("loglevel", "info").equals("debug")) {
+							System.out.println(time + " " + timemark);
+						}
+						if (time >= timemark) {
+							iterator.remove();
+							if (p.isOnline()) {
+								p.getPlayer().sendMessage(LocalizedMessage.UNMUTE_PLAYER_PLAYER.toString()
+										.replace("{player}", p.getName()).replace("{channel_color}", channel.getColor())
+										.replace("{channel_name}", channel.getName()));
+							} else {
+								p.setModified(true);
+							}
 						}
 					}
 				}
-				if(getConfig().getString("loglevel", "info").equals("debug")) {
-					Bukkit.getConsoleSender().sendMessage(Format.FormatStringAll("&8[&eVentureChat&8]&e - Updating Player Mutes"));
+				if (getConfig().getString("loglevel", "info").equals("debug")) {
+					Bukkit.getConsoleSender()
+							.sendMessage(Format.FormatStringAll("&8[&eVentureChat&8]&e - Updating Player Mutes"));
 				}
 			}
-		}, 0L, 1200L); //one minute interval
+		}, 0L, 1200L); // one minute interval
 		this.firstRun = false;
 	}
 
