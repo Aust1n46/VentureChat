@@ -3,7 +3,7 @@ package mineverse.Aust1n46.chat.localization;
 import mineverse.Aust1n46.chat.utilities.Format;
 
 /**
- * Messages configurable in Messages.yml
+ * Messages configurable in Messages.yml file.
  */
 public enum LocalizedMessage {
 	BLOCK_COMMAND_PLAYER("BlockCommandPlayer"),
@@ -24,6 +24,7 @@ public enum LocalizedMessage {
     CHANNEL_NO_SPEAK_PERMISSIONS("ChannelNoSpeakPermissions"),
     CHANNEL_PLAYER_LIST_HEADER("ChannelPlayerListHeader"),
     CHANNEL_MUTED("ChannelMuted"),
+    CHANNEL_MUTED_TIMED("ChannelMutedTimed"),
     COMMAND_INVALID_ARGUMENTS("CommandInvalidArguments"),
     COMMAND_INVALID_ARGUMENTS_IGNORE("CommandInvalidArgumentsIgnore"),
     COMMAND_MUST_BE_RUN_BY_PLAYER("CommandMustBeRunByPlayer"),
@@ -62,6 +63,7 @@ public enum LocalizedMessage {
 	MUTE_PLAYER_PLAYER("MutePlayerPlayer"),
 	MUTE_PLAYER_PLAYER_TIME("MutePlayerPlayerTime"),
 	MUTE_PLAYER_SPAM("MutePlayerSpam"),
+	MUTE_PLAYER_SPAM_TIME("MutePlayerSpamTime"),
 	MUTE_PLAYER_SENDER("MutePlayerSender"),
 	MUTE_PLAYER_SENDER_TIME("MutePlayerSenderTime"),
 	NO_PLAYER_TO_REPLY_TO("NoPlayerToReplyTo"),
@@ -83,8 +85,10 @@ public enum LocalizedMessage {
 	SPY_ON("SpyOn"),
 	UNBLOCK_COMMAND_PLAYER("UnblockCommandPlayer"),
 	UNBLOCK_COMMAND_SENDER("UnblockCommandSender"),
-	UNITS_PLURAL("UnitsPlural"),
-	UNITS_SINGULAR("UnitsSingular"),
+	UNITS_MINUTE_PLURAL("UnitsMinutePlural"),
+	UNITS_MINUTE_SINGULAR("UnitsMinuteSingular"),
+	UNITS_SECOND_PLURAL("UnitsSecondPlural"),
+	UNITS_SECOND_SINGULAR("UnitsSecondSingular"),
 	UNMUTE_PLAYER_ALL_PLAYER("UnmutePlayerAllPlayer"),
 	UNMUTE_PLAYER_ALL_SENDER("UnmutePlayerAllSender"),
 	UNMUTE_PLAYER_PLAYER("UnmutePlayerPlayer"),

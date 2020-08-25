@@ -35,6 +35,9 @@ import mineverse.Aust1n46.chat.versions.VersionHandler;
 
 //This class listens to chat through the chat event and handles the bulk of the chat channels and formatting.
 public class ChatListener implements Listener {
+	private static final int MILLISECONDS_PER_MINUTE = 60000;
+	private static final int MILLISECONDS_PER_SECOND = 1000;
+	
 	private MineverseChat plugin = MineverseChat.getInstance();
 
 	@EventHandler(priority = EventPriority.NORMAL)
@@ -208,28 +211,30 @@ public class ChatListener implements Listener {
 		Location diff;
 		Boolean filterthis = true;
 		mcp.addListening(eventChannel.getName());
-		if(mcp.isMuted(eventChannel.getName())) {
-			String timedMute = "";
-			if(mcp.getMutes().get(eventChannel.getName()).intValue() > 0) {
-				//Calendar currentDate = Calendar.getInstance();
-				//SimpleDateFormat formatter = new SimpleDateFormat("dd:HH:mm:ss");
-				//String date = formatter.format(currentDate.getTime());
-				//String[] datearray = date.split(":");
-				//int datetime = (Integer.parseInt(datearray[0]) * 1440) + (Integer.parseInt(datearray[1]) * 60) + (Integer.parseInt(datearray[2]));
-				
-				int time = (int) (System.currentTimeMillis() / 60000);
-				
-				String keyword = "minutes";
-				int timemark = mcp.getMutes().get(eventChannel.getName()).intValue();
-				int remaining = timemark - time;
-				if(remaining <= 0) remaining = 1;
-				if(remaining == 1) keyword = "minute";
-				timedMute = " for " + remaining + " more " + keyword;
+		if (mcp.isMuted(eventChannel.getName())) {
+			if (mcp.getMutes().get(eventChannel.getName()).intValue() > 0) {
+				int dateTimeMillis = (int) System.currentTimeMillis();
+				String units = LocalizedMessage.UNITS_MINUTE_PLURAL.toString();
+				int muteTimeMillis = mcp.getMutes().get(eventChannel.getName()).intValue();
+				int remainingMuteTime = (muteTimeMillis - dateTimeMillis) / MILLISECONDS_PER_MINUTE;
+				if (remainingMuteTime <= 0) {
+					remainingMuteTime = 1;
+				}
+				if (remainingMuteTime == 1) {
+					units = LocalizedMessage.UNITS_MINUTE_SINGULAR.toString();
+				}
+				mcp.getPlayer()
+						.sendMessage(LocalizedMessage.CHANNEL_MUTED_TIMED.toString()
+								.replace("{channel_color}", eventChannel.getColor())
+								.replace("{channel_name}", eventChannel.getName())
+								.replace("{time}", String.valueOf(remainingMuteTime)).replace("{units}", units));
 			}
-			mcp.getPlayer().sendMessage(LocalizedMessage.CHANNEL_MUTED.toString()
-					.replace("{channel_color}", eventChannel.getColor() + "")
-					.replace("{channel_name}", eventChannel.getName())
-					.replace("{time}", timedMute));
+			else {
+				mcp.getPlayer()
+						.sendMessage(LocalizedMessage.CHANNEL_MUTED.toString()
+								.replace("{channel_color}", eventChannel.getColor())
+								.replace("{channel_name}", eventChannel.getName()));
+			}
 			mcp.setQuickChat(false);
 			return;
 		}
@@ -251,77 +256,84 @@ public class ChatListener implements Listener {
 		curColor = eventChannel.getChatColor();
 		bungee = eventChannel.getBungee();
 		
-		int time = (int) (System.currentTimeMillis() / 1000);
+		int dateTimeSeconds = (int) System.currentTimeMillis() / MILLISECONDS_PER_SECOND;
 		
 		if(eventChannel.hasCooldown()) {
 			chCooldown = eventChannel.getCooldown();
 		}
 		try {
-			if(mcp.hasCooldown(eventChannel)) {
-				int timemark = mcp.getCooldowns().get(eventChannel).intValue();
-				if(time < timemark) {
-					int remaining = timemark - time;
-					String keyword = "seconds";
-					if(remaining == 1) keyword = "second";
+			if (mcp.hasCooldown(eventChannel)) {
+				int cooldownTime = mcp.getCooldowns().get(eventChannel).intValue();
+				if (dateTimeSeconds < cooldownTime) {
+					int remainingCooldownTime = cooldownTime - dateTimeSeconds;
+					String units = LocalizedMessage.UNITS_SECOND_PLURAL.toString();
+					if (remainingCooldownTime == 1) {
+						units = LocalizedMessage.UNITS_SECOND_SINGULAR.toString();
+					}
 					mcp.getPlayer().sendMessage(LocalizedMessage.CHANNEL_COOLDOWN.toString()
-							.replace("{cooldown}", remaining + "")
-							.replace("{units}", keyword));
+							.replace("{cooldown}", String.valueOf(remainingCooldownTime)).replace("{units}", units));
 					mcp.setQuickChat(false);
 					bungee = false;
 					return;
 				}
 			}
-			if(eventChannel.hasCooldown()) {
-				if(!mcp.getPlayer().hasPermission("venturechat.cooldown.bypass")) {
-					mcp.addCooldown(eventChannel, time + chCooldown);
+			if (eventChannel.hasCooldown()) {
+				if (!mcp.getPlayer().hasPermission("venturechat.cooldown.bypass")) {
+					mcp.addCooldown(eventChannel, dateTimeSeconds + chCooldown);
 				}
 			}
-		}
-		catch(NumberFormatException e) {
+		} catch (NumberFormatException e) {
 			e.printStackTrace();
 		}
 		
-		if(mcp.hasSpam(eventChannel) && plugin.getConfig().getConfigurationSection("antispam").getBoolean("enabled") && !mcp.getPlayer().hasPermission("venturechat.spam.bypass")) {
+		if (mcp.hasSpam(eventChannel) && plugin.getConfig().getConfigurationSection("antispam").getBoolean("enabled")
+				&& !mcp.getPlayer().hasPermission("venturechat.spam.bypass")) {
 			int spamcount = mcp.getSpam().get(eventChannel).get(0);
 			int spamtime = mcp.getSpam().get(eventChannel).get(1);
 			int spamtimeconfig = plugin.getConfig().getConfigurationSection("antispam").getInt("spamnumber");
-			int mutedfor = plugin.getConfig().getConfigurationSection("antispam").getInt("mutetime", 0);
-			
-			int datetime = time/60;
-			if(time < spamtime + plugin.getConfig().getConfigurationSection("antispam").getInt("spamtime")) {
-				if(spamcount + 1 >= spamtimeconfig) {
-					mcp.addMute(eventChannel.getName(), datetime + mutedfor);
-					String timedmute = "";
-					if(mutedfor > 0) {
-						String keyword = "minutes";
-						if(mutedfor == 1) keyword = "minute";
-						timedmute = " for " + mutedfor + " " + keyword;
+			int mutedForTime = plugin.getConfig().getConfigurationSection("antispam").getInt("mutetime", 0);
+			int dateTime = (int) System.currentTimeMillis();
+			if (dateTimeSeconds < spamtime
+					+ plugin.getConfig().getConfigurationSection("antispam").getInt("spamtime")) {
+				if (spamcount + 1 >= spamtimeconfig) {
+					mcp.addMute(eventChannel.getName(), dateTime + (mutedForTime * MILLISECONDS_PER_MINUTE));
+					if (mutedForTime > 0) {
+						String units = LocalizedMessage.UNITS_MINUTE_PLURAL.toString();
+						if (mutedForTime == 1) {
+							units = LocalizedMessage.UNITS_MINUTE_SINGULAR.toString();
+						}
+						mcp.getPlayer()
+								.sendMessage(LocalizedMessage.MUTE_PLAYER_SPAM_TIME.toString()
+										.replace("{channel_color}", eventChannel.getColor())
+										.replace("{channel_name}", eventChannel.getName())
+										.replace("{time}", String.valueOf(mutedForTime)).replace("{units}", units));
+					}
+					else {
+						mcp.getPlayer()
+								.sendMessage(LocalizedMessage.MUTE_PLAYER_SPAM.toString()
+										.replace("{channel_color}", eventChannel.getColor())
+										.replace("{channel_name}", eventChannel.getName()));
 					}
 					mcp.getSpam().get(eventChannel).set(0, 0);
-					mcp.getPlayer().sendMessage(LocalizedMessage.MUTE_PLAYER_SPAM.toString()
-							.replace("{channel_color}", eventChannel.getColor() + "")
-							.replace("{channel_name}", eventChannel.getName())
-							.replace("{time}", timedmute));
 					mcp.setQuickChat(false);
 					return;
-				}
-				else {
-					if(spamtimeconfig % 2 != 0) spamtimeconfig++;
-					if(spamcount + 1 == spamtimeconfig / 2) {
+				} else {
+					if (spamtimeconfig % 2 != 0) {
+						spamtimeconfig++;
+					}
+					if (spamcount + 1 == spamtimeconfig / 2) {
 						mcp.getPlayer().sendMessage(LocalizedMessage.SPAM_WARNING.toString());
 					}
 					mcp.getSpam().get(eventChannel).set(0, spamcount + 1);
 				}
-			}
-			else {
+			} else {
 				mcp.getSpam().get(eventChannel).set(0, 1);
-				mcp.getSpam().get(eventChannel).set(1, time);
+				mcp.getSpam().get(eventChannel).set(1, dateTimeSeconds);
 			}
-		}
-		else {
+		} else {
 			mcp.addSpam(eventChannel);
 			mcp.getSpam().get(eventChannel).add(0, 1);
-			mcp.getSpam().get(eventChannel).add(1, time);
+			mcp.getSpam().get(eventChannel).add(1, dateTimeSeconds);
 		}
 		
 		if(eventChannel.hasDistance()) {

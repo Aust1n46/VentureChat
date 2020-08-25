@@ -77,9 +77,9 @@ public class Mute extends MineverseCommand {
 						int time = Integer.parseInt(args[2]);
 						if (time > 0) {
 							player.addMute(channel.getName(), datetime + (time * MILLISECONDS_PER_MINUTE));
-							String units = LocalizedMessage.UNITS_PLURAL.toString();
+							String units = LocalizedMessage.UNITS_MINUTE_PLURAL.toString();
 							if (time == 1)
-								units = LocalizedMessage.UNITS_SINGULAR.toString();
+								units = LocalizedMessage.UNITS_MINUTE_SINGULAR.toString();
 							sender.sendMessage(LocalizedMessage.MUTE_PLAYER_SENDER_TIME.toString()
 									.replace("{player}", player.getName())
 									.replace("{channel_color}", channel.getColor())
