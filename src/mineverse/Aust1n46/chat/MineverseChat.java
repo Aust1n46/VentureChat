@@ -417,17 +417,18 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 				}
 			}
 		}, 0L, getConfig().getInt("saveinterval") * 1200); //one minute * save interval
+		
 		scheduler.runTaskTimerAsynchronously(this, new Runnable() {
 			@Override
 			public void run() {
 				for (MineverseChatPlayer p : MineverseChat.onlinePlayers) {
-					int time = (int) System.currentTimeMillis();
+					int time = Format.currentTimeMillis();
 					Iterator<String> iterator = p.getMutes().keySet().iterator();
 					while (iterator.hasNext()) {
 						ChatChannel channel = ChatChannel.getChannel(iterator.next());
 						int timemark = p.getMutes().get(channel.getName());
 						if (timemark == 0) {
-							return;
+							continue;
 						}
 						if (getConfig().getString("loglevel", "info").equals("debug")) {
 							System.out.println(time + " " + timemark);

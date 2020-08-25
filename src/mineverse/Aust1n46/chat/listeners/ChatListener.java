@@ -213,7 +213,7 @@ public class ChatListener implements Listener {
 		mcp.addListening(eventChannel.getName());
 		if (mcp.isMuted(eventChannel.getName())) {
 			if (mcp.getMutes().get(eventChannel.getName()).intValue() > 0) {
-				int dateTimeMillis = (int) System.currentTimeMillis();
+				int dateTimeMillis = Format.currentTimeMillis();
 				String units = LocalizedMessage.UNITS_MINUTE_PLURAL.toString();
 				int muteTimeMillis = mcp.getMutes().get(eventChannel.getName()).intValue();
 				int remainingMuteTime = (muteTimeMillis - dateTimeMillis) / MILLISECONDS_PER_MINUTE;
@@ -256,7 +256,7 @@ public class ChatListener implements Listener {
 		curColor = eventChannel.getChatColor();
 		bungee = eventChannel.getBungee();
 		
-		int dateTimeSeconds = (int) System.currentTimeMillis() / MILLISECONDS_PER_SECOND;
+		int dateTimeSeconds = Format.currentTimeMillis() / MILLISECONDS_PER_SECOND;
 		
 		if(eventChannel.hasCooldown()) {
 			chCooldown = eventChannel.getCooldown();
@@ -292,7 +292,7 @@ public class ChatListener implements Listener {
 			int spamtime = mcp.getSpam().get(eventChannel).get(1);
 			int spamtimeconfig = plugin.getConfig().getConfigurationSection("antispam").getInt("spamnumber");
 			int mutedForTime = plugin.getConfig().getConfigurationSection("antispam").getInt("mutetime", 0);
-			int dateTime = (int) System.currentTimeMillis();
+			int dateTime = Format.currentTimeMillis();
 			if (dateTimeSeconds < spamtime
 					+ plugin.getConfig().getConfigurationSection("antispam").getInt("spamtime")) {
 				if (spamcount + 1 >= spamtimeconfig) {

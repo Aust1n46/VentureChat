@@ -8,6 +8,7 @@ import mineverse.Aust1n46.chat.api.MineverseChatPlayer;
 import mineverse.Aust1n46.chat.channel.ChatChannel;
 import mineverse.Aust1n46.chat.command.MineverseCommand;
 import mineverse.Aust1n46.chat.localization.LocalizedMessage;
+import mineverse.Aust1n46.chat.utilities.Format;
 
 public class Mute extends MineverseCommand {
 	private static final int MILLISECONDS_PER_MINUTE = 60000;
@@ -73,7 +74,7 @@ public class Mute extends MineverseCommand {
 				}
 				if (channel.isMutable()) {
 					try {
-						int datetime = (int) System.currentTimeMillis();
+						int datetime = Format.currentTimeMillis();
 						int time = Integer.parseInt(args[2]);
 						if (time > 0) {
 							player.addMute(channel.getName(), datetime + (time * MILLISECONDS_PER_MINUTE));

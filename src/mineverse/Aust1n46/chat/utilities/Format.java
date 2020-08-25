@@ -540,4 +540,8 @@ public class Format {
 	public static boolean underlineURLs() {
 		return plugin.getConfig().getBoolean("underlineurls", true);
 	}
+
+	public static int currentTimeMillis() {
+		return (int) (System.currentTimeMillis() % Integer.MAX_VALUE);
+	}
 }
