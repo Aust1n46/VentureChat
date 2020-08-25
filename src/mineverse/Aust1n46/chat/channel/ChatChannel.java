@@ -179,6 +179,44 @@ public class ChatChannel {
 	}
 
 	/**
+	 * Deprecated parameterized constructor a {@link ChatChannel}.
+	 * 
+	 * @param name
+	 * @param color
+	 * @param chatColor
+	 * @param permission
+	 * @param speakPermission
+	 * @param mutable
+	 * @param filter
+	 * @param defaultChannel
+	 * @param alias
+	 * @param distance
+	 * @param autojoin
+	 * @param bungee
+	 * @param cooldown
+	 * @param format
+	 */
+	@Deprecated
+	public ChatChannel(String name, String color, String chatColor, String permission, String speakPermission,
+			Boolean mutable, Boolean filter, Boolean defaultChannel, String alias, Double distance, Boolean autojoin,
+			Boolean bungee, int cooldown, String format) {
+		this.name = name;
+		this.color = color;
+		this.chatColor = chatColor;
+		this.permission = PERMISSION_PREFIX + permission;
+		this.speakPermission = PERMISSION_PREFIX + speakPermission;
+		this.mutable = mutable;
+		this.filter = filter;
+		this.defaultChannel = defaultChannel;
+		this.alias = alias;
+		this.distance = distance;
+		this.autojoin = autojoin;
+		this.bungee = bungee;
+		this.cooldown = cooldown;
+		this.format = format;
+	}
+
+	/**
 	 * Get the name of the chat channel.
 	 * 
 	 * @return {@link String}
