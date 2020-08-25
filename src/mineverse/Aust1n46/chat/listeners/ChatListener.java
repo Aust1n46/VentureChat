@@ -296,8 +296,8 @@ public class ChatListener implements Listener {
 			if (dateTimeSeconds < spamtime
 					+ plugin.getConfig().getConfigurationSection("antispam").getInt("spamtime")) {
 				if (spamcount + 1 >= spamtimeconfig) {
-					mcp.addMute(eventChannel.getName(), dateTime + (mutedForTime * MILLISECONDS_PER_MINUTE));
 					if (mutedForTime > 0) {
+						mcp.addMute(eventChannel.getName(), dateTime + (mutedForTime * MILLISECONDS_PER_MINUTE));
 						String units = LocalizedMessage.UNITS_MINUTE_PLURAL.toString();
 						if (mutedForTime == 1) {
 							units = LocalizedMessage.UNITS_MINUTE_SINGULAR.toString();
@@ -309,6 +309,7 @@ public class ChatListener implements Listener {
 										.replace("{time}", String.valueOf(mutedForTime)).replace("{units}", units));
 					}
 					else {
+						mcp.addMute(eventChannel.getName(), 0);
 						mcp.getPlayer()
 								.sendMessage(LocalizedMessage.MUTE_PLAYER_SPAM.toString()
 										.replace("{channel_color}", eventChannel.getColor())
