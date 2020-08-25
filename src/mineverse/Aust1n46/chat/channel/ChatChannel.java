@@ -208,10 +208,11 @@ public class ChatChannel {
 	/**
 	 * Check if the chat channel is BungeeCord enabled.
 	 * 
-	 * @return true if the chat channel is BungeeCord enabled, false otherwise.
+	 * @return {@link Boolean#TRUE} if the chat channel is BungeeCord enabled,
+	 *         {@link Boolean#FALSE} otherwise.
 	 */
-	public boolean getBungee() {
-		return bungee;
+	public Boolean getBungee() {
+		return Boolean.valueOf(bungee);
 	}
 
 	/**
@@ -226,19 +227,21 @@ public class ChatChannel {
 	/**
 	 * Check if autojoin is enabled for the chat channel.
 	 * 
-	 * @return true if autojoin is enabled, false otherwise.
+	 * @return {@link Boolean#TRUE} if autojoin is enabled, {@link Boolean#FALSE}
+	 *         otherwise.
 	 */
-	public boolean getAutojoin() {
-		return autojoin;
+	public Boolean getAutojoin() {
+		return Boolean.valueOf(autojoin);
 	}
 
 	/**
 	 * Check if the chat channel allows muting.
 	 * 
-	 * @return true if muting is allowed, false otherwise.
+	 * @return {@link Boolean#TRUE} if muting is allowed, {@link Boolean#FALSE}
+	 *         otherwise.
 	 */
-	public boolean isMutable() {
-		return mutable;
+	public Boolean isMutable() {
+		return Boolean.valueOf(mutable);
 	}
 
 	/**
@@ -297,11 +300,11 @@ public class ChatChannel {
 	/**
 	 * Check if the chat channel is the default chat channel.
 	 * 
-	 * @return true if the chat channel is the default chat channel, false
-	 *         otherwise.
+	 * @return {@link Boolean#TRUE} if the chat channel is the default chat channel,
+	 *         {@link Boolean#FALSE} otherwise.
 	 */
-	public boolean isDefaultchannel() {
-		return defaultChannel;
+	public Boolean isDefaultchannel() {
+		return Boolean.valueOf(defaultChannel);
 	}
 
 	/**
@@ -316,38 +319,40 @@ public class ChatChannel {
 	/**
 	 * Get the distance of the chat channel in blocks.
 	 * 
-	 * @return double
+	 * @return {@link Double}
 	 */
-	public double getDistance() {
-		return distance;
+	public Double getDistance() {
+		return Double.valueOf(distance);
 	}
 
 	/**
 	 * Checks if the chat channel has a distance set.
 	 * 
-	 * @return true if the distance is greater than zero, false otherwise.
+	 * @return {@link Boolean#TRUE} if the distance is greater than zero,
+	 *         {@link Boolean#FALSE} otherwise.
 	 */
-	public boolean hasDistance() {
-		return distance > 0;
+	public Boolean hasDistance() {
+		return Boolean.valueOf(distance > 0);
 	}
 
 	/**
 	 * Checks if the chat channel has a cooldown set.
 	 * 
-	 * @return true if the cooldown is greater than zero, false otherwise.
+	 * @return {@link Boolean#TRUE} if the cooldown is greater than zero,
+	 *         {@link Boolean#FALSE} otherwise.
 	 */
-	public boolean hasCooldown() {
-		return cooldown > 0;
+	public Boolean hasCooldown() {
+		return Boolean.valueOf(cooldown > 0);
 	}
 
 	/**
 	 * Checks if the chat channel has a permission set.
 	 * 
-	 * @return true if the permission does not equal
-	 *         {@link ChatChannel#NO_PERMISSIONS}, false otherwise.
+	 * @return {@link Boolean#TRUE} if the permission does not equal
+	 *         {@link ChatChannel#NO_PERMISSIONS}, {@link Boolean#FALSE} otherwise.
 	 */
-	public boolean hasPermission() {
-		return !permission.equalsIgnoreCase(NO_PERMISSIONS);
+	public Boolean hasPermission() {
+		return Boolean.valueOf(!permission.equalsIgnoreCase(NO_PERMISSIONS));
 	}
 
 	/**
@@ -372,10 +377,11 @@ public class ChatChannel {
 	/**
 	 * Checks if the chat channel has the filter enabled.
 	 * 
-	 * @return true if the chat channel has the filter enabled, false otherwise.
+	 * @return {@link Boolean#TRUE} if the chat channel has the filter enabled,
+	 *         {@link Boolean#FALSE} otherwise.
 	 */
-	public boolean isFiltered() {
-		return filter;
+	public Boolean isFiltered() {
+		return Boolean.valueOf(filter);
 	}
 
 	/**
