@@ -285,6 +285,9 @@ public class Party extends MineverseCommand {
 						if(mcp.hasFilter()) {
 							msg = Format.FilterChat(msg);
 						}
+						if(mcp.getPlayer().hasPermission("venturechat.color.legacy")) {
+							msg = Format.FormatStringLegacyColor(msg);
+						}
 						if(mcp.getPlayer().hasPermission("venturechat.color")) {
 							msg = Format.FormatStringColor(msg);
 						}

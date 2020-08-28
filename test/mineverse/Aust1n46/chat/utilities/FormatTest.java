@@ -1,5 +1,6 @@
 package mineverse.Aust1n46.chat.utilities;
 
+import static mineverse.Aust1n46.chat.utilities.Format.BUKKIT_COLOR_CODE_PREFIX;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -135,6 +136,24 @@ public class FormatTest {
 		String expectedResult = "񖶄HelloThere񖶄񖶄Austin";
 		
 		String result = Format.convertHexColorCodeStringToBukkitColorCodeString(input);
+		assertEquals(expectedResult, result);
+	}
+	
+	@Test
+	public void testConvertLegacyColorCodeStringToBukkitColorCodeString() {
+		String input = "Hello &cThere Austin";
+		String expectedResult = "Hello " + BUKKIT_COLOR_CODE_PREFIX + "cThere Austin";
+
+		String result = Format.FormatStringLegacyColor(input);
+		assertEquals(expectedResult, result);
+	}
+
+	@Test
+	public void testRemoveSpigoteHexColorCodeFromStringWithLegacyFormatting() {
+		String input = "&x&f&f&f&f&f&fHello There Austin";
+		String expectedResult = "&x&f&f&f&f&f&fHello There Austin";
+
+		String result = Format.FormatStringLegacyColor(input);
 		assertEquals(expectedResult, result);
 	}
 }

@@ -30,7 +30,7 @@ public class Format {
 	public static final int HEX_COLOR_CODE_LENGTH = 14;
 	public static final String DEFAULT_COLOR_CODE = String.valueOf(ChatColor.WHITE);
 	public static final String HEX_COLOR_CODE_PREFIX = "#";
-	public static final String BUKKIT_COLOR_CODE_PREFIX = "§";
+	public static final String BUKKIT_COLOR_CODE_PREFIX = "\u00A7";
 	public static final String BUKKIT_HEX_COLOR_CODE_PREFIX = "x";
 	
 	public static String convertToJson(MineverseChatPlayer sender, String format, String chat) {
@@ -438,6 +438,7 @@ public class Format {
 	}
 	
 	protected static Pattern chatColorPattern = Pattern.compile("(?i)&([0-9])");
+	protected static Pattern legacyChatFormatPattern = Pattern.compile("(?<!(&x(&[a-fA-F0-9]){5}))(?<!(&x(&[a-fA-F0-9]){4}))(?<!(&x(&[a-fA-F0-9]){3}))(?<!(&x(&[a-fA-F0-9]){2}))(?<!(&x(&[a-fA-F0-9]){1}))(?<!(&x))(&)([0-9a-fA-F])");
 
 	public static String FormatStringColor(String string) {
 		String allFormated = string;
@@ -456,6 +457,22 @@ public class Format {
 		allFormated = convertHexColorCodeStringToBukkitColorCodeString(allFormated);
 		return allFormated;
 	}
+	
+	public static String FormatStringLegacyColor(String string) {
+		String allFormated = string;
+
+		allFormated = legacyChatFormatPattern.matcher(allFormated).replaceAll("\u00A7$13");
+		allFormated = allFormated.replaceAll(BUKKIT_COLOR_CODE_PREFIX + "[aA]", BUKKIT_COLOR_CODE_PREFIX + "a");
+		allFormated = allFormated.replaceAll(BUKKIT_COLOR_CODE_PREFIX + "[bB]", BUKKIT_COLOR_CODE_PREFIX + "b");
+		allFormated = allFormated.replaceAll(BUKKIT_COLOR_CODE_PREFIX + "[cC]", BUKKIT_COLOR_CODE_PREFIX + "c");
+		allFormated = allFormated.replaceAll(BUKKIT_COLOR_CODE_PREFIX + "[dD]", BUKKIT_COLOR_CODE_PREFIX + "d");
+		allFormated = allFormated.replaceAll(BUKKIT_COLOR_CODE_PREFIX + "[eE]", BUKKIT_COLOR_CODE_PREFIX + "e");
+		allFormated = allFormated.replaceAll(BUKKIT_COLOR_CODE_PREFIX + "[fF]", BUKKIT_COLOR_CODE_PREFIX + "f");
+		
+		allFormated = allFormated.replaceAll("%", "\\%");
+		return allFormated;
+	}
+
 
 	public static String FormatString(String string) {
 		String allFormated = string;
