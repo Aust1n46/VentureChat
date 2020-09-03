@@ -31,14 +31,26 @@ public class Format {
 	public static final int HEX_COLOR_CODE_LENGTH = 14;
 	public static final String DEFAULT_COLOR_CODE = String.valueOf(ChatColor.WHITE);
 	public static final String HEX_COLOR_CODE_PREFIX = "#";
-	public static final String BUKKIT_COLOR_CODE_PREFIX = "\u00A7";
 	public static final char BUKKIT_COLOR_CODE_PREFIX_CHAR = '\u00A7';
+	public static final String BUKKIT_COLOR_CODE_PREFIX = String.valueOf(BUKKIT_COLOR_CODE_PREFIX_CHAR);
 	public static final String BUKKIT_HEX_COLOR_CODE_PREFIX = "x";
 
 	private static final Pattern LEGACY_CHAT_COLOR_DIGITS_PATTERN = Pattern.compile("&([0-9])");
 	private static final Pattern LEGACY_CHAT_COLOR_PATTERN = Pattern.compile(
 			"(?<!(&x(&[a-fA-F0-9]){5}))(?<!(&x(&[a-fA-F0-9]){4}))(?<!(&x(&[a-fA-F0-9]){3}))(?<!(&x(&[a-fA-F0-9]){2}))(?<!(&x(&[a-fA-F0-9]){1}))(?<!(&x))(&)([0-9a-fA-F])");
 
+	/**
+	 * Converts a message to Minecraft JSON formatting while applying the
+	 * {@link JsonFormat} from the config.
+	 * 
+	 * @param sender
+	 *            {@link MineverseChatPlayer} wrapper of the message sender.
+	 * @param format
+	 *            The format section of the message.
+	 * @param chat
+	 *            The chat section of the message.
+	 * @return {@link String}
+	 */
 	public static String convertToJson(MineverseChatPlayer sender, String format, String chat) {
 		JsonFormat JSONformat = MineverseChat.jfInfo.getJsonFormat(sender.getJsonFormat());
 		String f = format.replace("\\", "\\\\").replace("\"", "\\\"");
@@ -84,6 +96,16 @@ public class Format {
 		return json;
 	}
 
+	/**
+	 * 
+	 * @param s
+	 * @param format
+	 * @param prefix
+	 * @param nickname
+	 * @param suffix
+	 * @param icp
+	 * @return {@link String}
+	 */
 	private static String convertPlaceholders(String s, JsonFormat format, String prefix, String nickname,
 			String suffix, MineverseChatPlayer icp) {
 		String remaining = s;
