@@ -13,6 +13,7 @@ Full setup and dependency guide is available here on SpigotMC: https://www.spigo
 ##### Mavenified dependencies coming soon (TM) #####
 
 Dependency List (for development):
+
 * PlaceholderAPI
 * Vault
 * ProtocolLib
