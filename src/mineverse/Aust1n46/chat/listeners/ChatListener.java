@@ -113,6 +113,9 @@ public class ChatListener implements Listener {
 				if(mcp.hasFilter()) {
 					filtered = Format.FilterChat(filtered);
 				}
+				if(mcp.getPlayer().hasPermission("venturechat.color.legacy")) {
+					filtered = Format.FormatStringLegacyColor(filtered);
+				}
 				if(mcp.getPlayer().hasPermission("venturechat.color")) {
 					filtered = Format.FormatStringColor(filtered);
 				}
@@ -176,6 +179,9 @@ public class ChatListener implements Listener {
 						String filtered = chat;
 						if(mcp.hasFilter()) {
 							filtered = Format.FilterChat(filtered);
+						}
+						if(mcp.getPlayer().hasPermission("venturechat.color.legacy")) {
+							filtered = Format.FormatStringLegacyColor(filtered);
 						}
 						if(mcp.getPlayer().hasPermission("venturechat.color")) {
 							filtered = Format.FormatStringColor(filtered);
@@ -463,6 +469,9 @@ public class ChatListener implements Listener {
 			}
 		}
 		
+		if(mcp.getPlayer().hasPermission("venturechat.color.legacy")) {
+			chat = Format.FormatStringLegacyColor(chat);
+		}
 		if(mcp.getPlayer().hasPermission("venturechat.color")) {
 			chat = Format.FormatStringColor(chat);
 		}

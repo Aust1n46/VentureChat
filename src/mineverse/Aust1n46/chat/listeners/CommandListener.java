@@ -127,8 +127,15 @@ public class CommandListener implements CommandExecutor, Listener {
 					}
 					if(send.length() > 0) send = send.substring(1);
 					s = Format.FormatStringAll(s);
-					if(mcp.getPlayer().hasPermission("venturechat.color")) send = Format.FormatStringColor(send);
-					if(mcp.getPlayer().hasPermission("venturechat.format")) send = Format.FormatString(send);
+					if(mcp.getPlayer().hasPermission("venturechat.color.legacy")) {
+						send = Format.FormatStringLegacyColor(send);
+					}
+					if(mcp.getPlayer().hasPermission("venturechat.color")) {
+						send = Format.FormatStringColor(send);
+					}
+					if(mcp.getPlayer().hasPermission("venturechat.format")) {
+						send = Format.FormatString(send);
+					}
 					if(s.startsWith("Command:")) {
 						mcp.getPlayer().chat(s.substring(9).replace("$", send));
 						event.setCancelled(true);
