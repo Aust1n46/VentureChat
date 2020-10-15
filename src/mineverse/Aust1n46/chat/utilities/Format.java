@@ -97,6 +97,7 @@ public class Format {
 	}
 
 	/**
+	 * Converts the format section of a message to JSON using PlaceholderAPI.
 	 * 
 	 * @param s
 	 * @param format
@@ -168,6 +169,12 @@ public class Format {
 		return temp;
 	}
 
+	/**
+	 * Converts URL's to JSON.
+	 * 
+	 * @param s
+	 * @return {@link String}
+	 */
 	private static String convertLinks(String s) {
 		String remaining = s;
 		String temp = "";
@@ -240,10 +247,23 @@ public class Format {
 		return ts;
 	}
 
+	/**
+	 * Converts a message to JSON colors with no additional JSON extensions.
+	 * 
+	 * @param s
+	 * @return {@link String}
+	 */
 	private static String convertToJsonColors(String s) {
 		return convertToJsonColors(s, "");
 	}
 
+	/**
+	 * Converts a message to JSON colors with additional JSON extensions.
+	 * 
+	 * @param s
+	 * @param extensions
+	 * @return {@link String}
+	 */
 	private static String convertToJsonColors(String s, String extensions) {
 		String remaining = s;
 		String temp = "";
@@ -620,13 +640,28 @@ public class Format {
 		return bFound;
 	}
 
+	/**
+	 * Validates a hex color code.
+	 * 
+	 * @param color
+	 *            to validate.
+	 * @return true if color code is valid, false otherwise.
+	 */
 	public static boolean isValidHexColor(String color) {
-		Pattern pattern = Pattern.compile("(^#[0-9a-fA-F]{6}\\b)");
+		Pattern pattern = Pattern.compile("(^&?#[0-9a-fA-F]{6}\\b)");
 		Matcher matcher = pattern.matcher(color);
 		return matcher.find();
 	}
 
+	/**
+	 * Convert a single hex color code to a single Bukkit hex color code.
+	 * 
+	 * @param color
+	 *            to convert.
+	 * @return {@link String}
+	 */
 	public static String convertHexColorCodeToBukkitColorCode(String color) {
+		color = color.replace("&", "");
 		StringBuilder bukkitColorCode = new StringBuilder(BUKKIT_COLOR_CODE_PREFIX + BUKKIT_HEX_COLOR_CODE_PREFIX);
 		for (int a = 1; a < color.length(); a++) {
 			bukkitColorCode.append(BUKKIT_COLOR_CODE_PREFIX + color.charAt(a));
@@ -634,8 +669,15 @@ public class Format {
 		return bukkitColorCode.toString().toLowerCase();
 	}
 
+	/**
+	 * Convert an entire String of hex color codes to Bukkit hex color codes.
+	 * 
+	 * @param string
+	 *            to convert.
+	 * @return {@link String}
+	 */
 	public static String convertHexColorCodeStringToBukkitColorCodeString(String string) {
-		Pattern pattern = Pattern.compile("(#[0-9a-fA-F]{6})");
+		Pattern pattern = Pattern.compile("(&?#[0-9a-fA-F]{6})");
 		Matcher matcher = pattern.matcher(string);
 		while (matcher.find()) {
 			int indexStart = matcher.start();
