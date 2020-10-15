@@ -200,6 +200,20 @@ public class MineverseChatPlayer {
 	}
 	
 	public boolean isListening(String channel) {
+		if(this.isOnline()) {
+			if(ChatChannel.isChannel(channel)) {
+				ChatChannel chatChannel = ChatChannel.getChannel(channel);
+				if(chatChannel.hasPermission()) {
+					if(!this.getPlayer().hasPermission(chatChannel.getPermission())) {
+						if(this.getCurrentChannel().equals(chatChannel)) {
+							this.setCurrentChannel(ChatChannel.getDefaultChannel());
+						}
+						this.removeListening(channel);
+						return false;
+					}
+				}
+			}
+		}
 		return this.listening.contains(channel);
 	}
 
@@ -350,6 +364,12 @@ public class MineverseChatPlayer {
 	}
 
 	public boolean isSpy() {
+		if(this.isOnline()) {
+			if(!this.getPlayer().hasPermission("venturechat.spy")) {
+				this.setSpy(false);
+				return false;
+			}
+		}
 		return this.spy;
 	}
 
@@ -358,6 +378,12 @@ public class MineverseChatPlayer {
 	}
 
 	public boolean hasCommandSpy() {
+		if(this.isOnline()) {
+			if(!this.getPlayer().hasPermission("venturechat.commandspy")) {
+				this.setCommandSpy(false);
+				return false;
+			}
+		}
 		return this.commandSpy;
 	}
 
