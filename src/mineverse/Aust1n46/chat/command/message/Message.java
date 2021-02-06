@@ -71,12 +71,12 @@ public class Message extends MineverseCommand {
 					.replace("{player}", player.getName()));
 			return;
 		}
+		
 		if(args.length >= 2) {
 			String msg = "";
 			String echo = "";
 			String send = "";
 			String spy = "";
-			String tellColor = plugin.getConfig().getString("tellcolor", "gray");
 			if(args[1].length() > 0) {
 				for(int r = 1; r < args.length; r++) {
 					msg += " " + args[r];
@@ -93,24 +93,18 @@ public class Message extends MineverseCommand {
 				if(mcp.getPlayer().hasPermission("venturechat.format")) {
 					msg = Format.FormatString(msg);
 				}
-				if(plugin.getConfig().getString("tellformatto").equalsIgnoreCase("Default")) {
-					echo = "You message " + player.getNickname() + ":" + ChatColor.valueOf(tellColor.toUpperCase()) + msg;
-				}
-				else {
-					echo = Format.FormatStringAll(plugin.getConfig().getString("tellformatto").replace("{playerto}", player.getNickname()).replace("{playerfrom}", mcp.getNickname())) + msg;
-				}
-				if(plugin.getConfig().getString("tellformatfrom").equalsIgnoreCase("Default")) {
-					send = mcp.getNickname() + " messages you:" + ChatColor.valueOf(tellColor.toUpperCase()) + msg;
-				}
-				else {
-					send = Format.FormatStringAll(plugin.getConfig().getString("tellformatfrom").replace("{playerto}", player.getNickname()).replace("{playerfrom}", mcp.getNickname())) + msg;
-				}
-				if(plugin.getConfig().getString("tellformatspy").equalsIgnoreCase("Default")) {
-					spy = mcp.getName() + " messages " + player.getName() + ":" + ChatColor.valueOf(tellColor.toUpperCase()) + msg;
-				}
-				else {
-					spy = Format.FormatStringAll(plugin.getConfig().getString("tellformatspy").replace("{playerto}", player.getName()).replace("{playerfrom}", mcp.getName())) + msg;
-				}
+				send = Format.FormatStringAll(plugin.getConfig().getString("tellformatfrom")) + msg;
+				echo = Format.FormatStringAll(plugin.getConfig().getString("tellformatto")) + msg;
+				spy = Format.FormatStringAll(plugin.getConfig().getString("tellformatspy")) + msg;
+				
+				send = PlaceholderAPI.setBracketPlaceholders(mcp.getPlayer(), send.replaceAll("sender_", ""));
+				echo = PlaceholderAPI.setBracketPlaceholders(mcp.getPlayer(), echo.replaceAll("sender_", ""));
+				spy = PlaceholderAPI.setBracketPlaceholders(mcp.getPlayer(), spy.replaceAll("sender_", ""));
+				
+				send = PlaceholderAPI.setBracketPlaceholders(player.getPlayer(), send.replaceAll("receiver_", ""));
+				echo = PlaceholderAPI.setBracketPlaceholders(player.getPlayer(), echo.replaceAll("receiver_", ""));
+				spy = PlaceholderAPI.setBracketPlaceholders(player.getPlayer(), spy.replaceAll("receiver_", ""));
+				
 				player.setReplyPlayer(mcp.getUUID());
 				mcp.setReplyPlayer(player.getUUID());
 				player.getPlayer().sendMessage(send);
@@ -125,6 +119,9 @@ public class Message extends MineverseCommand {
 				}
 				if(!mcp.getPlayer().hasPermission("venturechat.spy.override")) {
 					for(MineverseChatPlayer sp : MineverseChat.onlinePlayers) {
+						if(sp.getName().equals(mcp.getName()) || sp.getName().equals(player.getName())) {
+							continue;
+						}
 						if(sp.isSpy()) {
 							sp.getPlayer().sendMessage(spy);
 						}

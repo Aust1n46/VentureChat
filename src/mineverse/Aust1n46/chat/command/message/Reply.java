@@ -3,7 +3,6 @@ package mineverse.Aust1n46.chat.command.message;
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 
-import org.bukkit.ChatColor;
 import org.bukkit.Sound;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -62,7 +61,6 @@ public class Reply extends MineverseCommand {
 				String echo = "";
 				String send = "";
 				String spy = "";
-				String tellColor = plugin.getConfig().getString("tellcolor", "gray");
 				if(args.length > 0) {
 					for(int r = 0; r < args.length; r++)
 						msg += " " + args[r];
@@ -78,27 +76,25 @@ public class Reply extends MineverseCommand {
 					if(mcp.getPlayer().hasPermission("venturechat.format")) {
 						msg = Format.FormatString(msg);
 					}
-					if(plugin.getConfig().getString("replyformatto").equalsIgnoreCase("Default")) {
-						echo = "You reply to " + player.getNickname() + ":" + ChatColor.valueOf(tellColor.toUpperCase()) + msg;
-					}
-					else {
-						echo = Format.FormatStringAll(plugin.getConfig().getString("replyformatto").replace("{playerto}", player.getNickname()).replace("{playerfrom}", mcp.getNickname())) + msg;
-					}
-					if(plugin.getConfig().getString("replyformatfrom").equalsIgnoreCase("Default")) {
-						send = mcp.getNickname() + " replies to you:" + ChatColor.valueOf(tellColor.toUpperCase()) + msg;
-					}
-					else {
-						send = Format.FormatStringAll(plugin.getConfig().getString("replyformatfrom").replace("{playerto}", player.getNickname()).replace("{playerfrom}", mcp.getNickname())) + msg;
-					}
-					if(plugin.getConfig().getString("replyformatspy").equalsIgnoreCase("Default")) {
-						spy = mcp.getName() + " replied to " + player.getName() + ":" + ChatColor.valueOf(tellColor.toUpperCase()) + msg;
-					}
-					else {
-						spy = Format.FormatStringAll(plugin.getConfig().getString("replyformatspy").replace("{playerto}", player.getName()).replace("{playerfrom}", mcp.getName())) + msg;
-					}
+
+					echo = Format.FormatStringAll(plugin.getConfig().getString("replyformatto")) + msg;
+					send = Format.FormatStringAll(plugin.getConfig().getString("replyformatfrom")) + msg;
+					spy = Format.FormatStringAll(plugin.getConfig().getString("replyformatspy")) + msg;
+					
+					send = PlaceholderAPI.setBracketPlaceholders(mcp.getPlayer(), send.replaceAll("sender_", ""));
+					echo = PlaceholderAPI.setBracketPlaceholders(mcp.getPlayer(), echo.replaceAll("sender_", ""));
+					spy = PlaceholderAPI.setBracketPlaceholders(mcp.getPlayer(), spy.replaceAll("sender_", ""));
+					
+					send = PlaceholderAPI.setBracketPlaceholders(player.getPlayer(), send.replaceAll("receiver_", ""));
+					echo = PlaceholderAPI.setBracketPlaceholders(player.getPlayer(), echo.replaceAll("receiver_", ""));
+					spy = PlaceholderAPI.setBracketPlaceholders(player.getPlayer(), spy.replaceAll("receiver_", ""));
+					
 					if(!mcp.getPlayer().hasPermission("venturechat.spy.override")) {
 						for(MineverseChatPlayer p : MineverseChat.onlinePlayers) {
-							if(p.isOnline() && p.isSpy()) {
+							if(p.getName().equals(mcp.getName()) || p.getName().equals(player.getName())) {
+								continue;
+							}
+							if(p.isSpy()) {
 								p.getPlayer().sendMessage(spy);
 							}
 						}
