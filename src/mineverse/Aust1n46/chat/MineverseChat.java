@@ -778,9 +778,11 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 				int hash = (message.replaceAll("([§]([a-z0-9]))", "")).hashCode();
 				
 				for(MineverseChatPlayer p : MineverseChat.onlinePlayers) {
-					String finalJSON = Format.formatModerationGUI(json, p.getPlayer(), "Discord", chatChannelObj.getName(), hash);
-					PacketContainer packet = Format.createPacketPlayOutChat(finalJSON);
-					Format.sendPacketPlayOutChat(p.getPlayer(), packet);
+					if(p.isListening(chatChannelObj.getName())) {
+						String finalJSON = Format.formatModerationGUI(json, p.getPlayer(), "Discord", chatChannelObj.getName(), hash);
+						PacketContainer packet = Format.createPacketPlayOutChat(finalJSON);
+						Format.sendPacketPlayOutChat(p.getPlayer(), packet);
+					}
 				}	
 			}
 			if(subchannel.equals("Chwho")) {
