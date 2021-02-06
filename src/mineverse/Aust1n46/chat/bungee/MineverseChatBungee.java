@@ -405,7 +405,6 @@ public class MineverseChatBungee extends Plugin implements Listener {
 					out.writeUTF("Message");
 					out.writeUTF("Spy");
 					out.writeUTF(player);
-					out.writeUTF(sender);
 					out.writeUTF(sName);
 					out.writeUTF(spy);
 					for(String send : getProxy().getServers().keySet()) {

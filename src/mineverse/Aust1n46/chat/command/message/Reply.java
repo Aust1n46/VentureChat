@@ -8,6 +8,7 @@ import org.bukkit.Sound;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import me.clip.placeholderapi.PlaceholderAPI;
 import mineverse.Aust1n46.chat.MineverseChat;
 import mineverse.Aust1n46.chat.api.MineverseChatAPI;
 import mineverse.Aust1n46.chat.api.MineverseChatPlayer;
@@ -33,37 +34,12 @@ public class Reply extends MineverseCommand {
 		if(args.length > 0) {
 			if(mcp.hasReplyPlayer()) {
 				MineverseChatPlayer player = MineverseChatAPI.getMineverseChatPlayer(mcp.getReplyPlayer());
+				
 				if(plugin.getConfig().getBoolean("bungeecordmessaging", true)) {
-					ByteArrayOutputStream byteOutStream = new ByteArrayOutputStream();
-					DataOutputStream out = new DataOutputStream(byteOutStream);
-					String msg = "";
-					String send = "";
-					String echo = "";
-					String spy = "";
-					for(int r = 0; r < args.length; r++) {
-						msg += " " + args[r];
-					}
-					send = Format.FormatStringAll(plugin.getConfig().getString("replyformatfrom")) + msg;
-					echo = Format.FormatStringAll(plugin.getConfig().getString("replyformatto")) + msg;
-					spy = Format.FormatStringAll(plugin.getConfig().getString("replyformatspy")) + msg;
-					try {
-						out.writeUTF("Message");
-						out.writeUTF("Send");
-						// out.writeUTF(mcp.getPlayer().getServer().getServerName());
-						out.writeUTF(player.getName());
-						out.writeUTF(mcp.getUUID().toString());
-						out.writeUTF(mcp.getName());
-						out.writeUTF(send);
-						out.writeUTF(echo);
-						out.writeUTF(spy);
-						mcp.getPlayer().sendPluginMessage(plugin, MineverseChat.PLUGIN_MESSAGING_CHANNEL, byteOutStream.toByteArray());
-						out.close();
-					}
-					catch(Exception e) {
-						e.printStackTrace();
-					}
+					sendBungeeCordReply(mcp, player, args);
 					return;
 				}
+				
 				if(player == null || !player.isOnline()) {
 					mcp.getPlayer().sendMessage(LocalizedMessage.NO_PLAYER_TO_REPLY_TO.toString());
 					return;
@@ -147,5 +123,39 @@ public class Reply extends MineverseCommand {
 		mcp.getPlayer().sendMessage(LocalizedMessage.COMMAND_INVALID_ARGUMENTS.toString()
 				.replace("{command}", "/reply")
 				.replace("{args}", "[message]"));
+	}
+	
+	private void sendBungeeCordReply(MineverseChatPlayer mcp, MineverseChatPlayer player, String[] args) {
+		ByteArrayOutputStream byteOutStream = new ByteArrayOutputStream();
+		DataOutputStream out = new DataOutputStream(byteOutStream);
+		String msg = "";
+		String send = "";
+		String echo = "";
+		String spy = "";
+		for(int r = 0; r < args.length; r++) {
+			msg += " " + args[r];
+		}
+		send = Format.FormatStringAll(plugin.getConfig().getString("replyformatfrom")) + msg;
+		echo = Format.FormatStringAll(plugin.getConfig().getString("replyformatto")) + msg;
+		spy = Format.FormatStringAll(plugin.getConfig().getString("replyformatspy")) + msg;
+		
+		send = PlaceholderAPI.setBracketPlaceholders(mcp.getPlayer(), send.replaceAll("sender_", ""));
+		echo = PlaceholderAPI.setBracketPlaceholders(mcp.getPlayer(), echo.replaceAll("sender_", ""));
+		spy = PlaceholderAPI.setBracketPlaceholders(mcp.getPlayer(), spy.replaceAll("sender_", ""));
+		try {
+			out.writeUTF("Message");
+			out.writeUTF("Send");
+			out.writeUTF(player.getName());
+			out.writeUTF(mcp.getUUID().toString());
+			out.writeUTF(mcp.getName());
+			out.writeUTF(send);
+			out.writeUTF(echo);
+			out.writeUTF(spy);
+			mcp.getPlayer().sendPluginMessage(plugin, MineverseChat.PLUGIN_MESSAGING_CHANNEL, byteOutStream.toByteArray());
+			out.close();
+		}
+		catch(Exception e) {
+			e.printStackTrace();
+		}
 	}
 }

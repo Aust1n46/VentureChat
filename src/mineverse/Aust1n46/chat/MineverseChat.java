@@ -112,6 +112,8 @@ import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.utility.MinecraftReflection;
 
+import me.clip.placeholderapi.PlaceholderAPI;
+
 public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 	// Listeners --------------------------------
 	private ChatListener chatListener;
@@ -981,10 +983,6 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 					String msg = msgin.readUTF();
 					String echo = msgin.readUTF();
 					String spy = msgin.readUTF();
-					// System.out.println((p == null) + " null");
-					if(p != null) {
-						// System.out.println(p.isOnline() + " online");
-					}
 					if(!this.getConfig().getBoolean("bungeecordmessaging", true) || p == null || !p.isOnline()) {
 						out.writeUTF("Message");
 						out.writeUTF("Offline");
@@ -1028,7 +1026,7 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 						s = new MineverseChatPlayer(uuid, name, current, ignores, listening, mutes, blockedCommands, false, null, true, true, name, jsonFormat, false, false, false, true, true);
 						MineverseChat.players.add(s);
 					}
-					p.getPlayer().sendMessage(msg.replace("{playerfrom}", sName).replace("{playerto}", Format.FormatStringAll(p.getNickname())));
+					p.getPlayer().sendMessage(PlaceholderAPI.setBracketPlaceholders(p.getPlayer(), msg.replaceAll("receiver_", "")));
 					if(p.hasNotifications()) {
 						if(VersionHandler.is1_8() || VersionHandler.is1_7_10() || VersionHandler.is1_7_2() || VersionHandler.is1_7_9()) {
 							p.getPlayer().playSound(p.getPlayer().getLocation(), Sound.valueOf("LEVEL_UP"), 1, 0);
@@ -1041,11 +1039,11 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 					out.writeUTF("Message");
 					out.writeUTF("Echo");
 					out.writeUTF(server);
-					out.writeUTF(p.getNickname());
+					out.writeUTF(receiver);
 					out.writeUTF(sender.toString());
 					out.writeUTF(sName);
-					out.writeUTF(echo);
-					out.writeUTF(spy);
+					out.writeUTF(PlaceholderAPI.setBracketPlaceholders(p.getPlayer(), echo.replaceAll("receiver_", "")));
+					out.writeUTF(PlaceholderAPI.setBracketPlaceholders(p.getPlayer(), spy.replaceAll("receiver_", "")));
 					player.sendPluginMessage(this, MineverseChat.PLUGIN_MESSAGING_CHANNEL, stream.toByteArray());
 					return;
 				}
@@ -1072,35 +1070,23 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 							.replace("{player}", receiver));
 				}
 				if(identifier.equals("Echo")) {
-					String receiver = msgin.readUTF();
-					UUID sender = UUID.fromString(msgin.readUTF());
-					MineverseChatPlayer p = MineverseChatAPI.getOnlineMineverseChatPlayer(sender);
-					MineverseChatPlayer r = MineverseChatAPI.getMineverseChatPlayer(receiver);
+					String receiverName = msgin.readUTF();
+					UUID senderUUID = UUID.fromString(msgin.readUTF());
+					MineverseChatPlayer senderMCP = MineverseChatAPI.getOnlineMineverseChatPlayer(senderUUID);
+					MineverseChatPlayer receiverMCP = MineverseChatAPI.getMineverseChatPlayer(receiverName);
 					String echo = msgin.readUTF();
-					String rName = Format.FormatStringAll(receiver);
-					if(r != null) {
-						rName = Format.FormatStringAll(r.getNickname());
-						p.setReplyPlayer(r.getUUID());
+					if(receiverMCP != null) {
+						senderMCP.setReplyPlayer(receiverMCP.getUUID());
 					}
-					p.getPlayer().sendMessage(echo.replace("{playerfrom}", Format.FormatStringAll(p.getNickname())).replace("{playerto}", rName));
+					senderMCP.getPlayer().sendMessage(echo);
 				}
 				if(identifier.equals("Spy")) {
-					String receiver = msgin.readUTF();
-					MineverseChatPlayer r = MineverseChatAPI.getMineverseChatPlayer(receiver);
-					UUID sender = UUID.fromString(msgin.readUTF());
-					MineverseChatPlayer p = MineverseChatAPI.getOnlineMineverseChatPlayer(sender);
-					String sName = msgin.readUTF();
+					String receiverName = msgin.readUTF();
+					String senderName = msgin.readUTF();
 					String spy = msgin.readUTF();
-					String rName = receiver;
-					if(r != null) {
-						rName = Format.FormatStringAll(r.getNickname());
-					}
-					if(p != null) {
-						sName = Format.FormatStringAll(p.getNickname());
-					}
 					for(MineverseChatPlayer pl : onlinePlayers) {
-						if(pl.isSpy() && !pl.getName().equals(sName) && !pl.getName().equals(rName)) {
-							pl.getPlayer().sendMessage(spy.replace("{playerto}", rName).replace("{playerfrom}", sName));
+						if(pl.isSpy() && !pl.getName().equals(senderName) && !pl.getName().equals(receiverName)) {
+							pl.getPlayer().sendMessage(spy);
 						}
 					}
 				}
