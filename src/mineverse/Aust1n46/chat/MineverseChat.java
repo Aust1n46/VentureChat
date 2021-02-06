@@ -76,7 +76,7 @@ import mineverse.Aust1n46.chat.command.chat.Setchannelall;
 import mineverse.Aust1n46.chat.command.chat.VentureChatGui;
 import mineverse.Aust1n46.chat.command.chat.Venturechat;
 import mineverse.Aust1n46.chat.command.message.Ignore;
-import mineverse.Aust1n46.chat.command.message.Message;
+import mineverse.Aust1n46.chat.command.message.MessageCommandExecutor;
 import mineverse.Aust1n46.chat.command.message.MessageToggle;
 import mineverse.Aust1n46.chat.command.message.Notifications;
 import mineverse.Aust1n46.chat.command.message.Reply;
@@ -314,9 +314,6 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 		commands.put("leave", new Leave("leave"));
 		commands.put("listen", new Listen("listen"));
 		commands.put("me", new Me("me"));
-		commands.put("message", new Message("message"));
-		commands.put("tell", new Message("tell"));
-		commands.put("whisper", new Message("whisper"));
 		commands.put("venturechat", new Venturechat("venturechat"));
 		commands.put("mute", new Mute("mute"));
 		commands.put("muteall", new Muteall("muteall"));
@@ -338,6 +335,8 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 		for(String command : commands.keySet()) {
 			this.getCommand(command).setExecutor(commandExecutor);
 		}
+		
+		this.getCommand("message").setExecutor(new MessageCommandExecutor());
 
 		channelListener = new Channel();
 		signListener = new SignListener();

@@ -2,46 +2,45 @@ package mineverse.Aust1n46.chat.command.message;
 
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Sound;
+import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
+import org.bukkit.command.TabExecutor;
 import org.bukkit.entity.Player;
 
 import me.clip.placeholderapi.PlaceholderAPI;
 import mineverse.Aust1n46.chat.MineverseChat;
 import mineverse.Aust1n46.chat.api.MineverseChatAPI;
 import mineverse.Aust1n46.chat.api.MineverseChatPlayer;
-import mineverse.Aust1n46.chat.command.MineverseCommand;
 import mineverse.Aust1n46.chat.localization.LocalizedMessage;
 import mineverse.Aust1n46.chat.utilities.Format;
 import mineverse.Aust1n46.chat.versions.VersionHandler;
 
-public class Message extends MineverseCommand {
+public class MessageCommandExecutor implements TabExecutor {
 	private MineverseChat plugin = MineverseChat.getInstance();
 
-	public Message(String name) {
-		super(name);
-	}
-
 	@Override
-	public void execute(CommandSender sender, String command, String[] args) {
+	public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
 		if(!(sender instanceof Player)) {
 			plugin.getServer().getConsoleSender().sendMessage(LocalizedMessage.COMMAND_MUST_BE_RUN_BY_PLAYER.toString());
-			return;
+			return true;
 		}
 		
 		MineverseChatPlayer mcp = MineverseChatAPI.getMineverseChatPlayer((Player) sender);
 		if(args.length == 0) {
 			mcp.getPlayer().sendMessage(LocalizedMessage.COMMAND_INVALID_ARGUMENTS.toString()
-			.replace("{command}", "/" + command)
+			.replace("{command}", "/" + command.getName())
 			.replace("{args}", "[player] [message]"));
-			return;
+			return true;
 		}
 		
 		if(plugin.getConfig().getBoolean("bungeecordmessaging", true)) {
-			sendBungeeCordMessage(mcp, command, args);
-			return;
+			sendBungeeCordMessage(mcp, command.getName(), args);
+			return true;
 		}
 		
 		MineverseChatPlayer player = MineverseChatAPI.getMineverseChatPlayer(args[0]);
@@ -54,22 +53,22 @@ public class Message extends MineverseCommand {
 		if(player == null || !player.isOnline()) {
 			mcp.getPlayer().sendMessage(LocalizedMessage.PLAYER_OFFLINE.toString()
 					.replace("{args}", args[0]));
-			return;
+			return true;
 		}
 		if(!mcp.getPlayer().canSee(player.getPlayer())) {
 			mcp.getPlayer().sendMessage(LocalizedMessage.PLAYER_OFFLINE.toString()
 					.replace("{args}", args[0]));
-			return;
+			return true;
 		}
 		if(player.getIgnores().contains(mcp.getUUID())) {
 			mcp.getPlayer().sendMessage(LocalizedMessage.IGNORING_MESSAGE.toString()
 					.replace("{player}", player.getName()));
-			return;
+			return true;
 		}
 		if(!player.getMessageToggle()) {
 			mcp.getPlayer().sendMessage(LocalizedMessage.BLOCKING_MESSAGE.toString()
 					.replace("{player}", player.getName()));
-			return;
+			return true;
 		}
 		
 		if(args.length >= 2) {
@@ -161,7 +160,17 @@ public class Message extends MineverseCommand {
 				}
 			}
 		}
-		return;
+		return true;
+	}
+	
+	@Override
+	public List<String> onTabComplete(CommandSender sender, Command command, String label, String[] args) {
+		List<String> completions = new ArrayList<>();
+		
+		for(Player p : plugin.getServer().getOnlinePlayers()) {
+			completions.add(p.getName());
+		}
+		return completions;
 	}
 	
 	private void sendBungeeCordMessage(MineverseChatPlayer mcp, String command, String[] args) {

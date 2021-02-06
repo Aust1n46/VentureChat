@@ -18,20 +18,15 @@ commands:
         aliases: [ump,vunmute]
         description: Unmutes player in a channel so they can talk again.
         permission-message: You don't have <permission>
-    tell:
-        usage: /tell [playername] [msg]
-        aliases: [vtell]
+    message:
+        usage: /message [playername] [msg]
+        aliases: [vmessage,msg,pm,tell,vtell,whisper,w,vwhisper]
         description: Send a message to a player
         permission-message: You don't have <permission>
     ignore:
         usage: /ignore [playername] or /ignore ? for more information
         aliases: [vignore]
         description: This allows you to prevent a player from sending you a tell /ignore list to see who you have ignored
-        permission-message: You don't have <permission>
-    whisper:
-        usage: /whisper [playername] [msg]
-        aliases: [w,vwhisper]
-        description: Send a message to a player
         permission-message: You don't have <permission>
     channel:
         usage: /channel [channelname]
@@ -68,10 +63,6 @@ commands:
         aliases: [kc,vkickchannel]
         description: Kicks a player out of a channel
         permission-message: You don't have <permission>
-    message:
-        usage: /message [playername] [msg]
-        aliases: [msg,pm,vmessage]
-        description: Send a message to a player
     muteall:
         usage: /muteall [playername]
         aliases: [mpa,vmuteall]
