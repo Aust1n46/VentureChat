@@ -24,6 +24,8 @@ import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.connection.Server;
 import net.md_5.bungee.api.event.PluginMessageEvent;
+import net.md_5.bungee.api.event.ServerDisconnectEvent;
+import net.md_5.bungee.api.event.ServerSwitchEvent;
 import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.api.plugin.Plugin;
 import net.md_5.bungee.config.Configuration;
@@ -38,7 +40,6 @@ public class MineverseChatBungee extends Plugin implements Listener {
 	private Configuration bungeeconfig;
 	private Configuration playerData;
 	public static Set<SynchronizedMineverseChatPlayer> players = new HashSet<SynchronizedMineverseChatPlayer>();
-	public static HashMap<String, String> networkPlayers = new HashMap<String, String>();
 	public static String PLUGIN_MESSAGING_CHANNEL = "venturechat:data";
 
 	@Override
@@ -128,6 +129,37 @@ public class MineverseChatBungee extends Plugin implements Listener {
 		}
 		try {
 			ConfigurationProvider.getProvider(YamlConfiguration.class).save(playerData, new File(getDataFolder(), "BungeePlayers.yml"));
+		}
+		catch(Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
+	@EventHandler
+	public void onPlayerJoin(ServerSwitchEvent event) {
+		updatePlayerNames();
+	}
+	
+	@EventHandler
+	public void onPlayerLeave(ServerDisconnectEvent event) {
+		updatePlayerNames();
+	}
+	
+	private void updatePlayerNames() {
+		try {
+			ByteArrayOutputStream outstream = new ByteArrayOutputStream();
+			DataOutputStream out = new DataOutputStream(outstream);
+			out.writeUTF("PlayerNames");
+			out.writeInt(this.getProxy().getPlayers().size());
+			for(ProxiedPlayer pp : this.getProxy().getPlayers()) {
+				out.writeUTF(pp.getName());
+			}
+			
+			for(String send : getProxy().getServers().keySet()) {
+				if(getProxy().getServers().get(send).getPlayers().size() > 0) {
+					getProxy().getServers().get(send).sendData(MineverseChatBungee.PLUGIN_MESSAGING_CHANNEL, outstream.toByteArray());
+				}
+			}
 		}
 		catch(Exception e) {
 			e.printStackTrace();
@@ -485,35 +517,6 @@ public class MineverseChatBungee extends Plugin implements Listener {
 					}
 					smcp.setSpy(in.readBoolean());
 					smcp.setMessageToggle(in.readBoolean());
-				}
-				if(identifier.equals("PlayersReceive")) {
-					String server = in.readUTF();
-					out.writeUTF("PlayersUpdate");
-					out.write(networkPlayers.keySet().size());
-					for(String s : networkPlayers.keySet()) {
-						out.writeUTF(s + "," + networkPlayers.get(s));
-					}
-					if(getProxy().getServers().get(server).getPlayers().size() > 0) 
-						getProxy().getServers().get(server).sendData(MineverseChatBungee.PLUGIN_MESSAGING_CHANNEL, outstream.toByteArray());
-				}
-				if(identifier.equals("PlayersUpdate")) {
-					networkPlayers.clear();
-					int size = in.read();
-					//System.out.println(size);
-					for(int a = 1; a <= size; a ++) {
-						String player = in.readUTF();
-						String[] parts = player.split(",");
-						networkPlayers.put(parts[0], parts[1]);
-					}
-					out.writeUTF("PlayersUpdate");
-					out.write(networkPlayers.keySet().size());
-					for(String s : networkPlayers.keySet()) {
-						out.writeUTF(s + "," + networkPlayers.get(s));
-					}
-					for(String send : getProxy().getServers().keySet()) {
-						if(getProxy().getServers().get(send).getPlayers().size() > 0) 
-							getProxy().getServers().get(send).sendData(MineverseChatBungee.PLUGIN_MESSAGING_CHANNEL, outstream.toByteArray());
-					}
 				}
 			}
 			if(subchannel.equals("Mute")) {

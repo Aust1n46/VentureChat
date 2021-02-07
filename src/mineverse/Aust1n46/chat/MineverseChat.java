@@ -147,7 +147,7 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 	private static final Logger log = Logger.getLogger("Minecraft");
 	public static Set<MineverseChatPlayer> players = new HashSet<MineverseChatPlayer>();
 	public static Set<MineverseChatPlayer> onlinePlayers = new HashSet<MineverseChatPlayer>();
-	public static HashMap<String, String> networkPlayers = new HashMap<String, String>();
+	public static List<String> networkPlayerNames = new ArrayList<String>();
 	private boolean firstRun = true;
 	
 	// Plugin Messaging Channel
@@ -636,33 +636,6 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 			e.printStackTrace();
 		}
 	}
-
-	public void updatePlayerList(MineverseChatPlayer mcp, boolean request) {
-		ByteArrayOutputStream outstream = new ByteArrayOutputStream();
-		DataOutputStream out = new DataOutputStream(outstream);
-		try {
-			out.writeUTF("Sync");
-			if(request) {
-				out.writeUTF("PlayersReceive");
-				// System.out.println(mcp.getPlayer().getServer().getServerName());
-				out.writeUTF(this.getServer().getName());
-			}
-			else {
-				out.writeUTF("PlayersUpdate");
-				// System.out.println(networkPlayers.keySet().size());
-				out.write(networkPlayers.keySet().size());
-				for(String p : networkPlayers.keySet()) {
-					out.writeUTF(p + "," + networkPlayers.get(p));
-				}
-			}
-			mcp.getPlayer().sendPluginMessage(this, MineverseChat.PLUGIN_MESSAGING_CHANNEL, outstream.toByteArray());
-			// System.out.println("Sync start bottom...");
-			out.close();
-		}
-		catch(IOException e) {
-			e.printStackTrace();
-		}
-	}
 	
 	public static void sendDiscordSRVPluginMessage(String chatChannel, String message) {
 		if(onlinePlayers.size() == 0) {
@@ -786,6 +759,13 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 					}
 				}	
 			}
+			if(subchannel.equals("PlayerNames")) {
+				networkPlayerNames.clear();
+				int playerCount = msgin.readInt();
+				for(int a = 0; a < playerCount; a ++) {
+					networkPlayerNames.add(msgin.readUTF());
+				}
+			}
 			if(subchannel.equals("Chwho")) {
 				String identifier = msgin.readUTF();
 				if(identifier.equals("Get")) {
@@ -837,16 +817,6 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 			if(subchannel.equals("RemoveMessage")) {
 				String hash = msgin.readUTF();
 				this.getServer().dispatchCommand(this.getServer().getConsoleSender(), "removemessage " + hash);
-			}
-			if(subchannel.equals("PlayersUpdate")) {
-				networkPlayers.clear();
-				int size = msgin.read();
-				for(int a = 1; a <= size; a++) {
-					String p = msgin.readUTF();
-					String[] parts = p.split(",");
-					networkPlayers.put(parts[0], parts[1]);
-					System.out.print(p);
-				}
 			}
 			if(subchannel.equals("Sync")) {
 				if(this.getConfig().getString("loglevel", "info").equals("debug")) {

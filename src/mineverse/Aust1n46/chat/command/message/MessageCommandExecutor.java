@@ -2,7 +2,6 @@ package mineverse.Aust1n46.chat.command.message;
 
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
-import java.util.ArrayList;
 import java.util.List;
 
 import org.bukkit.ChatColor;
@@ -165,12 +164,10 @@ public class MessageCommandExecutor implements TabExecutor {
 	
 	@Override
 	public List<String> onTabComplete(CommandSender sender, Command command, String label, String[] args) {
-		List<String> completions = new ArrayList<>();
-		
-		for(Player p : plugin.getServer().getOnlinePlayers()) {
-			completions.add(p.getName());
+		if(plugin.getConfig().getBoolean("bungeecordmessaging", true)) {
+			return MineverseChat.networkPlayerNames;
 		}
-		return completions;
+		return null;
 	}
 	
 	private void sendBungeeCordMessage(MineverseChatPlayer mcp, String command, String[] args) {
