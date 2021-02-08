@@ -350,9 +350,10 @@ public class MineverseChatBungee extends Plugin implements Listener {
 					String player = in.readUTF();
 					String sender = in.readUTF();
 					String sName = in.readUTF();
-					String message = in.readUTF();
+					String send = in.readUTF();
 					String echo = in.readUTF();
 					String spy = in.readUTF();
+					String msg = in.readUTF();
 					SynchronizedMineverseChatPlayer smcp = MineverseChatAPI.getSynchronizedMineverseChatPlayer(UUID.fromString(sender));
 					smcp.clearMessagePackets();
 					out.writeUTF("Message");
@@ -361,12 +362,13 @@ public class MineverseChatBungee extends Plugin implements Listener {
 					out.writeUTF(player);
 					out.writeUTF(sender);
 					out.writeUTF(sName);
-					out.writeUTF(message);
+					out.writeUTF(send);
 					out.writeUTF(echo);
 					out.writeUTF(spy);
-					for(String send : getProxy().getServers().keySet()) {
-						if(getProxy().getServers().get(send).getPlayers().size() > 0) {
-							getProxy().getServers().get(send).sendData(MineverseChatBungee.PLUGIN_MESSAGING_CHANNEL, outstream.toByteArray());
+					out.writeUTF(msg);
+					for(String serv : getProxy().getServers().keySet()) {
+						if(getProxy().getServers().get(serv).getPlayers().size() > 0) {
+							getProxy().getServers().get(serv).sendData(MineverseChatBungee.PLUGIN_MESSAGING_CHANNEL, outstream.toByteArray());
 						}
 					}
 				}

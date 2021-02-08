@@ -198,13 +198,10 @@ public class MessageCommandExecutor implements TabExecutor {
 		if(mcp.getPlayer().hasPermission("venturechat.format")) {
 			msg = Format.FormatString(msg);
 		}
-		send = Format.FormatStringAll(plugin.getConfig().getString("tellformatfrom")) + msg;
-		echo = Format.FormatStringAll(plugin.getConfig().getString("tellformatto")) + msg;
-		spy = Format.FormatStringAll(plugin.getConfig().getString("tellformatspy")) + msg;
 		
-		send = PlaceholderAPI.setBracketPlaceholders(mcp.getPlayer(), send.replaceAll("sender_", ""));
-		echo = PlaceholderAPI.setBracketPlaceholders(mcp.getPlayer(), echo.replaceAll("sender_", ""));
-		spy = PlaceholderAPI.setBracketPlaceholders(mcp.getPlayer(), spy.replaceAll("sender_", ""));
+		send = Format.FormatStringAll(PlaceholderAPI.setBracketPlaceholders(mcp.getPlayer(), plugin.getConfig().getString("tellformatfrom").replaceAll("sender_", "")));
+		echo = Format.FormatStringAll(PlaceholderAPI.setBracketPlaceholders(mcp.getPlayer(), plugin.getConfig().getString("tellformatto").replaceAll("sender_", "")));
+		spy = Format.FormatStringAll(PlaceholderAPI.setBracketPlaceholders(mcp.getPlayer(), plugin.getConfig().getString("tellformatspy").replaceAll("sender_", "")));
 		try {
 			out.writeUTF("Message");
 			out.writeUTF("Send");
@@ -214,6 +211,7 @@ public class MessageCommandExecutor implements TabExecutor {
 			out.writeUTF(send);
 			out.writeUTF(echo);
 			out.writeUTF(spy);
+			out.writeUTF(msg);
 			mcp.getPlayer().sendPluginMessage(plugin, MineverseChat.PLUGIN_MESSAGING_CHANNEL, byteOutStream.toByteArray());
 			out.close();
 		}

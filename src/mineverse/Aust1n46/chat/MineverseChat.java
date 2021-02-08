@@ -949,9 +949,10 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 					UUID sender = UUID.fromString(msgin.readUTF());
 					String sName = msgin.readUTF();
 					MineverseChatPlayer s = MineverseChatAPI.getMineverseChatPlayer(sender);
-					String msg = msgin.readUTF();
+					String send = msgin.readUTF();
 					String echo = msgin.readUTF();
 					String spy = msgin.readUTF();
+					String msg = msgin.readUTF();
 					if(!this.getConfig().getBoolean("bungeecordmessaging", true) || p == null || !p.isOnline()) {
 						out.writeUTF("Message");
 						out.writeUTF("Offline");
@@ -995,7 +996,7 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 						s = new MineverseChatPlayer(uuid, name, current, ignores, listening, mutes, blockedCommands, false, null, true, true, name, jsonFormat, false, false, false, true, true);
 						MineverseChat.players.add(s);
 					}
-					p.getPlayer().sendMessage(PlaceholderAPI.setBracketPlaceholders(p.getPlayer(), msg.replaceAll("receiver_", "")));
+					p.getPlayer().sendMessage(Format.FormatStringAll(PlaceholderAPI.setBracketPlaceholders(p.getPlayer(), send.replaceAll("receiver_", ""))) + msg);
 					if(p.hasNotifications()) {
 						if(VersionHandler.is1_8() || VersionHandler.is1_7_10() || VersionHandler.is1_7_2() || VersionHandler.is1_7_9()) {
 							p.getPlayer().playSound(p.getPlayer().getLocation(), Sound.valueOf("LEVEL_UP"), 1, 0);
@@ -1011,8 +1012,8 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 					out.writeUTF(receiver);
 					out.writeUTF(sender.toString());
 					out.writeUTF(sName);
-					out.writeUTF(PlaceholderAPI.setBracketPlaceholders(p.getPlayer(), echo.replaceAll("receiver_", "")));
-					out.writeUTF(PlaceholderAPI.setBracketPlaceholders(p.getPlayer(), spy.replaceAll("receiver_", "")));
+					out.writeUTF(Format.FormatStringAll(PlaceholderAPI.setBracketPlaceholders(p.getPlayer(), echo.replaceAll("receiver_", ""))) + msg);
+					out.writeUTF(Format.FormatStringAll(PlaceholderAPI.setBracketPlaceholders(p.getPlayer(), spy.replaceAll("receiver_", ""))) + msg);
 					player.sendPluginMessage(this, MineverseChat.PLUGIN_MESSAGING_CHANNEL, stream.toByteArray());
 					return;
 				}

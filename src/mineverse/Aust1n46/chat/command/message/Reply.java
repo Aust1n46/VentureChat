@@ -131,13 +131,22 @@ public class Reply extends MineverseCommand {
 		for(int r = 0; r < args.length; r++) {
 			msg += " " + args[r];
 		}
-		send = Format.FormatStringAll(plugin.getConfig().getString("replyformatfrom")) + msg;
-		echo = Format.FormatStringAll(plugin.getConfig().getString("replyformatto")) + msg;
-		spy = Format.FormatStringAll(plugin.getConfig().getString("replyformatspy")) + msg;
+		if(mcp.hasFilter()) {
+			msg = Format.FilterChat(msg);
+		}
+		if(mcp.getPlayer().hasPermission("venturechat.color.legacy")) {
+			msg = Format.FormatStringLegacyColor(msg);
+		}
+		if(mcp.getPlayer().hasPermission("venturechat.color")) {
+			msg = Format.FormatStringColor(msg);
+		}
+		if(mcp.getPlayer().hasPermission("venturechat.format")) {
+			msg = Format.FormatString(msg);
+		}
 		
-		send = PlaceholderAPI.setBracketPlaceholders(mcp.getPlayer(), send.replaceAll("sender_", ""));
-		echo = PlaceholderAPI.setBracketPlaceholders(mcp.getPlayer(), echo.replaceAll("sender_", ""));
-		spy = PlaceholderAPI.setBracketPlaceholders(mcp.getPlayer(), spy.replaceAll("sender_", ""));
+		send = Format.FormatStringAll(PlaceholderAPI.setBracketPlaceholders(mcp.getPlayer(), plugin.getConfig().getString("replyformatfrom").replaceAll("sender_", "")));
+		echo = Format.FormatStringAll(PlaceholderAPI.setBracketPlaceholders(mcp.getPlayer(), plugin.getConfig().getString("replyformatto").replaceAll("sender_", "")));
+		spy = Format.FormatStringAll(PlaceholderAPI.setBracketPlaceholders(mcp.getPlayer(), plugin.getConfig().getString("replyformatspy").replaceAll("sender_", "")));
 		try {
 			out.writeUTF("Message");
 			out.writeUTF("Send");
@@ -147,6 +156,7 @@ public class Reply extends MineverseCommand {
 			out.writeUTF(send);
 			out.writeUTF(echo);
 			out.writeUTF(spy);
+			out.writeUTF(msg);
 			mcp.getPlayer().sendPluginMessage(plugin, MineverseChat.PLUGIN_MESSAGING_CHANNEL, byteOutStream.toByteArray());
 			out.close();
 		}
