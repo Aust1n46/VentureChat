@@ -77,17 +77,13 @@ public class Reply extends MineverseCommand {
 						msg = Format.FormatString(msg);
 					}
 
-					echo = Format.FormatStringAll(plugin.getConfig().getString("replyformatto")) + msg;
-					send = Format.FormatStringAll(plugin.getConfig().getString("replyformatfrom")) + msg;
-					spy = Format.FormatStringAll(plugin.getConfig().getString("replyformatspy")) + msg;
+					send = Format.FormatStringAll(PlaceholderAPI.setBracketPlaceholders(mcp.getPlayer(), plugin.getConfig().getString("replyformatfrom").replaceAll("sender_", "")));
+					echo = Format.FormatStringAll(PlaceholderAPI.setBracketPlaceholders(mcp.getPlayer(), plugin.getConfig().getString("replyformatto").replaceAll("sender_", "")));
+					spy = Format.FormatStringAll(PlaceholderAPI.setBracketPlaceholders(mcp.getPlayer(), plugin.getConfig().getString("replyformatspy").replaceAll("sender_", "")));
 					
-					send = PlaceholderAPI.setBracketPlaceholders(mcp.getPlayer(), send.replaceAll("sender_", ""));
-					echo = PlaceholderAPI.setBracketPlaceholders(mcp.getPlayer(), echo.replaceAll("sender_", ""));
-					spy = PlaceholderAPI.setBracketPlaceholders(mcp.getPlayer(), spy.replaceAll("sender_", ""));
-					
-					send = PlaceholderAPI.setBracketPlaceholders(player.getPlayer(), send.replaceAll("receiver_", ""));
-					echo = PlaceholderAPI.setBracketPlaceholders(player.getPlayer(), echo.replaceAll("receiver_", ""));
-					spy = PlaceholderAPI.setBracketPlaceholders(player.getPlayer(), spy.replaceAll("receiver_", ""));
+					send = Format.FormatStringAll(PlaceholderAPI.setBracketPlaceholders(player.getPlayer(), send.replaceAll("receiver_", ""))) + msg;
+					echo = Format.FormatStringAll(PlaceholderAPI.setBracketPlaceholders(player.getPlayer(), echo.replaceAll("receiver_", ""))) + msg;
+					spy = Format.FormatStringAll(PlaceholderAPI.setBracketPlaceholders(player.getPlayer(), spy.replaceAll("receiver_", ""))) + msg;
 					
 					if(!mcp.getPlayer().hasPermission("venturechat.spy.override")) {
 						for(MineverseChatPlayer p : MineverseChat.onlinePlayers) {

@@ -83,6 +83,9 @@ public class ChatListener implements Listener {
 				mcp.getPlayer().sendMessage(ChatColor.RED + tp.getName() + " is not available.");
 				if(!mcp.getPlayer().hasPermission("venturechat.spy.override")) {
 					for(MineverseChatPlayer p : MineverseChat.onlinePlayers) {
+						if(p.getName().equals(mcp.getName())) {
+							continue;
+						}
 						if(p.isSpy()) {
 							p.getPlayer().sendMessage(LocalizedMessage.EXIT_PRIVATE_CONVERSATION_SPY.toString()
 									.replace("{player_sender}", mcp.getName())
@@ -109,7 +112,6 @@ public class ChatListener implements Listener {
 				String echo = "";
 				String send = "";
 				String spy = "";
-				String tellColor = plugin.getConfig().getString("tellcolor", "gray");
 				if(mcp.hasFilter()) {
 					filtered = Format.FilterChat(filtered);
 				}
@@ -123,27 +125,21 @@ public class ChatListener implements Listener {
 					filtered = Format.FormatString(filtered);
 				}
 				filtered = " " + filtered;
-				if(plugin.getConfig().getString("tellformatto").equalsIgnoreCase("Default")) {
-					echo = "You message " + tp.getPlayer().getDisplayName() + ":" + ChatColor.valueOf(tellColor.toUpperCase()) + filtered;
-				}
-				else {
-					echo = Format.FormatStringAll(plugin.getConfig().getString("tellformatto").replace("{playerto}", tp.getPlayer().getDisplayName()).replace("{playerfrom}", mcp.getPlayer().getDisplayName())) + filtered;
-				}
-				if(plugin.getConfig().getString("tellformatfrom").equalsIgnoreCase("Default")) {
-					send = mcp.getPlayer().getDisplayName() + " messages you:" + ChatColor.valueOf(tellColor.toUpperCase()) + filtered;
-				}
-				else {
-					send = Format.FormatStringAll(plugin.getConfig().getString("tellformatfrom").replace("{playerto}", tp.getPlayer().getDisplayName()).replace("{playerfrom}", mcp.getPlayer().getDisplayName())) + filtered;
-				}
-				if(plugin.getConfig().getString("tellformatspy").equalsIgnoreCase("Default")) {
-					spy = mcp.getName() + " messages " + tp.getName() + ":" + ChatColor.valueOf(tellColor.toUpperCase()) + filtered;
-				}
-				else {
-					spy = Format.FormatStringAll(plugin.getConfig().getString("tellformatspy").replace("{playerto}", tp.getName()).replace("{playerfrom}", mcp.getName())) + filtered;
-				}
+				
+				send = Format.FormatStringAll(PlaceholderAPI.setBracketPlaceholders(mcp.getPlayer(), plugin.getConfig().getString("tellformatfrom").replaceAll("sender_", "")));
+				echo = Format.FormatStringAll(PlaceholderAPI.setBracketPlaceholders(mcp.getPlayer(), plugin.getConfig().getString("tellformatto").replaceAll("sender_", "")));
+				spy = Format.FormatStringAll(PlaceholderAPI.setBracketPlaceholders(mcp.getPlayer(), plugin.getConfig().getString("tellformatspy").replaceAll("sender_", "")));
+				
+				send = Format.FormatStringAll(PlaceholderAPI.setBracketPlaceholders(tp.getPlayer(), send.replaceAll("receiver_", ""))) + filtered;
+				echo = Format.FormatStringAll(PlaceholderAPI.setBracketPlaceholders(tp.getPlayer(), echo.replaceAll("receiver_", ""))) + filtered;
+				spy = Format.FormatStringAll(PlaceholderAPI.setBracketPlaceholders(tp.getPlayer(), spy.replaceAll("receiver_", ""))) + filtered;
+				
 				if(!mcp.getPlayer().hasPermission("venturechat.spy.override")) {
 					for(MineverseChatPlayer p : MineverseChat.onlinePlayers) {
-						if(p.isOnline() && p.isSpy()) {
+						if(p.getName().equals(mcp.getName()) || p.getName().equals(tp.getName())) {
+							continue;
+						}
+						if(p.isSpy()) {
 							p.getPlayer().sendMessage(spy);
 						}
 					}
@@ -160,7 +156,6 @@ public class ChatListener implements Listener {
 				}
 				mcp.setReplyPlayer(tp.getUUID());
 				tp.setReplyPlayer(mcp.getUUID());
-				Bukkit.getConsoleSender().sendMessage(mcp.getName() + " messages " + tp.getName() + ":" + ChatColor.valueOf(tellColor.toUpperCase()) + filtered);
 				if(plugin.db != null) {
 					Calendar currentDate = Calendar.getInstance();
 					SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");

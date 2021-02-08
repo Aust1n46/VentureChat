@@ -91,17 +91,14 @@ public class MessageCommandExecutor implements TabExecutor {
 				if(mcp.getPlayer().hasPermission("venturechat.format")) {
 					msg = Format.FormatString(msg);
 				}
-				send = Format.FormatStringAll(plugin.getConfig().getString("tellformatfrom")) + msg;
-				echo = Format.FormatStringAll(plugin.getConfig().getString("tellformatto")) + msg;
-				spy = Format.FormatStringAll(plugin.getConfig().getString("tellformatspy")) + msg;
 				
-				send = PlaceholderAPI.setBracketPlaceholders(mcp.getPlayer(), send.replaceAll("sender_", ""));
-				echo = PlaceholderAPI.setBracketPlaceholders(mcp.getPlayer(), echo.replaceAll("sender_", ""));
-				spy = PlaceholderAPI.setBracketPlaceholders(mcp.getPlayer(), spy.replaceAll("sender_", ""));
+				send = Format.FormatStringAll(PlaceholderAPI.setBracketPlaceholders(mcp.getPlayer(), plugin.getConfig().getString("tellformatfrom").replaceAll("sender_", "")));
+				echo = Format.FormatStringAll(PlaceholderAPI.setBracketPlaceholders(mcp.getPlayer(), plugin.getConfig().getString("tellformatto").replaceAll("sender_", "")));
+				spy = Format.FormatStringAll(PlaceholderAPI.setBracketPlaceholders(mcp.getPlayer(), plugin.getConfig().getString("tellformatspy").replaceAll("sender_", "")));
 				
-				send = PlaceholderAPI.setBracketPlaceholders(player.getPlayer(), send.replaceAll("receiver_", ""));
-				echo = PlaceholderAPI.setBracketPlaceholders(player.getPlayer(), echo.replaceAll("receiver_", ""));
-				spy = PlaceholderAPI.setBracketPlaceholders(player.getPlayer(), spy.replaceAll("receiver_", ""));
+				send = Format.FormatStringAll(PlaceholderAPI.setBracketPlaceholders(player.getPlayer(), send.replaceAll("receiver_", ""))) + msg;
+				echo = Format.FormatStringAll(PlaceholderAPI.setBracketPlaceholders(player.getPlayer(), echo.replaceAll("receiver_", ""))) + msg;
+				spy = Format.FormatStringAll(PlaceholderAPI.setBracketPlaceholders(player.getPlayer(), spy.replaceAll("receiver_", ""))) + msg;
 				
 				player.setReplyPlayer(mcp.getUUID());
 				mcp.setReplyPlayer(player.getUUID());
@@ -133,6 +130,9 @@ public class MessageCommandExecutor implements TabExecutor {
 					mcp.setConversation(player.getUUID());
 					if(!mcp.getPlayer().hasPermission("venturechat.spy.override")) {
 						for(MineverseChatPlayer sp : MineverseChat.onlinePlayers) {
+							if(sp.getName().equals(mcp.getName())) {
+								continue;
+							}
 							if(sp.isSpy()) {
 								sp.getPlayer().sendMessage(LocalizedMessage.ENTER_PRIVATE_CONVERSATION_SPY.toString()
 										.replace("{player_sender}", mcp.getName())
@@ -147,6 +147,9 @@ public class MessageCommandExecutor implements TabExecutor {
 					mcp.setConversation(null);
 					if(!mcp.getPlayer().hasPermission("venturechat.spy.override")) {
 						for(MineverseChatPlayer sp : MineverseChat.onlinePlayers) {
+							if(sp.getName().equals(mcp.getName())) {
+								continue;
+							}
 							if(sp.isSpy()) {
 								sp.getPlayer().sendMessage(LocalizedMessage.EXIT_PRIVATE_CONVERSATION_SPY.toString()
 										.replace("{player_sender}", mcp.getName())
