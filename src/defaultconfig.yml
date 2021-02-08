@@ -101,14 +101,16 @@ bungeecordmessaging: false
 # This will allow vanished players to be exempt from being sent private messages, and will act as if they aren't online
 vanishsupport: true
 
-# {playerto} : player receivings name
-# {playerfrom} : player sendings name
-tellformatto: 'You message {playerto}:&7'
-tellformatfrom: '{playerfrom} messages you:&7'
-tellformatspy: '{playerfrom} messages {playerto}:&7'
-replyformatto: 'You reply to {playerto}:&7'
-replyformatfrom: '{playerfrom} replies to you:&7'
-replyformatspy: '{playerfrom} replied to {playerto}:&7'
+# Use PlaceholderAPI placeholders
+# Start the placeholder with 'sender_' for the sending players placeholder
+# Start the placeholder with 'receiver_' for the receiving players placeholder
+# The defaults shown below provide an example of each
+tellformatto: '&7You message {receiver_vault_prefix}{receiver_player_displayname}&7:'
+tellformatfrom: '{sender_vault_prefix}{sender_player_displayname} &7messages you:'
+tellformatspy: '{sender_player_name} messages {receiver_player_name}:&7'
+replyformatto: '&7You reply to {receiver_vault_prefix}{receiver_player_displayname}&7:'
+replyformatfrom: '{sender_vault_prefix}{sender_player_displayname} &7replies to you:'
+replyformatspy: '{sender_player_name} replies to {receiver_player_name}:&7'
 
 # {host} : party hosts name
 # {player} : player name
