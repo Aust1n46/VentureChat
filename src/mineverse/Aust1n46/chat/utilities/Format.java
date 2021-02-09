@@ -625,6 +625,7 @@ public class Format {
 					pparse[t++] = st.nextToken();
 				}
 			}
+			// (?i) = case insensitive
 			msg = msg.replaceAll("(?i)" + pparse[0], pparse[1]);
 		}
 		return msg;
