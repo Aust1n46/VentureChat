@@ -333,10 +333,12 @@ public class MineverseChatBungee extends Plugin implements Listener {
 				if(identifier.equals("Echo")) {
 					String server = in.readUTF();
 					String player = in.readUTF();
+					String receiverName = in.readUTF();
 					String sender = in.readUTF();
 					out.writeUTF("Ignore");
 					out.writeUTF("Echo");
 					out.writeUTF(player);
+					out.writeUTF(receiverName);
 					out.writeUTF(sender);
 					if(getProxy().getServers().get(server).getPlayers().size() > 0) {
 						getProxy().getServers().get(server).sendData(MineverseChatBungee.PLUGIN_MESSAGING_CHANNEL, outstream.toByteArray());

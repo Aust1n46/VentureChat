@@ -49,21 +49,7 @@ public class Ignore extends MineverseCommand {
 			}
 			return;
 		}
-		MineverseChatPlayer player = MineverseChatAPI.getMineverseChatPlayer(args[0]);
-
-		if(player == null) {
-			mcp.getPlayer().sendMessage(LocalizedMessage.PLAYER_OFFLINE.toString()
-					.replace("{args}", args[0]));
-			return;
-		}
-		if(mcp.getIgnores().contains(player.getUUID())) {
-			mcp.getPlayer().sendMessage(LocalizedMessage.IGNORE_PLAYER_OFF.toString()
-					.replace("{player}", player.getName()));
-			mcp.removeIgnore(player.getUUID());
-			plugin.synchronize(mcp, true);
-			return;
-		}
-		if(mcp.getName().equalsIgnoreCase(player.getName())) {
+		if(mcp.getName().equalsIgnoreCase(args[0])) {
 			mcp.getPlayer().sendMessage(LocalizedMessage.IGNORE_YOURSELF.toString());
 			return;
 		}
@@ -82,18 +68,21 @@ public class Ignore extends MineverseCommand {
 				e.printStackTrace();
 			}
 			return;
-		}		
-		if(!player.isOnline()) {
+		}	
+		
+		MineverseChatPlayer player = MineverseChatAPI.getMineverseChatPlayer(args[0]);
+		if(player == null || !player.isOnline()) {
 			mcp.getPlayer().sendMessage(LocalizedMessage.PLAYER_OFFLINE.toString()
-					.replace("{args}", player.getName()));
+					.replace("{args}", args[0]));
 			return;
 		}
 		if(mcp.getIgnores().contains(player.getUUID())) {
-			mcp.getPlayer().sendMessage(ChatColor.GOLD + "You are no longer ignoring player: " + ChatColor.RED + player.getName());
+			mcp.getPlayer().sendMessage(LocalizedMessage.IGNORE_PLAYER_OFF.toString()
+					.replace("{player}", player.getName()));
 			mcp.removeIgnore(player.getUUID());
 			plugin.synchronize(mcp, true);
 			return;
-		}		
+		}
 		if(player.getPlayer().hasPermission("venturechat.ignore.bypass")) {
 			mcp.getPlayer().sendMessage(LocalizedMessage.IGNORE_PLAYER_CANT.toString()
 					.replace("{player}", player.getName()));

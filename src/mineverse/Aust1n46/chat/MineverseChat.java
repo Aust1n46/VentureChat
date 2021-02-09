@@ -906,6 +906,7 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 					out.writeUTF("Echo");
 					out.writeUTF(server);
 					out.writeUTF(p.getUUID().toString());
+					out.writeUTF(receiver);
 					out.writeUTF(sender.toString());
 					player.sendPluginMessage(this, MineverseChat.PLUGIN_MESSAGING_CHANNEL, stream.toByteArray());
 					return;
@@ -919,16 +920,13 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 				}
 				if(identifier.equals("Echo")) {
 					UUID receiver = UUID.fromString(msgin.readUTF());
+					String receiverName = msgin.readUTF();
 					UUID sender = UUID.fromString(msgin.readUTF());
 					MineverseChatPlayer p = MineverseChatAPI.getOnlineMineverseChatPlayer(sender);
-					MineverseChatPlayer r = MineverseChatAPI.getMineverseChatPlayer(receiver);
-					String rName = receiver.toString();
-					if(r != null) {
-						rName = Format.FormatStringAll(r.getNickname());
-					}
 					
 					if(p.getIgnores().contains(receiver)) {
-						p.getPlayer().sendMessage(ChatColor.GOLD + "You are no longer ignoring player: " + ChatColor.RED + rName);
+						p.getPlayer().sendMessage(LocalizedMessage.IGNORE_PLAYER_OFF.toString()
+								.replace("{player}", receiverName));
 						p.removeIgnore(receiver);
 						this.synchronize(p, true);
 						return;
@@ -936,7 +934,7 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 					
 					p.addIgnore(receiver);
 					p.getPlayer().sendMessage(LocalizedMessage.IGNORE_PLAYER_ON.toString()
-							.replace("{player}", rName));
+							.replace("{player}", receiverName));
 					this.synchronize(p, true);
 				}
 			}
@@ -979,9 +977,6 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 						out.writeUTF(sender.toString());
 						player.sendPluginMessage(this, MineverseChat.PLUGIN_MESSAGING_CHANNEL, stream.toByteArray());
 						return;
-					}
-					if(s != null) {
-						sName = Format.FormatStringAll(s.getNickname());
 					}
 					else {
 						UUID uuid = sender;
