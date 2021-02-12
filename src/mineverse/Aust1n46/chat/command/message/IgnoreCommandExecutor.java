@@ -25,7 +25,7 @@ public class IgnoreCommandExecutor implements TabExecutor {
 			plugin.getServer().getConsoleSender().sendMessage(LocalizedMessage.COMMAND_MUST_BE_RUN_BY_PLAYER.toString());
 			return true;
 		}
-		MineverseChatPlayer mcp = MineverseChatAPI.getMineverseChatPlayer((Player) sender);
+		MineverseChatPlayer mcp = MineverseChatAPI.getOnlineMineverseChatPlayer((Player) sender);
 		if(args.length == 0) {
 			mcp.getPlayer().sendMessage(LocalizedMessage.COMMAND_INVALID_ARGUMENTS_IGNORE.toString());
 			return true;
@@ -67,8 +67,8 @@ public class IgnoreCommandExecutor implements TabExecutor {
 			return true;
 		}	
 		
-		MineverseChatPlayer player = MineverseChatAPI.getMineverseChatPlayer(args[0]);
-		if(player == null || !player.isOnline()) {
+		MineverseChatPlayer player = MineverseChatAPI.getOnlineMineverseChatPlayer(args[0]);
+		if(player == null) {
 			mcp.getPlayer().sendMessage(LocalizedMessage.PLAYER_OFFLINE.toString()
 					.replace("{args}", args[0]));
 			return true;

@@ -36,7 +36,7 @@ public class Chwho extends MineverseCommand {
 				if(channel != null) {
 					if(channel.hasPermission()) {
 						if(!sender.hasPermission(channel.getPermission())) {
-							MineverseChatPlayer mcp = MineverseChatAPI.getMineverseChatPlayer(((Player) sender));
+							MineverseChatPlayer mcp = MineverseChatAPI.getOnlineMineverseChatPlayer(((Player) sender));
 							mcp.removeListening(channel.getName());
 							mcp.getPlayer().sendMessage(LocalizedMessage.CHANNEL_NO_PERMISSION_VIEW.toString());
 							return;

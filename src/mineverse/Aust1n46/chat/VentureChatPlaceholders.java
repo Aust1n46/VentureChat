@@ -13,7 +13,7 @@ public class VentureChatPlaceholders extends PlaceholderExpansion {
 		if(p == null) {
 			return null;
 		}
-		MineverseChatPlayer mcp = MineverseChatAPI.getMineverseChatPlayer(p);
+		MineverseChatPlayer mcp = MineverseChatAPI.getOnlineMineverseChatPlayer(p);
 		if(mcp == null) {
 			return "";
 		}

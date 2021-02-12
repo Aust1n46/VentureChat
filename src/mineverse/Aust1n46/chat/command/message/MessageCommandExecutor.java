@@ -4,7 +4,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.util.List;
 
-import org.bukkit.ChatColor;
 import org.bukkit.Sound;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -29,7 +28,7 @@ public class MessageCommandExecutor implements TabExecutor {
 			return true;
 		}
 		
-		MineverseChatPlayer mcp = MineverseChatAPI.getMineverseChatPlayer((Player) sender);
+		MineverseChatPlayer mcp = MineverseChatAPI.getOnlineMineverseChatPlayer((Player) sender);
 		if(args.length == 0) {
 			mcp.getPlayer().sendMessage(LocalizedMessage.COMMAND_INVALID_ARGUMENTS.toString()
 			.replace("{command}", "/" + command.getName())
@@ -42,14 +41,8 @@ public class MessageCommandExecutor implements TabExecutor {
 			return true;
 		}
 		
-		MineverseChatPlayer player = MineverseChatAPI.getMineverseChatPlayer(args[0]);
-		for(MineverseChatPlayer p : MineverseChat.onlinePlayers) {
-			if(ChatColor.stripColor(p.getNickname()).equals(args[0])) {
-				player = p;
-				break;
-			}
-		}
-		if(player == null || !player.isOnline()) {
+		MineverseChatPlayer player = MineverseChatAPI.getOnlineMineverseChatPlayer(args[0]);
+		if(player == null) {
 			mcp.getPlayer().sendMessage(LocalizedMessage.PLAYER_OFFLINE.toString()
 					.replace("{args}", args[0]));
 			return true;

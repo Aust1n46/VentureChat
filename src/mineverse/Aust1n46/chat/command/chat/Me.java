@@ -24,7 +24,7 @@ public class Me extends MineverseCommand {
 				for(int x = 0; x < args.length; x++) 
 					if(args[x].length() > 0) 
 						msg += " " + args[x];	
-				if(sender instanceof Player && MineverseChatAPI.getMineverseChatPlayer((Player) sender).hasFilter()) {
+				if(sender instanceof Player && MineverseChatAPI.getOnlineMineverseChatPlayer((Player) sender).hasFilter()) {
 					msg = Format.FilterChat(msg);
 				}
 				if(sender.hasPermission("venturechat.color.legacy")) {

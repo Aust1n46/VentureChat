@@ -24,7 +24,7 @@ public class Notifications extends MineverseCommand {
 			return;
 		}
 
-		MineverseChatPlayer mcp = MineverseChatAPI.getMineverseChatPlayer((Player) sender);
+		MineverseChatPlayer mcp = MineverseChatAPI.getOnlineMineverseChatPlayer((Player) sender);
 		if(!mcp.hasNotifications()) {
 			mcp.setNotifications(true);
 			mcp.getPlayer().sendMessage(LocalizedMessage.NOTIFICATIONS_ON.toString());

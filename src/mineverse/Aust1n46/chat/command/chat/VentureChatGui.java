@@ -42,7 +42,7 @@ public class VentureChatGui extends MineverseCommand {
 					.replace("{args}", "[player] [channel] [hashcode]"));
 			return;
 		}
-		MineverseChatPlayer mcp = MineverseChatAPI.getMineverseChatPlayer((Player) sender);
+		MineverseChatPlayer mcp = MineverseChatAPI.getOnlineMineverseChatPlayer((Player) sender);
 		if(mcp.getPlayer().hasPermission("venturechat.gui")) {
 			MineverseChatPlayer target = MineverseChatAPI.getMineverseChatPlayer(args[0]);
 			if(target == null && !args[0].equals("Discord")) {

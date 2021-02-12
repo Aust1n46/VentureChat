@@ -22,7 +22,7 @@ public class Commandblock extends MineverseCommand {
 	public void execute(CommandSender sender, String command, String[] args) {
 		if(sender.hasPermission("venturechat.commandblock")) {
 			if(args.length > 1) {
-				MineverseChatPlayer player = MineverseChatAPI.getMineverseChatPlayer(args[0]);
+				MineverseChatPlayer player = MineverseChatAPI.getOnlineMineverseChatPlayer(args[0]);
 				if(player == null) {
 					sender.sendMessage(LocalizedMessage.PLAYER_OFFLINE.toString()
 							.replace("{args}", args[0]));

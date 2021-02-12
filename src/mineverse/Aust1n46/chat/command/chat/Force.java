@@ -22,8 +22,8 @@ public class Force extends MineverseCommand {
 						.replace("{args}", "[player] [message]"));
 				return;
 			}
-			MineverseChatPlayer player = MineverseChatAPI.getMineverseChatPlayer(args[0]);
-			if(player == null || !player.isOnline()) {
+			MineverseChatPlayer player = MineverseChatAPI.getOnlineMineverseChatPlayer(args[0]);
+			if(player == null) {
 				sender.sendMessage(LocalizedMessage.PLAYER_OFFLINE.toString()
 						.replace("{args}", args[0]));
 				return;

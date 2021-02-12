@@ -121,7 +121,7 @@ public class LoginListener implements Listener {
 	}
 
 	private void playerLeaving(Player player) {
-		MineverseChatPlayer mcp = MineverseChatAPI.getMineverseChatPlayer(player);
+		MineverseChatPlayer mcp = MineverseChatAPI.getOnlineMineverseChatPlayer(player);
 		ConfigurationSection cs = playerData.getConfigurationSection("players." + mcp.getUUID().toString());
 		if(mcp.getPlayer() == null) {
 			return;

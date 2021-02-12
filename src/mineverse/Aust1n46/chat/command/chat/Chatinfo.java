@@ -26,7 +26,7 @@ public class Chatinfo extends MineverseCommand {
 					plugin.getServer().getConsoleSender().sendMessage(ChatColor.RED + "This command must be run by a player; use /ci [name]");
 					return;
 				}
-				MineverseChatPlayer mcp = MineverseChatAPI.getMineverseChatPlayer((Player) sender);
+				MineverseChatPlayer mcp = MineverseChatAPI.getOnlineMineverseChatPlayer((Player) sender);
 				String listen = "";
 				String mute = "";
 				String blockedcommands = "";

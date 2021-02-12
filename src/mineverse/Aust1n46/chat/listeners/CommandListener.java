@@ -217,7 +217,7 @@ public class CommandListener implements CommandExecutor, Listener {
 			plugin.getServer().getConsoleSender().sendMessage(ChatColor.RED + "This command must be run by a player.");
 			return true;
 		}
-		MineverseChatPlayer mcp = MineverseChatAPI.getMineverseChatPlayer((Player) sender);
+		MineverseChatPlayer mcp = MineverseChatAPI.getOnlineMineverseChatPlayer((Player) sender);
 		for(ChatChannel channel : ChatChannel.getChannels()) {
 			if(command.getName().toLowerCase().equals(channel.getAlias())) {
 				if(args.length == 0) {

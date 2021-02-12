@@ -28,7 +28,7 @@ public class Nick extends MineverseCommand {
 						plugin.getServer().getConsoleSender().sendMessage(ChatColor.RED + "This command must be run by a player.");
 						return;
 					}
-					MineverseChatPlayer mcp = MineverseChatAPI.getMineverseChatPlayer((Player) sender);
+					MineverseChatPlayer mcp = MineverseChatAPI.getOnlineMineverseChatPlayer((Player) sender);
 					if(args[0].equalsIgnoreCase("Off")) {
 						mcp.getPlayer().setDisplayName(mcp.getName());
 						mcp.setNickname(mcp.getName());

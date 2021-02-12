@@ -29,7 +29,7 @@ public class Channel extends MineverseCommand implements Listener {
 			plugin.getServer().getConsoleSender().sendMessage(LocalizedMessage.COMMAND_MUST_BE_RUN_BY_PLAYER.toString());
 			return;
 		}		
-		MineverseChatPlayer mcp = MineverseChatAPI.getMineverseChatPlayer((Player) sender);	
+		MineverseChatPlayer mcp = MineverseChatAPI.getOnlineMineverseChatPlayer((Player) sender);	
 		if(args.length > 0) {
 			if(!ChatChannel.isChannel(args[0])) {
 				mcp.getPlayer().sendMessage(LocalizedMessage.INVALID_CHANNEL.toString()
@@ -53,7 +53,7 @@ public class Channel extends MineverseCommand implements Listener {
 		if(event.isCancelled()) 
 			return;		
 		ChatChannel channel = event.getChannel();
-		MineverseChatPlayer mcp = MineverseChatAPI.getMineverseChatPlayer(event.getPlayer());		
+		MineverseChatPlayer mcp = MineverseChatAPI.getOnlineMineverseChatPlayer(event.getPlayer());		
 		if(channel.hasPermission()) {
 			if(!mcp.getPlayer().hasPermission(channel.getPermission())) {
 				mcp.removeListening(channel.getName());

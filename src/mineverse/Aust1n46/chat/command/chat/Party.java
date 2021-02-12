@@ -23,7 +23,7 @@ public class Party extends MineverseCommand {
 			plugin.getServer().getConsoleSender().sendMessage(ChatColor.RED + "This command must be run by a player.");
 			return;
 		}
-		MineverseChatPlayer mcp = MineverseChatAPI.getMineverseChatPlayer((Player) sender);
+		MineverseChatPlayer mcp = MineverseChatAPI.getOnlineMineverseChatPlayer((Player) sender);
 		if(!mcp.getPlayer().hasPermission("venturechat.party")) {
 			mcp.getPlayer().sendMessage(ChatColor.RED + "You do not have permission for this command!");
 			return;

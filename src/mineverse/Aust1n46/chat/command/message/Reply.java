@@ -29,17 +29,16 @@ public class Reply extends MineverseCommand {
 			plugin.getServer().getConsoleSender().sendMessage(LocalizedMessage.COMMAND_MUST_BE_RUN_BY_PLAYER.toString());
 			return;
 		}
-		MineverseChatPlayer mcp = MineverseChatAPI.getMineverseChatPlayer((Player) sender);
+		MineverseChatPlayer mcp = MineverseChatAPI.getOnlineMineverseChatPlayer((Player) sender);
 		if(args.length > 0) {
 			if(mcp.hasReplyPlayer()) {
-				MineverseChatPlayer player = MineverseChatAPI.getMineverseChatPlayer(mcp.getReplyPlayer());
-				
 				if(plugin.getConfig().getBoolean("bungeecordmessaging", true)) {
-					sendBungeeCordReply(mcp, player, args);
+					sendBungeeCordReply(mcp, args);
 					return;
 				}
 				
-				if(player == null || !player.isOnline()) {
+				MineverseChatPlayer player = MineverseChatAPI.getOnlineMineverseChatPlayer(mcp.getReplyPlayer());
+				if(player == null) {
 					mcp.getPlayer().sendMessage(LocalizedMessage.NO_PLAYER_TO_REPLY_TO.toString());
 					return;
 				}
@@ -117,7 +116,7 @@ public class Reply extends MineverseCommand {
 				.replace("{args}", "[message]"));
 	}
 	
-	private void sendBungeeCordReply(MineverseChatPlayer mcp, MineverseChatPlayer player, String[] args) {
+	private void sendBungeeCordReply(MineverseChatPlayer mcp, String[] args) {
 		ByteArrayOutputStream byteOutStream = new ByteArrayOutputStream();
 		DataOutputStream out = new DataOutputStream(byteOutStream);
 		String msg = "";
@@ -146,7 +145,7 @@ public class Reply extends MineverseCommand {
 		try {
 			out.writeUTF("Message");
 			out.writeUTF("Send");
-			out.writeUTF(player.getName());
+			out.writeUTF(MineverseChatAPI.getMineverseChatPlayer(mcp.getReplyPlayer()).getName());
 			out.writeUTF(mcp.getUUID().toString());
 			out.writeUTF(mcp.getName());
 			out.writeUTF(send);
