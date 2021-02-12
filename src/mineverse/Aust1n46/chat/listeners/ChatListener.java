@@ -19,8 +19,8 @@ import org.bukkit.plugin.PluginManager;
 
 import com.comphenix.protocol.events.PacketContainer;
 import com.massivecraft.factions.entity.MPlayer;
+import com.palmergames.bukkit.towny.TownyUniverse;
 import com.palmergames.bukkit.towny.object.Resident;
-import com.palmergames.bukkit.towny.object.TownyUniverse;
 
 import me.clip.placeholderapi.PlaceholderAPI;
 import mineverse.Aust1n46.chat.MineverseChat;
@@ -369,9 +369,10 @@ public class ChatListener implements Listener {
 				}
 				if(plugin.getConfig().getBoolean("enable_towny_channel") && pluginManager.isPluginEnabled("Towny")) {
 					try {
+						TownyUniverse towny = TownyUniverse.getInstance();
 						if(eventChannel.getName().equalsIgnoreCase("Town")) {
-							Resident r = TownyUniverse.getDataSource().getResident(p.getName());
-							Resident pp = TownyUniverse.getDataSource().getResident(mcp.getName());
+							Resident r = towny.getResident(p.getName());
+							Resident pp = towny.getResident(mcp.getName());
 							if(!pp.hasTown()) {
 								recipients.remove(p.getPlayer());
 								recipientCount--;
@@ -389,8 +390,8 @@ public class ChatListener implements Listener {
 							}
 						}
 						if(eventChannel.getName().equalsIgnoreCase("Nation")) {
-							Resident r = TownyUniverse.getDataSource().getResident(p.getName());
-							Resident pp = TownyUniverse.getDataSource().getResident(mcp.getName());
+							Resident r = towny.getResident(p.getName());
+							Resident pp = towny.getResident(mcp.getName());
 							if(!pp.hasNation()) {
 								recipients.remove(p.getPlayer());
 								recipientCount--;

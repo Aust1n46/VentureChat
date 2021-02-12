@@ -10,8 +10,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.PluginManager;
 
 import com.massivecraft.factions.entity.MPlayer;
+import com.palmergames.bukkit.towny.TownyUniverse;
 import com.palmergames.bukkit.towny.object.Resident;
-import com.palmergames.bukkit.towny.object.TownyUniverse;
 
 import mineverse.Aust1n46.chat.MineverseChat;
 import mineverse.Aust1n46.chat.api.MineverseChatAPI;
@@ -78,9 +78,10 @@ public class Chwho extends MineverseCommand {
 							}
 							if(plugin.getConfig().getBoolean("enable_towny_channel") && pluginManager.isPluginEnabled("Towny") && sender instanceof Player) {
 								try {
+									TownyUniverse towny = TownyUniverse.getInstance();
 									if(channel.getName().equalsIgnoreCase("Town")) {
-										Resident r = TownyUniverse.getDataSource().getResident(p.getName());
-										Resident pp = TownyUniverse.getDataSource().getResident(((Player) sender).getName());
+										Resident r = towny.getResident(p.getName());
+										Resident pp = towny.getResident(((Player) sender).getName());
 										if(!pp.hasTown()) {
 											if(playerlist.length() + p.getName().length() > linecount) {
 												playerlist += "\n";
@@ -103,8 +104,8 @@ public class Chwho extends MineverseCommand {
 										}
 									}
 									if(channel.getName().equalsIgnoreCase("Nation")) {
-										Resident r = TownyUniverse.getDataSource().getResident(p.getName());
-										Resident pp = TownyUniverse.getDataSource().getResident(((Player) sender).getName());
+										Resident r = towny.getResident(p.getName());
+										Resident pp = towny.getResident(((Player) sender).getName());
 										if(!pp.hasNation()) {
 											if(playerlist.length() + p.getName().length() > linecount) {
 												playerlist += "\n";
