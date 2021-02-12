@@ -93,4 +93,13 @@ public class UUIDFetcher implements Callable<Map<String, UUID>> { //unimplemente
 	public static UUID getUUIDOf(String name) throws Exception {
 		return new UUIDFetcher(Arrays.asList(name)).call().get(name);
 	}
+	
+	/**
+     * Returns whether the passed UUID is a v3 UUID. Offline UUIDs are v3, online are v4.
+     * @param uuid the UUID to check
+     * @return whether the UUID is a v3 UUID & thus is offline
+     */
+    public static boolean uuidIsOffline(UUID uuid) {
+        return uuid.version() == 3;
+    }
 }
