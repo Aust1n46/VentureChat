@@ -21,6 +21,7 @@ import mineverse.Aust1n46.chat.MineverseChat;
 import mineverse.Aust1n46.chat.api.MineverseChatPlayer;
 import mineverse.Aust1n46.chat.channel.ChatChannel;
 import mineverse.Aust1n46.chat.utilities.Format;
+import mineverse.Aust1n46.chat.utilities.UUIDFetcher;
 
 /**
  * Class for reading and writing player data.
@@ -42,6 +43,10 @@ public class PlayerData {
 			FileConfiguration playerData = YamlConfiguration.loadConfiguration(legacyPlayerDataFile);
 			for(String uuidString : playerData.getConfigurationSection("players").getKeys(false)) {
 				UUID uuid = UUID.fromString(uuidString);
+				if(UUIDFetcher.shouldSkipOfflineUUID(uuid)) {
+					Bukkit.getConsoleSender().sendMessage(Format.FormatStringAll("&8[&eVentureChat&8]&c - Skipping Offline UUID: " + uuid));
+					continue;
+				}
 				String name = playerData.getConfigurationSection("players." + uuid).getString("name");
 				String currentChannelName = playerData.getConfigurationSection("players." + uuid).getString("current");
 				ChatChannel currentChannel = ChatChannel.isChannel(currentChannelName) ? ChatChannel.getChannel(currentChannelName) : ChatChannel.getDefaultChannel();
@@ -130,6 +135,12 @@ public class PlayerData {
 			FileConfiguration playerDataFileYamlConfiguration = YamlConfiguration.loadConfiguration(playerDataFile);
 			String uuidString = playerDataFile.getName().replace(".yml", "");
 			UUID uuid = UUID.fromString(uuidString);
+			if(UUIDFetcher.shouldSkipOfflineUUID(uuid)) {
+				Bukkit.getConsoleSender().sendMessage(Format.FormatStringAll("&8[&eVentureChat&8]&c - Skipping Offline UUID: " + uuid));
+				Bukkit.getConsoleSender().sendMessage(Format.FormatStringAll("&8[&eVentureChat&8]&c - File will be skipped and deleted."));
+				playerDataFile.delete();
+				return;
+			}
 			String name = playerDataFileYamlConfiguration.getString("name");
 			String currentChannelName = playerDataFileYamlConfiguration.getString("current");
 			ChatChannel currentChannel = ChatChannel.isChannel(currentChannelName) ? ChatChannel.getChannel(currentChannelName) : ChatChannel.getDefaultChannel();
@@ -188,7 +199,7 @@ public class PlayerData {
 	}
 	
 	public static void savePlayerData(MineverseChatPlayer mcp) {
-		if(mcp == null || mcp.isTempData() || (!mcp.isOnline() && !mcp.wasModified())) {
+		if(mcp == null || UUIDFetcher.shouldSkipOfflineUUID(mcp.getUUID()) || (!mcp.isOnline() && !mcp.wasModified())) {
 			return;
 		}
 		try {

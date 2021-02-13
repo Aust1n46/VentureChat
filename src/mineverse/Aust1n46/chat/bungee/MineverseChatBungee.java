@@ -4,6 +4,8 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
+import java.io.File;
+import java.nio.file.Files;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -17,20 +19,26 @@ import mineverse.Aust1n46.chat.bungee.command.GlobalMuteAll;
 import mineverse.Aust1n46.chat.bungee.command.GlobalUnmute;
 import mineverse.Aust1n46.chat.bungee.command.GlobalUnmuteAll;
 import mineverse.Aust1n46.chat.database.BungeePlayerData;
+import mineverse.Aust1n46.chat.utilities.UUIDFetcher;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.connection.Server;
 import net.md_5.bungee.api.event.PluginMessageEvent;
+import net.md_5.bungee.api.event.PostLoginEvent;
 import net.md_5.bungee.api.event.ServerDisconnectEvent;
 import net.md_5.bungee.api.event.ServerSwitchEvent;
 import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.api.plugin.Plugin;
+import net.md_5.bungee.config.Configuration;
+import net.md_5.bungee.config.ConfigurationProvider;
+import net.md_5.bungee.config.YamlConfiguration;
 import net.md_5.bungee.event.EventHandler;
 
 //This is the main class for the BungeeCord version of the plugin.
 public class MineverseChatBungee extends Plugin implements Listener {
 	private static MineverseChatBungee instance;
+	private Configuration bungeeConfig;
 	public Map<String, String> ignore = new HashMap<String, String>();
 	public Map<String, Boolean> spy = new HashMap<String, Boolean>();
 	public static Set<SynchronizedMineverseChatPlayer> players = new HashSet<SynchronizedMineverseChatPlayer>();
@@ -39,6 +47,20 @@ public class MineverseChatBungee extends Plugin implements Listener {
 	@Override
 	public void onEnable() {
 		instance = this;
+		
+		if(!getDataFolder().exists()) {
+			getDataFolder().mkdir();
+		}
+		File config = new File(getDataFolder(), "bungeeconfig.yml");
+		try {
+			if(!config.exists()) {
+				Files.copy(getResourceAsStream("bungeeconfig.yml"), config.toPath());
+			}
+			bungeeConfig = ConfigurationProvider.getProvider(YamlConfiguration.class).load(new File(getDataFolder(), "bungeeconfig.yml"));
+		}
+		catch(Exception e) {
+			e.printStackTrace();
+		}
 		
 		BungeePlayerData.loadLegacyBungeePlayerData();
 		BungeePlayerData.loadBungeePlayerData();
@@ -73,6 +95,10 @@ public class MineverseChatBungee extends Plugin implements Listener {
 		return instance;
 	}
 	
+	public Configuration getBungeeConfig() {
+		return bungeeConfig;
+	}
+	
 	@EventHandler
 	public void onPlayerJoin(ServerSwitchEvent event) {
 		updatePlayerNames();
@@ -81,6 +107,11 @@ public class MineverseChatBungee extends Plugin implements Listener {
 	@EventHandler
 	public void onPlayerLeave(ServerDisconnectEvent event) {
 		updatePlayerNames();
+	}
+	
+	@EventHandler
+	public void onPlayerJoinNetwork(PostLoginEvent event) {
+		UUIDFetcher.checkOfflineUUIDWarningBungee(event.getPlayer().getUniqueId());
 	}
 	
 	private void updatePlayerNames() {

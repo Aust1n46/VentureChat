@@ -13,12 +13,16 @@ import java.util.UUID;
 import java.util.concurrent.Callable;
 
 import org.bukkit.Bukkit;
-import org.bukkit.entity.Player;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 
 import com.google.common.collect.ImmutableList;
+
+import mineverse.Aust1n46.chat.MineverseChat;
+import mineverse.Aust1n46.chat.bungee.MineverseChatBungee;
+import net.md_5.bungee.api.ProxyServer;
+import net.md_5.bungee.api.chat.TextComponent;
 
 //This class is used to query the Mojang servers to verify UUID's.
 public class UUIDFetcher implements Callable<Map<String, UUID>> { //unimplemented
@@ -111,17 +115,37 @@ public class UUIDFetcher implements Callable<Map<String, UUID>> { //unimplemente
         return uuid.version() == 3;
     }
     
-    public static UUID getUUIDFromPlayer(Player player) {
-    	UUID uuid = player.getUniqueId();
-    	if(uuidIsOffline(uuid)) {
+    public static boolean shouldSkipOfflineUUID(UUID uuid) {
+    	return (uuidIsOffline(uuid) && !MineverseChat.getInstance().getConfig().getBoolean("offline_server_acknowledgement", false));
+    }
+    
+    public static boolean shouldSkipOfflineUUIDBungee(UUID uuid) {
+    	return (uuidIsOffline(uuid) && !MineverseChatBungee.getInstance().getBungeeConfig().getBoolean("offline_server_acknowledgement", false));
+    }
+    
+    public static void checkOfflineUUIDWarning(UUID uuid) {
+		if(shouldSkipOfflineUUID(uuid)) {
     		Bukkit.getConsoleSender().sendMessage(Format.FormatStringAll("&8[&eVentureChat&8]&c - Detected Offline UUID!"));
     		Bukkit.getConsoleSender().sendMessage(Format.FormatStringAll("&8[&eVentureChat&8]&c - If you are using BungeeCord, make sure you have properly setup IP Forwarding."));
     		Bukkit.getConsoleSender().sendMessage(Format.FormatStringAll("&8[&eVentureChat&8]&c - https://www.spigotmc.org/wiki/bungeecord-ip-forwarding/"));
     		Bukkit.getConsoleSender().sendMessage(Format.FormatStringAll("&8[&eVentureChat&8]&c - You can access this wiki page from the log file or just Google it."));
     		Bukkit.getConsoleSender().sendMessage(Format.FormatStringAll("&8[&eVentureChat&8]&c - If you're running a \"cracked\" server, player data might not be stored properly, and thus, you are on your own."));
-    		Bukkit.getConsoleSender().sendMessage(Format.FormatStringAll("&8[&eVentureChat&8]&c - If you run your server in offline mode, you might have to reset your player data when switching to online mode!"));
+    		Bukkit.getConsoleSender().sendMessage(Format.FormatStringAll("&8[&eVentureChat&8]&c - If you run your server in offline mode, you will probably lose your player data when switching to online mode!"));
     		Bukkit.getConsoleSender().sendMessage(Format.FormatStringAll("&8[&eVentureChat&8]&c - No player data will be saved in offline mode unless you set the \"cracked\" server acknowledgement in the config!"));
-    	}
-    	return uuid;
+    		return;
+		}
+    }
+    
+    public static void checkOfflineUUIDWarningBungee(UUID uuid) {
+		if(shouldSkipOfflineUUIDBungee(uuid)) {
+			ProxyServer.getInstance().getConsole().sendMessage(TextComponent.fromLegacyText(Format.FormatStringAll("&8[&eVentureChat&8]&c - Detected Offline UUID!")));
+			ProxyServer.getInstance().getConsole().sendMessage(TextComponent.fromLegacyText(Format.FormatStringAll("&8[&eVentureChat&8]&c - If you are using BungeeCord, make sure you have properly setup IP Forwarding.")));
+			ProxyServer.getInstance().getConsole().sendMessage(TextComponent.fromLegacyText(Format.FormatStringAll("&8[&eVentureChat&8]&c - https://www.spigotmc.org/wiki/bungeecord-ip-forwarding/")));
+			ProxyServer.getInstance().getConsole().sendMessage(TextComponent.fromLegacyText(Format.FormatStringAll("&8[&eVentureChat&8]&c - You can access this wiki page from the log file or just Google it.")));
+			ProxyServer.getInstance().getConsole().sendMessage(TextComponent.fromLegacyText(Format.FormatStringAll("&8[&eVentureChat&8]&c - If you're running a \"cracked\" server, player data might not be stored properly, and thus, you are on your own.")));
+			ProxyServer.getInstance().getConsole().sendMessage(TextComponent.fromLegacyText(Format.FormatStringAll("&8[&eVentureChat&8]&c - If you run your server in offline mode, you will probably lose your player data when switching to online mode!")));
+			ProxyServer.getInstance().getConsole().sendMessage(TextComponent.fromLegacyText(Format.FormatStringAll("&8[&eVentureChat&8]&c - No player data will be saved in offline mode unless you set the \"cracked\" server acknowledgement in the config!")));	
+    		return;
+		}
     }
 }

@@ -54,8 +54,7 @@ public class LoginListener implements Listener {
 		if(mcp == null) {
 			Player player = event.getPlayer();
 			String name = player.getName();
-			UUID uuid = UUIDFetcher.getUUIDFromPlayer(player);
-			boolean tempData = UUIDFetcher.uuidIsOffline(uuid);
+			UUID uuid = player.getUniqueId();
 			ChatChannel current = ChatChannel.getDefaultChannel();
 			Set<UUID> ignores = new HashSet<UUID>();
 			Set<String> listening = new HashSet<String>();
@@ -63,9 +62,10 @@ public class LoginListener implements Listener {
 			HashMap<String, Integer> mutes = new HashMap<String, Integer>();
 			Set<String> blockedCommands = new HashSet<String>();
 			String jsonFormat = "Default";
-			mcp = new MineverseChatPlayer(uuid, name, current, ignores, listening, mutes, blockedCommands, false, null, true, true, name, jsonFormat, false, false, false, true, true, tempData);
+			mcp = new MineverseChatPlayer(uuid, name, current, ignores, listening, mutes, blockedCommands, false, null, true, true, name, jsonFormat, false, false, false, true, true);
 			MineverseChat.players.add(mcp);
 		}
+		UUIDFetcher.checkOfflineUUIDWarning(mcp.getUUID());
 		mcp.setName(event.getPlayer().getName());
 		if(!event.getPlayer().getDisplayName().equals(mcp.getName())) {
 			mcp.setNickname(event.getPlayer().getDisplayName());

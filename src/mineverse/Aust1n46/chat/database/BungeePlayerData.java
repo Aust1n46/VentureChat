@@ -14,6 +14,7 @@ import java.util.UUID;
 import mineverse.Aust1n46.chat.api.SynchronizedMineverseChatPlayer;
 import mineverse.Aust1n46.chat.bungee.MineverseChatBungee;
 import mineverse.Aust1n46.chat.utilities.Format;
+import mineverse.Aust1n46.chat.utilities.UUIDFetcher;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.config.Configuration;
@@ -40,6 +41,10 @@ public class BungeePlayerData {
 			Configuration playerData = ConfigurationProvider.getProvider(YamlConfiguration.class).load(sync);
 			for(String uuidString : playerData.getKeys()) {
 				UUID uuid = UUID.fromString(uuidString);
+				if(UUIDFetcher.shouldSkipOfflineUUIDBungee(uuid)) {
+					ProxyServer.getInstance().getConsole().sendMessage(TextComponent.fromLegacyText(Format.FormatStringAll("&8[&eVentureChat&8]&c - Skipping Offline UUID: " + uuid)));
+					continue;
+				}
 				Set<String> listening = new HashSet<String>();
 				StringTokenizer l = new StringTokenizer(playerData.getString(uuidString + ".channels"), ",");
 				while(l.hasMoreTokens()) {
@@ -97,6 +102,12 @@ public class BungeePlayerData {
 			Configuration bungeePlayerDataFileConfiguration = ConfigurationProvider.getProvider(YamlConfiguration.class).load(bungeePlayerDataFile);
 			String uuidString = bungeePlayerDataFile.getName().replace(".yml", "");
 			UUID uuid = UUID.fromString(uuidString);
+			if(UUIDFetcher.shouldSkipOfflineUUIDBungee(uuid)) {
+				ProxyServer.getInstance().getConsole().sendMessage(TextComponent.fromLegacyText(Format.FormatStringAll("&8[&eVentureChat&8]&c - Skipping Offline UUID: " + uuid)));
+				ProxyServer.getInstance().getConsole().sendMessage(TextComponent.fromLegacyText(Format.FormatStringAll("&8[&eVentureChat&8]&c - File will be skipped and deleted.")));
+				bungeePlayerDataFile.delete();
+				return;
+			}
 			Set<String> listening = new HashSet<String>();
 			StringTokenizer l = new StringTokenizer(bungeePlayerDataFileConfiguration.getString("channels"), ",");
 			while(l.hasMoreTokens()) {
@@ -133,6 +144,9 @@ public class BungeePlayerData {
 	public static void saveBungeePlayerData() {
 		try {
 			for(SynchronizedMineverseChatPlayer p : MineverseChatBungee.players) {
+				if(UUIDFetcher.shouldSkipOfflineUUIDBungee(p.getUUID())) {
+					return;
+				}
 				File bungeePlayerDataFile = new File(BUNGEE_PLAYER_DATA_DIRECTORY_PATH, p.getUUID() + ".yml");
 				if(!bungeePlayerDataFile.exists()) {
 					bungeePlayerDataFile.createNewFile();

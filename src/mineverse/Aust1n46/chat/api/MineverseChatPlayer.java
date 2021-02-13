@@ -49,7 +49,6 @@ public class MineverseChatPlayer {
 	private boolean rangedSpy;
 	private boolean messageToggle;
 	private boolean bungeeToggle;
-	private boolean tempData;
 
 	//buttons variable no longer used
 	//mail variable no longer used
@@ -59,10 +58,6 @@ public class MineverseChatPlayer {
 	}
 	
 	public MineverseChatPlayer(UUID uuid, String name, ChatChannel currentChannel, Set<UUID> ignores, Set<String> listening, HashMap<String, Integer> mutes, Set<String> blockedCommands, boolean host, UUID party, boolean filter, boolean notifications, String nickname, String jsonFormat, boolean spy, boolean commandSpy, boolean rangedSpy, boolean messageToggle, boolean bungeeToggle) {
-		this(uuid, name, currentChannel, ignores, listening, mutes, blockedCommands, host, party, filter, notifications, nickname, jsonFormat, spy, commandSpy, rangedSpy, messageToggle, bungeeToggle, false);
-	}
-	
-	public MineverseChatPlayer(UUID uuid, String name, ChatChannel currentChannel, Set<UUID> ignores, Set<String> listening, HashMap<String, Integer> mutes, Set<String> blockedCommands, boolean host, UUID party, boolean filter, boolean notifications, String nickname, String jsonFormat, boolean spy, boolean commandSpy, boolean rangedSpy, boolean messageToggle, boolean bungeeToggle, boolean tempData) {
 		this.uuid = uuid;
 		this.name = name;
 		this.currentChannel = currentChannel;
@@ -93,11 +88,6 @@ public class MineverseChatPlayer {
 		this.spam = new HashMap<ChatChannel, List<Integer>>();
 		this.messageToggle = messageToggle;
 		this.bungeeToggle = bungeeToggle;
-		this.tempData = tempData;
-	}
-	
-	public boolean isTempData() {
-		return tempData;
 	}
 	
 	public boolean getBungeeToggle() {
