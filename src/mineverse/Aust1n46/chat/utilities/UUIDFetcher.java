@@ -1,16 +1,24 @@
 package mineverse.Aust1n46.chat.utilities;
 
-import com.google.common.collect.ImmutableList;
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.ByteBuffer;
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 import java.util.concurrent.Callable;
+
+import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+
+import com.google.common.collect.ImmutableList;
 
 //This class is used to query the Mojang servers to verify UUID's.
 public class UUIDFetcher implements Callable<Map<String, UUID>> { //unimplemented
@@ -101,5 +109,19 @@ public class UUIDFetcher implements Callable<Map<String, UUID>> { //unimplemente
      */
     public static boolean uuidIsOffline(UUID uuid) {
         return uuid.version() == 3;
+    }
+    
+    public static UUID getUUIDFromPlayer(Player player) {
+    	UUID uuid = player.getUniqueId();
+    	if(uuidIsOffline(uuid)) {
+    		Bukkit.getConsoleSender().sendMessage(Format.FormatStringAll("&8[&eVentureChat&8]&c - Detected Offline UUID!"));
+    		Bukkit.getConsoleSender().sendMessage(Format.FormatStringAll("&8[&eVentureChat&8]&c - If you are using BungeeCord, make sure you have properly setup IP Forwarding."));
+    		Bukkit.getConsoleSender().sendMessage(Format.FormatStringAll("&8[&eVentureChat&8]&c - https://www.spigotmc.org/wiki/bungeecord-ip-forwarding/"));
+    		Bukkit.getConsoleSender().sendMessage(Format.FormatStringAll("&8[&eVentureChat&8]&c - You can access this wiki page from the log file or just Google it."));
+    		Bukkit.getConsoleSender().sendMessage(Format.FormatStringAll("&8[&eVentureChat&8]&c - If you're running a \"cracked\" server, player data might not be stored properly, and thus, you are on your own."));
+    		Bukkit.getConsoleSender().sendMessage(Format.FormatStringAll("&8[&eVentureChat&8]&c - If you run your server in offline mode, you might have to reset your player data when switching to online mode!"));
+    		Bukkit.getConsoleSender().sendMessage(Format.FormatStringAll("&8[&eVentureChat&8]&c - No player data will be saved in offline mode unless you set the \"cracked\" server acknowledgement in the config!"));
+    	}
+    	return uuid;
     }
 }

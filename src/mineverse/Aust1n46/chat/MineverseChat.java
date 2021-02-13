@@ -21,7 +21,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.StringTokenizer;
 import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -148,7 +147,7 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 	public static Set<MineverseChatPlayer> players = new HashSet<MineverseChatPlayer>();
 	public static Set<MineverseChatPlayer> onlinePlayers = new HashSet<MineverseChatPlayer>();
 	public static List<String> networkPlayerNames = new ArrayList<String>();
-	private boolean firstRun = true;
+	//private boolean firstRun = true;
 	
 	// Plugin Messaging Channel
 	public static final String PLUGIN_MESSAGING_CHANNEL = "venturechat:data";
@@ -221,57 +220,8 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 		jfInfo = new JsonFormatInfo(this);
 		gsInfo = new GuiSlotInfo();
 		
-		PlayerData.initialize();
-		if(this.firstRun) {
-			for(String uuidString : PlayerData.getPlayerData().getConfigurationSection("players").getKeys(false)) {
-				UUID uuid = UUID.fromString(uuidString);
-				String name = PlayerData.getPlayerData().getConfigurationSection("players." + uuid).getString("name");
-				String currentChannelName = PlayerData.getPlayerData().getConfigurationSection("players." + uuid).getString("current");
-				ChatChannel currentChannel = ChatChannel.isChannel(currentChannelName) ? ChatChannel.getChannel(currentChannelName) : ChatChannel.getDefaultChannel();
-				Set<UUID> ignores = new HashSet<UUID>();
-				StringTokenizer i = new StringTokenizer(PlayerData.getPlayerData().getConfigurationSection("players." + uuidString).getString("ignores"), ",");
-				while(i.hasMoreTokens()) {
-					ignores.add(UUID.fromString(i.nextToken()));
-				}
-				Set<String> listening = new HashSet<String>();
-				StringTokenizer l = new StringTokenizer(PlayerData.getPlayerData().getConfigurationSection("players." + uuidString).getString("listen"), ",");
-				while(l.hasMoreTokens()) {
-					String channel = l.nextToken();
-					if(ChatChannel.isChannel(channel)) {
-						listening.add(channel);
-					}
-				}
-				HashMap<String, Integer> mutes = new HashMap<String, Integer>();
-				StringTokenizer m = new StringTokenizer(PlayerData.getPlayerData().getConfigurationSection("players." + uuidString).getString("mutes"), ",");
-				while(m.hasMoreTokens()) {
-					String[] parts = m.nextToken().split(":");
-					if(ChatChannel.isChannel(parts[0])) {
-						if(parts[1].equals("null")) {
-							log.info("[VentureChat] Null Mute Time: " + parts[0] + " " + name);
-							continue;
-						}
-						mutes.put(ChatChannel.getChannel(parts[0]).getName(), Integer.parseInt(parts[1]));
-					}
-				}
-				Set<String> blockedCommands = new HashSet<String>();
-				StringTokenizer b = new StringTokenizer(PlayerData.getPlayerData().getConfigurationSection("players." + uuidString).getString("blockedcommands"), ",");
-				while(b.hasMoreTokens()) {
-					blockedCommands.add(b.nextToken());
-				}
-				boolean host = PlayerData.getPlayerData().getConfigurationSection("players." + uuidString).getBoolean("host");
-				UUID party = PlayerData.getPlayerData().getConfigurationSection("players." + uuidString).getString("party").length() > 0 ? UUID.fromString(PlayerData.getPlayerData().getConfigurationSection("players." + uuidString).getString("party")) : null;
-				boolean filter = PlayerData.getPlayerData().getConfigurationSection("players." + uuidString).getBoolean("filter");
-				boolean notifications = PlayerData.getPlayerData().getConfigurationSection("players." + uuidString).getBoolean("notifications");
-				String nickname = PlayerData.getPlayerData().getConfigurationSection("players." + uuidString).getString("nickname");
-				String jsonFormat = "Default";
-				boolean spy = PlayerData.getPlayerData().getConfigurationSection("players." + uuidString).getBoolean("spy", false);
-				boolean commandSpy = PlayerData.getPlayerData().getConfigurationSection("players." + uuidString).getBoolean("commandspy", false);
-				boolean rangedSpy = PlayerData.getPlayerData().getConfigurationSection("players." + uuidString).getBoolean("rangedspy", false);
-				boolean messageToggle = PlayerData.getPlayerData().getConfigurationSection("players." + uuidString).getBoolean("messagetoggle", true);
-				boolean bungeeToggle = PlayerData.getPlayerData().getConfigurationSection("players." + uuidString).getBoolean("bungeetoggle", true);
-				players.add(new MineverseChatPlayer(uuid, name, currentChannel, ignores, listening, mutes, blockedCommands, host, party, filter, notifications, nickname, jsonFormat, spy, commandSpy, rangedSpy, messageToggle, bungeeToggle));
-			}
-		}
+		PlayerData.loadLegacyPlayerData();
+		PlayerData.loadPlayerData();
 		for(Player p : this.getServer().getOnlinePlayers()) {
 			MineverseChatPlayer mcp = MineverseChatAPI.getMineverseChatPlayer(p);
 			mcp.setName(p.getName());
@@ -452,7 +402,6 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 				}
 			}
 		}, 0L, 1200L); // one minute interval
-		this.firstRun = false;
 	}
 
 	@SuppressWarnings("unchecked")

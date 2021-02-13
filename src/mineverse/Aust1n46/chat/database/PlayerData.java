@@ -2,104 +2,261 @@ package mineverse.Aust1n46.chat.database;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.StringTokenizer;
 import java.util.UUID;
+
+import org.bukkit.Bukkit;
+import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.configuration.file.YamlConfiguration;
 
 import mineverse.Aust1n46.chat.MineverseChat;
 import mineverse.Aust1n46.chat.api.MineverseChatPlayer;
 import mineverse.Aust1n46.chat.channel.ChatChannel;
+import mineverse.Aust1n46.chat.utilities.Format;
 
-import org.bukkit.configuration.ConfigurationSection;
-import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.configuration.file.YamlConfiguration;
-
-//This class writes player data to the PlayerData.yml file in preparation for saving and shutting down the server.
+/**
+ * Class for reading and writing player data.
+ * 
+ * @author Aust1n46
+ */
 public class PlayerData {
-	private static FileConfiguration playerData;
-	private static File playerDataFile;
-	private static MineverseChat plugin;
+	private static MineverseChat plugin = MineverseChat.getInstance();
+	private static final String PLAYER_DATA_DIRECTORY_PATH = plugin.getDataFolder().getAbsolutePath() + "/PlayerData";
 	
-	public static void initialize() {
-		plugin = MineverseChat.getInstance();
-		playerDataFile = new File(plugin.getDataFolder().getAbsolutePath(), "Players.yml");
-		if(!playerDataFile.isFile()) {
-			plugin.saveResource("Players.yml", true);		
+	public static void loadLegacyPlayerData() {
+		File legacyPlayerDataFile = new File(plugin.getDataFolder().getAbsolutePath(), "Players.yml");
+		if(!legacyPlayerDataFile.isFile()) {
+			return;
 		}
-		playerData = YamlConfiguration.loadConfiguration(playerDataFile);
+		try {
+			Bukkit.getConsoleSender().sendMessage(Format.FormatStringAll("&8[&eVentureChat&8]&c - Detected Legacy Player Data!"));
+			Bukkit.getConsoleSender().sendMessage(Format.FormatStringAll("&8[&eVentureChat&8]&c - Converting to new structure and deleting old Players.yml file!"));
+			FileConfiguration playerData = YamlConfiguration.loadConfiguration(legacyPlayerDataFile);
+			for(String uuidString : playerData.getConfigurationSection("players").getKeys(false)) {
+				UUID uuid = UUID.fromString(uuidString);
+				String name = playerData.getConfigurationSection("players." + uuid).getString("name");
+				String currentChannelName = playerData.getConfigurationSection("players." + uuid).getString("current");
+				ChatChannel currentChannel = ChatChannel.isChannel(currentChannelName) ? ChatChannel.getChannel(currentChannelName) : ChatChannel.getDefaultChannel();
+				Set<UUID> ignores = new HashSet<UUID>();
+				StringTokenizer i = new StringTokenizer(playerData.getConfigurationSection("players." + uuidString).getString("ignores"), ",");
+				while(i.hasMoreTokens()) {
+					ignores.add(UUID.fromString(i.nextToken()));
+				}
+				Set<String> listening = new HashSet<String>();
+				StringTokenizer l = new StringTokenizer(playerData.getConfigurationSection("players." + uuidString).getString("listen"), ",");
+				while(l.hasMoreTokens()) {
+					String channel = l.nextToken();
+					if(ChatChannel.isChannel(channel)) {
+						listening.add(channel);
+					}
+				}
+				HashMap<String, Integer> mutes = new HashMap<String, Integer>();
+				StringTokenizer m = new StringTokenizer(playerData.getConfigurationSection("players." + uuidString).getString("mutes"), ",");
+				while(m.hasMoreTokens()) {
+					String[] parts = m.nextToken().split(":");
+					if(ChatChannel.isChannel(parts[0])) {
+						if(parts[1].equals("null")) {
+							Bukkit.getConsoleSender().sendMessage("[VentureChat] Null Mute Time: " + parts[0] + " " + name);
+							continue;
+						}
+						mutes.put(ChatChannel.getChannel(parts[0]).getName(), Integer.parseInt(parts[1]));
+					}
+				}
+				Set<String> blockedCommands = new HashSet<String>();
+				StringTokenizer b = new StringTokenizer(playerData.getConfigurationSection("players." + uuidString).getString("blockedcommands"), ",");
+				while(b.hasMoreTokens()) {
+					blockedCommands.add(b.nextToken());
+				}
+				boolean host = playerData.getConfigurationSection("players." + uuidString).getBoolean("host");
+				UUID party = playerData.getConfigurationSection("players." + uuidString).getString("party").length() > 0 ? UUID.fromString(playerData.getConfigurationSection("players." + uuidString).getString("party")) : null;
+				boolean filter = playerData.getConfigurationSection("players." + uuidString).getBoolean("filter");
+				boolean notifications = playerData.getConfigurationSection("players." + uuidString).getBoolean("notifications");
+				String nickname = playerData.getConfigurationSection("players." + uuidString).getString("nickname");
+				String jsonFormat = "Default";
+				boolean spy = playerData.getConfigurationSection("players." + uuidString).getBoolean("spy", false);
+				boolean commandSpy = playerData.getConfigurationSection("players." + uuidString).getBoolean("commandspy", false);
+				boolean rangedSpy = playerData.getConfigurationSection("players." + uuidString).getBoolean("rangedspy", false);
+				boolean messageToggle = playerData.getConfigurationSection("players." + uuidString).getBoolean("messagetoggle", true);
+				boolean bungeeToggle = playerData.getConfigurationSection("players." + uuidString).getBoolean("bungeetoggle", true);
+				MineverseChatPlayer mcp = new MineverseChatPlayer(uuid, name, currentChannel, ignores, listening, mutes, blockedCommands, host, party, filter, notifications, nickname, jsonFormat, spy, commandSpy, rangedSpy, messageToggle, bungeeToggle);
+				mcp.setModified(true);
+				MineverseChat.players.add(mcp);
+			}
+		}
+		catch (Exception e) {
+			MineverseChat.players.clear();
+			Bukkit.getConsoleSender().sendMessage(Format.FormatStringAll("&8[&eVentureChat&8]&c - Error Loading Legacy Player Data!"));
+			Bukkit.getConsoleSender().sendMessage(Format.FormatStringAll("&8[&eVentureChat&8]&c - Deleted Players.yml file!"));
+		}
+		finally {
+			legacyPlayerDataFile.delete();
+		}
 	}
 	
-	public static FileConfiguration getPlayerData() {		
-		return playerData;
+	public static void loadPlayerData() {
+		try {
+			File playerDataDirectory = new File(PLAYER_DATA_DIRECTORY_PATH);
+			if(!playerDataDirectory.exists()) {
+				playerDataDirectory.mkdirs();
+			}
+			Files.walk(Paths.get(PLAYER_DATA_DIRECTORY_PATH))
+			 .filter(Files::isRegularFile)
+			 .forEach((path) -> readPlayerDataFile(path));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	/**
+	 * Loads the player data file for a specific player. Corrupt/invalid data files are skipped and deleted.
+	 * 
+	 * @param path
+	 */
+	private static void readPlayerDataFile(Path path) {
+		MineverseChatPlayer mcp;
+		File playerDataFile = path.toFile();
+		if(!playerDataFile.exists()) {
+			return;
+		}
+		try {
+			FileConfiguration playerDataFileYamlConfiguration = YamlConfiguration.loadConfiguration(playerDataFile);
+			String uuidString = playerDataFile.getName().replace(".yml", "");
+			UUID uuid = UUID.fromString(uuidString);
+			String name = playerDataFileYamlConfiguration.getString("name");
+			String currentChannelName = playerDataFileYamlConfiguration.getString("current");
+			ChatChannel currentChannel = ChatChannel.isChannel(currentChannelName) ? ChatChannel.getChannel(currentChannelName) : ChatChannel.getDefaultChannel();
+			Set<UUID> ignores = new HashSet<UUID>();
+			StringTokenizer i = new StringTokenizer(playerDataFileYamlConfiguration.getString("ignores"), ",");
+			while(i.hasMoreTokens()) {
+				ignores.add(UUID.fromString(i.nextToken()));
+			}
+			Set<String> listening = new HashSet<String>();
+			StringTokenizer l = new StringTokenizer(playerDataFileYamlConfiguration.getString("listen"), ",");
+			while(l.hasMoreTokens()) {
+				String channel = l.nextToken();
+				if(ChatChannel.isChannel(channel)) {
+					listening.add(channel);
+				}
+			}
+			HashMap<String, Integer> mutes = new HashMap<String, Integer>();
+			StringTokenizer m = new StringTokenizer(playerDataFileYamlConfiguration.getString("mutes"), ",");
+			while(m.hasMoreTokens()) {
+				String[] parts = m.nextToken().split(":");
+				if(ChatChannel.isChannel(parts[0])) {
+					if(parts[1].equals("null")) {
+						Bukkit.getConsoleSender().sendMessage("[VentureChat] Null Mute Time: " + parts[0] + " " + name);
+						continue;
+					}
+					mutes.put(ChatChannel.getChannel(parts[0]).getName(), Integer.parseInt(parts[1]));
+				}
+			}
+			Set<String> blockedCommands = new HashSet<String>();
+			StringTokenizer b = new StringTokenizer(playerDataFileYamlConfiguration.getString("blockedcommands"), ",");
+			while(b.hasMoreTokens()) {
+				blockedCommands.add(b.nextToken());
+			}
+			boolean host = playerDataFileYamlConfiguration.getBoolean("host");
+			UUID party = playerDataFileYamlConfiguration.getString("party").length() > 0 ? UUID.fromString(playerDataFileYamlConfiguration.getString("party")) : null;
+			boolean filter = playerDataFileYamlConfiguration.getBoolean("filter");
+			boolean notifications = playerDataFileYamlConfiguration.getBoolean("notifications");
+			String nickname = playerDataFileYamlConfiguration.getString("nickname");
+			String jsonFormat = "Default";
+			boolean spy = playerDataFileYamlConfiguration.getBoolean("spy", false);
+			boolean commandSpy = playerDataFileYamlConfiguration.getBoolean("commandspy", false);
+			boolean rangedSpy = playerDataFileYamlConfiguration.getBoolean("rangedspy", false);
+			boolean messageToggle = playerDataFileYamlConfiguration.getBoolean("messagetoggle", true);
+			boolean bungeeToggle = playerDataFileYamlConfiguration.getBoolean("bungeetoggle", true);
+			mcp = new MineverseChatPlayer(uuid, name, currentChannel, ignores, listening, mutes, blockedCommands, host, party, filter, notifications, nickname, jsonFormat, spy, commandSpy, rangedSpy, messageToggle, bungeeToggle);
+		}
+		catch (Exception e) {
+			Bukkit.getConsoleSender().sendMessage(Format.FormatStringAll("&8[&eVentureChat&8]&c - Error Loading Data File: " + playerDataFile.getName()));
+			Bukkit.getConsoleSender().sendMessage(Format.FormatStringAll("&8[&eVentureChat&8]&c - File will be skipped and deleted."));
+			playerDataFile.delete();
+			return;
+		}
+		if(mcp != null) {
+			MineverseChat.players.add(mcp);
+		}
+	}
+	
+	public static void savePlayerData(MineverseChatPlayer mcp) {
+		if(mcp == null || mcp.isTempData() || (!mcp.isOnline() && !mcp.wasModified())) {
+			return;
+		}
+		try {
+			File playerDataFile = new File(PLAYER_DATA_DIRECTORY_PATH, mcp.getUUID() + ".yml");
+			FileConfiguration playerDataFileYamlConfiguration = YamlConfiguration.loadConfiguration(playerDataFile);
+			if(!playerDataFile.exists()) {
+				playerDataFileYamlConfiguration.save(playerDataFile);
+			}
+			
+			playerDataFileYamlConfiguration.set("name", mcp.getName());
+			playerDataFileYamlConfiguration.set("current", mcp.getCurrentChannel().getName());
+			String ignores = "";
+			for(UUID s : mcp.getIgnores()) {
+				ignores += s.toString() + ",";
+			}
+			playerDataFileYamlConfiguration.set("ignores", ignores);
+			String listening = "";
+			for(String channel : mcp.getListening()) {
+				ChatChannel c = ChatChannel.getChannel(channel);
+				listening += c.getName() + ",";
+			}
+			String mutes = "";
+			for(String channel : mcp.getMutes().keySet()) {
+				ChatChannel c = ChatChannel.getChannel(channel);
+				mutes += c.getName() + ":" + mcp.getMutes().get(c.getName()) + ",";
+			}
+			String blockedCommands = "";
+			for(String s : mcp.getBlockedCommands()) {
+				blockedCommands += s + ",";
+			}
+			if(listening.length() > 0) {
+				listening = listening.substring(0, listening.length() - 1);
+			}
+			playerDataFileYamlConfiguration.set("listen", listening);
+			if(mutes.length() > 0) {
+				mutes = mutes.substring(0, mutes.length() - 1);
+			}
+			playerDataFileYamlConfiguration.set("mutes", mutes);
+			if(blockedCommands.length() > 0) {
+				blockedCommands = blockedCommands.substring(0, blockedCommands.length() - 1);
+			}
+			playerDataFileYamlConfiguration.set("blockedcommands", blockedCommands);
+			playerDataFileYamlConfiguration.set("host", mcp.isHost());
+			playerDataFileYamlConfiguration.set("party", mcp.hasParty() ? mcp.getParty().toString() : "");
+			playerDataFileYamlConfiguration.set("filter", mcp.hasFilter());
+			playerDataFileYamlConfiguration.set("notifications", mcp.hasNotifications());
+			playerDataFileYamlConfiguration.set("nickname", mcp.getNickname());
+			playerDataFileYamlConfiguration.set("spy", mcp.isSpy());
+			playerDataFileYamlConfiguration.set("commandspy", mcp.hasCommandSpy());
+			playerDataFileYamlConfiguration.set("rangedspy", mcp.getRangedSpy());
+			playerDataFileYamlConfiguration.set("messagetoggle", mcp.getMessageToggle());
+			playerDataFileYamlConfiguration.set("bungeetoggle", mcp.getBungeeToggle());
+			Calendar currentDate = Calendar.getInstance();
+			SimpleDateFormat formatter = new SimpleDateFormat("yyyy/MMM/dd HH:mm:ss");
+			String dateNow = formatter.format(currentDate.getTime());
+			playerDataFileYamlConfiguration.set("date", dateNow);
+			mcp.setModified(false);
+			
+			playerDataFileYamlConfiguration.save(playerDataFile);
+		} 
+		catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	public static void savePlayerData() {
-		try {
-			for(MineverseChatPlayer p : MineverseChat.players) {
-				if(p.wasModified() || p.isOnline()) {
-					ConfigurationSection cs = playerData.getConfigurationSection("players." + p.getUUID().toString());
-					String nickname = p.getNickname();
-					if(cs == null) {
-						ConfigurationSection ps = playerData.getConfigurationSection("players");
-						if(ps == null) {
-							cs = playerData.createSection("players");
-						}
-						cs = playerData.createSection("players." + p.getUUID().toString());
-					}
-					cs.set("name", p.getName());
-					cs.set("current", p.getCurrentChannel().getName());
-					String ignores = "";
-					for(UUID s : p.getIgnores()) {
-						ignores += s.toString() + ",";
-					}
-					cs.set("ignores", ignores);
-					String listening = "";
-					for(String channel : p.getListening()) {
-						ChatChannel c = ChatChannel.getChannel(channel);
-						listening += c.getName() + ",";
-					}
-					String mutes = "";
-					for(String channel : p.getMutes().keySet()) {		
-						ChatChannel c = ChatChannel.getChannel(channel);
-						mutes += c.getName() + ":" + p.getMutes().get(c.getName()) + ",";
-					}
-					String blockedCommands = "";
-					for(String s : p.getBlockedCommands()) {
-						blockedCommands += s + ",";
-					}
-					if(listening.length() > 0) {
-						listening = listening.substring(0, listening.length() - 1);
-					}
-					cs.set("listen", listening);
-					if(mutes.length() > 0) {
-						mutes = mutes.substring(0, mutes.length() - 1);
-					}
-					cs.set("mutes", mutes);
-					if(blockedCommands.length() > 0) {
-						blockedCommands = blockedCommands.substring(0, blockedCommands.length() - 1);
-					}
-					cs.set("blockedcommands", blockedCommands);
-					cs.set("host", p.isHost());
-					cs.set("party", p.hasParty() ? p.getParty().toString() : "");
-					cs.set("filter", p.hasFilter());
-					cs.set("notifications", p.hasNotifications());
-					cs.set("nickname", nickname);
-					cs.set("spy", p.isSpy());
-					cs.set("commandspy", p.hasCommandSpy());
-					cs.set("rangedspy", p.getRangedSpy());
-					cs.set("messagetoggle", p.getMessageToggle());
-					cs.set("bungeetoggle", p.getBungeeToggle());
-					Calendar currentDate = Calendar.getInstance();
-					SimpleDateFormat formatter = new SimpleDateFormat("yyyy/MMM/dd HH:mm:ss");
-					String dateNow = formatter.format(currentDate.getTime());
-					cs.set("date", dateNow);
-					p.setModified(false);
-				}
-			}
-			playerData.save(playerDataFile);
-		}
-		catch(IOException e) {			
-			e.printStackTrace();
+		for(MineverseChatPlayer p : MineverseChat.players) {
+			savePlayerData(p);
 		}
 	}
 }
