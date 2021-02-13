@@ -4,13 +4,10 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
-import java.io.File;
-import java.nio.file.Files;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-import java.util.StringTokenizer;
 import java.util.UUID;
 
 import mineverse.Aust1n46.chat.api.MineverseChatAPI;
@@ -19,6 +16,7 @@ import mineverse.Aust1n46.chat.bungee.command.GlobalMute;
 import mineverse.Aust1n46.chat.bungee.command.GlobalMuteAll;
 import mineverse.Aust1n46.chat.bungee.command.GlobalUnmute;
 import mineverse.Aust1n46.chat.bungee.command.GlobalUnmuteAll;
+import mineverse.Aust1n46.chat.database.BungeePlayerData;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
@@ -28,111 +26,51 @@ import net.md_5.bungee.api.event.ServerDisconnectEvent;
 import net.md_5.bungee.api.event.ServerSwitchEvent;
 import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.api.plugin.Plugin;
-import net.md_5.bungee.config.Configuration;
-import net.md_5.bungee.config.ConfigurationProvider;
-import net.md_5.bungee.config.YamlConfiguration;
 import net.md_5.bungee.event.EventHandler;
 
 //This is the main class for the BungeeCord version of the plugin.
 public class MineverseChatBungee extends Plugin implements Listener {
+	private static MineverseChatBungee instance;
 	public Map<String, String> ignore = new HashMap<String, String>();
 	public Map<String, Boolean> spy = new HashMap<String, Boolean>();
-	private Configuration bungeeconfig;
-	private Configuration playerData;
 	public static Set<SynchronizedMineverseChatPlayer> players = new HashSet<SynchronizedMineverseChatPlayer>();
 	public static String PLUGIN_MESSAGING_CHANNEL = "venturechat:data";
 
 	@Override
 	public void onEnable() {
-		if(!getDataFolder().exists()) {
-			getDataFolder().mkdir();
-		}
-		File config = new File(getDataFolder(), "bungeeconfig.yml");
-		File sync = new File(getDataFolder(), "BungeePlayers.yml");
-		try {
-			if(!config.exists()) {
-				Files.copy(getResourceAsStream("bungeeconfig.yml"), config.toPath());
-			}
-			bungeeconfig = ConfigurationProvider.getProvider(YamlConfiguration.class).load(new File(getDataFolder(), "bungeeconfig.yml"));
-			if(!sync.exists()) {
-				Files.copy(getResourceAsStream("BungeePlayers.yml"), sync.toPath());
-			}
-			playerData = ConfigurationProvider.getProvider(YamlConfiguration.class).load(new File(getDataFolder(), "BungeePlayers.yml"));
-		}
-		catch(Exception e) {
-			e.printStackTrace();
-		}
-		for(String uuidString : playerData.getKeys()) {
-			UUID uuid = UUID.fromString(uuidString);
-			Set<String> listening = new HashSet<String>();
-			StringTokenizer l = new StringTokenizer(playerData.getString(uuidString + ".channels"), ",");
-			while(l.hasMoreTokens()) {
-				String channel = l.nextToken();
-				listening.add(channel);
-			}
-			HashMap<String, Integer> mutes = new HashMap<String, Integer>();
-			StringTokenizer m = new StringTokenizer(playerData.getString(uuidString + ".mutes"), ",");
-			while(m.hasMoreTokens()) {
-				String[] parts = m.nextToken().split(":");
-				mutes.put(parts[0], Integer.parseInt(parts[1]));
-			}
-			HashSet<UUID> ignores = new HashSet<UUID>();
-			StringTokenizer n = new StringTokenizer(playerData.getString(uuidString + ".ignores"), ",");
-			while(n.hasMoreTokens()) {
-				String ignore = n.nextToken();
-				ignores.add(UUID.fromString(ignore));
-			}
-			boolean spy = playerData.getBoolean(uuidString + ".spy");
-			boolean messageToggle = playerData.getBoolean(uuidString + ".messagetoggle");
-			players.add(new SynchronizedMineverseChatPlayer(uuid, listening, mutes, ignores, spy, messageToggle));
-		}
+		instance = this;
+		
+		BungeePlayerData.loadLegacyBungeePlayerData();
+		BungeePlayerData.loadBungeePlayerData();
+		
 		this.getProxy().registerChannel(MineverseChatBungee.PLUGIN_MESSAGING_CHANNEL);
 		this.getProxy().getPluginManager().registerListener(this, this);
-		if(bungeeconfig.getBoolean("muting")) {
-			getProxy().getPluginManager().registerCommand(this, new GlobalMute(this, "globalmute"));
-			getProxy().getPluginManager().registerCommand(this, new GlobalMute(this, "gmute"));
-			getProxy().getPluginManager().registerCommand(this, new GlobalMuteAll(this, "globalmuteall"));
-			getProxy().getPluginManager().registerCommand(this, new GlobalMuteAll(this, "gmuteall"));
-			getProxy().getPluginManager().registerCommand(this, new GlobalUnmute(this, "globalunmute"));
-			getProxy().getPluginManager().registerCommand(this, new GlobalUnmute(this, "gunmute"));
-			getProxy().getPluginManager().registerCommand(this, new GlobalUnmuteAll(this, "globalunmuteall"));
-			getProxy().getPluginManager().registerCommand(this, new GlobalUnmuteAll(this, "gunmuteall"));
-		}
-		if(bungeeconfig.getBoolean("nicknames")) {
-
-		}
+		
+		registerBungeeCordMuteCommands();
 	}
 
 	@Override
 	public void onDisable() {
-		for(SynchronizedMineverseChatPlayer p : players) {
-			String listen = "";
-			for(String s : p.getListening())
-				listen += s + ",";
-			String mute = "";
-			for(String s : p.getMutes().keySet())
-				mute += s + ":0,";
-			String ignore = "";
-			for(UUID s : p.getIgnores()) 
-				ignore += s.toString() + ",";
-			if(listen.length() > 0)
-				listen = listen.substring(0, listen.length() - 1);
-			if(mute.length() > 0)
-				mute = mute.substring(0, mute.length() - 1);
-			if(ignore.length() > 0)
-				ignore = ignore.substring(0, ignore.length() - 1);
-			playerData.set(p.getUUID().toString() + ".channels", listen);
-			playerData.set(p.getUUID().toString() + ".mutes", mute);
-			playerData.set(p.getUUID().toString() + ".ignores", ignore);
-			playerData.set(p.getUUID().toString() + ".spy", p.isSpy());
-			playerData.set(p.getUUID().toString() + ".messagetoggle", p.getMessageToggle());
-		}
-		try {
-			ConfigurationProvider.getProvider(YamlConfiguration.class).save(playerData, new File(getDataFolder(), "BungeePlayers.yml"));
-		}
-		catch(Exception e) {
-			e.printStackTrace();
-		}
+		BungeePlayerData.saveBungeePlayerData();
+	}
+	
+	/**
+	 * Old BungeeCord mute commands that pretty much no one even knows about let alone uses...
+	 * Slated for removal when the mute system is reworked.
+	 */
+	private void registerBungeeCordMuteCommands() {
+		getProxy().getPluginManager().registerCommand(this, new GlobalMute(this, "globalmute"));
+		getProxy().getPluginManager().registerCommand(this, new GlobalMute(this, "gmute"));
+		getProxy().getPluginManager().registerCommand(this, new GlobalMuteAll(this, "globalmuteall"));
+		getProxy().getPluginManager().registerCommand(this, new GlobalMuteAll(this, "gmuteall"));
+		getProxy().getPluginManager().registerCommand(this, new GlobalUnmute(this, "globalunmute"));
+		getProxy().getPluginManager().registerCommand(this, new GlobalUnmute(this, "gunmute"));
+		getProxy().getPluginManager().registerCommand(this, new GlobalUnmuteAll(this, "globalunmuteall"));
+		getProxy().getPluginManager().registerCommand(this, new GlobalUnmuteAll(this, "gunmuteall"));
+	}
+	
+	public static MineverseChatBungee getInstance() {
+		return instance;
 	}
 	
 	@EventHandler

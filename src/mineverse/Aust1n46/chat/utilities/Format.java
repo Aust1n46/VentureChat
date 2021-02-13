@@ -1,5 +1,7 @@
 package mineverse.Aust1n46.chat.utilities;
 
+import static mineverse.Aust1n46.chat.MineverseChat.getInstance;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.StringTokenizer;
@@ -25,15 +27,13 @@ import mineverse.Aust1n46.chat.versions.VersionHandler;
  * Class containing chat formatting methods.
  */
 public class Format {
-	private static MineverseChat plugin = MineverseChat.getInstance();
-
 	public static final int LEGACY_COLOR_CODE_LENGTH = 2;
 	public static final int HEX_COLOR_CODE_LENGTH = 14;
-	public static final String DEFAULT_COLOR_CODE = String.valueOf(ChatColor.WHITE);
 	public static final String HEX_COLOR_CODE_PREFIX = "#";
 	public static final char BUKKIT_COLOR_CODE_PREFIX_CHAR = '\u00A7';
 	public static final String BUKKIT_COLOR_CODE_PREFIX = String.valueOf(BUKKIT_COLOR_CODE_PREFIX_CHAR);
 	public static final String BUKKIT_HEX_COLOR_CODE_PREFIX = "x";
+	public static final String DEFAULT_COLOR_CODE = BUKKIT_COLOR_CODE_PREFIX + "f";
 
 	private static final Pattern LEGACY_CHAT_COLOR_DIGITS_PATTERN = Pattern.compile("&([0-9])");
 	private static final Pattern LEGACY_CHAT_COLOR_PATTERN = Pattern.compile(
@@ -70,7 +70,7 @@ public class Format {
 			}
 		} catch (Exception e) {
 			System.out.println("Exception?" + e.getLocalizedMessage());
-			if (plugin.getConfig().getString("loglevel", "info").equals("debug")) {
+			if (getInstance().getConfig().getString("loglevel", "info").equals("debug")) {
 				Bukkit.getConsoleSender().sendMessage(Format.FormatStringAll(
 						"&8[&eVentureChat&8]&e - Prefix and / or suffix don't exist, setting to nothing."));
 			}
@@ -85,7 +85,7 @@ public class Format {
 		json += "]}";
 		json += "," + convertLinks(c);
 		json += "]";
-		if (plugin.getConfig().getString("loglevel", "info").equals("debug")) {
+		if (getInstance().getConfig().getString("loglevel", "info").equals("debug")) {
 			System.out.println(json);
 			System.out.println("END OF JSON");
 			System.out.println("END OF JSON");
@@ -436,12 +436,12 @@ public class Format {
 	public static String formatModerationGUI(String json, Player player, String sender, String channelName, int hash) {
 		if (player.hasPermission("venturechat.gui")) {
 			json = json.substring(0, json.length() - 1);
-			json += "," + Format.convertToJsonColors(Format.FormatStringAll(plugin.getConfig().getString("guiicon")),
+			json += "," + Format.convertToJsonColors(Format.FormatStringAll(getInstance().getConfig().getString("guiicon")),
 					",\"clickEvent\":{\"action\":\"run_command\",\"value\":\"/vchatgui " + sender + " " + channelName
 							+ " " + hash
 							+ "\"},\"hoverEvent\":{\"action\":\"show_text\",\"value\":{\"text\":\"\",\"extra\":["
 							+ Format.convertToJsonColors(
-									Format.FormatStringAll(plugin.getConfig().getString("guitext")))
+									Format.FormatStringAll(getInstance().getConfig().getString("guitext")))
 							+ "]}}")
 					+ "]";
 		}
@@ -613,7 +613,7 @@ public class Format {
 
 	public static String FilterChat(String msg) {
 		int t = 0;
-		List<String> filters = plugin.getConfig().getStringList("filters");
+		List<String> filters = getInstance().getConfig().getStringList("filters");
 		for (String s : filters) {
 			t = 0;
 			String[] pparse = new String[2];
@@ -697,7 +697,7 @@ public class Format {
 	}
 
 	public static boolean underlineURLs() {
-		return plugin.getConfig().getBoolean("underlineurls", true);
+		return getInstance().getConfig().getBoolean("underlineurls", true);
 	}
 
 	public static int currentTimeMillis() {
