@@ -5,6 +5,7 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -63,17 +64,24 @@ public class LoginListener implements Listener {
 			Set<String> blockedCommands = new HashSet<String>();
 			String jsonFormat = "Default";
 			mcp = new MineverseChatPlayer(uuid, name, current, ignores, listening, mutes, blockedCommands, false, null, true, true, name, jsonFormat, false, false, false, true, true);
-			MineverseChat.players.add(mcp);
+			MineverseChatAPI.addMineverseChatPlayerToMap(mcp);
+			MineverseChatAPI.addNameToMap(mcp);
 		}
 		UUIDFetcher.checkOfflineUUIDWarning(mcp.getUUID());
-		mcp.setName(event.getPlayer().getName());
+		//check for name change
+		if(!mcp.getName().equals(event.getPlayer().getName())) {
+			Bukkit.getConsoleSender().sendMessage(Format.FormatStringAll("&8[&eVentureChat&8]&e - Detected Name Change. Old Name:&c " + mcp.getName() + " &eNew Name:&c " + event.getPlayer().getName()));
+			MineverseChatAPI.removeNameFromMap(mcp.getName());
+			mcp.setName(event.getPlayer().getName());
+			MineverseChatAPI.addNameToMap(mcp);
+		}
 		if(!event.getPlayer().getDisplayName().equals(mcp.getName())) {
 			mcp.setNickname(event.getPlayer().getDisplayName());
 		}
 		event.getPlayer().setDisplayName(Format.FormatStringAll(mcp.getNickname()));
 		mcp.setOnline(true);
 		mcp.setHasPlayed(false);
-		MineverseChat.onlinePlayers.add(mcp);
+		MineverseChatAPI.addMineverseChatOnlinePlayerToMap(mcp);
 		mcp.setJsonFormat();
 		if(plugin.getConfig().getBoolean("nickname-in-tablist", false)) {
 			String nick = mcp.getNickname();
@@ -111,6 +119,6 @@ public class LoginListener implements Listener {
 		PlayerData.savePlayerData(mcp);
 		mcp.clearMessages();
 		mcp.setOnline(false);
-		MineverseChat.onlinePlayers.remove(mcp);
+		MineverseChatAPI.removeMineverseChatOnlinePlayerToMap(mcp);
 	}
 }

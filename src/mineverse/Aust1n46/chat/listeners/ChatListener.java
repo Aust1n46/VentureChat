@@ -82,7 +82,7 @@ public class ChatListener implements Listener {
 			if(!tp.isOnline()) {
 				mcp.getPlayer().sendMessage(ChatColor.RED + tp.getName() + " is not available.");
 				if(!mcp.getPlayer().hasPermission("venturechat.spy.override")) {
-					for(MineverseChatPlayer p : MineverseChat.onlinePlayers) {
+					for(MineverseChatPlayer p : MineverseChatAPI.getOnlineMineverseChatPlayers()) {
 						if(p.getName().equals(mcp.getName())) {
 							continue;
 						}
@@ -135,7 +135,7 @@ public class ChatListener implements Listener {
 				spy = Format.FormatStringAll(PlaceholderAPI.setBracketPlaceholders(tp.getPlayer(), spy.replaceAll("receiver_", ""))) + filtered;
 				
 				if(!mcp.getPlayer().hasPermission("venturechat.spy.override")) {
-					for(MineverseChatPlayer p : MineverseChat.onlinePlayers) {
+					for(MineverseChatPlayer p : MineverseChatAPI.getOnlineMineverseChatPlayers()) {
 						if(p.getName().equals(mcp.getName()) || p.getName().equals(tp.getName())) {
 							continue;
 						}
@@ -169,7 +169,7 @@ public class ChatListener implements Listener {
 		if(mcp.isPartyChat() && !mcp.isQuickChat()) {
 			if(mcp.hasParty()) {
 				String partyformat = "";
-				for(MineverseChatPlayer p : MineverseChat.onlinePlayers) {
+				for(MineverseChatPlayer p : MineverseChatAPI.getOnlineMineverseChatPlayers()) {
 					if((p.hasParty() && p.getParty().toString().equals(mcp.getParty().toString()) || p.isSpy())) {
 						String filtered = chat;
 						if(mcp.hasFilter()) {
@@ -355,7 +355,7 @@ public class ChatListener implements Listener {
 			}
 		}
 		PluginManager pluginManager = plugin.getServer().getPluginManager();
-		for(MineverseChatPlayer p : MineverseChat.onlinePlayers) {
+		for(MineverseChatPlayer p : MineverseChatAPI.getOnlineMineverseChatPlayers()) {
 			if(p.getPlayer() != mcp.getPlayer()) {
 				if(!p.isListening(eventChannel.getName())) {
 					recipients.remove(p.getPlayer());

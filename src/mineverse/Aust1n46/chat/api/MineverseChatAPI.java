@@ -1,5 +1,7 @@
 package mineverse.Aust1n46.chat.api;
 
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.UUID;
 
 import org.bukkit.entity.Player;
@@ -14,6 +16,54 @@ import mineverse.Aust1n46.chat.bungee.MineverseChatBungee;
  * @author Aust1n46
  */
 public final class MineverseChatAPI {
+	private static HashMap<UUID, MineverseChatPlayer> playerMap = new HashMap<UUID, MineverseChatPlayer>();
+	private static HashMap<String, UUID> namesMap = new HashMap<String, UUID>();
+	private static HashMap<UUID, MineverseChatPlayer> onlinePlayerMap = new HashMap<UUID, MineverseChatPlayer>();
+
+	public static void addNameToMap(MineverseChatPlayer mcp) {
+		namesMap.put(mcp.getName(), mcp.getUUID());
+	}
+	
+	public static void removeNameFromMap(String name) {
+		namesMap.remove(name);
+	}
+
+	public static void clearNameMap() {
+		namesMap.clear();
+	}
+
+	public static void addMineverseChatPlayerToMap(MineverseChatPlayer mcp) {
+		playerMap.put(mcp.getUUID(), mcp);
+		MineverseChat.players.add(mcp);
+	}
+
+	public static void clearMineverseChatPlayerMap() {
+		playerMap.clear();
+		MineverseChat.players.clear();
+	}
+
+	public static Collection<MineverseChatPlayer> getMineverseChatPlayers() {
+		return playerMap.values();
+	}
+
+	public static void addMineverseChatOnlinePlayerToMap(MineverseChatPlayer mcp) {
+		onlinePlayerMap.put(mcp.getUUID(), mcp);
+		MineverseChat.onlinePlayers.add(mcp);
+	}
+
+	public static void removeMineverseChatOnlinePlayerToMap(MineverseChatPlayer mcp) {
+		onlinePlayerMap.remove(mcp.getUUID());
+		MineverseChat.onlinePlayers.remove(mcp);
+	}
+
+	public static void clearOnlineMineverseChatPlayerMap() {
+		onlinePlayerMap.clear();
+		MineverseChat.onlinePlayers.clear();
+	}
+
+	public static Collection<MineverseChatPlayer> getOnlineMineverseChatPlayers() {
+		return onlinePlayerMap.values();
+	}
 
 	/**
 	 * Get a MineverseChatPlayer wrapper from a Bukkit Player instance.
@@ -23,16 +73,7 @@ public final class MineverseChatAPI {
 	 * @return {@link MineverseChatPlayer}
 	 */
 	public static MineverseChatPlayer getMineverseChatPlayer(Player player) {
-		for (MineverseChatPlayer mcp : MineverseChat.players) {
-			try {
-				if (mcp.getName().equals(player.getName())) {
-					return mcp;
-				}
-			} catch (Exception exception) {
-				continue;
-			}
-		}
-		return null;
+		return getMineverseChatPlayer(player.getUniqueId());
 	}
 
 	/**
@@ -43,16 +84,7 @@ public final class MineverseChatAPI {
 	 * @return {@link MineverseChatPlayer}
 	 */
 	public static MineverseChatPlayer getMineverseChatPlayer(UUID uuid) {
-		for (MineverseChatPlayer mcp : MineverseChat.players) {
-			try {
-				if (mcp.getUUID().toString().equals(uuid.toString())) {
-					return mcp;
-				}
-			} catch (Exception exception) {
-				continue;
-			}
-		}
-		return null;
+		return playerMap.get(uuid);
 	}
 
 	/**
@@ -63,16 +95,7 @@ public final class MineverseChatAPI {
 	 * @return {@link MineverseChatPlayer}
 	 */
 	public static MineverseChatPlayer getMineverseChatPlayer(String name) {
-		for (MineverseChatPlayer mcp : MineverseChat.players) {
-			try {
-				if (mcp.getName().equalsIgnoreCase(name)) {
-					return mcp;
-				}
-			} catch (Exception exception) {
-				continue;
-			}
-		}
-		return null;
+		return getMineverseChatPlayer(namesMap.get(name));
 	}
 
 	/**
@@ -84,16 +107,7 @@ public final class MineverseChatAPI {
 	 * @return {@link MineverseChatPlayer}
 	 */
 	public static MineverseChatPlayer getOnlineMineverseChatPlayer(Player player) {
-		for (MineverseChatPlayer mcp : MineverseChat.onlinePlayers) {
-			try {
-				if (mcp.getName().equals(player.getName())) {
-					return mcp;
-				}
-			} catch (Exception exception) {
-				continue;
-			}
-		}
-		return null;
+		return getOnlineMineverseChatPlayer(player.getUniqueId());
 	}
 
 	/**
@@ -105,16 +119,7 @@ public final class MineverseChatAPI {
 	 * @return {@link MineverseChatPlayer}
 	 */
 	public static MineverseChatPlayer getOnlineMineverseChatPlayer(UUID uuid) {
-		for (MineverseChatPlayer mcp : MineverseChat.onlinePlayers) {
-			try {
-				if (mcp.getUUID().toString().equals(uuid.toString())) {
-					return mcp;
-				}
-			} catch (Exception exception) {
-				continue;
-			}
-		}
-		return null;
+		return onlinePlayerMap.get(uuid);
 	}
 
 	/**
@@ -126,16 +131,7 @@ public final class MineverseChatAPI {
 	 * @return {@link MineverseChatPlayer}
 	 */
 	public static MineverseChatPlayer getOnlineMineverseChatPlayer(String name) {
-		for (MineverseChatPlayer mcp : MineverseChat.onlinePlayers) {
-			try {
-				if (mcp.getName().equalsIgnoreCase(name)) {
-					return mcp;
-				}
-			} catch (Exception exception) {
-				continue;
-			}
-		}
-		return null;
+		return getOnlineMineverseChatPlayer(namesMap.get(name));
 	}
 
 	/**

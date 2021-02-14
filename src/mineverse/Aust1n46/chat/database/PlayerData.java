@@ -18,6 +18,7 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import mineverse.Aust1n46.chat.MineverseChat;
+import mineverse.Aust1n46.chat.api.MineverseChatAPI;
 import mineverse.Aust1n46.chat.api.MineverseChatPlayer;
 import mineverse.Aust1n46.chat.channel.ChatChannel;
 import mineverse.Aust1n46.chat.utilities.Format;
@@ -93,11 +94,13 @@ public class PlayerData {
 				boolean bungeeToggle = playerData.getConfigurationSection("players." + uuidString).getBoolean("bungeetoggle", true);
 				MineverseChatPlayer mcp = new MineverseChatPlayer(uuid, name, currentChannel, ignores, listening, mutes, blockedCommands, host, party, filter, notifications, nickname, jsonFormat, spy, commandSpy, rangedSpy, messageToggle, bungeeToggle);
 				mcp.setModified(true);
-				MineverseChat.players.add(mcp);
+				MineverseChatAPI.addMineverseChatPlayerToMap(mcp);
+				MineverseChatAPI.addNameToMap(mcp);
 			}
 		}
 		catch (Exception e) {
-			MineverseChat.players.clear();
+			MineverseChatAPI.clearMineverseChatPlayerMap();
+			MineverseChatAPI.clearNameMap();
 			Bukkit.getConsoleSender().sendMessage(Format.FormatStringAll("&8[&eVentureChat&8]&c - Error Loading Legacy Player Data!"));
 			Bukkit.getConsoleSender().sendMessage(Format.FormatStringAll("&8[&eVentureChat&8]&c - Deleted Players.yml file!"));
 		}
@@ -194,7 +197,8 @@ public class PlayerData {
 			return;
 		}
 		if(mcp != null) {
-			MineverseChat.players.add(mcp);
+			MineverseChatAPI.addMineverseChatPlayerToMap(mcp);
+			MineverseChatAPI.addNameToMap(mcp);
 		}
 	}
 	
@@ -266,7 +270,7 @@ public class PlayerData {
 	}
 	
 	public static void savePlayerData() {
-		for(MineverseChatPlayer p : MineverseChat.players) {
+		for(MineverseChatPlayer p : MineverseChatAPI.getMineverseChatPlayers()) {
 			savePlayerData(p);
 		}
 	}

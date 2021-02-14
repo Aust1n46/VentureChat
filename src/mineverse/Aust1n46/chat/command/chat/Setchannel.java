@@ -2,7 +2,6 @@ package mineverse.Aust1n46.chat.command.chat;
 
 import org.bukkit.command.CommandSender;
 
-import mineverse.Aust1n46.chat.MineverseChat;
 import mineverse.Aust1n46.chat.api.MineverseChatAPI;
 import mineverse.Aust1n46.chat.api.MineverseChatPlayer;
 import mineverse.Aust1n46.chat.channel.ChatChannel;
@@ -57,7 +56,7 @@ public class Setchannel extends MineverseCommand {
 					.replace("{channel_color}", channel.getColor() + "")
 					.replace("{channel_name}", channel.getName()));
 			if(player.hasConversation()) {					
-				for(MineverseChatPlayer p : MineverseChat.onlinePlayers) {
+				for(MineverseChatPlayer p : MineverseChatAPI.getOnlineMineverseChatPlayers()) {
 					if(p.isSpy()) {
 						p.getPlayer().sendMessage(LocalizedMessage.EXIT_PRIVATE_CONVERSATION_SPY.toString()
 								.replace("{player_sender}", player.getName())

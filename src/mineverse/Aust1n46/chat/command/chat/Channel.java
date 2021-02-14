@@ -62,7 +62,7 @@ public class Channel extends MineverseCommand implements Listener {
 			}
 		}		
 		if(mcp.hasConversation()) {
-			for(MineverseChatPlayer p : MineverseChat.onlinePlayers) {
+			for(MineverseChatPlayer p : MineverseChatAPI.getOnlineMineverseChatPlayers()) {
 				if(p.isSpy()) {
 					p.getPlayer().sendMessage(LocalizedMessage.EXIT_PRIVATE_CONVERSATION_SPY.toString()
 							.replace("{player_sender}", mcp.getName())

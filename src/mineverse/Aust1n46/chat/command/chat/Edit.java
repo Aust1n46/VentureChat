@@ -14,6 +14,7 @@ import com.comphenix.protocol.wrappers.WrappedChatComponent;
 
 import mineverse.Aust1n46.chat.ChatMessage;
 import mineverse.Aust1n46.chat.MineverseChat;
+import mineverse.Aust1n46.chat.api.MineverseChatAPI;
 import mineverse.Aust1n46.chat.api.MineverseChatPlayer;
 import mineverse.Aust1n46.chat.command.MineverseCommand;
 import mineverse.Aust1n46.chat.localization.LocalizedMessage;
@@ -48,7 +49,7 @@ public class Edit extends MineverseCommand {
 		new BukkitRunnable() {
 			public void run() {
 				final Map<Player, List<PacketContainer>> packets = new HashMap();
-				for(MineverseChatPlayer p : MineverseChat.onlinePlayers) {
+				for(MineverseChatPlayer p : MineverseChatAPI.getOnlineMineverseChatPlayers()) {
 					List<ChatMessage> messages = p.getMessages();
 					List<PacketContainer> playerPackets = new ArrayList();
 					boolean resend = false;

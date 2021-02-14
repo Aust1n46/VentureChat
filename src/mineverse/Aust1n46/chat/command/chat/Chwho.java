@@ -64,7 +64,7 @@ public class Chwho extends MineverseCommand {
 					
 					PluginManager pluginManager = plugin.getServer().getPluginManager();
 					long linecount = plugin.getLineLength();
-					for(MineverseChatPlayer p : MineverseChat.onlinePlayers) {
+					for(MineverseChatPlayer p : MineverseChatAPI.getOnlineMineverseChatPlayers()) {
 						if(p.getListening().contains(channel.getName())) {
 							if(sender instanceof Player) {
 								if(!((Player) sender).canSee(p.getPlayer())) {

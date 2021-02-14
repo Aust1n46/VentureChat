@@ -85,7 +85,7 @@ public class Reply extends MineverseCommand {
 					spy = Format.FormatStringAll(PlaceholderAPI.setBracketPlaceholders(player.getPlayer(), spy.replaceAll("receiver_", ""))) + msg;
 					
 					if(!mcp.getPlayer().hasPermission("venturechat.spy.override")) {
-						for(MineverseChatPlayer p : MineverseChat.onlinePlayers) {
+						for(MineverseChatPlayer p : MineverseChatAPI.getOnlineMineverseChatPlayers()) {
 							if(p.getName().equals(mcp.getName()) || p.getName().equals(player.getName())) {
 								continue;
 							}

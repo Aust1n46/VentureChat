@@ -144,8 +144,12 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 	public static GuiSlotInfo gsInfo;
 	public boolean quickchat = true;
 	private static final Logger log = Logger.getLogger("Minecraft");
+	
+	@Deprecated
 	public static Set<MineverseChatPlayer> players = new HashSet<MineverseChatPlayer>();
+	@Deprecated
 	public static Set<MineverseChatPlayer> onlinePlayers = new HashSet<MineverseChatPlayer>();
+	
 	public static List<String> networkPlayerNames = new ArrayList<String>();
 	//private boolean firstRun = true;
 	
@@ -228,7 +232,7 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 			mcp.setOnline(true);
 			mcp.setHasPlayed(false);
 			mcp.setJsonFormat();
-			onlinePlayers.add(mcp);
+			MineverseChatAPI.addMineverseChatOnlinePlayerToMap(mcp);
 		}
 
 		FileConfiguration config = getConfig();
@@ -372,7 +376,7 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 		scheduler.runTaskTimerAsynchronously(this, new Runnable() {
 			@Override
 			public void run() {
-				for (MineverseChatPlayer p : MineverseChat.onlinePlayers) {
+				for (MineverseChatPlayer p : MineverseChatAPI.getOnlineMineverseChatPlayers()) {
 					int time = Format.currentTimeMillis();
 					Iterator<String> iterator = p.getMutes().keySet().iterator();
 					while (iterator.hasNext()) {
@@ -402,6 +406,16 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 				}
 			}
 		}, 0L, 1200L); // one minute interval
+	}
+	
+	@Override
+	public void onDisable() {
+		PlayerData.savePlayerData();
+		MineverseChatAPI.clearMineverseChatPlayerMap();
+		MineverseChatAPI.clearNameMap();
+		MineverseChatAPI.clearOnlineMineverseChatPlayerMap();
+		Bukkit.getConsoleSender().sendMessage(Format.FormatStringAll("&8[&eVentureChat&8]&e - Disabling..."));
+		Bukkit.getConsoleSender().sendMessage(Format.FormatStringAll("&8[&eVentureChat&8]&e - Disabled Successfully"));
 	}
 
 	@SuppressWarnings("unchecked")
@@ -494,13 +508,6 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 		return LINELENGTH;
 	}
 
-	@Override
-	public void onDisable() {
-		PlayerData.savePlayerData();
-		Bukkit.getConsoleSender().sendMessage(Format.FormatStringAll("&8[&eVentureChat&8]&e - Disabling..."));
-		Bukkit.getConsoleSender().sendMessage(Format.FormatStringAll("&8[&eVentureChat&8]&e - Disabled Successfully"));
-	}
-
 	public void setLogLevel(String loglevel) {
 		if(LogLevels.valueOf(loglevel) != null) {
 			curLogLevel = LogLevels.valueOf(loglevel);
@@ -574,7 +581,7 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 				out.writeBoolean(mcp.isSpy());
 				out.writeBoolean(mcp.getMessageToggle());
 			}
-			for(MineverseChatPlayer p : MineverseChat.onlinePlayers) {
+			for(MineverseChatPlayer p : MineverseChatAPI.getOnlineMineverseChatPlayers()) {
 				p.getPlayer().sendPluginMessage(this, MineverseChat.PLUGIN_MESSAGING_CHANNEL, outstream.toByteArray());
 				break;
 			}
@@ -587,10 +594,10 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 	}
 	
 	public static void sendDiscordSRVPluginMessage(String chatChannel, String message) {
-		if(onlinePlayers.size() == 0) {
+		if(MineverseChatAPI.getOnlineMineverseChatPlayers().size() == 0) {
 			return;
 		}
-		Player host = onlinePlayers.iterator().next().getPlayer();
+		Player host = MineverseChatAPI.getOnlineMineverseChatPlayers().iterator().next().getPlayer();
 		ByteArrayOutputStream byteOutStream = new ByteArrayOutputStream();
 		DataOutputStream out = new DataOutputStream(byteOutStream);
 		try {
@@ -641,7 +648,7 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 				}
 				
 				Set<Player> recipients = new HashSet<Player>();
-				for(MineverseChatPlayer p : MineverseChat.onlinePlayers) {
+				for(MineverseChatPlayer p : MineverseChatAPI.getOnlineMineverseChatPlayers()) {
 					if(p.isListening(chatChannelObject.getName())) {
 						recipients.add(p.getPlayer());
 					}
@@ -666,7 +673,7 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 					db.writeVentureChat(date, senderUUID.toString(), senderName, server, chatchannel, chat.replace("'", "''"), "Chat");
 				}
 				
-				for(MineverseChatPlayer p : MineverseChat.onlinePlayers) {
+				for(MineverseChatPlayer p : MineverseChatAPI.getOnlineMineverseChatPlayers()) {
 					if(p.isListening(chatChannelObject.getName())) {
 						if(!p.getBungeeToggle() && MineverseChatAPI.getOnlineMineverseChatPlayer(senderName) == null) {
 							continue;
@@ -700,7 +707,7 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 				String json = Format.convertPlainTextToJson(message, true);
 				int hash = (message.replaceAll("([§]([a-z0-9]))", "")).hashCode();
 				
-				for(MineverseChatPlayer p : MineverseChat.onlinePlayers) {
+				for(MineverseChatPlayer p : MineverseChatAPI.getOnlineMineverseChatPlayers()) {
 					if(p.isListening(chatChannelObj.getName())) {
 						String finalJSON = Format.formatModerationGUI(json, p.getPlayer(), "Discord", chatChannelObj.getName(), hash);
 						PacketContainer packet = Format.createPacketPlayOutChat(finalJSON);
@@ -723,7 +730,7 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 					String chatchannel = msgin.readUTF();
 					List<String> listening = new ArrayList<String>();
 					if(ChatChannel.isChannel(chatchannel)) {
-						for(MineverseChatPlayer mcp : onlinePlayers) {
+						for(MineverseChatPlayer mcp : MineverseChatAPI.getOnlineMineverseChatPlayers()) {
 							if(mcp.isListening(chatchannel)) {
 								String entry = "&f" + mcp.getName();
 								if(mcp.isMuted(chatchannel)) {
@@ -938,7 +945,8 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 						Set<String> blockedCommands = new HashSet<String>();
 						String jsonFormat = "Default";
 						s = new MineverseChatPlayer(uuid, name, current, ignores, listening, mutes, blockedCommands, false, null, true, true, name, jsonFormat, false, false, false, true, true);
-						MineverseChat.players.add(s);
+						MineverseChatAPI.addMineverseChatPlayerToMap(s);
+						MineverseChatAPI.addNameToMap(s);
 					}
 					p.getPlayer().sendMessage(Format.FormatStringAll(PlaceholderAPI.setBracketPlaceholders(p.getPlayer(), send.replaceAll("receiver_", ""))) + msg);
 					if(p.hasNotifications()) {
@@ -998,7 +1006,7 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 					String receiverName = msgin.readUTF();
 					String senderName = msgin.readUTF();
 					String spy = msgin.readUTF();
-					for(MineverseChatPlayer pl : onlinePlayers) {
+					for(MineverseChatPlayer pl : MineverseChatAPI.getOnlineMineverseChatPlayers()) {
 						if(pl.isSpy() && !pl.getName().equals(senderName) && !pl.getName().equals(receiverName)) {
 							pl.getPlayer().sendMessage(spy);
 						}

@@ -109,7 +109,7 @@ public class MessageCommandExecutor implements TabExecutor {
 					}
 				}
 				if(!mcp.getPlayer().hasPermission("venturechat.spy.override")) {
-					for(MineverseChatPlayer sp : MineverseChat.onlinePlayers) {
+					for(MineverseChatPlayer sp : MineverseChatAPI.getOnlineMineverseChatPlayers()) {
 						if(sp.getName().equals(mcp.getName()) || sp.getName().equals(player.getName())) {
 							continue;
 						}
@@ -125,7 +125,7 @@ public class MessageCommandExecutor implements TabExecutor {
 				if(!mcp.hasConversation() || (mcp.hasConversation() && !mcp.getConversation().toString().equals(player.getUUID().toString()))) {
 					mcp.setConversation(player.getUUID());
 					if(!mcp.getPlayer().hasPermission("venturechat.spy.override")) {
-						for(MineverseChatPlayer sp : MineverseChat.onlinePlayers) {
+						for(MineverseChatPlayer sp : MineverseChatAPI.getOnlineMineverseChatPlayers()) {
 							if(sp.getName().equals(mcp.getName())) {
 								continue;
 							}
@@ -142,7 +142,7 @@ public class MessageCommandExecutor implements TabExecutor {
 				else {
 					mcp.setConversation(null);
 					if(!mcp.getPlayer().hasPermission("venturechat.spy.override")) {
-						for(MineverseChatPlayer sp : MineverseChat.onlinePlayers) {
+						for(MineverseChatPlayer sp : MineverseChatAPI.getOnlineMineverseChatPlayers()) {
 							if(sp.getName().equals(mcp.getName())) {
 								continue;
 							}

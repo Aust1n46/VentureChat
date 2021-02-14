@@ -48,7 +48,7 @@ public class CommandListener implements CommandExecutor, Listener {
 		ConfigurationSection cs = plugin.getConfig().getConfigurationSection("commandspy");
 		Boolean wec = cs.getBoolean("worldeditcommands", true);
 		MineverseChatPlayer mcp = MineverseChatAPI.getOnlineMineverseChatPlayer(event.getPlayer());
-		for(MineverseChatPlayer p : MineverseChat.onlinePlayers) {
+		for(MineverseChatPlayer p : MineverseChatAPI.getOnlineMineverseChatPlayers()) {
 			if(p.hasCommandSpy()) {
 				if(wec) {
 					p.getPlayer().sendMessage(Format.FormatStringAll(cs.getString("format").replace("{player}", mcp.getName()).replace("{command}", event.getMessage())));
@@ -160,7 +160,7 @@ public class CommandListener implements CommandExecutor, Listener {
 								.replace("{channel_color}", channel.getColor() + "")
 								.replace("{channel_name}", channel.getName()));
 						if(mcp.hasConversation()) {
-							for(MineverseChatPlayer p : MineverseChat.onlinePlayers) {
+							for(MineverseChatPlayer p : MineverseChatAPI.getOnlineMineverseChatPlayers()) {
 								if(p.isSpy()) {
 									p.getPlayer().sendMessage(LocalizedMessage.EXIT_PRIVATE_CONVERSATION_SPY.toString()
 											.replace("{player_sender}", mcp.getName())

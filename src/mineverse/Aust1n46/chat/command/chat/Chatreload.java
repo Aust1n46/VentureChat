@@ -4,6 +4,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 
 import mineverse.Aust1n46.chat.MineverseChat;
+import mineverse.Aust1n46.chat.api.MineverseChatAPI;
 import mineverse.Aust1n46.chat.api.MineverseChatPlayer;
 import mineverse.Aust1n46.chat.command.MineverseCommand;
 import mineverse.Aust1n46.chat.localization.LocalizedMessage;
@@ -23,8 +24,8 @@ public class Chatreload extends MineverseCommand {
 			Bukkit.getPluginManager().disablePlugin(plugin);
 			Bukkit.getPluginManager().enablePlugin(plugin);
 			plugin.getServer().getLogger().info("[VentureChat] Config reloaded");		
-			for(MineverseChatPlayer player : MineverseChat.players) {
-				if(player.isOnline() && player.getPlayer().hasPermission("venturechat.reload")) {
+			for(MineverseChatPlayer player : MineverseChatAPI.getOnlineMineverseChatPlayers()) {
+				if(player.getPlayer().hasPermission("venturechat.reload")) {
 					player.getPlayer().sendMessage(LocalizedMessage.CONFIG_RELOADED.toString());
 				}
 			}

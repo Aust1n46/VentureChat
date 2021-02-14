@@ -38,11 +38,15 @@ public class Party extends MineverseCommand {
 				if(mcp.isHost()) {
 					mcp.setHost(false);
 					mcp.getPlayer().sendMessage(ChatColor.GREEN + "You are no longer hosting a party.");
-					for(MineverseChatPlayer player : MineverseChat.players) {
+					for(MineverseChatPlayer player : MineverseChatAPI.getMineverseChatPlayers()) {
 						if(player.hasParty() && player.getParty().equals(mcp.getParty())) {
 							player.setParty(null);
-							if(player.isOnline()) player.getPlayer().sendMessage(ChatColor.RED + mcp.getName() + " is no longer hosting a party.");
-							else player.setModified(true);
+							if(player.isOnline()) {
+								player.getPlayer().sendMessage(ChatColor.RED + mcp.getName() + " is no longer hosting a party.");
+							}
+							else {
+								player.setModified(true);
+							}
 						}
 					}
 					mcp.setParty(null);
@@ -96,11 +100,15 @@ public class Party extends MineverseCommand {
 					mcp.getPlayer().sendMessage(ChatColor.GREEN + "Leaving " + MineverseChatAPI.getMineverseChatPlayer(mcp.getParty()).getName() + "'s party.");
 					mcp.setParty(null);
 					if(mcp.isHost()) {
-						for(MineverseChatPlayer player : MineverseChat.players) {
+						for(MineverseChatPlayer player : MineverseChatAPI.getMineverseChatPlayers()) {
 							if(player.hasParty() && player.getParty().equals(mcp.getUUID()) && !player.getName().equals(mcp.getName())) {
 								player.setParty(null);
-								if(player.isOnline()) player.getPlayer().sendMessage(ChatColor.RED + mcp.getName() + " is no longer hosting a party.");
-								else player.setModified(true);
+								if(player.isOnline()) {
+									player.getPlayer().sendMessage(ChatColor.RED + mcp.getName() + " is no longer hosting a party.");
+								}
+								else {
+									player.setModified(true);
+								}
 							}
 						}
 					}
@@ -214,8 +222,8 @@ public class Party extends MineverseCommand {
 				if(mcp.hasConversation()) {
 					String tellChat = MineverseChatAPI.getMineverseChatPlayer(mcp.getConversation()).getName();
 					mcp.setConversation(null);
-					for(MineverseChatPlayer p : MineverseChat.players) {
-						if(p.isOnline() && p.isSpy()) {
+					for(MineverseChatPlayer p : MineverseChatAPI.getOnlineMineverseChatPlayers()) {
+						if(p.isSpy()) {
 							p.getPlayer().sendMessage(mcp.getName() + " is no longer in a private conversation with " + tellChat + ".");
 						}
 					}
@@ -244,7 +252,7 @@ public class Party extends MineverseCommand {
 						if(player.isHost()) {
 							String members = "";
 							long linecount = plugin.getLineLength();
-							for(MineverseChatPlayer p : MineverseChat.players) {
+							for(MineverseChatPlayer p : MineverseChatAPI.getMineverseChatPlayers()) {
 								if(p.getParty() != null && p.getParty().equals(player.getUUID())) {
 									if(members.length() + p.getName().length() > linecount) {
 										members += "\n";
@@ -300,8 +308,8 @@ public class Party extends MineverseCommand {
 						else {
 							partyformat = Format.FormatStringAll(plugin.getConfig().getString("partyformat").replace("{host}", MineverseChatAPI.getMineverseChatPlayer(mcp.getParty()).getName()).replace("{player}", mcp.getName())) + msg;
 						}
-						for(MineverseChatPlayer p : MineverseChat.players) {
-							if(p.isOnline() && (p.getParty().equals(mcp.getParty()) || p.isSpy())) {
+						for(MineverseChatPlayer p : MineverseChatAPI.getOnlineMineverseChatPlayers()) {
+							if((p.getParty().equals(mcp.getParty()) || p.isSpy())) {
 								p.getPlayer().sendMessage(partyformat);
 							}
 						}
