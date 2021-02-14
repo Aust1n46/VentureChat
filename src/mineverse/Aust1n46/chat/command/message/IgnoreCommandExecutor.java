@@ -2,6 +2,8 @@ package mineverse.Aust1n46.chat.command.message;
 
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
@@ -10,6 +12,7 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabExecutor;
 import org.bukkit.entity.Player;
+import org.bukkit.util.StringUtil;
 
 import mineverse.Aust1n46.chat.MineverseChat;
 import mineverse.Aust1n46.chat.api.MineverseChatAPI;
@@ -95,7 +98,10 @@ public class IgnoreCommandExecutor implements TabExecutor {
 	@Override
 	public List<String> onTabComplete(CommandSender sender, Command command, String label, String[] args) {
 		if(plugin.getConfig().getBoolean("bungeecordmessaging", true)) {
-			return MineverseChat.networkPlayerNames;
+			List<String> completions = new ArrayList<>();
+			StringUtil.copyPartialMatches(args[args.length - 1], MineverseChat.networkPlayerNames, completions);
+			Collections.sort(completions);
+	        return completions;
 		}
 		return null;
 	}
