@@ -7,7 +7,6 @@ import java.util.UUID;
 import org.bukkit.entity.Player;
 
 import mineverse.Aust1n46.chat.MineverseChat;
-import mineverse.Aust1n46.chat.bungee.MineverseChatBungee;
 
 /**
  * API class for looking up wrapped {@link MineverseChatPlayer} objects from
@@ -19,7 +18,21 @@ public final class MineverseChatAPI {
 	private static HashMap<UUID, MineverseChatPlayer> playerMap = new HashMap<UUID, MineverseChatPlayer>();
 	private static HashMap<String, UUID> namesMap = new HashMap<String, UUID>();
 	private static HashMap<UUID, MineverseChatPlayer> onlinePlayerMap = new HashMap<UUID, MineverseChatPlayer>();
+	
+	private static HashMap<UUID, SynchronizedMineverseChatPlayer> bungeePlayerMap = new HashMap<UUID, SynchronizedMineverseChatPlayer>();
 
+	public static void addSynchronizedMineverseChatPlayerToMap(SynchronizedMineverseChatPlayer smcp) {
+		bungeePlayerMap.put(smcp.getUUID(), smcp);
+	}
+	
+	public static void clearBungeePlayerMap() {
+		bungeePlayerMap.clear();
+	}
+	
+	public static Collection<SynchronizedMineverseChatPlayer> getSynchronizedMineverseChatPlayers() {
+		return bungeePlayerMap.values();
+	}
+	
 	public static void addNameToMap(MineverseChatPlayer mcp) {
 		namesMap.put(mcp.getName(), mcp.getUUID());
 	}
@@ -32,11 +45,13 @@ public final class MineverseChatAPI {
 		namesMap.clear();
 	}
 
+	@SuppressWarnings("deprecation")
 	public static void addMineverseChatPlayerToMap(MineverseChatPlayer mcp) {
 		playerMap.put(mcp.getUUID(), mcp);
 		MineverseChat.players.add(mcp);
 	}
 
+	@SuppressWarnings("deprecation")
 	public static void clearMineverseChatPlayerMap() {
 		playerMap.clear();
 		MineverseChat.players.clear();
@@ -46,16 +61,19 @@ public final class MineverseChatAPI {
 		return playerMap.values();
 	}
 
+	@SuppressWarnings("deprecation")
 	public static void addMineverseChatOnlinePlayerToMap(MineverseChatPlayer mcp) {
 		onlinePlayerMap.put(mcp.getUUID(), mcp);
 		MineverseChat.onlinePlayers.add(mcp);
 	}
 
+	@SuppressWarnings("deprecation")
 	public static void removeMineverseChatOnlinePlayerToMap(MineverseChatPlayer mcp) {
 		onlinePlayerMap.remove(mcp.getUUID());
 		MineverseChat.onlinePlayers.remove(mcp);
 	}
 
+	@SuppressWarnings("deprecation")
 	public static void clearOnlineMineverseChatPlayerMap() {
 		onlinePlayerMap.clear();
 		MineverseChat.onlinePlayers.clear();
@@ -142,15 +160,6 @@ public final class MineverseChatAPI {
 	 * @return {@link SynchronizedMineverseChatPlayer}
 	 */
 	public static SynchronizedMineverseChatPlayer getSynchronizedMineverseChatPlayer(UUID uuid) {
-		for (SynchronizedMineverseChatPlayer smcp : MineverseChatBungee.players) {
-			try {
-				if (smcp.getUUID().toString().equals(uuid.toString())) {
-					return smcp;
-				}
-			} catch (Exception exception) {
-				continue;
-			}
-		}
-		return null;
+		return bungeePlayerMap.get(uuid);
 	}
 }

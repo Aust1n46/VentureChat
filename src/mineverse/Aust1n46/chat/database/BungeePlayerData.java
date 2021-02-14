@@ -11,6 +11,7 @@ import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.UUID;
 
+import mineverse.Aust1n46.chat.api.MineverseChatAPI;
 import mineverse.Aust1n46.chat.api.SynchronizedMineverseChatPlayer;
 import mineverse.Aust1n46.chat.bungee.MineverseChatBungee;
 import mineverse.Aust1n46.chat.utilities.Format;
@@ -65,11 +66,11 @@ public class BungeePlayerData {
 				}
 				boolean spy = playerData.getBoolean(uuidString + ".spy");
 				boolean messageToggle = playerData.getBoolean(uuidString + ".messagetoggle");
-				MineverseChatBungee.players.add(new SynchronizedMineverseChatPlayer(uuid, listening, mutes, ignores, spy, messageToggle));
+				MineverseChatAPI.addSynchronizedMineverseChatPlayerToMap(new SynchronizedMineverseChatPlayer(uuid, listening, mutes, ignores, spy, messageToggle));
 			}
 		}
 		catch (Exception e) {
-			MineverseChatBungee.players.clear();
+			MineverseChatAPI.clearBungeePlayerMap();
 			ProxyServer.getInstance().getConsole().sendMessage(TextComponent.fromLegacyText(Format.FormatStringAll("&8[&eVentureChat&8]&c - Error Loading Legacy Player Data!")));
 			ProxyServer.getInstance().getConsole().sendMessage(TextComponent.fromLegacyText(Format.FormatStringAll("&8[&eVentureChat&8]&c - Deleted BungeePlayers.yml file!")));
 		}
@@ -137,13 +138,13 @@ public class BungeePlayerData {
 			return;
 		}
 		if(smcp != null) {
-			MineverseChatBungee.players.add(smcp);
+			MineverseChatAPI.addSynchronizedMineverseChatPlayerToMap(smcp);
 		}
 	}
 	
 	public static void saveBungeePlayerData() {
 		try {
-			for(SynchronizedMineverseChatPlayer p : MineverseChatBungee.players) {
+			for(SynchronizedMineverseChatPlayer p : MineverseChatAPI.getSynchronizedMineverseChatPlayers()) {
 				if(UUIDFetcher.shouldSkipOfflineUUIDBungee(p.getUUID())) {
 					return;
 				}

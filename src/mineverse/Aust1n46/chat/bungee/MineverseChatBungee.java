@@ -8,8 +8,6 @@ import java.io.File;
 import java.nio.file.Files;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
 import java.util.UUID;
 
 import mineverse.Aust1n46.chat.api.MineverseChatAPI;
@@ -39,9 +37,6 @@ import net.md_5.bungee.event.EventHandler;
 public class MineverseChatBungee extends Plugin implements Listener {
 	private static MineverseChatBungee instance;
 	private Configuration bungeeConfig;
-	public Map<String, String> ignore = new HashMap<String, String>();
-	public Map<String, Boolean> spy = new HashMap<String, Boolean>();
-	public static Set<SynchronizedMineverseChatPlayer> players = new HashSet<SynchronizedMineverseChatPlayer>();
 	public static String PLUGIN_MESSAGING_CHANNEL = "venturechat:data";
 
 	@Override
@@ -429,7 +424,7 @@ public class MineverseChatBungee extends Plugin implements Listener {
 					SynchronizedMineverseChatPlayer smcp = MineverseChatAPI.getSynchronizedMineverseChatPlayer(uuid);
 					if(smcp == null) {
 						smcp = new SynchronizedMineverseChatPlayer(uuid, new HashSet<String>(), new HashMap<String, Integer>(), new HashSet<UUID>(), false, true);
-						players.add(smcp);
+						MineverseChatAPI.addSynchronizedMineverseChatPlayerToMap(smcp);
 					}
 					out.writeUTF("Sync");
 					out.writeUTF(uuid.toString());
@@ -465,7 +460,7 @@ public class MineverseChatBungee extends Plugin implements Listener {
 					SynchronizedMineverseChatPlayer smcp = MineverseChatAPI.getSynchronizedMineverseChatPlayer(uuid);
 					if(smcp == null) {
 						smcp = new SynchronizedMineverseChatPlayer(uuid, new HashSet<String>(), new HashMap<String, Integer>(), new HashSet<UUID>(), false, true);
-						players.add(smcp);
+						MineverseChatAPI.addSynchronizedMineverseChatPlayerToMap(smcp);
 					}		
 					smcp.getListening().clear();
 					smcp.getMutes().clear();
