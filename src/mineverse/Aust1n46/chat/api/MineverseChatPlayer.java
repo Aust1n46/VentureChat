@@ -107,6 +107,12 @@ public class MineverseChatPlayer {
 	}
 	
 	public boolean getRangedSpy() {
+		if(isOnline()) {
+			if(!getPlayer().hasPermission("venturechat.rangedspy")) {
+				setRangedSpy(false);
+				return false;
+			}
+		}
 		return this.rangedSpy;
 	}
 	
