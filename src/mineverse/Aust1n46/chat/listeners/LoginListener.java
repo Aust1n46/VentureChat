@@ -26,6 +26,7 @@ import mineverse.Aust1n46.chat.utilities.UUIDFetcher;
 //and it's data.
 public class LoginListener implements Listener {
 	private MineverseChat plugin = MineverseChat.getInstance();
+	private boolean firstPlayerHasJoined = false;
 
 	@EventHandler(priority = EventPriority.LOW)
 	public void onPlayerKick(PlayerKickEvent plog) {
@@ -100,12 +101,19 @@ public class LoginListener implements Listener {
 				mcp.addListening(ch.getName());
 			}
 		}
+		
+		long delayInTicks = 20L;
+		// Add extra delay to allow the sync to run properly
+		if(!firstPlayerHasJoined) {
+			delayInTicks = 100L;
+			firstPlayerHasJoined = true;
+		}
 		final MineverseChatPlayer sync = mcp;
-		plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
+		plugin.getServer().getScheduler().runTaskLaterAsynchronously(plugin, new Runnable() {
 			public void run() {
 				plugin.synchronize(sync, false);
 			}
-		}, 10L);
+		}, delayInTicks);
 		if(!plugin.getConfig().getConfigurationSection("login").getString("message", "Default").equalsIgnoreCase("Default")) {
 			event.setJoinMessage(Format.FormatStringAll(plugin.getConfig().getConfigurationSection("login").getString("message", "Default").replace("{player}", event.getPlayer().getName())));
 		}
