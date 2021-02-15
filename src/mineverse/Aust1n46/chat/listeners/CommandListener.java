@@ -173,12 +173,18 @@ public class CommandListener implements CommandExecutor, Listener {
 						}
 						mcp.addListening(channel.getName());
 						mcp.setCurrentChannel(channel);
+						if(channel.getBungee()) {
+							MineverseChat.getInstance().synchronize(mcp, true);
+						}
 						event.setCancelled(true);
 						return;
 					}
 					if(message.toLowerCase().startsWith("/" + channel.getAlias() + " ")) {
 						message = message.substring(channel.getAlias().length() + 1);
 						mcp.addListening(channel.getName());
+						if(channel.getBungee()) {
+							MineverseChat.getInstance().synchronize(mcp, true);
+						}
 						mcp.setQuickChannel(channel);
 						/*String format = "";
 						if(plugin.getConfig().getConfigurationSection("channels." + channel.getName()).getString("format").equalsIgnoreCase("Default")) {
@@ -211,6 +217,9 @@ public class CommandListener implements CommandExecutor, Listener {
 		}
 	}
 
+	/**
+	 * Unused
+	 */
 	@Override
 	public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
 		if(!(sender instanceof Player)) {
@@ -227,6 +236,9 @@ public class CommandListener implements CommandExecutor, Listener {
 				mcp.setQuickChat(true);
 				mcp.setQuickChannel(channel);
 				mcp.addListening(channel.getName());
+				if(channel.getBungee()) {
+					MineverseChat.getInstance().synchronize(mcp, true);
+				}
 				String msg = "";
 				for(int x = 0; x < args.length; x++) {
 					if(args[x].length() > 0) msg += " " + args[x];

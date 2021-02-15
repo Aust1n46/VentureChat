@@ -788,12 +788,11 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 					}
 				}
 				int size = msgin.read();
-				// System.out.println(size);
 				for(int a = 0; a < size; a++) {
 					String ch = msgin.readUTF();
 					if(ChatChannel.isChannel(ch)) {
 						ChatChannel cha = ChatChannel.getChannel(ch);
-						if(cha.hasPermission() && p.getPlayer().hasPermission(cha.getPermission())) {
+						if(!cha.hasPermission() || p.getPlayer().hasPermission(cha.getPermission())) {
 							p.addListening(ch);
 						}
 					}
@@ -828,18 +827,20 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 					p.addIgnore(UUID.fromString(i));
 				}
 				if(!p.hasPlayed()) {
+					boolean isThereABungeeChannel = false;
 					for(ChatChannel ch : ChatChannel.getAutojoinList()) {
-						if(ch.hasPermission()) {
-							if(p.getPlayer().hasPermission(ch.getPermission())) {
-								p.addListening(ch.getName());
+						if(!ch.hasPermission() || p.getPlayer().hasPermission(ch.getPermission())) {	
+							p.addListening(ch.getName());	
+							if(ch.getBungee()) {
+								isThereABungeeChannel = true;
 							}
-						}
-						else {
-							p.addListening(ch.getName());
 						}
 					}
 					p.setHasPlayed(true);
-					this.synchronize(p, true);
+					// Only run a sync update if the player joined a BungeeCord channel
+					if(isThereABungeeChannel) {
+						this.synchronize(p, true);
+					}
 				}
 			}
 			if(subchannel.equals("Ignore")) {
