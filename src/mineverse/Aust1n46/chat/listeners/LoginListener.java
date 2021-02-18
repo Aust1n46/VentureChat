@@ -11,7 +11,6 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
-import org.bukkit.event.player.PlayerKickEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
 import mineverse.Aust1n46.chat.MineverseChat;
@@ -29,17 +28,6 @@ public class LoginListener implements Listener {
 	private boolean firstPlayerHasJoined = false;
 
 	@EventHandler(priority = EventPriority.LOW)
-	public void onPlayerKick(PlayerKickEvent plog) {
-		if(!plugin.getConfig().getConfigurationSection("logout").getString("message", "Default").equalsIgnoreCase("Default")) {
-			plog.setLeaveMessage(Format.FormatStringAll(plugin.getConfig().getConfigurationSection("logout").getString("message", "Default").replace("{player}", plog.getPlayer().getName())));
-		}
-		if(!plugin.getConfig().getConfigurationSection("logout").getBoolean("enabled", true)) {
-			plog.setLeaveMessage("");
-		}
-		playerLeaving(plog.getPlayer());
-	}
-
-	@EventHandler(priority = EventPriority.LOW)
 	public void onPlayerQuit(PlayerQuitEvent plog) {
 		if(!plugin.getConfig().getConfigurationSection("logout").getString("message", "Default").equalsIgnoreCase("Default")) {
 			plog.setQuitMessage(Format.FormatStringAll(plugin.getConfig().getConfigurationSection("logout").getString("message", "Default").replace("{player}", plog.getPlayer().getName())));
@@ -48,6 +36,14 @@ public class LoginListener implements Listener {
 			plog.setQuitMessage("");
 		}
 		playerLeaving(plog.getPlayer());
+	}
+	
+	private void playerLeaving(Player player) {
+		MineverseChatPlayer mcp = MineverseChatAPI.getOnlineMineverseChatPlayer(player);
+		PlayerData.savePlayerData(mcp);
+		mcp.clearMessages();
+		mcp.setOnline(false);
+		MineverseChatAPI.removeMineverseChatOnlinePlayerToMap(mcp);
 	}
 
 	@EventHandler(priority = EventPriority.LOW)
@@ -120,13 +116,5 @@ public class LoginListener implements Listener {
 		if(!plugin.getConfig().getConfigurationSection("login").getBoolean("enabled", true)) {
 			event.setJoinMessage("");
 		}
-	}
-
-	private void playerLeaving(Player player) {
-		MineverseChatPlayer mcp = MineverseChatAPI.getOnlineMineverseChatPlayer(player);
-		PlayerData.savePlayerData(mcp);
-		mcp.clearMessages();
-		mcp.setOnline(false);
-		MineverseChatAPI.removeMineverseChatOnlinePlayerToMap(mcp);
 	}
 }
