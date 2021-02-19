@@ -377,25 +377,27 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 			@Override
 			public void run() {
 				for (MineverseChatPlayer p : MineverseChatAPI.getOnlineMineverseChatPlayers()) {
-					int time = Format.currentTimeMillis();
+					long currentTimeMillis = System.currentTimeMillis();
 					Iterator<String> iterator = p.getMutes().keySet().iterator();
 					while (iterator.hasNext()) {
-						ChatChannel channel = ChatChannel.getChannel(iterator.next());
-						int timemark = p.getMutes().get(channel.getName());
-						if (timemark == 0) {
-							continue;
-						}
-						if (getConfig().getString("loglevel", "info").equals("debug")) {
-							System.out.println(time + " " + timemark);
-						}
-						if (time >= timemark) {
-							iterator.remove();
-							if (p.isOnline()) {
+						String channelName = iterator.next();
+						if(ChatChannel.isChannel(channelName)) {
+							ChatChannel channel = ChatChannel.getChannel(channelName);
+							long timemark = p.getMutes().get(channelName);
+							if (timemark == 0) {
+								continue;
+							}
+							if (getConfig().getString("loglevel", "info").equals("debug")) {
+								System.out.println(currentTimeMillis + " " + timemark);
+							}
+							if (currentTimeMillis >= timemark) {
+								iterator.remove();
 								p.getPlayer().sendMessage(LocalizedMessage.UNMUTE_PLAYER_PLAYER.toString()
 										.replace("{player}", p.getName()).replace("{channel_color}", channel.getColor())
-										.replace("{channel_name}", channel.getName()));
-							} else {
-								p.setModified(true);
+										.replace("{channel_name}", channelName));
+								if(channel.getBungee()) {
+									MineverseChat.getInstance().synchronize(p, true);
+								}
 							}
 						}
 					}
@@ -405,7 +407,7 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 							.sendMessage(Format.FormatStringAll("&8[&eVentureChat&8]&e - Updating Player Mutes"));
 				}
 			}
-		}, 0L, 1200L); // one minute interval
+		}, 0L, 60L); // three second interval
 	}
 	
 	@Override
@@ -567,6 +569,7 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 					ChatChannel channel = ChatChannel.getChannel(c);
 					if(channel.getBungee()) {
 						out.writeUTF(channel.getName());
+						out.writeLong(mcp.getMutes().get(c));
 					}
 				}
 				int ignoreCount = 0;
@@ -807,9 +810,10 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 				// System.out.println(sizeB + " mute size");
 				for(int b = 0; b < sizeB; b++) {
 					String ch = msgin.readUTF();
+					long muteTime = msgin.readLong();
 					// System.out.println(ch);
 					if(ChatChannel.isChannel(ch)) {
-						p.addMute(ch, 0);
+						p.addMute(ch, muteTime);
 					}
 				}
 				// System.out.println(msgin.available() + " available before");
@@ -942,7 +946,7 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 						Set<UUID> ignores = new HashSet<UUID>();
 						Set<String> listening = new HashSet<String>();
 						listening.add(current.getName());
-						HashMap<String, Integer> mutes = new HashMap<String, Integer>();
+						HashMap<String, Long> mutes = new HashMap<String, Long>();
 						Set<String> blockedCommands = new HashSet<String>();
 						String jsonFormat = "Default";
 						s = new MineverseChatPlayer(uuid, name, current, ignores, listening, mutes, blockedCommands, false, null, true, true, name, jsonFormat, false, false, false, true, true);

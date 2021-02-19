@@ -52,11 +52,11 @@ public class BungeePlayerData {
 					String channel = l.nextToken();
 					listening.add(channel);
 				}
-				HashMap<String, Integer> mutes = new HashMap<String, Integer>();
+				HashMap<String, Long> mutes = new HashMap<String, Long>();
 				StringTokenizer m = new StringTokenizer(playerData.getString(uuidString + ".mutes"), ",");
 				while(m.hasMoreTokens()) {
 					String[] parts = m.nextToken().split(":");
-					mutes.put(parts[0], Integer.parseInt(parts[1]));
+					mutes.put(parts[0], Long.parseLong(parts[1]));
 				}
 				HashSet<UUID> ignores = new HashSet<UUID>();
 				StringTokenizer n = new StringTokenizer(playerData.getString(uuidString + ".ignores"), ",");
@@ -115,11 +115,11 @@ public class BungeePlayerData {
 				String channel = l.nextToken();
 				listening.add(channel);
 			}
-			HashMap<String, Integer> mutes = new HashMap<String, Integer>();
+			HashMap<String, Long> mutes = new HashMap<String, Long>();
 			StringTokenizer m = new StringTokenizer(bungeePlayerDataFileConfiguration.getString("mutes"), ",");
 			while(m.hasMoreTokens()) {
 				String[] parts = m.nextToken().split(":");
-				mutes.put(parts[0], Integer.parseInt(parts[1]));
+				mutes.put(parts[0], Long.parseLong(parts[1]));
 			}
 			HashSet<UUID> ignores = new HashSet<UUID>();
 			StringTokenizer n = new StringTokenizer(bungeePlayerDataFileConfiguration.getString("ignores"), ",");

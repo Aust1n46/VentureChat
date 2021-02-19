@@ -11,7 +11,6 @@ import mineverse.Aust1n46.chat.localization.LocalizedMessage;
 import mineverse.Aust1n46.chat.utilities.Format;
 
 public class Mute extends MineverseCommand {
-	private static final int MILLISECONDS_PER_MINUTE = 60000;
 
 	public Mute(String name) {
 		super(name);
@@ -74,24 +73,22 @@ public class Mute extends MineverseCommand {
 				}
 				if (channel.isMutable()) {
 					try {
-						int datetime = Format.currentTimeMillis();
-						int time = Integer.parseInt(args[2]);
+						long datetime = System.currentTimeMillis();
+						long time = Format.parseTimeStringToMillis(args[2]);
 						if (time > 0) {
-							player.addMute(channel.getName(), datetime + (time * MILLISECONDS_PER_MINUTE));
-							String units = LocalizedMessage.UNITS_MINUTE_PLURAL.toString();
-							if (time == 1)
-								units = LocalizedMessage.UNITS_MINUTE_SINGULAR.toString();
+							player.addMute(channel.getName(), datetime + time);
+							String timeString = Format.parseTimeStringFromMillis(time);
 							sender.sendMessage(LocalizedMessage.MUTE_PLAYER_SENDER_TIME.toString()
 									.replace("{player}", player.getName())
 									.replace("{channel_color}", channel.getColor())
-									.replace("{channel_name}", channel.getName()).replace("{time}", time + "")
-									.replace("{units}", units));
+									.replace("{channel_name}", channel.getName())
+									.replace("{time}", timeString));
 							if (player.isOnline())
 								player.getPlayer()
 										.sendMessage(LocalizedMessage.MUTE_PLAYER_PLAYER_TIME.toString()
 												.replace("{channel_color}", channel.getColor())
 												.replace("{channel_name}", channel.getName())
-												.replace("{time}", time + "").replace("{units}", units));
+												.replace("{time}", timeString));
 							else
 								player.setModified(true);
 							if (channel.getBungee()) {

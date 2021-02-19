@@ -9,14 +9,14 @@ import java.util.UUID;
 public class SynchronizedMineverseChatPlayer {
 	private UUID uuid;
 	private Set<String> listening;
-	private HashMap<String, Integer> mutes;
+	private HashMap<String, Long> mutes;
 	private Set<UUID> ignores;
 	private int messagePackets;
 	private List<String> messageData = new ArrayList<String>();
 	private boolean spy;
 	private boolean messageToggle;
 	
-	public SynchronizedMineverseChatPlayer(UUID uuid, Set<String> listening, HashMap<String, Integer> mutes, Set<UUID> ignores, boolean spy, boolean messageToggle) {
+	public SynchronizedMineverseChatPlayer(UUID uuid, Set<String> listening, HashMap<String, Long> mutes, Set<UUID> ignores, boolean spy, boolean messageToggle) {
 		this.uuid = uuid;
 		this.listening = listening;
 		this.mutes = mutes;
@@ -61,15 +61,15 @@ public class SynchronizedMineverseChatPlayer {
 		return this.ignores;
 	}
 	
-	public void addMute(String channel) {
-		this.mutes.put(channel, 0);
+	public void addMute(String channel, long muteTime) {
+		this.mutes.put(channel, muteTime);
 	}
 	
 	public void removeMute(String channel) {
 		this.mutes.remove(channel);
 	}
 	
-	public HashMap<String, Integer> getMutes() {
+	public HashMap<String, Long> getMutes() {
 		return this.mutes;
 	}
 	

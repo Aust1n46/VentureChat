@@ -22,7 +22,7 @@ public class MineverseChatPlayer {
 	private ChatChannel currentChannel;
 	private Set<UUID> ignores;
 	private Set<String> listening;
-	private HashMap<String, Integer> mutes;
+	private HashMap<String, Long> mutes;
 	private Set<String> blockedCommands;
 	private boolean host;
 	private UUID party;
@@ -38,9 +38,9 @@ public class MineverseChatPlayer {
 	private boolean quickChat;
 	private ChatChannel quickChannel;
 	private UUID replyPlayer;
-	private HashMap<ChatChannel, Integer> cooldowns;
+	private HashMap<ChatChannel, Long> cooldowns;
 	private boolean partyChat;
-	private HashMap<ChatChannel, List<Integer>> spam;
+	private HashMap<ChatChannel, List<Long>> spam;
 	private boolean modified;
 	private List<ChatMessage> messages;
 	private String jsonFormat;
@@ -49,15 +49,8 @@ public class MineverseChatPlayer {
 	private boolean rangedSpy;
 	private boolean messageToggle;
 	private boolean bungeeToggle;
-
-	//buttons variable no longer used
-	//mail variable no longer used
-	@Deprecated
-	public MineverseChatPlayer(UUID uuid, String name, ChatChannel currentChannel, Set<UUID> ignores, Set<String> listening, HashMap<String, Integer> mutes, Set<String> blockedCommands, List<String> mail, boolean host, UUID party, boolean filter, boolean notifications, String nickname, String jsonFormat, boolean spy, boolean commandSpy, boolean rangedSpy, boolean buttons, boolean messageToggle, boolean bungeeToggle) {
-		this(uuid, name, currentChannel, ignores, listening, mutes, blockedCommands, host, party, filter, notifications, nickname, jsonFormat, spy, commandSpy, rangedSpy, messageToggle, bungeeToggle);
-	}
 	
-	public MineverseChatPlayer(UUID uuid, String name, ChatChannel currentChannel, Set<UUID> ignores, Set<String> listening, HashMap<String, Integer> mutes, Set<String> blockedCommands, boolean host, UUID party, boolean filter, boolean notifications, String nickname, String jsonFormat, boolean spy, boolean commandSpy, boolean rangedSpy, boolean messageToggle, boolean bungeeToggle) {
+	public MineverseChatPlayer(UUID uuid, String name, ChatChannel currentChannel, Set<UUID> ignores, Set<String> listening, HashMap<String, Long> mutes, Set<String> blockedCommands, boolean host, UUID party, boolean filter, boolean notifications, String nickname, String jsonFormat, boolean spy, boolean commandSpy, boolean rangedSpy, boolean messageToggle, boolean bungeeToggle) {
 		this.uuid = uuid;
 		this.name = name;
 		this.currentChannel = currentChannel;
@@ -84,8 +77,8 @@ public class MineverseChatPlayer {
 		this.modified = false;
 		this.messages = new ArrayList<ChatMessage>();
 		this.jsonFormat = jsonFormat;
-		this.cooldowns = new HashMap<ChatChannel, Integer>();
-		this.spam = new HashMap<ChatChannel, List<Integer>>();
+		this.cooldowns = new HashMap<ChatChannel, Long>();
+		this.spam = new HashMap<ChatChannel, List<Long>>();
 		this.messageToggle = messageToggle;
 		this.bungeeToggle = bungeeToggle;
 	}
@@ -214,11 +207,11 @@ public class MineverseChatPlayer {
 		this.listening.clear();
 	}
 
-	public HashMap<String, Integer> getMutes() {
+	public HashMap<String, Long> getMutes() {
 		return this.mutes;
 	}
 
-	public boolean addMute(String channel, int time) {
+	public boolean addMute(String channel, long time) {
 		if(channel != null && time >= 0) {
 			mutes.put(channel, time);
 			return true;
@@ -412,11 +405,11 @@ public class MineverseChatPlayer {
 		this.partyChat = partyChat;
 	}
 
-	public HashMap<ChatChannel, Integer> getCooldowns() {
+	public HashMap<ChatChannel, Long> getCooldowns() {
 		return this.cooldowns;
 	}
 
-	public boolean addCooldown(ChatChannel channel, int time) {
+	public boolean addCooldown(ChatChannel channel, long time) {
 		if(channel != null && time > 0) {
 			cooldowns.put(channel, time);
 			return true;
@@ -436,7 +429,7 @@ public class MineverseChatPlayer {
 		return channel != null && this.cooldowns != null ? this.cooldowns.containsKey(channel) : false;
 	}
 	
-	public HashMap<ChatChannel, List<Integer>> getSpam() {
+	public HashMap<ChatChannel, List<Long>> getSpam() {
 		return this.spam;
 	}
 	
@@ -446,7 +439,7 @@ public class MineverseChatPlayer {
 	
 	public boolean addSpam(ChatChannel channel) {
 		if(channel != null) {
-			spam.put(channel, new ArrayList<Integer>());
+			spam.put(channel, new ArrayList<Long>());
 			return true;
 		}
 		return false;

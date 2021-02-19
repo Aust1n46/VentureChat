@@ -57,7 +57,7 @@ public class LoginListener implements Listener {
 			Set<UUID> ignores = new HashSet<UUID>();
 			Set<String> listening = new HashSet<String>();
 			listening.add(current.getName());
-			HashMap<String, Integer> mutes = new HashMap<String, Integer>();
+			HashMap<String, Long> mutes = new HashMap<String, Long>();
 			Set<String> blockedCommands = new HashSet<String>();
 			String jsonFormat = "Default";
 			mcp = new MineverseChatPlayer(uuid, name, current, ignores, listening, mutes, blockedCommands, false, null, true, true, name, jsonFormat, false, false, false, true, true);

@@ -423,7 +423,7 @@ public class MineverseChatBungee extends Plugin implements Listener {
 					UUID uuid = UUID.fromString(in.readUTF());
 					SynchronizedMineverseChatPlayer smcp = MineverseChatAPI.getSynchronizedMineverseChatPlayer(uuid);
 					if(smcp == null) {
-						smcp = new SynchronizedMineverseChatPlayer(uuid, new HashSet<String>(), new HashMap<String, Integer>(), new HashSet<UUID>(), false, true);
+						smcp = new SynchronizedMineverseChatPlayer(uuid, new HashSet<String>(), new HashMap<String, Long>(), new HashSet<UUID>(), false, true);
 						MineverseChatAPI.addSynchronizedMineverseChatPlayerToMap(smcp);
 					}
 					out.writeUTF("Sync");
@@ -440,6 +440,7 @@ public class MineverseChatBungee extends Plugin implements Listener {
 					for(String channel : smcp.getMutes().keySet()) {
 						//System.out.println(channel);
 						out.writeUTF(channel);
+						out.writeLong(smcp.getMutes().get(channel));
 					}
 					//System.out.println(smcp.isSpy() + " spy value");
 					//System.out.println(out.size() + " size before");
@@ -459,7 +460,7 @@ public class MineverseChatBungee extends Plugin implements Listener {
 					UUID uuid = UUID.fromString(in.readUTF());
 					SynchronizedMineverseChatPlayer smcp = MineverseChatAPI.getSynchronizedMineverseChatPlayer(uuid);
 					if(smcp == null) {
-						smcp = new SynchronizedMineverseChatPlayer(uuid, new HashSet<String>(), new HashMap<String, Integer>(), new HashSet<UUID>(), false, true);
+						smcp = new SynchronizedMineverseChatPlayer(uuid, new HashSet<String>(), new HashMap<String, Long>(), new HashSet<UUID>(), false, true);
 						MineverseChatAPI.addSynchronizedMineverseChatPlayerToMap(smcp);
 					}		
 					smcp.getListening().clear();
@@ -474,8 +475,9 @@ public class MineverseChatBungee extends Plugin implements Listener {
 					//System.out.println(size + " mutes");
 					for(int b = 0; b < sizeM; b++) {
 						String mute = in.readUTF();
+						long muteTime = in.readLong();
 						//System.out.println(mute);
-						smcp.addMute(mute);
+						smcp.addMute(mute, muteTime);
 					}
 					int sizeI = in.read();
 					for(int c = 0; c < sizeI; c++) {
