@@ -53,8 +53,8 @@ public class Format {
 	 */
 	public static String convertToJson(MineverseChatPlayer sender, String format, String chat) {
 		JsonFormat JSONformat = MineverseChat.jfInfo.getJsonFormat(sender.getJsonFormat());
-		String f = format.replace("\\", "\\\\").replace("\"", "\\\"");
-		String c = chat.replace("\\", "\\\\").replace("\"", "\\\"");
+		String f = escapeJsonChars(format);
+		String c = escapeJsonChars(chat);
 		String json = "[\"\",{\"text\":\"\",\"extra\":[";
 		String prefix = "";
 		String suffix = "";
@@ -426,11 +426,16 @@ public class Format {
 	}
 
 	public static String convertPlainTextToJson(String s, boolean convertURL) {
+		s = escapeJsonChars(s);
 		if (convertURL) {
 			return "[" + Format.convertLinks(s) + "]";
 		} else {
 			return "[" + convertToJsonColors(DEFAULT_COLOR_CODE + s) + "]";
 		}
+	}
+	
+	private static String escapeJsonChars(String s) {
+		return s.replace("\\", "\\\\").replace("\"", "\\\"");
 	}
 
 	public static String formatModerationGUI(String json, Player player, String sender, String channelName, int hash) {
