@@ -228,11 +228,25 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 		PlayerData.loadPlayerData();
 		for(Player p : this.getServer().getOnlinePlayers()) {
 			MineverseChatPlayer mcp = MineverseChatAPI.getMineverseChatPlayer(p);
-			mcp.setName(p.getName());
+			if(mcp == null) {
+				Bukkit.getConsoleSender().sendMessage(Format.FormatStringAll("&8[&eVentureChat&8]&c - Could not find player data post reload for currently online player: " + p.getName()));
+				Bukkit.getConsoleSender().sendMessage(Format.FormatStringAll("&8[&eVentureChat&8]&c - There could be an issue with your player data saving."));
+				String name = p.getName();
+				UUID uuid = p.getUniqueId();
+				ChatChannel current = ChatChannel.getDefaultChannel();
+				Set<UUID> ignores = new HashSet<UUID>();
+				Set<String> listening = new HashSet<String>();
+				listening.add(current.getName());
+				HashMap<String, Integer> mutes = new HashMap<String, Integer>();
+				Set<String> blockedCommands = new HashSet<String>();
+				String jsonFormat = "Default";
+				mcp = new MineverseChatPlayer(uuid, name, current, ignores, listening, mutes, blockedCommands, false, null, true, true, name, jsonFormat, false, false, false, true, true);
+			}
 			mcp.setOnline(true);
 			mcp.setHasPlayed(false);
 			mcp.setJsonFormat();
 			MineverseChatAPI.addMineverseChatOnlinePlayerToMap(mcp);
+			MineverseChatAPI.addNameToMap(mcp);
 		}
 
 		FileConfiguration config = getConfig();
