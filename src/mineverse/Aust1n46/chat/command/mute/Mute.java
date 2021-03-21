@@ -5,6 +5,7 @@ import java.io.DataOutputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -120,10 +121,17 @@ public class Mute extends MineverseCommand {
 	@Override
 	public List<String> onTabComplete(CommandSender sender, Command command, String label, String[] args) {
 		List<String> completions = new ArrayList<>();
-		StringUtil.copyPartialMatches(args[args.length - 1], MineverseChat.networkPlayerNames, completions);
-		completions.add("tester");
-		Collections.sort(completions);
-        return completions;
+		if(args.length == 1) {
+			StringUtil.copyPartialMatches(args[0], MineverseChat.networkPlayerNames, completions);
+			Collections.sort(completions);
+	        return completions;
+		}
+		if(args.length == 2) {
+			StringUtil.copyPartialMatches(args[1], ChatChannel.getChatChannels().stream().map(ChatChannel::getName).collect(Collectors.toList()), completions);
+			Collections.sort(completions);
+	        return completions;
+		}
+		return Collections.emptyList();
 	}
 	
 	private void sendBungeeCordMute(CommandSender sender, String playerToMute, ChatChannel channel, long time) {

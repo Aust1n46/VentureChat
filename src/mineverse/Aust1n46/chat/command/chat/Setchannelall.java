@@ -29,7 +29,7 @@ public class Setchannelall extends MineverseCommand {
 						.replace("{args}", args[0]));
 				return;
 			}
-			for(ChatChannel channel : ChatChannel.getChannels()) {
+			for(ChatChannel channel : ChatChannel.getChatChannels()) {
 				if(channel.hasPermission()) {
 					if(!player.isOnline()) {
 						sender.sendMessage(LocalizedMessage.PLAYER_OFFLINE_NO_PERMISSIONS_CHECK.toString());

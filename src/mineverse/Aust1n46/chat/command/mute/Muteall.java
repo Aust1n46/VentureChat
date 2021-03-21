@@ -31,7 +31,7 @@ public class Muteall extends MineverseCommand {
 				return;
 			}
 			boolean bungee = false;
-			for(ChatChannel channel : ChatChannel.getChannels()) {
+			for(ChatChannel channel : ChatChannel.getChatChannels()) {
 				if(channel.isMutable()) {
 					player.addMute(channel.getName(), 0);				
 					if(channel.getBungee()) {

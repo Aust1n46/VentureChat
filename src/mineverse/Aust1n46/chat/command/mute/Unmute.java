@@ -28,7 +28,7 @@ public class Unmute extends MineverseCommand {
 				sender.sendMessage(LocalizedMessage.PLAYER_OFFLINE.toString().replace("{args}", args[0]));
 				return;
 			}
-			for (ChatChannel channel : ChatChannel.getChannels()) {
+			for (ChatChannel channel : ChatChannel.getChatChannels()) {
 				if (channel.getName().equalsIgnoreCase(args[1]) || channel.getAlias().equalsIgnoreCase(args[1])) {
 					if (!player.isMuted(channel.getName())) {
 						sender.sendMessage(LocalizedMessage.PLAYER_NOT_MUTED.toString()

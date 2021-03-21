@@ -153,7 +153,7 @@ public class CommandListener implements CommandExecutor, Listener {
 		}
 
 		if(!plugin.quickchat) {
-			for(ChatChannel channel : ChatChannel.getChannels()) {
+			for(ChatChannel channel : ChatChannel.getChatChannels()) {
 				if(!channel.hasPermission() || mcp.getPlayer().hasPermission(channel.getPermission())) {
 					if(message.equals("/" + channel.getAlias())) {
 						mcp.getPlayer().sendMessage(LocalizedMessage.SET_CHANNEL.toString()
@@ -227,7 +227,7 @@ public class CommandListener implements CommandExecutor, Listener {
 			return true;
 		}
 		MineverseChatPlayer mcp = MineverseChatAPI.getOnlineMineverseChatPlayer((Player) sender);
-		for(ChatChannel channel : ChatChannel.getChannels()) {
+		for(ChatChannel channel : ChatChannel.getChatChannels()) {
 			if(command.getName().toLowerCase().equals(channel.getAlias())) {
 				if(args.length == 0) {
 					mcp.getPlayer().sendMessage(ChatColor.RED + "Invalid command: /" + channel.getAlias() + " message");
