@@ -3,6 +3,7 @@ package mineverse.Aust1n46.chat.command.mute;
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -22,6 +23,8 @@ import mineverse.Aust1n46.chat.utilities.Format;
 
 public class Mute extends MineverseCommand {
 	private MineverseChat plugin = MineverseChat.getInstance();
+	
+	private static final List<String> COMMON_MUTE_TIMES = Collections.unmodifiableList(Arrays.asList(new String[]{"12h", "15m", "1d", "1h", "1m", "30s"}));
 
 	public Mute(String name) {
 		super(name);
@@ -130,6 +133,12 @@ public class Mute extends MineverseCommand {
 			StringUtil.copyPartialMatches(args[1], ChatChannel.getChatChannels().stream().map(ChatChannel::getName).collect(Collectors.toList()), completions);
 			Collections.sort(completions);
 	        return completions;
+		}
+		if(args.length == 3) {
+			StringUtil.copyPartialMatches(args[2], COMMON_MUTE_TIMES, completions);
+			Collections.sort(completions);
+	        return completions;
+			
 		}
 		return Collections.emptyList();
 	}
