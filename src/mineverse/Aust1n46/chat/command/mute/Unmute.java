@@ -30,18 +30,18 @@ public class Unmute extends MineverseCommand {
 		if (sender.hasPermission("venturechat.mute")) {
 			if (args.length < 2) {
 				sender.sendMessage(LocalizedMessage.COMMAND_INVALID_ARGUMENTS.toString().replace("{command}", "/unmute")
-						.replace("{args}", "[player] [channel]"));
+						.replace("{args}", "[channel] [player]"));
 				return;
 			}
-			if (ChatChannel.isChannel(args[1])) {
-				ChatChannel channel = ChatChannel.getChannel(args[1]);
+			if (ChatChannel.isChannel(args[0])) {
+				ChatChannel channel = ChatChannel.getChannel(args[0]);
 				if(channel.getBungee()) {
-					sendBungeeCordUnmute(sender, args[0], channel);
+					sendBungeeCordUnmute(sender, args[1], channel);
 					return;
 				}
-				MineverseChatPlayer player = MineverseChatAPI.getMineverseChatPlayer(args[0]);
+				MineverseChatPlayer player = MineverseChatAPI.getMineverseChatPlayer(args[1]);
 				if (player == null || (!player.isOnline() && !sender.hasPermission("venturechat.mute.offline"))) {
-					sender.sendMessage(LocalizedMessage.PLAYER_OFFLINE.toString().replace("{args}", args[0]));
+					sender.sendMessage(LocalizedMessage.PLAYER_OFFLINE.toString().replace("{args}", args[1]));
 					return;
 				}
 				if (!player.isMuted(channel.getName())) {
@@ -64,7 +64,7 @@ public class Unmute extends MineverseCommand {
 				}
 				return;
 			}
-			sender.sendMessage(LocalizedMessage.INVALID_CHANNEL.toString().replace("{args}", args[1]));
+			sender.sendMessage(LocalizedMessage.INVALID_CHANNEL.toString().replace("{args}", args[0]));
 			return;
 		} else {
 			sender.sendMessage(LocalizedMessage.COMMAND_NO_PERMISSION.toString());
@@ -76,14 +76,17 @@ public class Unmute extends MineverseCommand {
 	public List<String> onTabComplete(CommandSender sender, Command command, String label, String[] args) {
 		List<String> completions = new ArrayList<>();
 		if(args.length == 1) {
-			StringUtil.copyPartialMatches(args[0], MineverseChat.networkPlayerNames, completions);
+			StringUtil.copyPartialMatches(args[0], ChatChannel.getChatChannels().stream().map(ChatChannel::getName).collect(Collectors.toList()), completions);
 			Collections.sort(completions);
 	        return completions;
 		}
 		if(args.length == 2) {
-			StringUtil.copyPartialMatches(args[1], ChatChannel.getChatChannels().stream().map(ChatChannel::getName).collect(Collectors.toList()), completions);
-			Collections.sort(completions);
-	        return completions;
+			if(ChatChannel.isChannel(args[0]) && ChatChannel.getChannel(args[0]).getBungee()) {
+				StringUtil.copyPartialMatches(args[1], MineverseChat.networkPlayerNames, completions);
+				Collections.sort(completions);
+		        return completions;
+			}
+			return null;
 		}
 		return Collections.emptyList();
 	}

@@ -938,7 +938,8 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 						return;
 					}
 					if(time > 0) {
-						playerToMuteMCP.addMute(chatChannelObj.getName(), time);
+						long datetime = System.currentTimeMillis();
+						playerToMuteMCP.addMute(chatChannelObj.getName(), datetime + time);
 						String timeString = Format.parseTimeStringFromMillis(time);
 						playerToMuteMCP.getPlayer()
 								.sendMessage(LocalizedMessage.MUTE_PLAYER_PLAYER_TIME.toString()

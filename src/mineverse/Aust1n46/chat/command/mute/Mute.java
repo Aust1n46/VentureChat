@@ -33,11 +33,11 @@ public class Mute extends MineverseCommand {
 		if (sender.hasPermission("venturechat.mute")) {
 			if (args.length < 2) {
 				sender.sendMessage(LocalizedMessage.COMMAND_INVALID_ARGUMENTS.toString().replace("{command}", "/mute")
-						.replace("{args}", "[player] [channel] {time}"));
+						.replace("{args}", "[channel] [player] {time}"));
 				return;
 			}
-			if (ChatChannel.isChannel(args[1])) {
-				ChatChannel channel = ChatChannel.getChannel(args[1]);
+			if (ChatChannel.isChannel(args[0])) {
+				ChatChannel channel = ChatChannel.getChannel(args[0]);
 				if (channel.isMutable()) {
 					long datetime = System.currentTimeMillis();
 					long time = 0;
@@ -56,15 +56,15 @@ public class Mute extends MineverseCommand {
 					}
 					if(channel.getBungee()) {
 						if(args.length > 2) {
-							sendBungeeCordMute(sender, args[0], channel, datetime + time);
+							sendBungeeCordMute(sender, args[1], channel, time);
 							return;
 						}
-						sendBungeeCordMute(sender, args[0], channel, 0);
+						sendBungeeCordMute(sender, args[1], channel, 0);
 						return;
 					}
-					MineverseChatPlayer playerToMute = MineverseChatAPI.getMineverseChatPlayer(args[0]);
+					MineverseChatPlayer playerToMute = MineverseChatAPI.getMineverseChatPlayer(args[1]);
 					if (playerToMute == null || (!playerToMute.isOnline() && !sender.hasPermission("venturechat.mute.offline"))) {
-						sender.sendMessage(LocalizedMessage.PLAYER_OFFLINE.toString().replace("{args}", args[0]));
+						sender.sendMessage(LocalizedMessage.PLAYER_OFFLINE.toString().replace("{args}", args[1]));
 						return;
 					}
 					if (playerToMute.isMuted(channel.getName())) {
@@ -113,7 +113,7 @@ public class Mute extends MineverseCommand {
 						.replace("{channel_name}", channel.getName()));
 				return;
 			}
-			sender.sendMessage(LocalizedMessage.INVALID_CHANNEL.toString().replace("{args}", args[1]));
+			sender.sendMessage(LocalizedMessage.INVALID_CHANNEL.toString().replace("{args}", args[0]));
 			return;
 		}
 		sender.sendMessage(LocalizedMessage.COMMAND_NO_PERMISSION.toString());
@@ -123,14 +123,17 @@ public class Mute extends MineverseCommand {
 	public List<String> onTabComplete(CommandSender sender, Command command, String label, String[] args) {
 		List<String> completions = new ArrayList<>();
 		if(args.length == 1) {
-			StringUtil.copyPartialMatches(args[0], MineverseChat.networkPlayerNames, completions);
+			StringUtil.copyPartialMatches(args[0], ChatChannel.getChatChannels().stream().map(ChatChannel::getName).collect(Collectors.toList()), completions);
 			Collections.sort(completions);
 	        return completions;
 		}
 		if(args.length == 2) {
-			StringUtil.copyPartialMatches(args[1], ChatChannel.getChatChannels().stream().map(ChatChannel::getName).collect(Collectors.toList()), completions);
-			Collections.sort(completions);
-	        return completions;
+			if(ChatChannel.isChannel(args[0]) && ChatChannel.getChannel(args[0]).getBungee()) {
+				StringUtil.copyPartialMatches(args[1], MineverseChat.networkPlayerNames, completions);
+				Collections.sort(completions);
+		        return completions;
+			}
+			return null;
 		}
 		if(args.length == 3) {
 			StringUtil.copyPartialMatches(args[2], COMMON_MUTE_TIMES, completions);
