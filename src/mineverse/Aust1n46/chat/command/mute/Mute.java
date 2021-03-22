@@ -22,8 +22,6 @@ import mineverse.Aust1n46.chat.localization.LocalizedMessage;
 import mineverse.Aust1n46.chat.utilities.Format;
 
 public class Mute extends MineverseCommand {
-	private MineverseChat plugin = MineverseChat.getInstance();
-	
 	private static final List<String> COMMON_MUTE_TIMES = Collections.unmodifiableList(Arrays.asList(new String[]{"12h", "15m", "1d", "1h", "1m", "30s"}));
 
 	public Mute(String name) {
@@ -158,7 +156,7 @@ public class Mute extends MineverseCommand {
 			out.writeUTF(playerToMute);
 			out.writeUTF(channel.getName());
 			out.writeLong(time);
-			plugin.getServer().getOnlinePlayers().iterator().next().sendPluginMessage(plugin, MineverseChat.PLUGIN_MESSAGING_CHANNEL, byteOutStream.toByteArray());
+			MineverseChat.sendPluginMessage(byteOutStream);
 			out.close();
 		}
 		catch(Exception e) {

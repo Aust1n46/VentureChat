@@ -386,6 +386,80 @@ public class MineverseChatBungee extends Plugin implements Listener {
 					}
 				}
 			}
+			if(subchannel.equals("Unmute")) {
+				String identifier = in.readUTF();
+				if(identifier.equals("Send")) {
+					String server = ser.getInfo().getName();
+					String senderIdentifier = in.readUTF();
+					String playerToUnmute = in.readUTF();
+					String channelName = in.readUTF();
+					UUID temporaryDataInstanceUUID = TemporaryDataInstance.createTemporaryDataInstance();
+					out.writeUTF("Unmute");
+					out.writeUTF("Send");
+					out.writeUTF(server);
+					out.writeUTF(senderIdentifier);
+					out.writeUTF(temporaryDataInstanceUUID.toString());
+					out.writeUTF(playerToUnmute);
+					out.writeUTF(channelName);
+					for(String send : getProxy().getServers().keySet()) {
+						if(getProxy().getServers().get(send).getPlayers().size() > 0) {
+							getProxy().getServers().get(send).sendData(MineverseChatBungee.PLUGIN_MESSAGING_CHANNEL, outstream.toByteArray());
+						}
+					}
+				}
+				if(identifier.equals("Valid")) {
+					String server = in.readUTF();
+					String senderIdentifier = in.readUTF();
+					String playerToUnmute = in.readUTF();
+					String channelName = in.readUTF();
+					out.writeUTF("Unmute");
+					out.writeUTF("Valid");
+					out.writeUTF(senderIdentifier);
+					out.writeUTF(playerToUnmute);
+					out.writeUTF(channelName);
+					if(getProxy().getServers().get(server).getPlayers().size() > 0) {
+						getProxy().getServers().get(server).sendData(MineverseChatBungee.PLUGIN_MESSAGING_CHANNEL, outstream.toByteArray());
+					}
+				}
+				if(identifier.equals("Offline")) {
+					String server = in.readUTF();
+					UUID temporaryDataInstanceUUID = UUID.fromString(in.readUTF());
+					String senderIdentifier = in.readUTF();
+					String playerToUnmute = in.readUTF();
+					TemporaryDataInstance temporaryDataInstance = TemporaryDataInstance.getTemporaryDataInstance(temporaryDataInstanceUUID);
+					temporaryDataInstance.incrementMessagePackets();
+					int servers = 0;
+					for(String send : getProxy().getServers().keySet()) {
+						if(getProxy().getServers().get(send).getPlayers().size() > 0) {
+							servers ++;
+						}
+					}
+					if(temporaryDataInstance.getMessagePackets() >= servers) {
+						temporaryDataInstance.destroyInstance();
+						out.writeUTF("Unmute");
+						out.writeUTF("Offline");
+						out.writeUTF(senderIdentifier);
+						out.writeUTF(playerToUnmute);
+						if(getProxy().getServers().get(server).getPlayers().size() > 0) {
+							getProxy().getServers().get(server).sendData(MineverseChatBungee.PLUGIN_MESSAGING_CHANNEL, outstream.toByteArray());
+						}
+					}	
+				}
+				if(identifier.equals("NotMuted")) {
+					String server = in.readUTF();
+					String senderIdentifier = in.readUTF();
+					String playerToUnmute = in.readUTF();
+					String channelName = in.readUTF();
+					out.writeUTF("Unmute");
+					out.writeUTF("NotMuted");
+					out.writeUTF(senderIdentifier);
+					out.writeUTF(playerToUnmute);
+					out.writeUTF(channelName);
+					if(getProxy().getServers().get(server).getPlayers().size() > 0) {
+						getProxy().getServers().get(server).sendData(MineverseChatBungee.PLUGIN_MESSAGING_CHANNEL, outstream.toByteArray());
+					}
+				}
+			}
 			if(subchannel.equals("Message")) {
 				String identifier = in.readUTF();
 				if(identifier.equals("Send")) {
