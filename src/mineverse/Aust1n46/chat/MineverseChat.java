@@ -536,6 +536,15 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 				// System.out.println(mcp.getPlayer().getServer().getServerName());
 				// out.writeUTF(mcp.getPlayer().getServer().getServerName());
 				out.writeUTF(mcp.getUUID().toString());
+				Bukkit.getServer().getScheduler().runTaskLaterAsynchronously(this, new Runnable() {
+					@Override
+					public void run() {
+						if(mcp.hasPlayed()) {
+							return;
+						}
+						synchronize(mcp, false);	
+					}
+				}, 20L); // one second delay before running again
 			}
 			else {
 				out.writeUTF("Update");
@@ -787,6 +796,9 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 				}
 				String uuid = msgin.readUTF();
 				MineverseChatPlayer p = MineverseChatAPI.getMineverseChatPlayer(UUID.fromString(uuid));
+				if(p.hasPlayed()) {
+					return;
+				}
 				for(Object ch : p.getListening().toArray()) {
 					String c = ch.toString();
 					ChatChannel cha = ChatChannel.getChannel(c);

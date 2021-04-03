@@ -25,7 +25,6 @@ import mineverse.Aust1n46.chat.utilities.UUIDFetcher;
 //and it's data.
 public class LoginListener implements Listener {
 	private MineverseChat plugin = MineverseChat.getInstance();
-	private boolean firstPlayerHasJoined = false;
 
 	@EventHandler(priority = EventPriority.LOW)
 	public void onPlayerQuit(PlayerQuitEvent plog) {
@@ -108,11 +107,6 @@ public class LoginListener implements Listener {
 		}
 		
 		long delayInTicks = 20L;
-		// Add extra delay to allow the sync to run properly
-		if(!firstPlayerHasJoined) {
-			delayInTicks = 100L;
-			firstPlayerHasJoined = true;
-		}
 		final MineverseChatPlayer sync = mcp;
 		plugin.getServer().getScheduler().runTaskLaterAsynchronously(plugin, new Runnable() {
 			public void run() {
