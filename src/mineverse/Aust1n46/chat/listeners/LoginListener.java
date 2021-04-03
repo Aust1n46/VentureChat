@@ -45,6 +45,18 @@ public class LoginListener implements Listener {
 		mcp.setOnline(false);
 		MineverseChatAPI.removeMineverseChatOnlinePlayerToMap(mcp);
 	}
+	
+	void handleNameChange(MineverseChatPlayer mcp, Player eventPlayerInstance) {
+		Bukkit.getConsoleSender().sendMessage(Format.FormatStringAll("&8[&eVentureChat&8]&e - Detected Name Change. Old Name:&c " + mcp.getName() + " &eNew Name:&c " + eventPlayerInstance.getName()));
+		MineverseChatAPI.removeNameFromMap(mcp.getName());
+		//reset nickname if nickname equals old username
+		if(mcp.getName().equals(eventPlayerInstance.getDisplayName())) {
+			eventPlayerInstance.setDisplayName(eventPlayerInstance.getName());
+			mcp.setNickname(eventPlayerInstance.getName());
+		}
+		mcp.setName(eventPlayerInstance.getName());
+		MineverseChatAPI.addNameToMap(mcp);
+	}
 
 	@EventHandler(priority = EventPriority.LOW)
 	public void onPlayerJoin(PlayerJoinEvent event) throws Exception {
@@ -67,10 +79,7 @@ public class LoginListener implements Listener {
 		UUIDFetcher.checkOfflineUUIDWarning(mcp.getUUID());
 		//check for name change
 		if(!mcp.getName().equals(event.getPlayer().getName())) {
-			Bukkit.getConsoleSender().sendMessage(Format.FormatStringAll("&8[&eVentureChat&8]&e - Detected Name Change. Old Name:&c " + mcp.getName() + " &eNew Name:&c " + event.getPlayer().getName()));
-			MineverseChatAPI.removeNameFromMap(mcp.getName());
-			mcp.setName(event.getPlayer().getName());
-			MineverseChatAPI.addNameToMap(mcp);
+			handleNameChange(mcp, event.getPlayer());
 		}
 		if(!event.getPlayer().getDisplayName().equals(mcp.getName())) {
 			mcp.setNickname(event.getPlayer().getDisplayName());
