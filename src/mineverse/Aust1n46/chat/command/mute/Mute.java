@@ -128,12 +128,17 @@ public class Mute extends MineverseCommand {
 	        return completions;
 		}
 		if(args.length == 2) {
-			if(ChatChannel.isChannel(args[0]) && ChatChannel.getChannel(args[0]).getBungee()) {
-				StringUtil.copyPartialMatches(args[1], MineverseChat.networkPlayerNames, completions);
+			if(ChatChannel.isChannel(args[0])) {
+				ChatChannel chatChannelObj = ChatChannel.getChannel(args[0]);
+				if(chatChannelObj.getBungee()) {
+					StringUtil.copyPartialMatches(args[1], MineverseChat.networkPlayerNames, completions);
+					Collections.sort(completions);
+			        return completions;
+				}
+				StringUtil.copyPartialMatches(args[1], MineverseChatAPI.getOnlineMineverseChatPlayers().stream().filter(mcp -> !mcp.isMuted(chatChannelObj.getName())).map(MineverseChatPlayer::getName).collect(Collectors.toList()), completions);
 				Collections.sort(completions);
 		        return completions;
 			}
-			return null;
 		}
 		if(args.length == 3) {
 			StringUtil.copyPartialMatches(args[2], COMMON_MUTE_TIMES, completions);
