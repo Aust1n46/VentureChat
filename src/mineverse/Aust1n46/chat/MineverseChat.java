@@ -542,7 +542,7 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 						if(mcp.hasPlayed()) {
 							return;
 						}
-						synchronize(mcp, false);	
+						synchronize(mcp, false);
 					}
 				}, 20L); // one second delay before running again
 			}
