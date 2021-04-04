@@ -1,8 +1,5 @@
 package mineverse.Aust1n46.chat.listeners;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Set;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
@@ -64,14 +61,7 @@ public class LoginListener implements Listener {
 			Player player = event.getPlayer();
 			String name = player.getName();
 			UUID uuid = player.getUniqueId();
-			ChatChannel current = ChatChannel.getDefaultChannel();
-			Set<UUID> ignores = new HashSet<UUID>();
-			Set<String> listening = new HashSet<String>();
-			listening.add(current.getName());
-			HashMap<String, Long> mutes = new HashMap<String, Long>();
-			Set<String> blockedCommands = new HashSet<String>();
-			String jsonFormat = "Default";
-			mcp = new MineverseChatPlayer(uuid, name, current, ignores, listening, mutes, blockedCommands, false, null, true, true, name, jsonFormat, false, false, false, true, true);
+			mcp = new MineverseChatPlayer(uuid, name);
 			MineverseChatAPI.addMineverseChatPlayerToMap(mcp);
 			MineverseChatAPI.addNameToMap(mcp);
 		}

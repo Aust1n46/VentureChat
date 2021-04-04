@@ -9,6 +9,7 @@ import mineverse.Aust1n46.chat.api.MineverseChatAPI;
 import mineverse.Aust1n46.chat.api.MineverseChatPlayer;
 import mineverse.Aust1n46.chat.channel.ChatChannel;
 import mineverse.Aust1n46.chat.command.MineverseCommand;
+import mineverse.Aust1n46.chat.command.mute.MuteContainer;
 
 public class Chatinfo extends MineverseCommand {
 	private MineverseChat plugin = MineverseChat.getInstance();;
@@ -36,8 +37,8 @@ public class Chatinfo extends MineverseCommand {
 						ChatChannel channel = ChatChannel.getChannel(c);
 						listen += channel.getColor() + channel.getName() + " ";						
 					}
-					for(String c : mcp.getMutes().keySet()) {
-						ChatChannel channel = ChatChannel.getChannel(c);
+					for(MuteContainer muteContainer : mcp.getMutes()) {
+						ChatChannel channel = ChatChannel.getChannel(muteContainer.getChannel());
 						mute += channel.getColor() + channel.getName() + " ";						
 					}
 					for(String bc : mcp.getBlockedCommands()) {						
@@ -97,8 +98,8 @@ public class Chatinfo extends MineverseCommand {
 					ChatChannel channel = ChatChannel.getChannel(c);
 					listen += channel.getColor() + channel.getName() + " ";						
 				}
-				for(String c : p.getMutes().keySet()) {
-					ChatChannel channel = ChatChannel.getChannel(c);
+				for(MuteContainer muteContainer : p.getMutes()) {
+					ChatChannel channel = ChatChannel.getChannel(muteContainer.getChannel());
 					mute += channel.getColor() + channel.getName() + " ";						
 				}
 				for(String bc : p.getBlockedCommands()) {						

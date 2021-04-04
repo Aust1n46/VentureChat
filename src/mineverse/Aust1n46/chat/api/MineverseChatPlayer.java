@@ -1,7 +1,9 @@
 package mineverse.Aust1n46.chat.api;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
@@ -9,6 +11,7 @@ import java.util.UUID;
 import mineverse.Aust1n46.chat.ChatMessage;
 import mineverse.Aust1n46.chat.MineverseChat;
 import mineverse.Aust1n46.chat.channel.ChatChannel;
+import mineverse.Aust1n46.chat.command.mute.MuteContainer;
 import mineverse.Aust1n46.chat.json.JsonFormat;
 
 import org.bukkit.Bukkit;
@@ -22,7 +25,7 @@ public class MineverseChatPlayer {
 	private ChatChannel currentChannel;
 	private Set<UUID> ignores;
 	private Set<String> listening;
-	private HashMap<String, Long> mutes;
+	private HashMap<String, MuteContainer> mutes;
 	private Set<String> blockedCommands;
 	private boolean host;
 	private UUID party;
@@ -50,7 +53,7 @@ public class MineverseChatPlayer {
 	private boolean messageToggle;
 	private boolean bungeeToggle;
 	
-	public MineverseChatPlayer(UUID uuid, String name, ChatChannel currentChannel, Set<UUID> ignores, Set<String> listening, HashMap<String, Long> mutes, Set<String> blockedCommands, boolean host, UUID party, boolean filter, boolean notifications, String nickname, String jsonFormat, boolean spy, boolean commandSpy, boolean rangedSpy, boolean messageToggle, boolean bungeeToggle) {
+	public MineverseChatPlayer(UUID uuid, String name, ChatChannel currentChannel, Set<UUID> ignores, Set<String> listening, HashMap<String, MuteContainer> mutes, Set<String> blockedCommands, boolean host, UUID party, boolean filter, boolean notifications, String nickname, String jsonFormat, boolean spy, boolean commandSpy, boolean rangedSpy, boolean messageToggle, boolean bungeeToggle) {
 		this.uuid = uuid;
 		this.name = name;
 		this.currentChannel = currentChannel;
@@ -81,6 +84,40 @@ public class MineverseChatPlayer {
 		this.spam = new HashMap<ChatChannel, List<Long>>();
 		this.messageToggle = messageToggle;
 		this.bungeeToggle = bungeeToggle;
+	}
+	
+	public MineverseChatPlayer(UUID uuid, String name) {
+		this.uuid = uuid;
+		this.name = name;
+		this.currentChannel = ChatChannel.getDefaultChannel();
+		this.ignores = new HashSet<UUID>();
+		this.listening = new HashSet<String>();
+		listening.add(currentChannel.getName());
+		this.mutes = new HashMap<String, MuteContainer>();
+		this.blockedCommands = new HashSet<String>();
+		this.host = false;
+		this.party = null;
+		this.filter = true;
+		this.notifications = true;
+		this.nickname = name;
+		this.online = false;
+		this.player = null;
+		this.hasPlayed = false;
+		this.conversation = null;
+		this.spy = false;
+		this.rangedSpy = false;
+		this.commandSpy = false;
+		this.quickChat = false;
+		this.quickChannel = null;
+		this.replyPlayer = null;
+		this.partyChat = false;
+		this.modified = false;
+		this.messages = new ArrayList<ChatMessage>();
+		this.jsonFormat = "Default";
+		this.cooldowns = new HashMap<ChatChannel, Long>();
+		this.spam = new HashMap<ChatChannel, List<Long>>();
+		this.messageToggle = true;
+		this.bungeeToggle = true;
 	}
 	
 	public boolean getBungeeToggle() {
@@ -207,13 +244,29 @@ public class MineverseChatPlayer {
 		this.listening.clear();
 	}
 
-	public HashMap<String, Long> getMutes() {
-		return this.mutes;
+	public Collection<MuteContainer> getMutes() {
+		return this.mutes.values();
+	}
+	
+	public MuteContainer getMute(String channel) {
+		return mutes.get(channel);
 	}
 
+	public boolean addMute(String channel) {
+		return addMute(channel, 0, "");
+	}
+	
 	public boolean addMute(String channel, long time) {
+		return addMute(channel, time, "");
+	}
+	
+	public boolean addMute(String channel, String reason) {
+		return addMute(channel, 0, reason);
+	}
+	
+	public boolean addMute(String channel, long time, String reason) {
 		if(channel != null && time >= 0) {
-			mutes.put(channel, time);
+			mutes.put(channel, new MuteContainer(channel, time, reason));
 			return true;
 		}
 		return false;

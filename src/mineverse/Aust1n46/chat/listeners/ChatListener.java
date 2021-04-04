@@ -29,6 +29,7 @@ import mineverse.Aust1n46.chat.api.MineverseChatPlayer;
 import mineverse.Aust1n46.chat.api.events.ChannelJoinEvent;
 import mineverse.Aust1n46.chat.api.events.VentureChatEvent;
 import mineverse.Aust1n46.chat.channel.ChatChannel;
+import mineverse.Aust1n46.chat.command.mute.MuteContainer;
 import mineverse.Aust1n46.chat.localization.LocalizedMessage;
 import mineverse.Aust1n46.chat.utilities.Format;
 import mineverse.Aust1n46.chat.versions.VersionHandler;
@@ -210,25 +211,45 @@ public class ChatListener implements Listener {
 		Boolean filterthis = true;
 		mcp.addListening(eventChannel.getName());
 		if (mcp.isMuted(eventChannel.getName())) {
-			if (mcp.getMutes().get(eventChannel.getName()).longValue() > 0) {
+			MuteContainer muteContainer = mcp.getMute(eventChannel.getName());
+			if (muteContainer.hasDuration()) {
 				long dateTimeMillis = System.currentTimeMillis();
-				long muteTimeMillis = mcp.getMutes().get(eventChannel.getName()).longValue();
+				long muteTimeMillis = muteContainer.getDuration();
 				long remainingMuteTime = muteTimeMillis - dateTimeMillis;
 				if (remainingMuteTime < 1000) {
 					remainingMuteTime = 1000;
 				}
 				String timeString = Format.parseTimeStringFromMillis(remainingMuteTime);
-				mcp.getPlayer()
-						.sendMessage(LocalizedMessage.CHANNEL_MUTED_TIMED.toString()
-								.replace("{channel_color}", eventChannel.getColor())
-								.replace("{channel_name}", eventChannel.getName())
-								.replace("{time}", timeString));
+				if(muteContainer.hasReason()) {
+					mcp.getPlayer()
+					.sendMessage(LocalizedMessage.CHANNEL_MUTED_TIMED_REASON.toString()
+							.replace("{channel_color}", eventChannel.getColor())
+							.replace("{channel_name}", eventChannel.getName())
+							.replace("{time}", timeString)
+							.replace("{reason}", muteContainer.getReason()));
+				}
+				else {
+					mcp.getPlayer()
+					.sendMessage(LocalizedMessage.CHANNEL_MUTED_TIMED.toString()
+							.replace("{channel_color}", eventChannel.getColor())
+							.replace("{channel_name}", eventChannel.getName())
+							.replace("{time}", timeString));
+				}
 			}
 			else {
-				mcp.getPlayer()
-						.sendMessage(LocalizedMessage.CHANNEL_MUTED.toString()
-								.replace("{channel_color}", eventChannel.getColor())
-								.replace("{channel_name}", eventChannel.getName()));
+				if(muteContainer.hasReason()) {
+					mcp.getPlayer()
+					.sendMessage(LocalizedMessage.CHANNEL_MUTED_REASON.toString()
+							.replace("{channel_color}", eventChannel.getColor())
+							.replace("{channel_name}", eventChannel.getName())
+							.replace("{reason}", muteContainer.getReason()));
+				}
+				else {
+					mcp.getPlayer()
+							.sendMessage(LocalizedMessage.CHANNEL_MUTED.toString()
+									.replace("{channel_color}", eventChannel.getColor())
+									.replace("{channel_name}", eventChannel.getName()));
+				}
 			}
 			mcp.setQuickChat(false);
 			return;

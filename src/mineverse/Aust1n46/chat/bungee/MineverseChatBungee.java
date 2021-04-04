@@ -6,16 +6,11 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.File;
 import java.nio.file.Files;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.UUID;
 
 import mineverse.Aust1n46.chat.api.MineverseChatAPI;
 import mineverse.Aust1n46.chat.api.SynchronizedMineverseChatPlayer;
-import mineverse.Aust1n46.chat.bungee.command.GlobalMute;
-import mineverse.Aust1n46.chat.bungee.command.GlobalMuteAll;
-import mineverse.Aust1n46.chat.bungee.command.GlobalUnmute;
-import mineverse.Aust1n46.chat.bungee.command.GlobalUnmuteAll;
+import mineverse.Aust1n46.chat.command.mute.MuteContainer;
 import mineverse.Aust1n46.chat.database.BungeePlayerData;
 import mineverse.Aust1n46.chat.database.TemporaryDataInstance;
 import mineverse.Aust1n46.chat.utilities.UUIDFetcher;
@@ -61,28 +56,11 @@ public class MineverseChatBungee extends Plugin implements Listener {
 		
 		this.getProxy().registerChannel(MineverseChatBungee.PLUGIN_MESSAGING_CHANNEL);
 		this.getProxy().getPluginManager().registerListener(this, this);
-		
-		registerBungeeCordMuteCommands();
 	}
 
 	@Override
 	public void onDisable() {
 		BungeePlayerData.saveBungeePlayerData();
-	}
-	
-	/**
-	 * Old BungeeCord mute commands that pretty much no one even knows about let alone uses...
-	 * Slated for removal when the mute system is reworked.
-	 */
-	private void registerBungeeCordMuteCommands() {
-		getProxy().getPluginManager().registerCommand(this, new GlobalMute(this, "globalmute"));
-		getProxy().getPluginManager().registerCommand(this, new GlobalMute(this, "gmute"));
-		getProxy().getPluginManager().registerCommand(this, new GlobalMuteAll(this, "globalmuteall"));
-		getProxy().getPluginManager().registerCommand(this, new GlobalMuteAll(this, "gmuteall"));
-		getProxy().getPluginManager().registerCommand(this, new GlobalUnmute(this, "globalunmute"));
-		getProxy().getPluginManager().registerCommand(this, new GlobalUnmute(this, "gunmute"));
-		getProxy().getPluginManager().registerCommand(this, new GlobalUnmuteAll(this, "globalunmuteall"));
-		getProxy().getPluginManager().registerCommand(this, new GlobalUnmuteAll(this, "gunmuteall"));
 	}
 	
 	public static MineverseChatBungee getInstance() {
@@ -316,6 +294,7 @@ public class MineverseChatBungee extends Plugin implements Listener {
 					String playerToMute = in.readUTF();
 					String channelName = in.readUTF();
 					long time = in.readLong();
+					String reason = in.readUTF();
 					UUID temporaryDataInstanceUUID = TemporaryDataInstance.createTemporaryDataInstance();
 					out.writeUTF("Mute");
 					out.writeUTF("Send");
@@ -325,6 +304,7 @@ public class MineverseChatBungee extends Plugin implements Listener {
 					out.writeUTF(playerToMute);
 					out.writeUTF(channelName);
 					out.writeLong(time);
+					out.writeUTF(reason);
 					for(String send : getProxy().getServers().keySet()) {
 						if(getProxy().getServers().get(send).getPlayers().size() > 0) {
 							getProxy().getServers().get(send).sendData(MineverseChatBungee.PLUGIN_MESSAGING_CHANNEL, outstream.toByteArray());
@@ -337,12 +317,14 @@ public class MineverseChatBungee extends Plugin implements Listener {
 					String playerToMute = in.readUTF();
 					String channelName = in.readUTF();
 					long time = in.readLong();
+					String reason = in.readUTF();
 					out.writeUTF("Mute");
 					out.writeUTF("Valid");
 					out.writeUTF(senderIdentifier);
 					out.writeUTF(playerToMute);
 					out.writeUTF(channelName);
 					out.writeLong(time);
+					out.writeUTF(reason);
 					if(getProxy().getServers().get(server).getPlayers().size() > 0) {
 						getProxy().getServers().get(server).sendData(MineverseChatBungee.PLUGIN_MESSAGING_CHANNEL, outstream.toByteArray());
 					}
@@ -574,7 +556,7 @@ public class MineverseChatBungee extends Plugin implements Listener {
 					UUID uuid = UUID.fromString(in.readUTF());
 					SynchronizedMineverseChatPlayer smcp = MineverseChatAPI.getSynchronizedMineverseChatPlayer(uuid);
 					if(smcp == null) {
-						smcp = new SynchronizedMineverseChatPlayer(uuid, new HashSet<String>(), new HashMap<String, Long>(), new HashSet<UUID>(), false, true);
+						smcp = new SynchronizedMineverseChatPlayer(uuid);
 						MineverseChatAPI.addSynchronizedMineverseChatPlayerToMap(smcp);
 					}
 					out.writeUTF("Sync");
@@ -585,13 +567,13 @@ public class MineverseChatBungee extends Plugin implements Listener {
 					for(String channel : smcp.getListening()) {
 						out.writeUTF(channel);
 					}
-					int muteCount = smcp.getMutes().keySet().size();
+					int muteCount = smcp.getMutes().size();
 					//System.out.println(muteCount);
 					out.write(muteCount);
-					for(String channel : smcp.getMutes().keySet()) {
-						//System.out.println(channel);
-						out.writeUTF(channel);
-						out.writeLong(smcp.getMutes().get(channel));
+					for(MuteContainer muteContainer : smcp.getMutes()) {
+						out.writeUTF(muteContainer.getChannel());
+						out.writeLong(muteContainer.getDuration());
+						out.writeUTF(muteContainer.getReason());
 					}
 					//System.out.println(smcp.isSpy() + " spy value");
 					//System.out.println(out.size() + " size before");
@@ -611,11 +593,11 @@ public class MineverseChatBungee extends Plugin implements Listener {
 					UUID uuid = UUID.fromString(in.readUTF());
 					SynchronizedMineverseChatPlayer smcp = MineverseChatAPI.getSynchronizedMineverseChatPlayer(uuid);
 					if(smcp == null) {
-						smcp = new SynchronizedMineverseChatPlayer(uuid, new HashSet<String>(), new HashMap<String, Long>(), new HashSet<UUID>(), false, true);
+						smcp = new SynchronizedMineverseChatPlayer(uuid);
 						MineverseChatAPI.addSynchronizedMineverseChatPlayerToMap(smcp);
 					}		
 					smcp.getListening().clear();
-					smcp.getMutes().clear();
+					smcp.clearMutes();
 					smcp.getIgnores().clear();
 					int sizeL = in.read();
 					//System.out.println(sizeL + " listening");
@@ -623,12 +605,12 @@ public class MineverseChatBungee extends Plugin implements Listener {
 						smcp.addListening(in.readUTF());
 					}
 					int sizeM = in.read();
-					//System.out.println(size + " mutes");
 					for(int b = 0; b < sizeM; b++) {
 						String mute = in.readUTF();
 						long muteTime = in.readLong();
+						String muteReason = in.readUTF();
 						//System.out.println(mute);
-						smcp.addMute(mute, muteTime);
+						smcp.addMute(mute, muteTime, muteReason);
 					}
 					int sizeI = in.read();
 					for(int c = 0; c < sizeI; c++) {

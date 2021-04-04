@@ -14,6 +14,7 @@ import java.util.UUID;
 import mineverse.Aust1n46.chat.api.MineverseChatAPI;
 import mineverse.Aust1n46.chat.api.SynchronizedMineverseChatPlayer;
 import mineverse.Aust1n46.chat.bungee.MineverseChatBungee;
+import mineverse.Aust1n46.chat.command.mute.MuteContainer;
 import mineverse.Aust1n46.chat.utilities.Format;
 import mineverse.Aust1n46.chat.utilities.UUIDFetcher;
 import net.md_5.bungee.api.ProxyServer;
@@ -52,11 +53,12 @@ public class BungeePlayerData {
 					String channel = l.nextToken();
 					listening.add(channel);
 				}
-				HashMap<String, Long> mutes = new HashMap<String, Long>();
+				HashMap<String, MuteContainer> mutes = new HashMap<String, MuteContainer>();
 				StringTokenizer m = new StringTokenizer(playerData.getString(uuidString + ".mutes"), ",");
 				while(m.hasMoreTokens()) {
 					String[] parts = m.nextToken().split(":");
-					mutes.put(parts[0], Long.parseLong(parts[1]));
+					String channelName = parts[0];
+					mutes.put(channelName, new MuteContainer(channelName, Long.parseLong(parts[1])));
 				}
 				HashSet<UUID> ignores = new HashSet<UUID>();
 				StringTokenizer n = new StringTokenizer(playerData.getString(uuidString + ".ignores"), ",");
@@ -115,11 +117,11 @@ public class BungeePlayerData {
 				String channel = l.nextToken();
 				listening.add(channel);
 			}
-			HashMap<String, Long> mutes = new HashMap<String, Long>();
-			StringTokenizer m = new StringTokenizer(bungeePlayerDataFileConfiguration.getString("mutes"), ",");
-			while(m.hasMoreTokens()) {
-				String[] parts = m.nextToken().split(":");
-				mutes.put(parts[0], Long.parseLong(parts[1]));
+			HashMap<String, MuteContainer> mutes = new HashMap<String, MuteContainer>();
+			Configuration muteSection = bungeePlayerDataFileConfiguration.getSection("mutes");
+			for(String channelName : muteSection.getKeys()) {
+				Configuration channelSection = muteSection.getSection(channelName);
+				mutes.put(channelName, new MuteContainer(channelName, channelSection.getLong("time"), channelSection.getString("reason")));
 			}
 			HashSet<UUID> ignores = new HashSet<UUID>();
 			StringTokenizer n = new StringTokenizer(bungeePlayerDataFileConfiguration.getString("ignores"), ",");
@@ -157,20 +159,20 @@ public class BungeePlayerData {
 				String listen = "";
 				for(String s : p.getListening())
 					listen += s + ",";
-				String mute = "";
-				for(String s : p.getMutes().keySet())
-					mute += s + ":0,";
 				String ignore = "";
 				for(UUID s : p.getIgnores()) 
 					ignore += s.toString() + ",";
 				if(listen.length() > 0)
 					listen = listen.substring(0, listen.length() - 1);
-				if(mute.length() > 0)
-					mute = mute.substring(0, mute.length() - 1);
 				if(ignore.length() > 0)
 					ignore = ignore.substring(0, ignore.length() - 1);
 				bungeePlayerDataFileConfiguration.set("channels", listen);
-				bungeePlayerDataFileConfiguration.set("mutes", mute);
+				Configuration muteSection = createSection(bungeePlayerDataFileConfiguration, "mutes");
+				for(MuteContainer mute : p.getMutes()) {
+					Configuration channelSection = createSection(muteSection, mute.getChannel());
+					channelSection.set("time", mute.getDuration());
+					channelSection.set("reason", mute.getReason());
+				}
 				bungeePlayerDataFileConfiguration.set("ignores", ignore);
 				bungeePlayerDataFileConfiguration.set("spy", p.isSpy());
 				bungeePlayerDataFileConfiguration.set("messagetoggle", p.getMessageToggle());
@@ -181,5 +183,17 @@ public class BungeePlayerData {
 		catch (IOException e) {
 			e.printStackTrace();
 		}
+	}
+	
+	/**
+	 * Create a new {@link Configuration} section.
+	 * 
+	 * @param configurationSection
+	 * @param sectionKey
+	 * @return Configuration
+	 */
+	private static Configuration createSection(Configuration configurationSection, String sectionKey) {
+		configurationSection.set(sectionKey, null);
+		return configurationSection.getSection(sectionKey);
 	}
 }
