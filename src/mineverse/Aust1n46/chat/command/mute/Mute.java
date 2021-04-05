@@ -33,7 +33,7 @@ public class Mute extends MineverseCommand {
 		if (sender.hasPermission("venturechat.mute")) {
 			if (args.length < 2) {
 				sender.sendMessage(LocalizedMessage.COMMAND_INVALID_ARGUMENTS.toString().replace("{command}", "/mute")
-						.replace("{args}", "[channel] [player] {time}"));
+						.replace("{args}", "[channel] [player] {time} {reason}"));
 				return;
 			}
 			if (ChatChannel.isChannel(args[0])) {

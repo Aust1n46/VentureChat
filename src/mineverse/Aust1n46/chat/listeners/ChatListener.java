@@ -311,20 +311,25 @@ public class ChatListener implements Listener {
 				if (spamcount + 1 >= spamtimeconfig) {
 					long time = Format.parseTimeStringToMillis(mutedForTime);
 					if (time > 0) {
-						mcp.addMute(eventChannel.getName(), dateTime + time);
+						mcp.addMute(eventChannel.getName(), dateTime + time, LocalizedMessage.SPAM_MUTE_REASON_TEXT.toString());
 						String timeString = Format.parseTimeStringFromMillis(time);
 						mcp.getPlayer()
-								.sendMessage(LocalizedMessage.MUTE_PLAYER_SPAM_TIME.toString()
+								.sendMessage(LocalizedMessage.MUTE_PLAYER_PLAYER_TIME_REASON.toString()
 										.replace("{channel_color}", eventChannel.getColor())
 										.replace("{channel_name}", eventChannel.getName())
-										.replace("{time}", timeString));
+										.replace("{time}", timeString)
+										.replace("{reason}", LocalizedMessage.SPAM_MUTE_REASON_TEXT.toString()));
 					}
 					else {
-						mcp.addMute(eventChannel.getName(), 0);
+						mcp.addMute(eventChannel.getName(), LocalizedMessage.SPAM_MUTE_REASON_TEXT.toString());
 						mcp.getPlayer()
-								.sendMessage(LocalizedMessage.MUTE_PLAYER_SPAM.toString()
+								.sendMessage(LocalizedMessage.MUTE_PLAYER_PLAYER_REASON.toString()
 										.replace("{channel_color}", eventChannel.getColor())
-										.replace("{channel_name}", eventChannel.getName()));
+										.replace("{channel_name}", eventChannel.getName())
+										.replace("{reason}", LocalizedMessage.SPAM_MUTE_REASON_TEXT.toString()));
+					}
+					if(eventChannel.getBungee()) {
+						plugin.synchronize(mcp, true);
 					}
 					mcp.getSpam().get(eventChannel).set(0, 0L);
 					mcp.setQuickChat(false);

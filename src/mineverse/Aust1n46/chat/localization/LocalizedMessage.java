@@ -86,6 +86,7 @@ public enum LocalizedMessage {
 	SET_CHANNEL_ALL_SENDER("SetChannelAllSender"),
 	SET_CHANNEL_PLAYER_CHANNEL_NO_PERMISSION("SetChannelPlayerChannelNoPermission"),
 	SET_CHANNEL_SENDER("SetChannelSender"),
+	SPAM_MUTE_REASON_TEXT("SpamMuteReasonText"),
 	SPAM_WARNING("SpamWarning"),
 	SPY_OFF("SpyOff"),
 	SPY_ON("SpyOn"),
