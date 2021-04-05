@@ -1,4 +1,4 @@
-Version: 2.20.0
+Version: 2.22.4
 BlockCommandPlayer: '&cYou have been blocked from entering command {command}.'
 BlockCommandSender: '&cBlocked player &6{player} &cfrom entering command {command}.'
 BlockedCommand: '&cYou are blocked from entering this command: {command}'
