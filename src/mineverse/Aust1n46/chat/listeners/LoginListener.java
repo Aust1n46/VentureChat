@@ -9,6 +9,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.spigotmc.SpigotConfig;
 
 import mineverse.Aust1n46.chat.MineverseChat;
 import mineverse.Aust1n46.chat.api.MineverseChatAPI;
@@ -95,14 +96,15 @@ public class LoginListener implements Listener {
 				mcp.addListening(ch.getName());
 			}
 		}
-		
-		long delayInTicks = 20L;
-		final MineverseChatPlayer sync = mcp;
-		plugin.getServer().getScheduler().runTaskLaterAsynchronously(plugin, new Runnable() {
-			public void run() {
-				plugin.synchronize(sync, false);
-			}
-		}, delayInTicks);
+		if(SpigotConfig.bungee) {
+			long delayInTicks = 20L;
+			final MineverseChatPlayer sync = mcp;
+			plugin.getServer().getScheduler().runTaskLaterAsynchronously(plugin, new Runnable() {
+				public void run() {
+					plugin.synchronize(sync, false);
+				}
+			}, delayInTicks);
+		}
 		if(!plugin.getConfig().getConfigurationSection("login").getString("message", "Default").equalsIgnoreCase("Default")) {
 			event.setJoinMessage(Format.FormatStringAll(plugin.getConfig().getConfigurationSection("login").getString("message", "Default").replace("{player}", event.getPlayer().getName())));
 		}
