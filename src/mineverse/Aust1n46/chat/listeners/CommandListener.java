@@ -1,8 +1,6 @@
 package mineverse.Aust1n46.chat.listeners;
 
 import java.io.FileNotFoundException;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
 
 import mineverse.Aust1n46.chat.MineverseChat;
 import mineverse.Aust1n46.chat.alias.Alias;
@@ -10,6 +8,7 @@ import mineverse.Aust1n46.chat.alias.AliasInfo;
 import mineverse.Aust1n46.chat.api.MineverseChatAPI;
 import mineverse.Aust1n46.chat.api.MineverseChatPlayer;
 import mineverse.Aust1n46.chat.channel.ChatChannel;
+import mineverse.Aust1n46.chat.database.Database;
 import mineverse.Aust1n46.chat.gui.GuiSlot;
 import mineverse.Aust1n46.chat.localization.LocalizedMessage;
 import mineverse.Aust1n46.chat.utilities.Format;
@@ -75,30 +74,9 @@ public class CommandListener implements CommandExecutor, Listener {
 		}
 
 		String message = event.getMessage();
-		/*
-		 * boolean cus = false; if((message.startsWith("/pl") ||
-		 * message.startsWith("/plugins")) &&
-		 * plugin.getConfig().getBoolean("modifypluginlist", true)) {
-		 * if(message.contains(" ")) { if(message.split(" ")[0].equals("/pl") ||
-		 * message.split(" ")[0].equals("/plugins")) { cus = true; } }
-		 * if(message.equals("/pl") || message.equals("/plugins")) { cus = true;
-		 * } if(cus && mcp.getPlayer().hasPermission("bukkit.command.plugins"))
-		 * { String pluginlist = ""; for(Plugin p :
-		 * Bukkit.getPluginManager().getPlugins()) { pluginlist +=
-		 * ChatColor.GREEN + p.getName().replace("VentureChat",
-		 * plugin.getConfig().getString("pluginname", "VentureChat")) +
-		 * ChatColor.WHITE + ", "; } if(pluginlist.length() > 2) { pluginlist =
-		 * pluginlist.substring(0, pluginlist.length() - 2); }
-		 * mcp.getPlayer().sendMessage("Plugins (" +
-		 * Bukkit.getPluginManager().getPlugins().length + "): " + pluginlist);
-		 * event.setCancelled(true); return; } }
-		 */
 
-		if(plugin.db != null) {
-			Calendar currentDate = Calendar.getInstance();
-			SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-			String date = formatter.format(currentDate.getTime());
-			plugin.db.writeVentureChat(date, mcp.getUUID().toString(), mcp.getName(), "Local", "Command_Component", event.getMessage().replace("'", "''"), "Command");
+		if(Database.isEnabled()) {
+			Database.writeVentureChat(mcp.getUUID().toString(), mcp.getName(), "Local", "Command_Component", event.getMessage().replace("'", "''"), "Command");
 		}
 
 		for(Alias a : aa.getAliases()) {
@@ -209,11 +187,8 @@ public class CommandListener implements CommandExecutor, Listener {
 	//old 1.8 command map
 	@EventHandler
 	public void onServerCommand(ServerCommandEvent event) {
-		if (plugin.db != null) {
-			Calendar currentDate = Calendar.getInstance();
-			SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-			String date = formatter.format(currentDate.getTime());
-			plugin.db.writeVentureChat(date, "N/A", "Console", "Local", "Command_Component", event.getCommand().replace("'", "''") , "Command");
+		if (Database.isEnabled()) {
+			Database.writeVentureChat("N/A", "Console", "Local", "Command_Component", event.getCommand().replace("'", "''") , "Command");
 		}
 	}
 

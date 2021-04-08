@@ -1,7 +1,3 @@
-/*
- * VentureChat plugin for Minecraft servers running Bukkit or Spigot software.
- * @author Aust1n46
- */
 package mineverse.Aust1n46.chat;
 
 import java.io.ByteArrayInputStream;
@@ -12,9 +8,7 @@ import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -86,7 +80,6 @@ import mineverse.Aust1n46.chat.command.mute.Muteall;
 import mineverse.Aust1n46.chat.command.mute.Unmute;
 import mineverse.Aust1n46.chat.command.mute.Unmuteall;
 import mineverse.Aust1n46.chat.database.Database;
-import mineverse.Aust1n46.chat.database.MySQL;
 import mineverse.Aust1n46.chat.database.PlayerData;
 import mineverse.Aust1n46.chat.gui.GuiSlotInfo;
 import mineverse.Aust1n46.chat.utilities.Format;
@@ -98,8 +91,6 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandMap;
 import org.bukkit.command.SimpleCommandMap;
-import org.bukkit.configuration.ConfigurationSection;
-import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.RegisteredServiceProvider;
@@ -114,6 +105,10 @@ import com.comphenix.protocol.utility.MinecraftReflection;
 
 import me.clip.placeholderapi.PlaceholderAPI;
 
+/**
+  * VentureChat Minecraft plugin for servers running Spigot or Paper software.
+  * @author Aust1n46
+  */
 public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 	// Listeners --------------------------------
 	private ChatListener chatListener;
@@ -135,9 +130,6 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 	// Executors --------------------------------
 	private MineverseCommandExecutor commandExecutor;
 	private Map<String, MineverseCommand> commands = new HashMap<String, MineverseCommand>();
-
-	// Database ------------------------------------
-	public Database db = null;
 
 	// Misc --------------------------------
 	public static AliasInfo aaInfo;
@@ -236,16 +228,7 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 			MineverseChatAPI.addMineverseChatOnlinePlayerToMap(mcp);
 		}
 
-		FileConfiguration config = getConfig();
-		ConfigurationSection mysqlConfig = config.getConfigurationSection("mysql");
-		if (this.getConfig().getConfigurationSection("mysql").getBoolean("enabled")) {
-			String host = mysqlConfig.getString("host");
-			int port = mysqlConfig.getInt("port");
-			String database = mysqlConfig.getString("database");
-			String user = mysqlConfig.getString("user");
-			String password = mysqlConfig.getString("password");
-			db = new MySQL(host, port, database, user, password);
-		}
+		Database.initializeMySQL();
 
 		commands.put("broadcast", new Broadcast("broadcast"));
 		commands.put("channel", new Channel("channel"));
@@ -684,11 +667,8 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 				
 				Bukkit.getConsoleSender().sendMessage(consoleChat);
 				
-				if(db != null) {
-					Calendar currentDate = Calendar.getInstance();
-					SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-					String date = formatter.format(currentDate.getTime());
-					db.writeVentureChat(date, senderUUID.toString(), senderName, server, chatchannel, chat.replace("'", "''"), "Chat");
+				if(Database.isEnabled()) {
+					Database.writeVentureChat(senderUUID.toString(), senderName, server, chatchannel, chat.replace("'", "''"), "Chat");
 				}
 				
 				for(MineverseChatPlayer p : MineverseChatAPI.getOnlineMineverseChatPlayers()) {

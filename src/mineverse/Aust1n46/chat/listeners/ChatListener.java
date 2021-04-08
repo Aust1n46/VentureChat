@@ -2,8 +2,6 @@ package mineverse.Aust1n46.chat.listeners;
 
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.Set;
 
 import org.bukkit.Bukkit;
@@ -30,6 +28,7 @@ import mineverse.Aust1n46.chat.api.events.ChannelJoinEvent;
 import mineverse.Aust1n46.chat.api.events.VentureChatEvent;
 import mineverse.Aust1n46.chat.channel.ChatChannel;
 import mineverse.Aust1n46.chat.command.mute.MuteContainer;
+import mineverse.Aust1n46.chat.database.Database;
 import mineverse.Aust1n46.chat.localization.LocalizedMessage;
 import mineverse.Aust1n46.chat.utilities.Format;
 import mineverse.Aust1n46.chat.versions.VersionHandler;
@@ -154,11 +153,8 @@ public class ChatListener implements Listener {
 				}
 				mcp.setReplyPlayer(tp.getUUID());
 				tp.setReplyPlayer(mcp.getUUID());
-				if(plugin.db != null) {
-					Calendar currentDate = Calendar.getInstance();
-					SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-					String date = formatter.format(currentDate.getTime());
-					plugin.db.writeVentureChat(date, mcp.getUUID().toString(), mcp.getName(), "Local", "Messaging_Component", chat.replace("'", "''"), "Chat");
+				if(Database.isEnabled()) {
+					Database.writeVentureChat(mcp.getUUID().toString(), mcp.getName(), "Local", "Messaging_Component", chat.replace("'", "''"), "Chat");
 				}
 			}
 			return;
@@ -193,11 +189,8 @@ public class ChatListener implements Listener {
 					}
 				}
 				Bukkit.getConsoleSender().sendMessage(partyformat);
-				if(plugin.db != null) {
-					Calendar currentDate = Calendar.getInstance();
-					SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-					String date = formatter.format(currentDate.getTime());
-					plugin.db.writeVentureChat(date, mcp.getUUID().toString(), mcp.getName(), "Local", "Party_Component", chat.replace("'", "''"), "Chat");
+				if(Database.isEnabled()) {
+					Database.writeVentureChat(mcp.getUUID().toString(), mcp.getName(), "Local", "Party_Component", chat.replace("'", "''"), "Chat");
 				}
 				return;
 			}
@@ -526,11 +519,8 @@ public class ChatListener implements Listener {
 		boolean bungee = event.isBungee();
 		
 		if(!bungee) {
-			if(plugin.db != null) {
-				Calendar currentDate = Calendar.getInstance();
-				SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-				String date = formatter.format(currentDate.getTime());
-				plugin.db.writeVentureChat(date, mcp.getUUID().toString(), mcp.getName(), "Local", channel.getName(), chat.replace("'", "''"), "Chat");
+			if(Database.isEnabled()) {
+				Database.writeVentureChat(mcp.getUUID().toString(), mcp.getName(), "Local", channel.getName(), chat.replace("'", "''"), "Chat");
 			}
 			
 			if(recipientCount == 1) {

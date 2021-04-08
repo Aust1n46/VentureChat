@@ -3,27 +3,72 @@ package mineverse.Aust1n46.chat.database;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 
 import org.bukkit.Bukkit;
+import org.bukkit.configuration.ConfigurationSection;
 
+import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 
 import mineverse.Aust1n46.chat.MineverseChat;
 
-//Parent class for both the MySQL and SQLite database classes.
-public abstract class Database {
+/**
+ * Initializes and handles writing to the chat logging database.
+ */
+public class Database {
+	private static HikariDataSource dataSource = null;
+	
+	public static void initializeMySQL() {
+		ConfigurationSection mysqlConfig = MineverseChat.getInstance().getConfig().getConfigurationSection("mysql");
+		if (mysqlConfig.getBoolean("enabled", false)) {
+			String host = mysqlConfig.getString("host");
+			int port = mysqlConfig.getInt("port");
+			String database = mysqlConfig.getString("database");
+			String user = mysqlConfig.getString("user");
+			String password = mysqlConfig.getString("password");
+		
+			final HikariConfig config = new HikariConfig();
+			//config.setDriverClassName(org.postgresql.Driver.class.getName());
+			//final String jdbcUrl = String.format("jdbc:postgresql://%s:%d/%s", hostname, port, database);
+			final String jdbcUrl = String.format("jdbc:mysql://%s:%d/%s?autoReconnect=true&useSSL=false", host, port, database);
+			config.setJdbcUrl(jdbcUrl);
+			config.setUsername(user);
+			config.setPassword(password);
+			config.addDataSourceProperty("cachePrepStmts", "true");
+			config.addDataSourceProperty("prepStmtCacheSize", "250");
+			config.addDataSourceProperty("prepStmtCacheSqlLimit", "2048");
+			dataSource = new HikariDataSource(config);
+			final String SQL_CREATE_TABLE = "CREATE TABLE IF NOT EXISTS VentureChat " +
+					"(ID SERIAL PRIMARY KEY, ChatTime TEXT, UUID TEXT, Name TEXT, " +
+					"Server TEXT, Channel TEXT, Text TEXT, Type TEXT)";
+			try (final Connection conn = dataSource.getConnection();
+					 final PreparedStatement statement = conn.prepareStatement(SQL_CREATE_TABLE)) {
+					statement.executeUpdate();
+			} 
+			catch (SQLException e) {
+				throw new RuntimeException(e);
+			}
+		}
+	}
+	
+	public static boolean isEnabled() {
+		return dataSource != null;
+	}
 
-	protected HikariDataSource dataSource = null;
-
-	public void writeVentureChat(String time, String uuid, String name, String server, String channel, String text, String type) {
+	public static void writeVentureChat(String uuid, String name, String server, String channel, String text, String type) {
 		MineverseChat plugin = MineverseChat.getInstance();
+		Calendar currentDate = Calendar.getInstance();
+		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		String date = formatter.format(currentDate.getTime());
 		Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
 			try(final Connection conn = dataSource.getConnection();
 					final PreparedStatement statement = conn.prepareStatement(
 							"INSERT INTO VentureChat " + 
 							"(ChatTime, UUID, Name, Server, Channel, Text, Type) " + 
 							"VALUES (?, ?, ?, ?, ?, ?, ?)")) {
-				statement.setString(1, time);
+				statement.setString(1, date);
 				statement.setString(2, uuid);
 				statement.setString(3, name);
 				statement.setString(4, server);
@@ -32,8 +77,8 @@ public abstract class Database {
 				statement.setString(7, type);
 				statement.executeUpdate();
 			} 
-			catch(SQLException e) {
-				throw new RuntimeException(e);
+			catch(SQLException error) {
+				error.printStackTrace();
 			}
 		});
 	}
