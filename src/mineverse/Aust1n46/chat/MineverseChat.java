@@ -227,8 +227,10 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 			mcp.setJsonFormat();
 			MineverseChatAPI.addMineverseChatOnlinePlayerToMap(mcp);
 		}
-
-		Database.initializeMySQL();
+		
+		Bukkit.getScheduler().runTaskAsynchronously(this, () -> {
+			Database.initializeMySQL();
+		});
 
 		commands.put("broadcast", new Broadcast("broadcast"));
 		commands.put("channel", new Channel("channel"));
