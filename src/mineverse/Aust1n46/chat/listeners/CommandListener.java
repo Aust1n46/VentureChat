@@ -125,7 +125,7 @@ public class CommandListener implements CommandExecutor, Listener {
 						event.setCancelled(true);
 					}
 					if(s.startsWith("Broadcast:")) {
-						plugin.getServer().broadcastMessage(s.substring(11).replace("$", send));
+						Format.broadcastToServer(s.substring(11).replace("$", send));
 						event.setCancelled(true);
 					}
 				}

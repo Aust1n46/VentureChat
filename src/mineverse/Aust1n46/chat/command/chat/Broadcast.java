@@ -20,7 +20,7 @@ public class Broadcast extends MineverseCommand {
 	public void execute(CommandSender sender, String command, String[] args) {
 		ConfigurationSection bs = plugin.getConfig().getConfigurationSection("broadcast");
 		String broadcastColor = bs.getString("color", "white");
-		String broadcastPermissions = bs.getString("permissions", "");
+		String broadcastPermissions = bs.getString("permissions", "None");
 		String broadcastDisplayTag = Format.FormatStringAll(bs.getString("displaytag", "[Broadcast]"));
 		if(broadcastPermissions.equalsIgnoreCase("None") || sender.hasPermission(broadcastPermissions)) {
 			if(args.length > 0) {
@@ -29,7 +29,7 @@ public class Broadcast extends MineverseCommand {
 					if(args[x].length() > 0) bc += args[x] + " ";
 				}
 				bc = Format.FormatStringAll(bc);
-				plugin.getServer().broadcastMessage(broadcastDisplayTag + ChatColor.valueOf(broadcastColor.toUpperCase()) + " " + bc);
+				Format.broadcastToServer(broadcastDisplayTag + ChatColor.valueOf(broadcastColor.toUpperCase()) + " " + bc);
 				return;
 			}
 			else {

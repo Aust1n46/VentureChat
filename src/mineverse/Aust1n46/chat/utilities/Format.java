@@ -19,6 +19,7 @@ import com.comphenix.protocol.wrappers.WrappedChatComponent;
 
 import me.clip.placeholderapi.PlaceholderAPI;
 import mineverse.Aust1n46.chat.MineverseChat;
+import mineverse.Aust1n46.chat.api.MineverseChatAPI;
 import mineverse.Aust1n46.chat.api.MineverseChatPlayer;
 import mineverse.Aust1n46.chat.json.JsonFormat;
 import mineverse.Aust1n46.chat.localization.LocalizedMessage;
@@ -835,5 +836,11 @@ public class Format {
 			}
 		}
 		return false;
+	}
+	
+	public static void broadcastToServer(String message) {
+		for(MineverseChatPlayer mcp : MineverseChatAPI.getOnlineMineverseChatPlayers()) {
+			mcp.getPlayer().sendMessage(message);
+		}
 	}
 }
