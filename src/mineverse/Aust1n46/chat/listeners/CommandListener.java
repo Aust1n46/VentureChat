@@ -47,18 +47,20 @@ public class CommandListener implements CommandExecutor, Listener {
 		ConfigurationSection cs = plugin.getConfig().getConfigurationSection("commandspy");
 		Boolean wec = cs.getBoolean("worldeditcommands", true);
 		MineverseChatPlayer mcp = MineverseChatAPI.getOnlineMineverseChatPlayer(event.getPlayer());
-		for(MineverseChatPlayer p : MineverseChatAPI.getOnlineMineverseChatPlayers()) {
-			if(p.hasCommandSpy()) {
-				if(wec) {
-					p.getPlayer().sendMessage(Format.FormatStringAll(cs.getString("format").replace("{player}", mcp.getName()).replace("{command}", event.getMessage())));
-				}
-				else {
-					if(!(event.getMessage().toLowerCase().startsWith("//"))) {
+		if(!mcp.getPlayer().hasPermission("venturechat.commandspy.override")) {
+			for(MineverseChatPlayer p : MineverseChatAPI.getOnlineMineverseChatPlayers()) {
+				if(p.hasCommandSpy()) {
+					if(wec) {
 						p.getPlayer().sendMessage(Format.FormatStringAll(cs.getString("format").replace("{player}", mcp.getName()).replace("{command}", event.getMessage())));
 					}
 					else {
 						if(!(event.getMessage().toLowerCase().startsWith("//"))) {
-							p.getPlayer().sendMessage(ChatColor.GOLD + mcp.getName() + ": " + event.getMessage());
+							p.getPlayer().sendMessage(Format.FormatStringAll(cs.getString("format").replace("{player}", mcp.getName()).replace("{command}", event.getMessage())));
+						}
+						else {
+							if(!(event.getMessage().toLowerCase().startsWith("//"))) {
+								p.getPlayer().sendMessage(ChatColor.GOLD + mcp.getName() + ": " + event.getMessage());
+							}
 						}
 					}
 				}
