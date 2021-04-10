@@ -1310,9 +1310,11 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 					String receiverName = msgin.readUTF();
 					String senderName = msgin.readUTF();
 					String spy = msgin.readUTF();
-					for(MineverseChatPlayer pl : MineverseChatAPI.getOnlineMineverseChatPlayers()) {
-						if(pl.isSpy() && !pl.getName().equals(senderName) && !pl.getName().equals(receiverName)) {
-							pl.getPlayer().sendMessage(spy);
+					if(!spy.startsWith("VentureChat:NoSpy")) {
+						for(MineverseChatPlayer pl : MineverseChatAPI.getOnlineMineverseChatPlayers()) {
+							if(pl.isSpy() && !pl.getName().equals(senderName) && !pl.getName().equals(receiverName)) {
+								pl.getPlayer().sendMessage(spy);
+							}
 						}
 					}
 				}

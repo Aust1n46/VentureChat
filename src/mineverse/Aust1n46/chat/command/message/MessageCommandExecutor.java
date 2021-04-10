@@ -181,13 +181,11 @@ public class MessageCommandExecutor implements TabExecutor {
 		}
 		ByteArrayOutputStream byteOutStream = new ByteArrayOutputStream();
 		DataOutputStream out = new DataOutputStream(byteOutStream);
-		String msg = "";
-		String send = "";
-		String echo = "";
-		String spy = "";
+		StringBuilder msgBuilder = new StringBuilder();
 		for(int r = 1; r < args.length; r++) {
-			msg += " " + args[r];
+			msgBuilder.append(" " + args[r]);
 		}
+		String msg = msgBuilder.toString();
 		if(mcp.hasFilter()) {
 			msg = Format.FilterChat(msg);
 		}
@@ -201,9 +199,12 @@ public class MessageCommandExecutor implements TabExecutor {
 			msg = Format.FormatString(msg);
 		}
 		
-		send = Format.FormatStringAll(PlaceholderAPI.setBracketPlaceholders(mcp.getPlayer(), plugin.getConfig().getString("tellformatfrom").replaceAll("sender_", "")));
-		echo = Format.FormatStringAll(PlaceholderAPI.setBracketPlaceholders(mcp.getPlayer(), plugin.getConfig().getString("tellformatto").replaceAll("sender_", "")));
-		spy = Format.FormatStringAll(PlaceholderAPI.setBracketPlaceholders(mcp.getPlayer(), plugin.getConfig().getString("tellformatspy").replaceAll("sender_", "")));
+		String send = Format.FormatStringAll(PlaceholderAPI.setBracketPlaceholders(mcp.getPlayer(), plugin.getConfig().getString("tellformatfrom").replaceAll("sender_", "")));
+		String echo = Format.FormatStringAll(PlaceholderAPI.setBracketPlaceholders(mcp.getPlayer(), plugin.getConfig().getString("tellformatto").replaceAll("sender_", "")));
+		String spy = "VentureChat:NoSpy";
+		if(!mcp.getPlayer().hasPermission("venturechat.spy.override")) {
+			spy = Format.FormatStringAll(PlaceholderAPI.setBracketPlaceholders(mcp.getPlayer(), plugin.getConfig().getString("tellformatspy").replaceAll("sender_", "")));
+		}
 		try {
 			out.writeUTF("Message");
 			out.writeUTF("Send");
