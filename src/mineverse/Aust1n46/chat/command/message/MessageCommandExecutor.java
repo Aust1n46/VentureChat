@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import org.bukkit.Sound;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabExecutor;
@@ -19,7 +18,6 @@ import mineverse.Aust1n46.chat.api.MineverseChatAPI;
 import mineverse.Aust1n46.chat.api.MineverseChatPlayer;
 import mineverse.Aust1n46.chat.localization.LocalizedMessage;
 import mineverse.Aust1n46.chat.utilities.Format;
-import mineverse.Aust1n46.chat.versions.VersionHandler;
 
 public class MessageCommandExecutor implements TabExecutor {
 	private MineverseChat plugin = MineverseChat.getInstance();
@@ -101,12 +99,7 @@ public class MessageCommandExecutor implements TabExecutor {
 				player.getPlayer().sendMessage(send);
 				mcp.getPlayer().sendMessage(echo);
 				if(player.hasNotifications()) {
-					if(VersionHandler.is1_8() || VersionHandler.is1_7_10() || VersionHandler.is1_7_2() || VersionHandler.is1_7_9()) {
-						player.getPlayer().playSound(player.getPlayer().getLocation(), Sound.valueOf("LEVEL_UP"), 1, 0);
-					}
-					else {
-						player.getPlayer().playSound(player.getPlayer().getLocation(), Sound.valueOf("ENTITY_PLAYER_LEVELUP"), 1, 0);
-					}
+					Format.playMessageSound(player);
 				}
 				if(!mcp.getPlayer().hasPermission("venturechat.spy.override")) {
 					for(MineverseChatPlayer sp : MineverseChatAPI.getOnlineMineverseChatPlayers()) {
@@ -181,13 +174,11 @@ public class MessageCommandExecutor implements TabExecutor {
 		}
 		ByteArrayOutputStream byteOutStream = new ByteArrayOutputStream();
 		DataOutputStream out = new DataOutputStream(byteOutStream);
-		String msg = "";
-		String send = "";
-		String echo = "";
-		String spy = "";
+		StringBuilder msgBuilder = new StringBuilder();
 		for(int r = 1; r < args.length; r++) {
-			msg += " " + args[r];
+			msgBuilder.append(" " + args[r]);
 		}
+		String msg = msgBuilder.toString();
 		if(mcp.hasFilter()) {
 			msg = Format.FilterChat(msg);
 		}
@@ -201,9 +192,12 @@ public class MessageCommandExecutor implements TabExecutor {
 			msg = Format.FormatString(msg);
 		}
 		
-		send = Format.FormatStringAll(PlaceholderAPI.setBracketPlaceholders(mcp.getPlayer(), plugin.getConfig().getString("tellformatfrom").replaceAll("sender_", "")));
-		echo = Format.FormatStringAll(PlaceholderAPI.setBracketPlaceholders(mcp.getPlayer(), plugin.getConfig().getString("tellformatto").replaceAll("sender_", "")));
-		spy = Format.FormatStringAll(PlaceholderAPI.setBracketPlaceholders(mcp.getPlayer(), plugin.getConfig().getString("tellformatspy").replaceAll("sender_", "")));
+		String send = Format.FormatStringAll(PlaceholderAPI.setBracketPlaceholders(mcp.getPlayer(), plugin.getConfig().getString("tellformatfrom").replaceAll("sender_", "")));
+		String echo = Format.FormatStringAll(PlaceholderAPI.setBracketPlaceholders(mcp.getPlayer(), plugin.getConfig().getString("tellformatto").replaceAll("sender_", "")));
+		String spy = "VentureChat:NoSpy";
+		if(!mcp.getPlayer().hasPermission("venturechat.spy.override")) {
+			spy = Format.FormatStringAll(PlaceholderAPI.setBracketPlaceholders(mcp.getPlayer(), plugin.getConfig().getString("tellformatspy").replaceAll("sender_", "")));
+		}
 		try {
 			out.writeUTF("Message");
 			out.writeUTF("Send");

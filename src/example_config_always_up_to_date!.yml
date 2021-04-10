@@ -1,6 +1,6 @@
 #===============================================================
 #                     VentureChat Config                       =
-#                      Author: Aust1n46                        =               
+#                      Author: Aust1n46                        =                  
 #===============================================================
 
 # - regex1,regex2
@@ -55,14 +55,17 @@ commandspy:
 antispam:
   enabled: true
   
-  # number of messages to be spam
+  # Number of messages to be spam
   spamnumber: 5
   
-  # amount of time in seconds for it to be spam
+  # Amount of time in seconds for it to be spam
   spamtime: 10
   
-  # amount of time in minutes for the mute to last, use 0 for untimed mute
-  mutetime: 10
+  # Amount of time for the mute to last
+  # Acceptable units are: d,h,m,s
+  # Units can be combined, for example: 1d8h30m15s
+  # Use 0 for untimed mute
+  mutetime: 10m
  
 # Logging chat and commands to a mysql database 
 mysql:
@@ -104,6 +107,9 @@ unmuteinterval: 60
 
 # Enables or disabled BungeeCord messaging
 bungeecordmessaging: false
+
+# Sound for message notification
+message_sound: ENTITY_PLAYER_LEVELUP
 
 # This will allow vanished players to be exempt from being sent private messages, and will act as if they aren't online
 vanishsupport: true
@@ -179,16 +185,16 @@ venturegui:
   mute:
     icon: 'REDSTONE_BLOCK'
     durability: 0
-    text: '&cMute {player_name}'
+    text: '&cMute {player_name} &410m'
     permission: 'mute'
-    command: '/mute {player_name} {channel} 10'
+    command: '/mute {channel} {player_name} 10m'
     slot: 1
   unmute:
     icon: 'DIAMOND_BLOCK'
     durability: 0
     text: '&bUnmute {player_name}'
     permission: 'mute'
-    command: '/unmute {player_name} {channel}'
+    command: '/unmute {channel} {player_name} '
     slot: 2
   removemessage:
     icon: 'DIAMOND_AXE'

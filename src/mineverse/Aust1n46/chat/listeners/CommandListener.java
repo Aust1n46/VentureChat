@@ -1,8 +1,6 @@
 package mineverse.Aust1n46.chat.listeners;
 
 import java.io.FileNotFoundException;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
 
 import mineverse.Aust1n46.chat.MineverseChat;
 import mineverse.Aust1n46.chat.alias.Alias;
@@ -10,6 +8,7 @@ import mineverse.Aust1n46.chat.alias.AliasInfo;
 import mineverse.Aust1n46.chat.api.MineverseChatAPI;
 import mineverse.Aust1n46.chat.api.MineverseChatPlayer;
 import mineverse.Aust1n46.chat.channel.ChatChannel;
+import mineverse.Aust1n46.chat.database.Database;
 import mineverse.Aust1n46.chat.gui.GuiSlot;
 import mineverse.Aust1n46.chat.localization.LocalizedMessage;
 import mineverse.Aust1n46.chat.utilities.Format;
@@ -48,18 +47,20 @@ public class CommandListener implements CommandExecutor, Listener {
 		ConfigurationSection cs = plugin.getConfig().getConfigurationSection("commandspy");
 		Boolean wec = cs.getBoolean("worldeditcommands", true);
 		MineverseChatPlayer mcp = MineverseChatAPI.getOnlineMineverseChatPlayer(event.getPlayer());
-		for(MineverseChatPlayer p : MineverseChatAPI.getOnlineMineverseChatPlayers()) {
-			if(p.hasCommandSpy()) {
-				if(wec) {
-					p.getPlayer().sendMessage(Format.FormatStringAll(cs.getString("format").replace("{player}", mcp.getName()).replace("{command}", event.getMessage())));
-				}
-				else {
-					if(!(event.getMessage().toLowerCase().startsWith("//"))) {
+		if(!mcp.getPlayer().hasPermission("venturechat.commandspy.override")) {
+			for(MineverseChatPlayer p : MineverseChatAPI.getOnlineMineverseChatPlayers()) {
+				if(p.hasCommandSpy()) {
+					if(wec) {
 						p.getPlayer().sendMessage(Format.FormatStringAll(cs.getString("format").replace("{player}", mcp.getName()).replace("{command}", event.getMessage())));
 					}
 					else {
 						if(!(event.getMessage().toLowerCase().startsWith("//"))) {
-							p.getPlayer().sendMessage(ChatColor.GOLD + mcp.getName() + ": " + event.getMessage());
+							p.getPlayer().sendMessage(Format.FormatStringAll(cs.getString("format").replace("{player}", mcp.getName()).replace("{command}", event.getMessage())));
+						}
+						else {
+							if(!(event.getMessage().toLowerCase().startsWith("//"))) {
+								p.getPlayer().sendMessage(ChatColor.GOLD + mcp.getName() + ": " + event.getMessage());
+							}
 						}
 					}
 				}
@@ -75,30 +76,9 @@ public class CommandListener implements CommandExecutor, Listener {
 		}
 
 		String message = event.getMessage();
-		/*
-		 * boolean cus = false; if((message.startsWith("/pl") ||
-		 * message.startsWith("/plugins")) &&
-		 * plugin.getConfig().getBoolean("modifypluginlist", true)) {
-		 * if(message.contains(" ")) { if(message.split(" ")[0].equals("/pl") ||
-		 * message.split(" ")[0].equals("/plugins")) { cus = true; } }
-		 * if(message.equals("/pl") || message.equals("/plugins")) { cus = true;
-		 * } if(cus && mcp.getPlayer().hasPermission("bukkit.command.plugins"))
-		 * { String pluginlist = ""; for(Plugin p :
-		 * Bukkit.getPluginManager().getPlugins()) { pluginlist +=
-		 * ChatColor.GREEN + p.getName().replace("VentureChat",
-		 * plugin.getConfig().getString("pluginname", "VentureChat")) +
-		 * ChatColor.WHITE + ", "; } if(pluginlist.length() > 2) { pluginlist =
-		 * pluginlist.substring(0, pluginlist.length() - 2); }
-		 * mcp.getPlayer().sendMessage("Plugins (" +
-		 * Bukkit.getPluginManager().getPlugins().length + "): " + pluginlist);
-		 * event.setCancelled(true); return; } }
-		 */
 
-		if(plugin.db != null) {
-			Calendar currentDate = Calendar.getInstance();
-			SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-			String date = formatter.format(currentDate.getTime());
-			plugin.db.writeVentureChat(date, mcp.getUUID().toString(), mcp.getName(), "Local", "Command_Component", event.getMessage().replace("'", "''"), "Command");
+		if(Database.isEnabled()) {
+			Database.writeVentureChat(mcp.getUUID().toString(), mcp.getName(), "Local", "Command_Component", event.getMessage().replace("'", "''"), "Command");
 		}
 
 		for(Alias a : aa.getAliases()) {
@@ -145,7 +125,7 @@ public class CommandListener implements CommandExecutor, Listener {
 						event.setCancelled(true);
 					}
 					if(s.startsWith("Broadcast:")) {
-						plugin.getServer().broadcastMessage(s.substring(11).replace("$", send));
+						Format.broadcastToServer(s.substring(11).replace("$", send));
 						event.setCancelled(true);
 					}
 				}
@@ -153,7 +133,7 @@ public class CommandListener implements CommandExecutor, Listener {
 		}
 
 		if(!plugin.quickchat) {
-			for(ChatChannel channel : ChatChannel.getChannels()) {
+			for(ChatChannel channel : ChatChannel.getChatChannels()) {
 				if(!channel.hasPermission() || mcp.getPlayer().hasPermission(channel.getPermission())) {
 					if(message.equals("/" + channel.getAlias())) {
 						mcp.getPlayer().sendMessage(LocalizedMessage.SET_CHANNEL.toString()
@@ -209,11 +189,8 @@ public class CommandListener implements CommandExecutor, Listener {
 	//old 1.8 command map
 	@EventHandler
 	public void onServerCommand(ServerCommandEvent event) {
-		if (plugin.db != null) {
-			Calendar currentDate = Calendar.getInstance();
-			SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-			String date = formatter.format(currentDate.getTime());
-			plugin.db.writeVentureChat(date, "N/A", "Console", "Local", "Command_Component", event.getCommand().replace("'", "''") , "Command");
+		if (Database.isEnabled()) {
+			Database.writeVentureChat("N/A", "Console", "Local", "Command_Component", event.getCommand().replace("'", "''") , "Command");
 		}
 	}
 
@@ -227,7 +204,7 @@ public class CommandListener implements CommandExecutor, Listener {
 			return true;
 		}
 		MineverseChatPlayer mcp = MineverseChatAPI.getOnlineMineverseChatPlayer((Player) sender);
-		for(ChatChannel channel : ChatChannel.getChannels()) {
+		for(ChatChannel channel : ChatChannel.getChatChannels()) {
 			if(command.getName().toLowerCase().equals(channel.getAlias())) {
 				if(args.length == 0) {
 					mcp.getPlayer().sendMessage(ChatColor.RED + "Invalid command: /" + channel.getAlias() + " message");

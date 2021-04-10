@@ -1,7 +1,3 @@
-/*
- * VentureChat plugin for Minecraft servers running Bukkit or Spigot software.
- * @author Aust1n46
- */
 package mineverse.Aust1n46.chat;
 
 import java.io.ByteArrayInputStream;
@@ -12,9 +8,7 @@ import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -81,11 +75,11 @@ import mineverse.Aust1n46.chat.command.message.Notifications;
 import mineverse.Aust1n46.chat.command.message.Reply;
 import mineverse.Aust1n46.chat.command.message.Spy;
 import mineverse.Aust1n46.chat.command.mute.Mute;
+import mineverse.Aust1n46.chat.command.mute.MuteContainer;
 import mineverse.Aust1n46.chat.command.mute.Muteall;
 import mineverse.Aust1n46.chat.command.mute.Unmute;
 import mineverse.Aust1n46.chat.command.mute.Unmuteall;
 import mineverse.Aust1n46.chat.database.Database;
-import mineverse.Aust1n46.chat.database.MySQL;
 import mineverse.Aust1n46.chat.database.PlayerData;
 import mineverse.Aust1n46.chat.gui.GuiSlotInfo;
 import mineverse.Aust1n46.chat.utilities.Format;
@@ -97,15 +91,12 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandMap;
 import org.bukkit.command.SimpleCommandMap;
-import org.bukkit.configuration.ConfigurationSection;
-import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.plugin.messaging.PluginMessageListener;
 import org.bukkit.scheduler.BukkitScheduler;
-import org.bukkit.Sound;
 
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.events.PacketContainer;
@@ -113,6 +104,10 @@ import com.comphenix.protocol.utility.MinecraftReflection;
 
 import me.clip.placeholderapi.PlaceholderAPI;
 
+/**
+  * VentureChat Minecraft plugin for servers running Spigot or Paper software.
+  * @author Aust1n46
+  */
 public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 	// Listeners --------------------------------
 	private ChatListener chatListener;
@@ -134,9 +129,6 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 	// Executors --------------------------------
 	private MineverseCommandExecutor commandExecutor;
 	private Map<String, MineverseCommand> commands = new HashMap<String, MineverseCommand>();
-
-	// Database ------------------------------------
-	public Database db = null;
 
 	// Misc --------------------------------
 	public static AliasInfo aaInfo;
@@ -195,7 +187,7 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 				Bukkit.getConsoleSender().sendMessage(Format.FormatStringAll("&8[&eVentureChat&8]&e - Config found! Loading file."));
 			}
 
-			saveResource("defaultconfig.yml", true);
+			saveResource("example_config_always_up_to_date!.yml", true);
 		}
 		catch(Exception ex) {
 			log.severe(String.format("[" + String.format("VentureChat") + "]" + " - Could not load configuration!\n " + ex, getDescription().getName()));
@@ -248,17 +240,10 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 			MineverseChatAPI.addMineverseChatOnlinePlayerToMap(mcp);
 			MineverseChatAPI.addNameToMap(mcp);
 		}
-
-		FileConfiguration config = getConfig();
-		ConfigurationSection mysqlConfig = config.getConfigurationSection("mysql");
-		if (this.getConfig().getConfigurationSection("mysql").getBoolean("enabled")) {
-			String host = mysqlConfig.getString("host");
-			int port = mysqlConfig.getInt("port");
-			String database = mysqlConfig.getString("database");
-			String user = mysqlConfig.getString("user");
-			String password = mysqlConfig.getString("password");
-			db = new MySQL(host, port, database, user, password);
-		}
+		
+		Bukkit.getScheduler().runTaskAsynchronously(this, () -> {
+			Database.initializeMySQL();
+		});
 
 		commands.put("broadcast", new Broadcast("broadcast"));
 		commands.put("channel", new Channel("channel"));
@@ -391,25 +376,27 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 			@Override
 			public void run() {
 				for (MineverseChatPlayer p : MineverseChatAPI.getOnlineMineverseChatPlayers()) {
-					int time = Format.currentTimeMillis();
-					Iterator<String> iterator = p.getMutes().keySet().iterator();
+					long currentTimeMillis = System.currentTimeMillis();
+					Iterator<MuteContainer> iterator = p.getMutes().iterator();
 					while (iterator.hasNext()) {
-						ChatChannel channel = ChatChannel.getChannel(iterator.next());
-						int timemark = p.getMutes().get(channel.getName());
-						if (timemark == 0) {
-							continue;
-						}
-						if (getConfig().getString("loglevel", "info").equals("debug")) {
-							System.out.println(time + " " + timemark);
-						}
-						if (time >= timemark) {
-							iterator.remove();
-							if (p.isOnline()) {
+						MuteContainer mute = iterator.next();
+						if(ChatChannel.isChannel(mute.getChannel())) {
+							ChatChannel channel = ChatChannel.getChannel(mute.getChannel());
+							long timemark = mute.getDuration();
+							if (timemark == 0) {
+								continue;
+							}
+							if (getConfig().getString("loglevel", "info").equals("debug")) {
+								System.out.println(currentTimeMillis + " " + timemark);
+							}
+							if (currentTimeMillis >= timemark) {
+								iterator.remove();
 								p.getPlayer().sendMessage(LocalizedMessage.UNMUTE_PLAYER_PLAYER.toString()
 										.replace("{player}", p.getName()).replace("{channel_color}", channel.getColor())
-										.replace("{channel_name}", channel.getName()));
-							} else {
-								p.setModified(true);
+										.replace("{channel_name}", mute.getChannel()));
+								if(channel.getBungee()) {
+									MineverseChat.getInstance().synchronize(p, true);
+								}
 							}
 						}
 					}
@@ -419,7 +406,7 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 							.sendMessage(Format.FormatStringAll("&8[&eVentureChat&8]&e - Updating Player Mutes"));
 				}
 			}
-		}, 0L, 1200L); // one minute interval
+		}, 0L, 60L); // three second interval
 	}
 	
 	@Override
@@ -548,6 +535,15 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 				// System.out.println(mcp.getPlayer().getServer().getServerName());
 				// out.writeUTF(mcp.getPlayer().getServer().getServerName());
 				out.writeUTF(mcp.getUUID().toString());
+				Bukkit.getServer().getScheduler().runTaskLaterAsynchronously(this, new Runnable() {
+					@Override
+					public void run() {
+						if(mcp.hasPlayed()) {
+							return;
+						}
+						synchronize(mcp, false);
+					}
+				}, 20L); // one second delay before running again
 			}
 			else {
 				out.writeUTF("Update");
@@ -569,18 +565,20 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 				}
 				// out.writeUTF("Mutes");
 				int muteCount = 0;
-				for(String c : mcp.getMutes().keySet()) {
-					ChatChannel channel = ChatChannel.getChannel(c);
+				for(MuteContainer mute : mcp.getMutes()) {
+					ChatChannel channel = ChatChannel.getChannel(mute.getChannel());
 					if(channel.getBungee()) {
 						muteCount++;
 					}
 				}
 				// System.out.println(muteCount + " mutes");
 				out.write(muteCount);
-				for(String c : mcp.getMutes().keySet()) {
-					ChatChannel channel = ChatChannel.getChannel(c);
+				for(MuteContainer mute : mcp.getMutes()) {
+					ChatChannel channel = ChatChannel.getChannel(mute.getChannel());
 					if(channel.getBungee()) {
 						out.writeUTF(channel.getName());
+						out.writeLong(mute.getDuration());
+						out.writeUTF(mute.getReason());
 					}
 				}
 				int ignoreCount = 0;
@@ -605,6 +603,10 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 		catch(IOException e) {
 			e.printStackTrace();
 		}
+	}
+	
+	public static void sendPluginMessage(ByteArrayOutputStream byteOutStream) {
+		MineverseChatAPI.getOnlineMineverseChatPlayers().iterator().next().getPlayer().sendPluginMessage(MineverseChat.getInstance(), MineverseChat.PLUGIN_MESSAGING_CHANNEL, byteOutStream.toByteArray());
 	}
 	
 	public static void sendDiscordSRVPluginMessage(String chatChannel, String message) {
@@ -680,11 +682,8 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 				
 				Bukkit.getConsoleSender().sendMessage(consoleChat);
 				
-				if(db != null) {
-					Calendar currentDate = Calendar.getInstance();
-					SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-					String date = formatter.format(currentDate.getTime());
-					db.writeVentureChat(date, senderUUID.toString(), senderName, server, chatchannel, chat.replace("'", "''"), "Chat");
+				if(Database.isEnabled()) {
+					Database.writeVentureChat(senderUUID.toString(), senderName, server, chatchannel, chat.replace("'", "''"), "Chat");
 				}
 				
 				for(MineverseChatPlayer p : MineverseChatAPI.getOnlineMineverseChatPlayers()) {
@@ -794,6 +793,9 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 				}
 				String uuid = msgin.readUTF();
 				MineverseChatPlayer p = MineverseChatAPI.getMineverseChatPlayer(UUID.fromString(uuid));
+				if(p.hasPlayed()) {
+					return;
+				}
 				for(Object ch : p.getListening().toArray()) {
 					String c = ch.toString();
 					ChatChannel cha = ChatChannel.getChannel(c);
@@ -811,19 +813,16 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 						}
 					}
 				}
-				for(Object o : p.getMutes().keySet().toArray()) {
-					ChatChannel ch = ChatChannel.getChannel((String) o);
-					if(ch.getBungee()) {
-						p.removeMute(ch.getName());
-					}
-				}
+				p.getMutes().removeIf(mute -> ChatChannel.getChannel(mute.getChannel()).getBungee());
 				int sizeB = msgin.read();
 				// System.out.println(sizeB + " mute size");
 				for(int b = 0; b < sizeB; b++) {
 					String ch = msgin.readUTF();
+					long muteTime = msgin.readLong();
+					String muteReason = msgin.readUTF();
 					// System.out.println(ch);
 					if(ChatChannel.isChannel(ch)) {
-						p.addMute(ch, 0);
+						p.addMute(ch, muteTime, muteReason);
 					}
 				}
 				// System.out.println(msgin.available() + " available before");
@@ -843,7 +842,7 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 				if(!p.hasPlayed()) {
 					boolean isThereABungeeChannel = false;
 					for(ChatChannel ch : ChatChannel.getAutojoinList()) {
-						if(!ch.hasPermission() || p.getPlayer().hasPermission(ch.getPermission())) {	
+						if((!ch.hasPermission() || p.getPlayer().hasPermission(ch.getPermission())) && !p.isListening(ch.getName())) {	
 							p.addListening(ch.getName());	
 							if(ch.getBungee()) {
 								isThereABungeeChannel = true;
@@ -909,6 +908,324 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 					this.synchronize(p, true);
 				}
 			}
+			if(subchannel.equals("Mute")) {
+				String identifier = msgin.readUTF();
+				if(identifier.equals("Send")) {
+					String server = msgin.readUTF();
+					String senderIdentifier = msgin.readUTF();
+					String temporaryDataInstanceUUIDString = msgin.readUTF();
+					String playerToMute = msgin.readUTF();
+					String channelName = msgin.readUTF();
+					long time = msgin.readLong();
+					String reason = msgin.readUTF();
+					MineverseChatPlayer playerToMuteMCP = MineverseChatAPI.getOnlineMineverseChatPlayer(playerToMute);
+					if(playerToMuteMCP == null) {
+						out.writeUTF("Mute");
+						out.writeUTF("Offline");
+						out.writeUTF(server);
+						out.writeUTF(temporaryDataInstanceUUIDString);
+						out.writeUTF(senderIdentifier);
+						out.writeUTF(playerToMute);
+						sendPluginMessage(stream);
+						return;
+					}
+					if(!ChatChannel.isChannel(channelName)) {
+						return;
+					}
+					ChatChannel chatChannelObj = ChatChannel.getChannel(channelName);
+					if (playerToMuteMCP.isMuted(chatChannelObj.getName())) {
+						out.writeUTF("Mute");
+						out.writeUTF("AlreadyMuted");
+						out.writeUTF(server);
+						out.writeUTF(senderIdentifier);
+						out.writeUTF(playerToMute);
+						out.writeUTF(channelName);
+						sendPluginMessage(stream);
+						return;
+					}
+					if(time > 0) {
+						long datetime = System.currentTimeMillis();
+						if(reason.isEmpty()) {
+							playerToMuteMCP.addMute(chatChannelObj.getName(), datetime + time);
+							String timeString = Format.parseTimeStringFromMillis(time);
+							playerToMuteMCP.getPlayer()
+									.sendMessage(LocalizedMessage.MUTE_PLAYER_PLAYER_TIME.toString()
+									.replace("{channel_color}", chatChannelObj.getColor())
+									.replace("{channel_name}", chatChannelObj.getName())
+									.replace("{time}", timeString));
+						}
+						else {
+							playerToMuteMCP.addMute(chatChannelObj.getName(), datetime + time, reason);
+							String timeString = Format.parseTimeStringFromMillis(time);
+							playerToMuteMCP.getPlayer()
+									.sendMessage(LocalizedMessage.MUTE_PLAYER_PLAYER_TIME_REASON.toString()
+									.replace("{channel_color}", chatChannelObj.getColor())
+									.replace("{channel_name}", chatChannelObj.getName())
+									.replace("{time}", timeString)
+									.replace("{reason}", reason));
+						}
+					}
+					else {
+						if(reason.isEmpty()) {
+							playerToMuteMCP.addMute(chatChannelObj.getName());
+							playerToMuteMCP.getPlayer()
+									.sendMessage(LocalizedMessage.MUTE_PLAYER_PLAYER.toString()
+									.replace("{channel_color}", chatChannelObj.getColor())
+									.replace("{channel_name}", chatChannelObj.getName()));
+						}
+						else {
+							playerToMuteMCP.addMute(chatChannelObj.getName(), reason);
+							playerToMuteMCP.getPlayer()
+									.sendMessage(LocalizedMessage.MUTE_PLAYER_PLAYER_REASON.toString()
+									.replace("{channel_color}", chatChannelObj.getColor())
+									.replace("{channel_name}", chatChannelObj.getName())
+									.replace("{reason}", reason));
+						}
+					}
+					synchronize(playerToMuteMCP, true);
+					out.writeUTF("Mute");
+					out.writeUTF("Valid");
+					out.writeUTF(server);
+					out.writeUTF(senderIdentifier);
+					out.writeUTF(playerToMute);
+					out.writeUTF(channelName);
+					out.writeLong(time);
+					out.writeUTF(reason);
+					sendPluginMessage(stream);
+					return;
+				}
+				if(identifier.equals("Valid")) {
+					String senderIdentifier = msgin.readUTF();
+					String playerToMute = msgin.readUTF();
+					String channelName = msgin.readUTF();
+					long time = msgin.readLong();
+					String reason = msgin.readUTF();
+					if(!ChatChannel.isChannel(channelName)) {
+						return;
+					}
+					ChatChannel chatChannelObj = ChatChannel.getChannel(channelName);
+					if(time > 0) {
+						String timeString = Format.parseTimeStringFromMillis(time);
+						if(reason.isEmpty()) {
+							if(senderIdentifier.equals("VentureChat:Console")) {
+								Bukkit.getConsoleSender().sendMessage(LocalizedMessage.MUTE_PLAYER_SENDER_TIME.toString()
+										.replace("{player}", playerToMute)
+										.replace("{channel_color}", chatChannelObj.getColor())
+										.replace("{channel_name}", chatChannelObj.getName())
+										.replace("{time}", timeString));
+							}
+							else {
+								UUID sender = UUID.fromString(senderIdentifier);
+								MineverseChatPlayer senderMCP = MineverseChatAPI.getOnlineMineverseChatPlayer(sender);
+								senderMCP.getPlayer().sendMessage(LocalizedMessage.MUTE_PLAYER_SENDER_TIME.toString()
+										.replace("{player}", playerToMute)
+										.replace("{channel_color}", chatChannelObj.getColor())
+										.replace("{channel_name}", chatChannelObj.getName())
+										.replace("{time}", timeString));
+							}
+						}
+						else {
+							if(senderIdentifier.equals("VentureChat:Console")) {
+								Bukkit.getConsoleSender().sendMessage(LocalizedMessage.MUTE_PLAYER_SENDER_TIME_REASON.toString()
+										.replace("{player}", playerToMute)
+										.replace("{channel_color}", chatChannelObj.getColor())
+										.replace("{channel_name}", chatChannelObj.getName())
+										.replace("{time}", timeString)
+										.replace("{reason}", reason));
+							}
+							else {
+								UUID sender = UUID.fromString(senderIdentifier);
+								MineverseChatPlayer senderMCP = MineverseChatAPI.getOnlineMineverseChatPlayer(sender);
+								senderMCP.getPlayer().sendMessage(LocalizedMessage.MUTE_PLAYER_SENDER_TIME_REASON.toString()
+										.replace("{player}", playerToMute)
+										.replace("{channel_color}", chatChannelObj.getColor())
+										.replace("{channel_name}", chatChannelObj.getName())
+										.replace("{time}", timeString)
+										.replace("{reason}", reason));
+							}
+						}
+					}
+					else {
+						if(reason.isEmpty()) {
+							if(senderIdentifier.equals("VentureChat:Console")) {
+								Bukkit.getConsoleSender().sendMessage(LocalizedMessage.MUTE_PLAYER_SENDER.toString()
+										.replace("{player}", playerToMute)
+										.replace("{channel_color}", chatChannelObj.getColor())
+										.replace("{channel_name}", chatChannelObj.getName()));
+							}
+							else {
+								UUID sender = UUID.fromString(senderIdentifier);
+								MineverseChatPlayer senderMCP = MineverseChatAPI.getOnlineMineverseChatPlayer(sender);
+								senderMCP.getPlayer().sendMessage(LocalizedMessage.MUTE_PLAYER_SENDER.toString()
+										.replace("{player}", playerToMute)
+										.replace("{channel_color}", chatChannelObj.getColor())
+										.replace("{channel_name}", chatChannelObj.getName()));
+							}
+						}
+						else {
+							if(senderIdentifier.equals("VentureChat:Console")) {
+								Bukkit.getConsoleSender().sendMessage(LocalizedMessage.MUTE_PLAYER_SENDER_REASON.toString()
+										.replace("{player}", playerToMute)
+										.replace("{channel_color}", chatChannelObj.getColor())
+										.replace("{channel_name}", chatChannelObj.getName())
+										.replace("{reason}", reason));
+							}
+							else {
+								UUID sender = UUID.fromString(senderIdentifier);
+								MineverseChatPlayer senderMCP = MineverseChatAPI.getOnlineMineverseChatPlayer(sender);
+								senderMCP.getPlayer().sendMessage(LocalizedMessage.MUTE_PLAYER_SENDER_REASON.toString()
+										.replace("{player}", playerToMute)
+										.replace("{channel_color}", chatChannelObj.getColor())
+										.replace("{channel_name}", chatChannelObj.getName())
+										.replace("{reason}", reason));
+							}
+						}
+					}
+					return;
+				}
+				if(identifier.equals("Offline")) {
+					String senderIdentifier = msgin.readUTF();
+					String playerToMute = msgin.readUTF();
+					if(senderIdentifier.equals("VentureChat:Console")) {
+						Bukkit.getConsoleSender().sendMessage(LocalizedMessage.PLAYER_OFFLINE.toString()
+								.replace("{args}", playerToMute));
+						return;
+					}
+					UUID sender = UUID.fromString(senderIdentifier);
+					MineverseChatPlayer senderMCP = MineverseChatAPI.getOnlineMineverseChatPlayer(sender);
+					senderMCP.getPlayer().sendMessage(LocalizedMessage.PLAYER_OFFLINE.toString()
+							.replace("{args}", playerToMute));
+					return;
+				}
+				if(identifier.equals("AlreadyMuted")) {
+					String senderIdentifier = msgin.readUTF();
+					String playerToMute = msgin.readUTF();
+					String channelName = msgin.readUTF();
+					if(!ChatChannel.isChannel(channelName)) {
+						return;
+					}
+					ChatChannel chatChannelObj = ChatChannel.getChannel(channelName);
+					if(senderIdentifier.equals("VentureChat:Console")) {
+						Bukkit.getConsoleSender().sendMessage(LocalizedMessage.PLAYER_ALREADY_MUTED.toString()
+								.replace("{player}", playerToMute).replace("{channel_color}", chatChannelObj.getColor())
+								.replace("{channel_name}", chatChannelObj.getName()));
+						return;
+					}
+					UUID sender = UUID.fromString(senderIdentifier);
+					MineverseChatPlayer senderMCP = MineverseChatAPI.getOnlineMineverseChatPlayer(sender);
+					senderMCP.getPlayer().sendMessage(LocalizedMessage.PLAYER_ALREADY_MUTED.toString()
+							.replace("{player}", playerToMute).replace("{channel_color}", chatChannelObj.getColor())
+							.replace("{channel_name}", chatChannelObj.getName()));
+					return;
+				}
+			}
+			if(subchannel.equals("Unmute")) {
+				String identifier = msgin.readUTF();
+				if(identifier.equals("Send")) {
+					String server = msgin.readUTF();
+					String senderIdentifier = msgin.readUTF();
+					String temporaryDataInstanceUUIDString = msgin.readUTF();
+					String playerToUnmute = msgin.readUTF();
+					String channelName = msgin.readUTF();
+					MineverseChatPlayer playerToUnmuteMCP = MineverseChatAPI.getOnlineMineverseChatPlayer(playerToUnmute);
+					if(playerToUnmuteMCP == null) {
+						out.writeUTF("Unmute");
+						out.writeUTF("Offline");
+						out.writeUTF(server);
+						out.writeUTF(temporaryDataInstanceUUIDString);
+						out.writeUTF(senderIdentifier);
+						out.writeUTF(playerToUnmute);
+						sendPluginMessage(stream);
+						return;
+					}
+					if(!ChatChannel.isChannel(channelName)) {
+						return;
+					}
+					ChatChannel chatChannelObj = ChatChannel.getChannel(channelName);
+					if (!playerToUnmuteMCP.isMuted(chatChannelObj.getName())) {
+						out.writeUTF("Unmute");
+						out.writeUTF("NotMuted");
+						out.writeUTF(server);
+						out.writeUTF(senderIdentifier);
+						out.writeUTF(playerToUnmute);
+						out.writeUTF(channelName);
+						sendPluginMessage(stream);
+						return;
+					}
+					playerToUnmuteMCP.removeMute(chatChannelObj.getName());
+					playerToUnmuteMCP.getPlayer().sendMessage(LocalizedMessage.UNMUTE_PLAYER_PLAYER.toString()
+							.replace("{player}", player.getName()).replace("{channel_color}", chatChannelObj.getColor())
+							.replace("{channel_name}", chatChannelObj.getName()));
+					synchronize(playerToUnmuteMCP, true);
+					out.writeUTF("Unmute");
+					out.writeUTF("Valid");
+					out.writeUTF(server);
+					out.writeUTF(senderIdentifier);
+					out.writeUTF(playerToUnmute);
+					out.writeUTF(channelName);
+					sendPluginMessage(stream);
+					return;
+				}
+				if(identifier.equals("Valid")) {
+					String senderIdentifier = msgin.readUTF();
+					String playerToUnmute = msgin.readUTF();
+					String channelName = msgin.readUTF();
+					if(!ChatChannel.isChannel(channelName)) {
+						return;
+					}
+					ChatChannel chatChannelObj = ChatChannel.getChannel(channelName);
+					if(senderIdentifier.equals("VentureChat:Console")) {
+						Bukkit.getConsoleSender().sendMessage(LocalizedMessage.UNMUTE_PLAYER_SENDER.toString()
+								.replace("{player}", playerToUnmute)
+								.replace("{channel_color}", chatChannelObj.getColor())
+								.replace("{channel_name}", chatChannelObj.getName()));
+					}
+					else {
+						UUID sender = UUID.fromString(senderIdentifier);
+						MineverseChatPlayer senderMCP = MineverseChatAPI.getOnlineMineverseChatPlayer(sender);
+						senderMCP.getPlayer().sendMessage(LocalizedMessage.UNMUTE_PLAYER_SENDER.toString()
+								.replace("{player}", playerToUnmute)
+								.replace("{channel_color}", chatChannelObj.getColor())
+								.replace("{channel_name}", chatChannelObj.getName()));
+					}
+					return;
+				}
+				if(identifier.equals("Offline")) {
+					String senderIdentifier = msgin.readUTF();
+					String playerToUnmute = msgin.readUTF();
+					if(senderIdentifier.equals("VentureChat:Console")) {
+						Bukkit.getConsoleSender().sendMessage(LocalizedMessage.PLAYER_OFFLINE.toString()
+								.replace("{args}", playerToUnmute));
+						return;
+					}
+					UUID sender = UUID.fromString(senderIdentifier);
+					MineverseChatPlayer senderMCP = MineverseChatAPI.getOnlineMineverseChatPlayer(sender);
+					senderMCP.getPlayer().sendMessage(LocalizedMessage.PLAYER_OFFLINE.toString()
+							.replace("{args}", playerToUnmute));
+					return;
+				}
+				if(identifier.equals("NotMuted")) {
+					String senderIdentifier = msgin.readUTF();
+					String playerToUnmute = msgin.readUTF();
+					String channelName = msgin.readUTF();
+					if(!ChatChannel.isChannel(channelName)) {
+						return;
+					}
+					ChatChannel chatChannelObj = ChatChannel.getChannel(channelName);
+					if(senderIdentifier.equals("VentureChat:Console")) {
+						Bukkit.getConsoleSender().sendMessage(LocalizedMessage.PLAYER_NOT_MUTED.toString()
+								.replace("{player}", playerToUnmute).replace("{channel_color}", chatChannelObj.getColor())
+								.replace("{channel_name}", chatChannelObj.getName()));
+						return;
+					}
+					UUID sender = UUID.fromString(senderIdentifier);
+					MineverseChatPlayer senderMCP = MineverseChatAPI.getOnlineMineverseChatPlayer(sender);
+					senderMCP.getPlayer().sendMessage(LocalizedMessage.PLAYER_NOT_MUTED.toString()
+							.replace("{player}", playerToUnmute).replace("{channel_color}", chatChannelObj.getColor())
+							.replace("{channel_name}", chatChannelObj.getName()));
+					return;
+				}
+			}
 			if(subchannel.equals("Message")) {
 				String identifier = msgin.readUTF();
 				if(identifier.equals("Send")) {
@@ -917,12 +1234,11 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 					MineverseChatPlayer p = MineverseChatAPI.getOnlineMineverseChatPlayer(receiver);
 					UUID sender = UUID.fromString(msgin.readUTF());
 					String sName = msgin.readUTF();
-					MineverseChatPlayer s = MineverseChatAPI.getMineverseChatPlayer(sender);
 					String send = msgin.readUTF();
 					String echo = msgin.readUTF();
 					String spy = msgin.readUTF();
 					String msg = msgin.readUTF();
-					if(!this.getConfig().getBoolean("bungeecordmessaging", true) || p == null || !p.isOnline()) {
+					if(!this.getConfig().getBoolean("bungeecordmessaging", true) || p == null) {
 						out.writeUTF("Message");
 						out.writeUTF("Offline");
 						out.writeUTF(server);
@@ -949,28 +1265,9 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 						player.sendPluginMessage(this, MineverseChat.PLUGIN_MESSAGING_CHANNEL, stream.toByteArray());
 						return;
 					}
-					else {
-						UUID uuid = sender;
-						String name = sName;
-						ChatChannel current = ChatChannel.getDefaultChannel();
-						Set<UUID> ignores = new HashSet<UUID>();
-						Set<String> listening = new HashSet<String>();
-						listening.add(current.getName());
-						HashMap<String, Integer> mutes = new HashMap<String, Integer>();
-						Set<String> blockedCommands = new HashSet<String>();
-						String jsonFormat = "Default";
-						s = new MineverseChatPlayer(uuid, name, current, ignores, listening, mutes, blockedCommands, false, null, true, true, name, jsonFormat, false, false, false, true, true);
-						MineverseChatAPI.addMineverseChatPlayerToMap(s);
-						MineverseChatAPI.addNameToMap(s);
-					}
 					p.getPlayer().sendMessage(Format.FormatStringAll(PlaceholderAPI.setBracketPlaceholders(p.getPlayer(), send.replaceAll("receiver_", ""))) + msg);
 					if(p.hasNotifications()) {
-						if(VersionHandler.is1_8() || VersionHandler.is1_7_10() || VersionHandler.is1_7_2() || VersionHandler.is1_7_9()) {
-							p.getPlayer().playSound(p.getPlayer().getLocation(), Sound.valueOf("LEVEL_UP"), 1, 0);
-						}
-						else {
-							p.getPlayer().playSound(p.getPlayer().getLocation(), Sound.valueOf("ENTITY_PLAYER_LEVELUP"), 1, 0);
-						}
+						Format.playMessageSound(p);
 					}
 					p.setReplyPlayer(sender);
 					out.writeUTF("Message");
@@ -1021,319 +1318,14 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 					String receiverName = msgin.readUTF();
 					String senderName = msgin.readUTF();
 					String spy = msgin.readUTF();
-					for(MineverseChatPlayer pl : MineverseChatAPI.getOnlineMineverseChatPlayers()) {
-						if(pl.isSpy() && !pl.getName().equals(senderName) && !pl.getName().equals(receiverName)) {
-							pl.getPlayer().sendMessage(spy);
-						}
-					}
-				}
-			}
-			if(subchannel.equals("Mute")) {
-				String sendplayer = msgin.readUTF();
-				String mutePlayer = msgin.readUTF();
-				String chatchannel = msgin.readUTF();
-				String server = msgin.readUTF();
-				String time = msgin.readUTF();
-				int numtime = 0;
-				MineverseChatPlayer p = MineverseChatAPI.getMineverseChatPlayer(mutePlayer);
-				ChatChannel cc = ChatChannel.getChannel(chatchannel);
-				if(cc == null) {
-					try {
-						out.writeUTF("Mute");
-						out.writeUTF("Channel");
-						out.writeUTF(sendplayer);
-						out.writeUTF(chatchannel);
-						player.sendPluginMessage(this, MineverseChat.PLUGIN_MESSAGING_CHANNEL, stream.toByteArray());
-					}
-					catch(Exception e) {
-						e.printStackTrace();
-					}
-					return;
-				}
-				if(p == null) {
-					try {
-						out.writeUTF("Mute");
-						out.writeUTF("Player");
-						out.writeUTF(sendplayer);
-						out.writeUTF(mutePlayer);
-						out.writeUTF(server);
-						player.sendPluginMessage(this, MineverseChat.PLUGIN_MESSAGING_CHANNEL, stream.toByteArray());
-					}
-					catch(Exception e) {
-						e.printStackTrace();
-					}
-					return;
-				}
-				if(!cc.isMutable()) {
-					try {
-						out.writeUTF("Mute");
-						out.writeUTF("Mutable");
-						out.writeUTF(sendplayer);
-						out.writeUTF(cc.getName());
-						out.writeUTF(cc.getColor());
-						player.sendPluginMessage(this, MineverseChat.PLUGIN_MESSAGING_CHANNEL, stream.toByteArray());
-					}
-					catch(Exception e) {
-						e.printStackTrace();
-					}
-					return;
-				}
-				if(p.isMuted(cc.getName())) {
-					try {
-						out.writeUTF("Mute");
-						out.writeUTF("Already");
-						out.writeUTF(sendplayer);
-						out.writeUTF(mutePlayer);
-						out.writeUTF(cc.getName());
-						out.writeUTF(cc.getColor());
-						player.sendPluginMessage(this, MineverseChat.PLUGIN_MESSAGING_CHANNEL, stream.toByteArray());
-					}
-					catch(Exception e) {
-						e.printStackTrace();
-					}
-					return;
-				}
-				if(!time.equals("None\n")) {
-					try {
-						numtime = Integer.parseInt(time);
-						if(numtime > 0) {
-							Calendar currentDate = Calendar.getInstance();
-							SimpleDateFormat formatter = new SimpleDateFormat("dd:HH:mm:ss");
-							String date = formatter.format(currentDate.getTime());
-							String[] datearray = date.split(":");
-							int datetime = (Integer.parseInt(datearray[0]) * 1440) + (Integer.parseInt(datearray[1]) * 60) + (Integer.parseInt(datearray[2]));
-							p.addMute(cc.getName(), datetime + numtime);
-							String keyword = "minutes";
-							if(numtime == 1) keyword = "minute";
-							if(p.isOnline()) p.getPlayer().sendMessage(ChatColor.RED + "You have just been muted in: " + ChatColor.valueOf(cc.getColor().toUpperCase()) + cc.getName() + ChatColor.RED + " for " + time + " " + keyword);
-							else p.setModified(true);
-							if(cc.getBungee()) {
-								MineverseChat.getInstance().synchronize(p, true);
+					if(!spy.startsWith("VentureChat:NoSpy")) {
+						for(MineverseChatPlayer pl : MineverseChatAPI.getOnlineMineverseChatPlayers()) {
+							if(pl.isSpy() && !pl.getName().equals(senderName) && !pl.getName().equals(receiverName)) {
+								pl.getPlayer().sendMessage(spy);
 							}
-							try {
-								out.writeUTF("Mute");
-								out.writeUTF("Valid");
-								out.writeUTF(sendplayer);
-								out.writeUTF(mutePlayer);
-								out.writeUTF(cc.getName());
-								out.writeUTF(cc.getColor());
-								out.writeUTF(time);
-								player.sendPluginMessage(this, MineverseChat.PLUGIN_MESSAGING_CHANNEL, stream.toByteArray());
-							}
-							catch(Exception e) {
-								e.printStackTrace();
-							}
-							return;
-						}
-						try {
-							out.writeUTF("Mute");
-							out.writeUTF("Time");
-							out.writeUTF(sendplayer);
-							out.writeUTF(time);
-							player.sendPluginMessage(this, MineverseChat.PLUGIN_MESSAGING_CHANNEL, stream.toByteArray());
-						}
-						catch(Exception e) {
-							e.printStackTrace();
-						}
-						return;
-					}
-					catch(Exception e) {
-						try {
-							out.writeUTF("Mute");
-							out.writeUTF("Time");
-							out.writeUTF(sendplayer);
-							out.writeUTF(time);
-							player.sendPluginMessage(this, MineverseChat.PLUGIN_MESSAGING_CHANNEL, stream.toByteArray());
-						}
-						catch(Exception e1) {
-							e1.printStackTrace();
-						}
-						return;
-					}
-				}
-				p.addMute(cc.getName(), 0);
-				if(p.isOnline()) p.getPlayer().sendMessage(ChatColor.RED + "You have just been muted in: " + ChatColor.valueOf(cc.getColor().toUpperCase()) + cc.getName());
-				else p.setModified(true);
-				if(cc.getBungee()) {
-					MineverseChat.getInstance().synchronize(p, true);
-				}
-				try {
-					out.writeUTF("Mute");
-					out.writeUTF("Valid");
-					out.writeUTF(sendplayer);
-					out.writeUTF(mutePlayer);
-					out.writeUTF(cc.getName());
-					out.writeUTF(cc.getColor());
-					out.writeUTF(time);
-					player.sendPluginMessage(this, MineverseChat.PLUGIN_MESSAGING_CHANNEL, stream.toByteArray());
-				}
-				catch(Exception e) {
-					e.printStackTrace();
-				}
-				return;
-			}
-			if(subchannel.equals("Muteall")) {
-				String sendplayer = msgin.readUTF();
-				String muteplayer = msgin.readUTF();
-				String server = msgin.readUTF();
-				Player mp = Bukkit.getPlayer(muteplayer);
-				MineverseChatPlayer p = MineverseChatAPI.getMineverseChatPlayer(mp);
-				if(mp == null) {
-					try {
-						out.writeUTF("Muteall");
-						out.writeUTF("Player");
-						out.writeUTF(sendplayer);
-						out.writeUTF(muteplayer);
-						out.writeUTF(server);
-						player.sendPluginMessage(this, MineverseChat.PLUGIN_MESSAGING_CHANNEL, stream.toByteArray());
-					}
-					catch(Exception e) {
-						e.printStackTrace();
-					}
-					return;
-				}
-				boolean bungee = false;
-				for(ChatChannel c : ChatChannel.getChannels()) {
-					if(c.isMutable()) {
-						p.addMute(c.getName(), 0);
-						if(c.getBungee()) {
-							bungee = true;
 						}
 					}
 				}
-				if(bungee) {
-					MineverseChat.getInstance().synchronize(p, true);
-				}
-				if(p.isOnline()) {
-					p.getPlayer().sendMessage(ChatColor.RED + "You have just been muted in all channels.");
-				}
-				else p.setModified(true);
-				try {
-					out.writeUTF("Muteall");
-					out.writeUTF("Valid");
-					out.writeUTF(sendplayer);
-					out.writeUTF(muteplayer);
-					player.sendPluginMessage(this, MineverseChat.PLUGIN_MESSAGING_CHANNEL, stream.toByteArray());
-				}
-				catch(Exception e) {
-					e.printStackTrace();
-				}
-				return;
-			}
-			if(subchannel.equals("Unmuteall")) {
-				String sendplayer = msgin.readUTF();
-				String muteplayer = msgin.readUTF();
-				String server = msgin.readUTF();
-				Player mp = Bukkit.getPlayer(muteplayer);
-				MineverseChatPlayer p = MineverseChatAPI.getMineverseChatPlayer(mp);
-				if(mp == null) {
-					try {
-						out.writeUTF("Unmuteall");
-						out.writeUTF("Player");
-						out.writeUTF(sendplayer);
-						out.writeUTF(muteplayer);
-						out.writeUTF(server);
-						player.sendPluginMessage(this, MineverseChat.PLUGIN_MESSAGING_CHANNEL, stream.toByteArray());
-					}
-					catch(Exception e) {
-						e.printStackTrace();
-					}
-					return;
-				}
-				boolean bungee = false;
-				for(ChatChannel c : ChatChannel.getChannels()) {
-					p.removeMute(c.getName());
-					if(c.getBungee()) {
-						bungee = true;
-					}
-				}
-				if(bungee) {
-					MineverseChat.getInstance().synchronize(p, true);
-				}
-				if(p.isOnline()) {
-					p.getPlayer().sendMessage(ChatColor.RED + "You have just been unmuted in all channels.");
-				}
-				else p.setModified(true);
-				try {
-					out.writeUTF("Unmuteall");
-					out.writeUTF("Valid");
-					out.writeUTF(sendplayer);
-					out.writeUTF(muteplayer);
-					player.sendPluginMessage(this, MineverseChat.PLUGIN_MESSAGING_CHANNEL, stream.toByteArray());
-				}
-				catch(Exception e) {
-					e.printStackTrace();
-				}
-				return;
-			}
-			if(subchannel.equals("Unmute")) {
-				String sendplayer = msgin.readUTF();
-				String mutePlayer = msgin.readUTF();
-				String chatchannel = msgin.readUTF();
-				String server = msgin.readUTF();
-				MineverseChatPlayer p = MineverseChatAPI.getMineverseChatPlayer(mutePlayer);
-				ChatChannel cc = ChatChannel.getChannel(chatchannel);
-				if(cc == null) {
-					try {
-						out.writeUTF("Unmute");
-						out.writeUTF("Channel");
-						out.writeUTF(sendplayer);
-						out.writeUTF(chatchannel);
-						player.sendPluginMessage(this, MineverseChat.PLUGIN_MESSAGING_CHANNEL, stream.toByteArray());
-					}
-					catch(Exception e) {
-						e.printStackTrace();
-					}
-					return;
-				}
-				if(p == null) {
-					try {
-						out.writeUTF("Unmute");
-						out.writeUTF("Player");
-						out.writeUTF(sendplayer);
-						out.writeUTF(mutePlayer);
-						out.writeUTF(server);
-						player.sendPluginMessage(this, MineverseChat.PLUGIN_MESSAGING_CHANNEL, stream.toByteArray());
-					}
-					catch(Exception e) {
-						e.printStackTrace();
-					}
-					return;
-				}
-				if(!p.isMuted(cc.getName())) {
-					try {
-						out.writeUTF("Unmute");
-						out.writeUTF("Already");
-						out.writeUTF(sendplayer);
-						out.writeUTF(mutePlayer);
-						out.writeUTF(cc.getName());
-						out.writeUTF(cc.getColor());
-						player.sendPluginMessage(this, MineverseChat.PLUGIN_MESSAGING_CHANNEL, stream.toByteArray());
-					}
-					catch(Exception e) {
-						e.printStackTrace();
-					}
-					return;
-				}
-				p.removeMute(cc.getName());
-				if(p.isOnline()) p.getPlayer().sendMessage(ChatColor.RED + "You have just been unmuted in: " + ChatColor.valueOf(cc.getColor().toUpperCase()) + cc.getName());
-				else p.setModified(true);
-				if(cc.getBungee()) {
-					MineverseChat.getInstance().synchronize(p, true);
-				}
-				try {
-					out.writeUTF("Unmute");
-					out.writeUTF("Valid");
-					out.writeUTF(sendplayer);
-					out.writeUTF(mutePlayer);
-					out.writeUTF(cc.getName());
-					out.writeUTF(cc.getColor());
-					player.sendPluginMessage(this, MineverseChat.PLUGIN_MESSAGING_CHANNEL, stream.toByteArray());
-				}
-				catch(Exception e) {
-					e.printStackTrace();
-				}
-				return;
 			}
 		}
 		catch(Exception e) {

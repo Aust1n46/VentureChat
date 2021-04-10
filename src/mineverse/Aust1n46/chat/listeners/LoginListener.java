@@ -1,8 +1,5 @@
 package mineverse.Aust1n46.chat.listeners;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Set;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
@@ -12,6 +9,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.spigotmc.SpigotConfig;
 
 import mineverse.Aust1n46.chat.MineverseChat;
 import mineverse.Aust1n46.chat.api.MineverseChatAPI;
@@ -25,7 +23,6 @@ import mineverse.Aust1n46.chat.utilities.UUIDFetcher;
 //and it's data.
 public class LoginListener implements Listener {
 	private MineverseChat plugin = MineverseChat.getInstance();
-	private boolean firstPlayerHasJoined = false;
 
 	@EventHandler(priority = EventPriority.LOW)
 	public void onPlayerQuit(PlayerQuitEvent plog) {
@@ -45,6 +42,18 @@ public class LoginListener implements Listener {
 		mcp.setOnline(false);
 		MineverseChatAPI.removeMineverseChatOnlinePlayerToMap(mcp);
 	}
+	
+	void handleNameChange(MineverseChatPlayer mcp, Player eventPlayerInstance) {
+		Bukkit.getConsoleSender().sendMessage(Format.FormatStringAll("&8[&eVentureChat&8]&e - Detected Name Change. Old Name:&c " + mcp.getName() + " &eNew Name:&c " + eventPlayerInstance.getName()));
+		MineverseChatAPI.removeNameFromMap(mcp.getName());
+		//reset nickname if nickname equals old username
+		if(mcp.getName().equals(eventPlayerInstance.getDisplayName())) {
+			eventPlayerInstance.setDisplayName(eventPlayerInstance.getName());
+			mcp.setNickname(eventPlayerInstance.getName());
+		}
+		mcp.setName(eventPlayerInstance.getName());
+		MineverseChatAPI.addNameToMap(mcp);
+	}
 
 	@EventHandler(priority = EventPriority.LOW)
 	public void onPlayerJoin(PlayerJoinEvent event) throws Exception {
@@ -53,24 +62,14 @@ public class LoginListener implements Listener {
 			Player player = event.getPlayer();
 			String name = player.getName();
 			UUID uuid = player.getUniqueId();
-			ChatChannel current = ChatChannel.getDefaultChannel();
-			Set<UUID> ignores = new HashSet<UUID>();
-			Set<String> listening = new HashSet<String>();
-			listening.add(current.getName());
-			HashMap<String, Integer> mutes = new HashMap<String, Integer>();
-			Set<String> blockedCommands = new HashSet<String>();
-			String jsonFormat = "Default";
-			mcp = new MineverseChatPlayer(uuid, name, current, ignores, listening, mutes, blockedCommands, false, null, true, true, name, jsonFormat, false, false, false, true, true);
+			mcp = new MineverseChatPlayer(uuid, name);
 			MineverseChatAPI.addMineverseChatPlayerToMap(mcp);
 			MineverseChatAPI.addNameToMap(mcp);
 		}
 		UUIDFetcher.checkOfflineUUIDWarning(mcp.getUUID());
 		//check for name change
 		if(!mcp.getName().equals(event.getPlayer().getName())) {
-			Bukkit.getConsoleSender().sendMessage(Format.FormatStringAll("&8[&eVentureChat&8]&e - Detected Name Change. Old Name:&c " + mcp.getName() + " &eNew Name:&c " + event.getPlayer().getName()));
-			MineverseChatAPI.removeNameFromMap(mcp.getName());
-			mcp.setName(event.getPlayer().getName());
-			MineverseChatAPI.addNameToMap(mcp);
+			handleNameChange(mcp, event.getPlayer());
 		}
 		if(!event.getPlayer().getDisplayName().equals(mcp.getName())) {
 			mcp.setNickname(event.getPlayer().getDisplayName());
@@ -97,19 +96,15 @@ public class LoginListener implements Listener {
 				mcp.addListening(ch.getName());
 			}
 		}
-		
-		long delayInTicks = 20L;
-		// Add extra delay to allow the sync to run properly
-		if(!firstPlayerHasJoined) {
-			delayInTicks = 100L;
-			firstPlayerHasJoined = true;
+		if(SpigotConfig.bungee) {
+			long delayInTicks = 20L;
+			final MineverseChatPlayer sync = mcp;
+			plugin.getServer().getScheduler().runTaskLaterAsynchronously(plugin, new Runnable() {
+				public void run() {
+					plugin.synchronize(sync, false);
+				}
+			}, delayInTicks);
 		}
-		final MineverseChatPlayer sync = mcp;
-		plugin.getServer().getScheduler().runTaskLaterAsynchronously(plugin, new Runnable() {
-			public void run() {
-				plugin.synchronize(sync, false);
-			}
-		}, delayInTicks);
 		if(!plugin.getConfig().getConfigurationSection("login").getString("message", "Default").equalsIgnoreCase("Default")) {
 			event.setJoinMessage(Format.FormatStringAll(plugin.getConfig().getConfigurationSection("login").getString("message", "Default").replace("{player}", event.getPlayer().getName())));
 		}

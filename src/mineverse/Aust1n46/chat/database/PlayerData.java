@@ -14,6 +14,7 @@ import java.util.StringTokenizer;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 
@@ -21,6 +22,7 @@ import mineverse.Aust1n46.chat.MineverseChat;
 import mineverse.Aust1n46.chat.api.MineverseChatAPI;
 import mineverse.Aust1n46.chat.api.MineverseChatPlayer;
 import mineverse.Aust1n46.chat.channel.ChatChannel;
+import mineverse.Aust1n46.chat.command.mute.MuteContainer;
 import mineverse.Aust1n46.chat.utilities.Format;
 import mineverse.Aust1n46.chat.utilities.UUIDFetcher;
 
@@ -64,7 +66,7 @@ public class PlayerData {
 						listening.add(channel);
 					}
 				}
-				HashMap<String, Integer> mutes = new HashMap<String, Integer>();
+				HashMap<String, MuteContainer> mutes = new HashMap<String, MuteContainer>();
 				StringTokenizer m = new StringTokenizer(playerData.getConfigurationSection("players." + uuidString).getString("mutes"), ",");
 				while(m.hasMoreTokens()) {
 					String[] parts = m.nextToken().split(":");
@@ -73,7 +75,8 @@ public class PlayerData {
 							Bukkit.getConsoleSender().sendMessage("[VentureChat] Null Mute Time: " + parts[0] + " " + name);
 							continue;
 						}
-						mutes.put(ChatChannel.getChannel(parts[0]).getName(), Integer.parseInt(parts[1]));
+						String channelName = parts[0];
+						mutes.put(channelName, new MuteContainer(channelName, Long.parseLong(parts[1])));
 					}
 				}
 				Set<String> blockedCommands = new HashSet<String>();
@@ -160,18 +163,13 @@ public class PlayerData {
 					listening.add(channel);
 				}
 			}
-			HashMap<String, Integer> mutes = new HashMap<String, Integer>();
-			StringTokenizer m = new StringTokenizer(playerDataFileYamlConfiguration.getString("mutes"), ",");
-			while(m.hasMoreTokens()) {
-				String[] parts = m.nextToken().split(":");
-				if(ChatChannel.isChannel(parts[0])) {
-					if(parts[1].equals("null")) {
-						Bukkit.getConsoleSender().sendMessage("[VentureChat] Null Mute Time: " + parts[0] + " " + name);
-						continue;
-					}
-					mutes.put(ChatChannel.getChannel(parts[0]).getName(), Integer.parseInt(parts[1]));
-				}
+			HashMap<String, MuteContainer> mutes = new HashMap<String, MuteContainer>();
+			ConfigurationSection muteSection = playerDataFileYamlConfiguration.getConfigurationSection("mutes");
+			for(String channelName : muteSection.getKeys(false)) {
+				ConfigurationSection channelSection = muteSection.getConfigurationSection(channelName);
+				mutes.put(channelName, new MuteContainer(channelName, channelSection.getLong("time"), channelSection.getString("reason")));
 			}
+			
 			Set<String> blockedCommands = new HashSet<String>();
 			StringTokenizer b = new StringTokenizer(playerDataFileYamlConfiguration.getString("blockedcommands"), ",");
 			while(b.hasMoreTokens()) {
@@ -225,11 +223,6 @@ public class PlayerData {
 				ChatChannel c = ChatChannel.getChannel(channel);
 				listening += c.getName() + ",";
 			}
-			String mutes = "";
-			for(String channel : mcp.getMutes().keySet()) {
-				ChatChannel c = ChatChannel.getChannel(channel);
-				mutes += c.getName() + ":" + mcp.getMutes().get(c.getName()) + ",";
-			}
 			String blockedCommands = "";
 			for(String s : mcp.getBlockedCommands()) {
 				blockedCommands += s + ",";
@@ -238,13 +231,14 @@ public class PlayerData {
 				listening = listening.substring(0, listening.length() - 1);
 			}
 			playerDataFileYamlConfiguration.set("listen", listening);
-			if(mutes.length() > 0) {
-				mutes = mutes.substring(0, mutes.length() - 1);
+			
+			ConfigurationSection muteSection = playerDataFileYamlConfiguration.createSection("mutes");
+			for(MuteContainer mute : mcp.getMutes()) {
+				ConfigurationSection channelSection = muteSection.createSection(mute.getChannel());
+				channelSection.set("time", mute.getDuration());
+				channelSection.set("reason", mute.getReason());
 			}
-			playerDataFileYamlConfiguration.set("mutes", mutes);
-			if(blockedCommands.length() > 0) {
-				blockedCommands = blockedCommands.substring(0, blockedCommands.length() - 1);
-			}
+			
 			playerDataFileYamlConfiguration.set("blockedcommands", blockedCommands);
 			playerDataFileYamlConfiguration.set("host", mcp.isHost());
 			playerDataFileYamlConfiguration.set("party", mcp.hasParty() ? mcp.getParty().toString() : "");

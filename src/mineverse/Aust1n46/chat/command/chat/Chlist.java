@@ -15,7 +15,7 @@ public class Chlist extends MineverseCommand {
 	@Override
 	public void execute(CommandSender sender, String command, String[] args) {
 		sender.sendMessage(LocalizedMessage.CHANNEL_LIST_HEADER.toString());
-		for(ChatChannel chname : ChatChannel.getChannels()) {
+		for(ChatChannel chname : ChatChannel.getChatChannels()) {
 			if(chname.hasPermission()) {
 				if(sender.hasPermission(chname.getPermission())) {
 					sender.sendMessage(LocalizedMessage.CHANNEL_LIST_WITH_PERMISSIONS.toString()

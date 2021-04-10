@@ -3,13 +3,16 @@ package mineverse.Aust1n46.chat.utilities;
 import static mineverse.Aust1n46.chat.MineverseChat.getInstance;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.StringTokenizer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 
 import com.comphenix.protocol.PacketType;
@@ -19,8 +22,10 @@ import com.comphenix.protocol.wrappers.WrappedChatComponent;
 
 import me.clip.placeholderapi.PlaceholderAPI;
 import mineverse.Aust1n46.chat.MineverseChat;
+import mineverse.Aust1n46.chat.api.MineverseChatAPI;
 import mineverse.Aust1n46.chat.api.MineverseChatPlayer;
 import mineverse.Aust1n46.chat.json.JsonFormat;
+import mineverse.Aust1n46.chat.localization.LocalizedMessage;
 import mineverse.Aust1n46.chat.versions.VersionHandler;
 
 /**
@@ -38,6 +43,14 @@ public class Format {
 	private static final Pattern LEGACY_CHAT_COLOR_DIGITS_PATTERN = Pattern.compile("&([0-9])");
 	private static final Pattern LEGACY_CHAT_COLOR_PATTERN = Pattern.compile(
 			"(?<!(&x(&[a-fA-F0-9]){5}))(?<!(&x(&[a-fA-F0-9]){4}))(?<!(&x(&[a-fA-F0-9]){3}))(?<!(&x(&[a-fA-F0-9]){2}))(?<!(&x(&[a-fA-F0-9]){1}))(?<!(&x))(&)([0-9a-fA-F])");
+	
+	public static final long MILLISECONDS_PER_DAY = 86400000;
+	public static final long MILLISECONDS_PER_HOUR = 3600000;
+	public static final long MILLISECONDS_PER_MINUTE = 60000;
+	public static final long MILLISECONDS_PER_SECOND = 1000;
+	
+	public static final String DEFAULT_MESSAGE_SOUND = "ENTITY_PLAYER_LEVELUP";
+	public static final String DEFAULT_LEGACY_MESSAGE_SOUND = "LEVEL_UP";
 
 	/**
 	 * Converts a message to Minecraft JSON formatting while applying the
@@ -704,8 +717,164 @@ public class Format {
 	public static boolean underlineURLs() {
 		return getInstance().getConfig().getBoolean("underlineurls", true);
 	}
+	
+	public static String parseTimeStringFromMillis(long millis) {
+		String timeString = "";
+		if(millis >= Format.MILLISECONDS_PER_DAY) {
+			long numberOfDays = millis / Format.MILLISECONDS_PER_DAY;
+			millis -= Format.MILLISECONDS_PER_DAY * numberOfDays;
+			
+			String units = LocalizedMessage.UNITS_DAY_PLURAL.toString();
+			if (numberOfDays == 1) {
+				units = LocalizedMessage.UNITS_DAY_SINGULAR.toString();
+			}
+			timeString += numberOfDays + " " + units + " ";
+		}
+		
+		if(millis >= Format.MILLISECONDS_PER_HOUR) {
+			long numberOfHours = millis / Format.MILLISECONDS_PER_HOUR;
+			millis -= Format.MILLISECONDS_PER_HOUR * numberOfHours;
 
-	public static int currentTimeMillis() {
-		return (int) (System.currentTimeMillis() % Integer.MAX_VALUE);
+			String units = LocalizedMessage.UNITS_HOUR_PLURAL.toString();
+			if (numberOfHours == 1) {
+				units = LocalizedMessage.UNITS_HOUR_SINGULAR.toString();
+			}
+			timeString += numberOfHours + " " + units + " ";
+		}
+		
+		if(millis >= Format.MILLISECONDS_PER_MINUTE) {
+			long numberOfMinutes = millis / Format.MILLISECONDS_PER_MINUTE;
+			millis -= Format.MILLISECONDS_PER_MINUTE * numberOfMinutes;
+
+			String units = LocalizedMessage.UNITS_MINUTE_PLURAL.toString();
+			if (numberOfMinutes == 1) {
+				units = LocalizedMessage.UNITS_MINUTE_SINGULAR.toString();
+			}
+			timeString += numberOfMinutes + " " + units + " ";
+		}
+		
+		if(millis >= Format.MILLISECONDS_PER_SECOND) {
+			long numberOfSeconds = millis / Format.MILLISECONDS_PER_SECOND;
+			millis -= Format.MILLISECONDS_PER_SECOND * numberOfSeconds;
+
+			String units = LocalizedMessage.UNITS_SECOND_PLURAL.toString();
+			if (numberOfSeconds == 1) {
+				units = LocalizedMessage.UNITS_SECOND_SINGULAR.toString();
+			}
+			timeString += numberOfSeconds + " " + units;
+		}
+		return timeString.trim();
+	}
+	
+	public static long parseTimeStringToMillis(String timeInput) {
+		long millis = 0L;
+		timeInput = timeInput.toLowerCase();
+		char validChars[] = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'd', 'h', 'm', 's' };
+		if(containsInvalidChars(validChars, timeInput)) {
+			return -1;
+		}
+		
+		long countDayTokens = timeInput.chars().filter(ch -> ch == 'd').count();
+		long countHourTokens = timeInput.chars().filter(ch -> ch == 'h').count();
+		long countMinuteTokens = timeInput.chars().filter(ch -> ch == 'm').count();
+		long countSecondTokens = timeInput.chars().filter(ch -> ch == 's').count();
+		if(countDayTokens > 1 || countHourTokens > 1 || countMinuteTokens > 1 || countSecondTokens > 1) {
+			return -1;
+		}
+		
+		int indexOfSecondToken = timeInput.indexOf("s");
+		int indexOfMinuteToken = timeInput.indexOf("m");
+		int indexOfHourToken = timeInput.indexOf("h");
+		int indexOfDayToken = timeInput.indexOf("d");
+		if(indexOfDayToken != -1) {
+			if((indexOfHourToken != -1 && indexOfHourToken < indexOfDayToken) || (indexOfMinuteToken != -1 && indexOfMinuteToken < indexOfDayToken) || (indexOfSecondToken != -1 && indexOfSecondToken < indexOfDayToken)) {
+				return -1;
+			}
+		}
+		if(indexOfHourToken != -1) {
+			if((indexOfMinuteToken != -1 && indexOfMinuteToken < indexOfHourToken) || (indexOfSecondToken != -1 && indexOfSecondToken < indexOfHourToken)) {
+				return -1;
+			}
+		}
+		if(indexOfMinuteToken != -1) {
+			if((indexOfSecondToken != -1 && indexOfSecondToken < indexOfMinuteToken)) {
+				return -1;
+			}
+		}
+		
+		if(indexOfDayToken != -1) {
+			int numberOfDays = Integer.parseInt(timeInput.substring(0, indexOfDayToken));
+			timeInput = timeInput.substring(indexOfDayToken + 1);
+			millis += MILLISECONDS_PER_DAY * numberOfDays;
+		}
+		if(timeInput.length() > 0) {
+			indexOfHourToken = timeInput.indexOf("h");
+			if(indexOfHourToken != -1) {
+				int numberOfHours = Integer.parseInt(timeInput.substring(0, indexOfHourToken));
+				timeInput = timeInput.substring(indexOfHourToken + 1);
+				millis += MILLISECONDS_PER_HOUR * numberOfHours;
+			}
+		}
+		if(timeInput.length() > 0) {
+			indexOfMinuteToken = timeInput.indexOf("m");
+			if(indexOfMinuteToken != -1) {
+				int numberOfMinutes = Integer.parseInt(timeInput.substring(0, indexOfMinuteToken));
+				timeInput = timeInput.substring(indexOfMinuteToken + 1);
+				millis += MILLISECONDS_PER_MINUTE * numberOfMinutes;
+			}
+		}
+		if(timeInput.length() > 0) {
+			indexOfSecondToken = timeInput.indexOf("s");
+			if(indexOfSecondToken != -1) {
+				int numberOfSeconds = Integer.parseInt(timeInput.substring(0, indexOfSecondToken));
+				timeInput = timeInput.substring(indexOfSecondToken + 1);
+				millis += MILLISECONDS_PER_SECOND * numberOfSeconds;
+			}
+		}
+		return millis;
+	}
+	
+	private static boolean containsInvalidChars(char[] validChars, String validate) {
+		for(char c : validate.toCharArray()) {
+			boolean isValidChar = false;
+			for(char v : validChars) {
+				if(c == v) {
+					isValidChar = true;
+				}
+			}
+			if(!isValidChar) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	public static void broadcastToServer(String message) {
+		for(MineverseChatPlayer mcp : MineverseChatAPI.getOnlineMineverseChatPlayers()) {
+			mcp.getPlayer().sendMessage(message);
+		}
+	}
+	
+	public static void playMessageSound(MineverseChatPlayer mcp) {
+		Player player = mcp.getPlayer();
+		Sound messageSound = getSound(getInstance().getConfig().getString("message_sound", DEFAULT_MESSAGE_SOUND));
+		player.playSound(player.getLocation(), messageSound, 1, 0);
+	}
+	
+	private static Sound getSound(String soundName) {
+		if(Arrays.asList(Sound.values()).stream().map(Sound::toString).collect(Collectors.toList()).contains(soundName)) {
+			return Sound.valueOf(soundName);
+		}
+		Bukkit.getConsoleSender().sendMessage(Format.FormatStringAll("&8[&eVentureChat&8]&c - Message sound invalid!"));
+		return getDefaultMessageSound();
+	}
+	
+	private static Sound getDefaultMessageSound() {
+		if(VersionHandler.is1_8() || VersionHandler.is1_7_10() || VersionHandler.is1_7_2() || VersionHandler.is1_7_9()) {
+			return Sound.valueOf(DEFAULT_LEGACY_MESSAGE_SOUND);
+		}
+		else {
+			return Sound.valueOf(DEFAULT_MESSAGE_SOUND);
+		}
 	}
 }

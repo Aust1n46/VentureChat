@@ -1,6 +1,17 @@
 package mineverse.Aust1n46.chat.command.mute;
 
+import java.io.ByteArrayOutputStream;
+import java.io.DataOutputStream;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
+import org.bukkit.util.StringUtil;
 
 import mineverse.Aust1n46.chat.MineverseChat;
 import mineverse.Aust1n46.chat.api.MineverseChatAPI;
@@ -11,7 +22,7 @@ import mineverse.Aust1n46.chat.localization.LocalizedMessage;
 import mineverse.Aust1n46.chat.utilities.Format;
 
 public class Mute extends MineverseCommand {
-	private static final int MILLISECONDS_PER_MINUTE = 60000;
+	private static final List<String> COMMON_MUTE_TIMES = Collections.unmodifiableList(Arrays.asList(new String[]{"12h", "15m", "1d", "1h", "1m", "30s"}));
 
 	public Mute(String name) {
 		super(name);
@@ -22,96 +33,191 @@ public class Mute extends MineverseCommand {
 		if (sender.hasPermission("venturechat.mute")) {
 			if (args.length < 2) {
 				sender.sendMessage(LocalizedMessage.COMMAND_INVALID_ARGUMENTS.toString().replace("{command}", "/mute")
-						.replace("{args}", "[player] [channel] {time}"));
+						.replace("{args}", "[channel] [player] {time} {reason}"));
 				return;
 			}
-			MineverseChatPlayer player = MineverseChatAPI.getMineverseChatPlayer(args[0]);
-			if (player == null || (!player.isOnline() && !sender.hasPermission("venturechat.mute.offline"))) {
-				sender.sendMessage(LocalizedMessage.PLAYER_OFFLINE.toString().replace("{args}", args[0]));
-				return;
-			}
-			if (args.length == 2) {
-				if (ChatChannel.isChannel(args[1])) {
-					ChatChannel channel = ChatChannel.getChannel(args[1]);
-					if (player.isMuted(channel.getName())) {
-						sender.sendMessage(LocalizedMessage.PLAYER_ALREADY_MUTED.toString()
-								.replace("{player}", player.getName()).replace("{channel_color}", channel.getColor())
-								.replace("{channel_name}", channel.getName()));
-						return;
-					}
-					if (channel.isMutable()) {
-						player.addMute(channel.getName(), 0);
-						sender.sendMessage(LocalizedMessage.MUTE_PLAYER_SENDER.toString()
-								.replace("{player}", player.getName()).replace("{channel_color}", channel.getColor())
-								.replace("{channel_name}", channel.getName()));
-						if (player.isOnline())
-							player.getPlayer()
-									.sendMessage(LocalizedMessage.MUTE_PLAYER_PLAYER.toString()
-											.replace("{channel_color}", channel.getColor())
-											.replace("{channel_name}", channel.getName()));
-						else
-							player.setModified(true);
-						if (channel.getBungee()) {
-							MineverseChat.getInstance().synchronize(player, true);
-						}
-						return;
-					}
-					sender.sendMessage(LocalizedMessage.CHANNEL_CANNOT_MUTE.toString()
-							.replace("{channel_color}", channel.getColor())
-							.replace("{channel_name}", channel.getName()));
-					return;
-				}
-				sender.sendMessage(LocalizedMessage.INVALID_CHANNEL.toString().replace("{args}", args[1]));
-				return;
-			}
-			if (ChatChannel.isChannel(args[1])) {
-				ChatChannel channel = ChatChannel.getChannel(args[1]);
-				if (player.isMuted(channel.getName())) {
-					sender.sendMessage(LocalizedMessage.PLAYER_ALREADY_MUTED.toString()
-							.replace("{player}", player.getName()).replace("{channel_color}", channel.getColor())
-							.replace("{channel_name}", channel.getName()));
-					return;
-				}
+			if (ChatChannel.isChannel(args[0])) {
+				ChatChannel channel = ChatChannel.getChannel(args[0]);
 				if (channel.isMutable()) {
-					try {
-						int datetime = Format.currentTimeMillis();
-						int time = Integer.parseInt(args[2]);
-						if (time > 0) {
-							player.addMute(channel.getName(), datetime + (time * MILLISECONDS_PER_MINUTE));
-							String units = LocalizedMessage.UNITS_MINUTE_PLURAL.toString();
-							if (time == 1)
-								units = LocalizedMessage.UNITS_MINUTE_SINGULAR.toString();
+					long datetime = System.currentTimeMillis();
+					long time = 0;
+					int reasonStartPos = 2;
+					String reason = "";
+					if(args.length > 2) {
+						String timeString = args[2];
+						if(Character.isDigit(timeString.charAt(0))) {
+							reasonStartPos = 3;
+							time = Format.parseTimeStringToMillis(timeString);
+							if (time <= 0) {
+								sender.sendMessage(LocalizedMessage.INVALID_TIME.toString().replace("{args}", timeString));
+								return;
+							}
+						}
+						StringBuilder reasonBuilder = new StringBuilder();
+						for(int a = reasonStartPos; a < args.length; a ++) {
+							reasonBuilder.append(args[a]);
+						}
+						reason = reasonBuilder.toString();
+					}
+					if(channel.getBungee()) {
+						sendBungeeCordMute(sender, args[1], channel, time, reason);
+						return;
+					}
+					MineverseChatPlayer playerToMute = MineverseChatAPI.getMineverseChatPlayer(args[1]);
+					if (playerToMute == null || (!playerToMute.isOnline() && !sender.hasPermission("venturechat.mute.offline"))) {
+						sender.sendMessage(LocalizedMessage.PLAYER_OFFLINE.toString().replace("{args}", args[1]));
+						return;
+					}
+					if (playerToMute.isMuted(channel.getName())) {
+						sender.sendMessage(LocalizedMessage.PLAYER_ALREADY_MUTED.toString()
+								.replace("{player}", playerToMute.getName()).replace("{channel_color}", channel.getColor())
+								.replace("{channel_name}", channel.getName()));
+						return;
+					}
+					
+					if(time > 0) {
+						if(reason.isEmpty()) {
+							playerToMute.addMute(channel.getName(), datetime + time);
+							String timeString = Format.parseTimeStringFromMillis(time);
 							sender.sendMessage(LocalizedMessage.MUTE_PLAYER_SENDER_TIME.toString()
-									.replace("{player}", player.getName())
+									.replace("{player}", playerToMute.getName())
 									.replace("{channel_color}", channel.getColor())
-									.replace("{channel_name}", channel.getName()).replace("{time}", time + "")
-									.replace("{units}", units));
-							if (player.isOnline())
-								player.getPlayer()
+									.replace("{channel_name}", channel.getName())
+									.replace("{time}", timeString));
+							if (playerToMute.isOnline()) {
+								playerToMute.getPlayer()
 										.sendMessage(LocalizedMessage.MUTE_PLAYER_PLAYER_TIME.toString()
 												.replace("{channel_color}", channel.getColor())
 												.replace("{channel_name}", channel.getName())
-												.replace("{time}", time + "").replace("{units}", units));
-							else
-								player.setModified(true);
-							if (channel.getBungee()) {
-								MineverseChat.getInstance().synchronize(player, true);
+												.replace("{time}", timeString));
+							}
+							else {
+								playerToMute.setModified(true);
 							}
 							return;
 						}
-						sender.sendMessage(LocalizedMessage.INVALID_TIME.toString().replace("{args}", args[2]));
-					} catch (Exception e) {
-						sender.sendMessage(LocalizedMessage.INVALID_TIME.toString().replace("{args}", args[2]));
+						else {
+							playerToMute.addMute(channel.getName(), datetime + time, reason);
+							String timeString = Format.parseTimeStringFromMillis(time);
+							sender.sendMessage(LocalizedMessage.MUTE_PLAYER_SENDER_TIME_REASON.toString()
+									.replace("{player}", playerToMute.getName())
+									.replace("{channel_color}", channel.getColor())
+									.replace("{channel_name}", channel.getName())
+									.replace("{time}", timeString)
+									.replace("{reason}", reason));
+							if (playerToMute.isOnline()) {
+								playerToMute.getPlayer()
+										.sendMessage(LocalizedMessage.MUTE_PLAYER_PLAYER_TIME_REASON.toString()
+												.replace("{channel_color}", channel.getColor())
+												.replace("{channel_name}", channel.getName())
+												.replace("{time}", timeString)
+												.replace("{reason}", reason));
+							}
+							else {
+								playerToMute.setModified(true);
+							}
+							return;
+						}
 					}
-					return;
+					else {
+						if(reason.isEmpty()) {
+							playerToMute.addMute(channel.getName());
+							sender.sendMessage(LocalizedMessage.MUTE_PLAYER_SENDER.toString()
+									.replace("{player}", playerToMute.getName()).replace("{channel_color}", channel.getColor())
+									.replace("{channel_name}", channel.getName()));
+							if (playerToMute.isOnline()) {
+								playerToMute.getPlayer()
+										.sendMessage(LocalizedMessage.MUTE_PLAYER_PLAYER.toString()
+												.replace("{channel_color}", channel.getColor())
+												.replace("{channel_name}", channel.getName()));
+							}
+							else {
+								playerToMute.setModified(true);
+							}
+							return;
+						}
+						else {
+							playerToMute.addMute(channel.getName(), reason);
+							sender.sendMessage(LocalizedMessage.MUTE_PLAYER_SENDER_REASON.toString()
+									.replace("{player}", playerToMute.getName()).replace("{channel_color}", channel.getColor())
+									.replace("{channel_name}", channel.getName())
+									.replace("{reason}", reason));
+							if (playerToMute.isOnline()) {
+								playerToMute.getPlayer()
+										.sendMessage(LocalizedMessage.MUTE_PLAYER_PLAYER_REASON.toString()
+												.replace("{channel_color}", channel.getColor())
+												.replace("{channel_name}", channel.getName())
+												.replace("{reason}", reason));
+							}
+							else {
+								playerToMute.setModified(true);
+							}
+							return;
+						}
+					}
 				}
 				sender.sendMessage(LocalizedMessage.CHANNEL_CANNOT_MUTE.toString()
-						.replace("{channel_color}", channel.getColor()).replace("{channel_name}", channel.getName()));
+						.replace("{channel_color}", channel.getColor())
+						.replace("{channel_name}", channel.getName()));
 				return;
 			}
-			sender.sendMessage(LocalizedMessage.INVALID_CHANNEL.toString().replace("{args}", args[1]));
+			sender.sendMessage(LocalizedMessage.INVALID_CHANNEL.toString().replace("{args}", args[0]));
 			return;
 		}
 		sender.sendMessage(LocalizedMessage.COMMAND_NO_PERMISSION.toString());
+	}
+	
+	@Override
+	public List<String> onTabComplete(CommandSender sender, Command command, String label, String[] args) {
+		List<String> completions = new ArrayList<>();
+		if(args.length == 1) {
+			StringUtil.copyPartialMatches(args[0], ChatChannel.getChatChannels().stream().map(ChatChannel::getName).collect(Collectors.toList()), completions);
+			Collections.sort(completions);
+	        return completions;
+		}
+		if(args.length == 2) {
+			if(ChatChannel.isChannel(args[0])) {
+				ChatChannel chatChannelObj = ChatChannel.getChannel(args[0]);
+				if(chatChannelObj.getBungee()) {
+					StringUtil.copyPartialMatches(args[1], MineverseChat.networkPlayerNames, completions);
+					Collections.sort(completions);
+			        return completions;
+				}
+				StringUtil.copyPartialMatches(args[1], MineverseChatAPI.getOnlineMineverseChatPlayers().stream().filter(mcp -> !mcp.isMuted(chatChannelObj.getName())).map(MineverseChatPlayer::getName).collect(Collectors.toList()), completions);
+				Collections.sort(completions);
+		        return completions;
+			}
+		}
+		if(args.length == 3) {
+			StringUtil.copyPartialMatches(args[2], COMMON_MUTE_TIMES, completions);
+			Collections.sort(completions);
+	        return completions;
+			
+		}
+		return Collections.emptyList();
+	}
+	
+	private void sendBungeeCordMute(CommandSender sender, String playerToMute, ChatChannel channel, long time, String reason) {
+		ByteArrayOutputStream byteOutStream = new ByteArrayOutputStream();
+		DataOutputStream out = new DataOutputStream(byteOutStream);
+		try {
+			out.writeUTF("Mute");
+			out.writeUTF("Send");
+			if(sender instanceof Player) {
+				out.writeUTF(((Player) sender).getUniqueId().toString());
+			}
+			else {
+				out.writeUTF("VentureChat:Console");
+			}
+			out.writeUTF(playerToMute);
+			out.writeUTF(channel.getName());
+			out.writeLong(time);
+			out.writeUTF(reason);
+			MineverseChat.sendPluginMessage(byteOutStream);
+			out.close();
+		}
+		catch(Exception e) {
+			e.printStackTrace();
+		}
 	}
 }

@@ -31,7 +31,7 @@ public class Unmuteall extends MineverseCommand {
 				return;
 			}
 			boolean bungee = false;
-			for(ChatChannel channel : ChatChannel.getChannels()) {
+			for(ChatChannel channel : ChatChannel.getChatChannels()) {
 				player.removeMute(channel.getName());				
 				if(channel.getBungee()) {
 					bungee = true;

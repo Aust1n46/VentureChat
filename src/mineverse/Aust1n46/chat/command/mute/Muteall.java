@@ -21,7 +21,7 @@ public class Muteall extends MineverseCommand {
 			if(args.length < 1) {
 				sender.sendMessage(LocalizedMessage.COMMAND_INVALID_ARGUMENTS.toString()
 						.replace("{command}", "/muteall")
-						.replace("{args}", "[player]"));
+						.replace("{args}", "[player] {reason}"));
 				return;
 			}
 			MineverseChatPlayer player = MineverseChatAPI.getMineverseChatPlayer(args[0]);
@@ -30,26 +30,60 @@ public class Muteall extends MineverseCommand {
 						.replace("{args}", args[0]));
 				return;
 			}
-			boolean bungee = false;
-			for(ChatChannel channel : ChatChannel.getChannels()) {
-				if(channel.isMutable()) {
-					player.addMute(channel.getName(), 0);				
-					if(channel.getBungee()) {
-						bungee = true;
+			String reason = "";
+			if(args.length > 1) {
+				StringBuilder reasonBuilder = new StringBuilder();
+				for(int a = 1; a < args.length; a ++) {
+					reasonBuilder.append(args[a]);
+				}
+				reason = reasonBuilder.toString();
+			}
+			if(reason.isEmpty()) {
+				boolean bungee = false;
+				for(ChatChannel channel : ChatChannel.getChatChannels()) {
+					if(channel.isMutable()) {
+						player.addMute(channel.getName());				
+						if(channel.getBungee()) {
+							bungee = true;
+						}
 					}
 				}
+				if(bungee) {
+					MineverseChat.getInstance().synchronize(player, true);
+				}
+				sender.sendMessage(LocalizedMessage.MUTE_PLAYER_ALL_SENDER.toString()
+						.replace("{player}", player.getName()));
+				if(player.isOnline()) {
+					player.getPlayer().sendMessage(LocalizedMessage.MUTE_PLAYER_ALL_PLAYER.toString());
+				}
+				else 
+					player.setModified(true);
+				return;
 			}
-			if(bungee) {
-				MineverseChat.getInstance().synchronize(player, true);
+			else {
+				boolean bungee = false;
+				for(ChatChannel channel : ChatChannel.getChatChannels()) {
+					if(channel.isMutable()) {
+						player.addMute(channel.getName(), reason);				
+						if(channel.getBungee()) {
+							bungee = true;
+						}
+					}
+				}
+				if(bungee) {
+					MineverseChat.getInstance().synchronize(player, true);
+				}
+				sender.sendMessage(LocalizedMessage.MUTE_PLAYER_ALL_SENDER_REASON.toString()
+						.replace("{player}", player.getName())
+						.replace("{reason}", reason));
+				if(player.isOnline()) {
+					player.getPlayer().sendMessage(LocalizedMessage.MUTE_PLAYER_ALL_PLAYER_REASON.toString()
+							.replace("{reason}", reason));
+				}
+				else 
+					player.setModified(true);
+				return;
 			}
-			sender.sendMessage(LocalizedMessage.MUTE_PLAYER_ALL_SENDER.toString()
-					.replace("{player}", player.getName()));
-			if(player.isOnline()) {
-				player.getPlayer().sendMessage(LocalizedMessage.MUTE_PLAYER_ALL_PLAYER.toString());
-			}
-			else 
-				player.setModified(true);
-			return;
 		}
 		else {
 			sender.sendMessage(LocalizedMessage.COMMAND_NO_PERMISSION.toString());

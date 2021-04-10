@@ -21,8 +21,10 @@ public class ChatChannel {
 
 	private static MineverseChat plugin = MineverseChat.getInstance();
 	private static ChatChannel defaultChatChannel;
+	@Deprecated
 	private static ChatChannel[] channels;
 	private static String defaultColor;
+	private static List<ChatChannel> chatChannels = new ArrayList<ChatChannel>();
 
 	private String name;
 	private String permission;
@@ -65,6 +67,7 @@ public class ChatChannel {
 			ChatChannel chatChannel = new ChatChannel(name, color, chatColor, permission, speakPermission, mutable,
 					filter, defaultChannel, alias, distance, autojoin, bungee, cooldown, format);
 			channels[counter++] = chatChannel;
+			chatChannels.add(chatChannel);
 			if (defaultChannel) {
 				defaultChatChannel = chatChannel;
 				defaultColor = color;
@@ -77,8 +80,18 @@ public class ChatChannel {
 	 * 
 	 * @return {@link ChatChannel}[]
 	 */
+	@Deprecated
 	public static ChatChannel[] getChannels() {
 		return channels;
+	}
+	
+	/**
+	 * Get list of chat channels.
+	 * 
+	 * @return {@link List}&lt{@link ChatChannel}&gt
+	 */
+	public static List<ChatChannel> getChatChannels() {
+		return chatChannels;
 	}
 
 	/**
