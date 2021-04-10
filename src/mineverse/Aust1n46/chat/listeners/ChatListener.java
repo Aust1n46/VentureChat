@@ -7,7 +7,6 @@ import java.util.Set;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
-import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -31,7 +30,6 @@ import mineverse.Aust1n46.chat.command.mute.MuteContainer;
 import mineverse.Aust1n46.chat.database.Database;
 import mineverse.Aust1n46.chat.localization.LocalizedMessage;
 import mineverse.Aust1n46.chat.utilities.Format;
-import mineverse.Aust1n46.chat.versions.VersionHandler;
 
 //This class listens to chat through the chat event and handles the bulk of the chat channels and formatting.
 public class ChatListener implements Listener {
@@ -144,12 +142,7 @@ public class ChatListener implements Listener {
 				tp.getPlayer().sendMessage(send);
 				mcp.getPlayer().sendMessage(echo);
 				if(tp.hasNotifications()) {
-					if(VersionHandler.is1_8()) {
-						tp.getPlayer().playSound(tp.getPlayer().getLocation(), Sound.valueOf("LEVEL_UP"), 1, 0);
-					}
-					if(VersionHandler.is1_9()) {
-						tp.getPlayer().playSound(tp.getPlayer().getLocation(), Sound.valueOf("ENTITY_PLAYER_LEVELUP"), 1, 0);
-					}
+					Format.playMessageSound(tp);
 				}
 				mcp.setReplyPlayer(tp.getUUID());
 				tp.setReplyPlayer(mcp.getUUID());

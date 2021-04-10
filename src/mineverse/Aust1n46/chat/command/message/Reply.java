@@ -3,7 +3,6 @@ package mineverse.Aust1n46.chat.command.message;
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 
-import org.bukkit.Sound;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -14,7 +13,6 @@ import mineverse.Aust1n46.chat.api.MineverseChatPlayer;
 import mineverse.Aust1n46.chat.command.MineverseCommand;
 import mineverse.Aust1n46.chat.localization.LocalizedMessage;
 import mineverse.Aust1n46.chat.utilities.Format;
-import mineverse.Aust1n46.chat.versions.VersionHandler;
 
 public class Reply extends MineverseCommand {
 	private MineverseChat plugin = MineverseChat.getInstance();
@@ -97,12 +95,7 @@ public class Reply extends MineverseCommand {
 					player.getPlayer().sendMessage(send);
 					mcp.getPlayer().sendMessage(echo);
 					if(player.hasNotifications()) {
-						if(VersionHandler.is1_8() || VersionHandler.is1_7_10() || VersionHandler.is1_7_2() || VersionHandler.is1_7_9()) {
-							player.getPlayer().playSound(player.getPlayer().getLocation(), Sound.valueOf("LEVEL_UP"), 1, 0);
-						}
-						else {
-							player.getPlayer().playSound(player.getPlayer().getLocation(), Sound.valueOf("ENTITY_PLAYER_LEVELUP"), 1, 0);
-						}
+						Format.playMessageSound(player);
 					}
 					player.setReplyPlayer(mcp.getUUID());
 					return;
@@ -119,13 +112,11 @@ public class Reply extends MineverseCommand {
 	private void sendBungeeCordReply(MineverseChatPlayer mcp, String[] args) {
 		ByteArrayOutputStream byteOutStream = new ByteArrayOutputStream();
 		DataOutputStream out = new DataOutputStream(byteOutStream);
-		String msg = "";
-		String send = "";
-		String echo = "";
-		String spy = "";
+		StringBuilder msgBuilder = new StringBuilder();
 		for(int r = 0; r < args.length; r++) {
-			msg += " " + args[r];
+			msgBuilder.append(" " + args[r]);
 		}
+		String msg = msgBuilder.toString();
 		if(mcp.hasFilter()) {
 			msg = Format.FilterChat(msg);
 		}
@@ -139,9 +130,12 @@ public class Reply extends MineverseCommand {
 			msg = Format.FormatString(msg);
 		}
 		
-		send = Format.FormatStringAll(PlaceholderAPI.setBracketPlaceholders(mcp.getPlayer(), plugin.getConfig().getString("replyformatfrom").replaceAll("sender_", "")));
-		echo = Format.FormatStringAll(PlaceholderAPI.setBracketPlaceholders(mcp.getPlayer(), plugin.getConfig().getString("replyformatto").replaceAll("sender_", "")));
-		spy = Format.FormatStringAll(PlaceholderAPI.setBracketPlaceholders(mcp.getPlayer(), plugin.getConfig().getString("replyformatspy").replaceAll("sender_", "")));
+		String send = Format.FormatStringAll(PlaceholderAPI.setBracketPlaceholders(mcp.getPlayer(), plugin.getConfig().getString("replyformatfrom").replaceAll("sender_", "")));
+		String echo = Format.FormatStringAll(PlaceholderAPI.setBracketPlaceholders(mcp.getPlayer(), plugin.getConfig().getString("replyformatto").replaceAll("sender_", "")));
+		String spy = "VentureChat:NoSpy";
+		if(!mcp.getPlayer().hasPermission("venturechat.spy.override")) {
+			spy = Format.FormatStringAll(PlaceholderAPI.setBracketPlaceholders(mcp.getPlayer(), plugin.getConfig().getString("replyformatspy").replaceAll("sender_", "")));
+		}
 		try {
 			out.writeUTF("Message");
 			out.writeUTF("Send");

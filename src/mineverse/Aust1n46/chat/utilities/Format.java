@@ -3,13 +3,16 @@ package mineverse.Aust1n46.chat.utilities;
 import static mineverse.Aust1n46.chat.MineverseChat.getInstance;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.StringTokenizer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 
 import com.comphenix.protocol.PacketType;
@@ -45,6 +48,9 @@ public class Format {
 	public static final long MILLISECONDS_PER_HOUR = 3600000;
 	public static final long MILLISECONDS_PER_MINUTE = 60000;
 	public static final long MILLISECONDS_PER_SECOND = 1000;
+	
+	public static final String DEFAULT_MESSAGE_SOUND = "ENTITY_PLAYER_LEVELUP";
+	public static final String DEFAULT_LEGACY_MESSAGE_SOUND = "LEVEL_UP";
 
 	/**
 	 * Converts a message to Minecraft JSON formatting while applying the
@@ -841,6 +847,29 @@ public class Format {
 	public static void broadcastToServer(String message) {
 		for(MineverseChatPlayer mcp : MineverseChatAPI.getOnlineMineverseChatPlayers()) {
 			mcp.getPlayer().sendMessage(message);
+		}
+	}
+	
+	public static void playMessageSound(MineverseChatPlayer mcp) {
+		Player player = mcp.getPlayer();
+		Sound messageSound = getSound(getInstance().getConfig().getString("message_sound", DEFAULT_MESSAGE_SOUND));
+		player.playSound(player.getLocation(), messageSound, 1, 0);
+	}
+	
+	private static Sound getSound(String soundName) {
+		if(Arrays.asList(Sound.values()).stream().map(Sound::toString).collect(Collectors.toList()).contains(soundName)) {
+			return Sound.valueOf(soundName);
+		}
+		Bukkit.getConsoleSender().sendMessage(Format.FormatStringAll("&8[&eVentureChat&8]&c - Message sound invalid!"));
+		return getDefaultMessageSound();
+	}
+	
+	private static Sound getDefaultMessageSound() {
+		if(VersionHandler.is1_8() || VersionHandler.is1_7_10() || VersionHandler.is1_7_2() || VersionHandler.is1_7_9()) {
+			return Sound.valueOf(DEFAULT_LEGACY_MESSAGE_SOUND);
+		}
+		else {
+			return Sound.valueOf(DEFAULT_MESSAGE_SOUND);
 		}
 	}
 }

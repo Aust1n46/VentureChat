@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import org.bukkit.Sound;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabExecutor;
@@ -19,7 +18,6 @@ import mineverse.Aust1n46.chat.api.MineverseChatAPI;
 import mineverse.Aust1n46.chat.api.MineverseChatPlayer;
 import mineverse.Aust1n46.chat.localization.LocalizedMessage;
 import mineverse.Aust1n46.chat.utilities.Format;
-import mineverse.Aust1n46.chat.versions.VersionHandler;
 
 public class MessageCommandExecutor implements TabExecutor {
 	private MineverseChat plugin = MineverseChat.getInstance();
@@ -101,12 +99,7 @@ public class MessageCommandExecutor implements TabExecutor {
 				player.getPlayer().sendMessage(send);
 				mcp.getPlayer().sendMessage(echo);
 				if(player.hasNotifications()) {
-					if(VersionHandler.is1_8() || VersionHandler.is1_7_10() || VersionHandler.is1_7_2() || VersionHandler.is1_7_9()) {
-						player.getPlayer().playSound(player.getPlayer().getLocation(), Sound.valueOf("LEVEL_UP"), 1, 0);
-					}
-					else {
-						player.getPlayer().playSound(player.getPlayer().getLocation(), Sound.valueOf("ENTITY_PLAYER_LEVELUP"), 1, 0);
-					}
+					Format.playMessageSound(player);
 				}
 				if(!mcp.getPlayer().hasPermission("venturechat.spy.override")) {
 					for(MineverseChatPlayer sp : MineverseChatAPI.getOnlineMineverseChatPlayers()) {
