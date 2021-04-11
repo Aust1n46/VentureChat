@@ -138,6 +138,7 @@ ignorechat: false
 # The message shown to players alerting them no one is in the channel to hear them
 emptychannelalert: "&6No one is listening to you."
 
+# Known issue: hex colors do not work here!
 messageremoverpermissions: '&cYou need additional permissions to view this message!'
 messageremovertext: '&c&o<message removed>'
 
@@ -203,7 +204,8 @@ venturegui:
     permission: 'removemessage'
     command: '/removemessage {hash} {channel}'
     slot: 7
-    
+
+# Known issue: Only one color code is allowed here! More than one will cause an error!
 guiicon: '&c [✓]'
 guitext: '&cOpen Moderation GUI'
 guirows: 1
