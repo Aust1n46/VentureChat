@@ -1262,11 +1262,17 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 					if(p.hasNotifications()) {
 						Format.playMessageSound(p);
 					}
+					if(MineverseChatAPI.getMineverseChatPlayer(sender) == null) {
+						MineverseChatPlayer senderMCP = new MineverseChatPlayer(sender, sName);
+						MineverseChatAPI.addMineverseChatPlayerToMap(senderMCP);
+						MineverseChatAPI.addNameToMap(senderMCP);
+					}
 					p.setReplyPlayer(sender);
 					out.writeUTF("Message");
 					out.writeUTF("Echo");
 					out.writeUTF(server);
 					out.writeUTF(receiver);
+					out.writeUTF(p.getUUID().toString());
 					out.writeUTF(sender.toString());
 					out.writeUTF(sName);
 					out.writeUTF(Format.FormatStringAll(PlaceholderAPI.setBracketPlaceholders(p.getPlayer(), echo.replaceAll("receiver_", ""))) + msg);
@@ -1298,13 +1304,16 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 				}
 				if(identifier.equals("Echo")) {
 					String receiverName = msgin.readUTF();
+					UUID receiverUUID = UUID.fromString(msgin.readUTF());
 					UUID senderUUID = UUID.fromString(msgin.readUTF());
 					MineverseChatPlayer senderMCP = MineverseChatAPI.getOnlineMineverseChatPlayer(senderUUID);
-					MineverseChatPlayer receiverMCP = MineverseChatAPI.getMineverseChatPlayer(receiverName);
 					String echo = msgin.readUTF();
-					if(receiverMCP != null) {
-						senderMCP.setReplyPlayer(receiverMCP.getUUID());
+					if(MineverseChatAPI.getMineverseChatPlayer(receiverUUID) == null) {
+						MineverseChatPlayer receiverMCP = new MineverseChatPlayer(receiverUUID, receiverName);
+						MineverseChatAPI.addMineverseChatPlayerToMap(receiverMCP);
+						MineverseChatAPI.addNameToMap(receiverMCP);
 					}
+					senderMCP.setReplyPlayer(receiverUUID);
 					senderMCP.getPlayer().sendMessage(echo);
 				}
 				if(identifier.equals("Spy")) {

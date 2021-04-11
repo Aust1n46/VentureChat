@@ -521,6 +521,7 @@ public class MineverseChatBungee extends Plugin implements Listener {
 				if(identifier.equals("Echo")) {
 					String server = in.readUTF();
 					String player = in.readUTF();
+					String receiverUUID = in.readUTF();
 					String sender = in.readUTF();
 					String sName = in.readUTF();
 					String echo = in.readUTF();
@@ -528,6 +529,7 @@ public class MineverseChatBungee extends Plugin implements Listener {
 					out.writeUTF("Message");
 					out.writeUTF("Echo");
 					out.writeUTF(player);
+					out.writeUTF(receiverUUID);
 					out.writeUTF(sender);
 					out.writeUTF(echo);
 					if(getProxy().getServers().get(server).getPlayers().size() > 0) {
