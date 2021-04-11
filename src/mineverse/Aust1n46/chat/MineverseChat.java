@@ -268,6 +268,7 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 		commands.put("rangedspy", new RangedSpy("rangedspy"));
 		commands.put("removemessage", new Removemessage("removemessage"));
 		commands.put("reply", new Reply("reply"));
+		commands.put("r", new Reply("r"));
 		commands.put("setchannel", new Setchannel("setchannel"));
 		commands.put("setchannelall", new Setchannelall("setchannelall"));
 		commands.put("spy", new Spy("spy"));
@@ -281,7 +282,11 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 			this.getCommand(command).setExecutor(commandExecutor);
 		}
 		
-		this.getCommand("message").setExecutor(new MessageCommandExecutor());
+		MessageCommandExecutor messageCommandExecutor = new MessageCommandExecutor();
+		this.getCommand("message").setExecutor(messageCommandExecutor);
+		this.getCommand("msg").setExecutor(messageCommandExecutor);
+		this.getCommand("tell").setExecutor(messageCommandExecutor);
+		this.getCommand("whisper").setExecutor(messageCommandExecutor);
 		this.getCommand("ignore").setExecutor(new IgnoreCommandExecutor());
 
 		channelListener = new Channel();

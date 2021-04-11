@@ -18,9 +18,24 @@ commands:
         aliases: [ump,vunmute]
         description: Unmutes player in a channel so they can talk again.
         permission-message: You don't have <permission>
+    msg:
+        usage: /msg [playername] [msg]
+        aliases: [vmsg]
+        description: Send a message to a player
+        permission-message: You don't have <permission>
+    tell:
+        usage: /tell [playername] [msg]
+        aliases: [vtell]
+        description: Send a message to a player
+        permission-message: You don't have <permission>
+    whisper:
+        usage: /whisper [playername] [msg]
+        aliases: [vwhisper,w]
+        description: Send a message to a player
+        permission-message: You don't have <permission>
     message:
         usage: /message [playername] [msg]
-        aliases: [vmessage,msg,pm,tell,vtell,whisper,w,vwhisper]
+        aliases: [vmessage,pm]
         description: Send a message to a player
         permission-message: You don't have <permission>
     ignore:
@@ -105,7 +120,12 @@ commands:
         permission-message: You don't have <permission>
     reply:
         usage: /reply [msg]
-        aliases: [r,vreply]
+        aliases: [vreply]
+        description: Reply to a message
+        permission-message: You don't have <permission>
+    r:
+        usage: /r [msg]
+        aliases: []
         description: Reply to a message
         permission-message: You don't have <permission>
     spy:
