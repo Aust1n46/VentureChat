@@ -7,11 +7,13 @@ import com.comphenix.protocol.wrappers.WrappedChatComponent;
 public class ChatMessage {
 	private WrappedChatComponent component;
 	private String message;
+	private String coloredMessage;
 	private int hash;
 
-	public ChatMessage(WrappedChatComponent component, String message, int hash) {
+	public ChatMessage(WrappedChatComponent component, String message, String coloredMessage, int hash) {
 		this.component = component;
 		this.message = message;
+		this.coloredMessage = coloredMessage;
 		this.hash = hash;
 	}
 
@@ -25,6 +27,10 @@ public class ChatMessage {
 
 	public String getMessage() {
 		return this.message;
+	}
+	
+	public String getColoredMessage() {
+		return this.coloredMessage;
 	}
 
 	public int getHash() {

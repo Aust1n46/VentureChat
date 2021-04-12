@@ -25,9 +25,9 @@ import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.wrappers.WrappedChatComponent;
 
 public class Removemessage extends MineverseCommand {
-	private PacketContainer emptyLinePacketContainer = Format.createPacketPlayOutChat("{\"extra\":[\" \"],\"text\":\"\"}");
 	private MineverseChat plugin = MineverseChat.getInstance();
-	private WrappedChatComponent messageDeletedComponentPlayer;
+	private PacketContainer emptyLinePacketContainer = Format.createPacketPlayOutChat("{\"extra\":[\" \"],\"text\":\"\"}");
+	private WrappedChatComponent messageDeletedComponentPlayer = WrappedChatComponent.fromJson("{\"text\":\"\",\"extra\":[{\"text\":\"\",\"extra\":[" + Format.convertToJsonColors(Format.FormatStringAll(plugin.getConfig().getString("messageremovertext"))) + "],\"hoverEvent\":{\"action\":\"show_text\",\"value\":{\"text\":\"\",\"extra\":[" + Format.convertToJsonColors(Format.FormatStringAll(plugin.getConfig().getString("messageremoverpermissions"))) + "]}}}]}");;
 
 	public Removemessage(String name) {
 		super(name);
@@ -118,17 +118,10 @@ public class Removemessage extends MineverseCommand {
 	}
 
 	public WrappedChatComponent getMessageDeletedChatComponentPlayer() {
-		if(this.messageDeletedComponentPlayer == null) {
-			this.messageDeletedComponentPlayer = WrappedChatComponent.fromJson("{\"text\":\"\",\"extra\":[{\"text\":\"" + Format.FormatStringAll(plugin.getConfig().getString("messageremovertext")) + "\",\"hoverEvent\":{\"action\":\"show_text\",\"value\":{\"text\":\"\",\"extra\":[{\"text\":\"" + Format.FormatStringAll(plugin.getConfig().getString("messageremoverpermissions")) + "\"}]}}}]}");
-		}
 		return this.messageDeletedComponentPlayer;
 	}
 
 	public WrappedChatComponent getMessageDeletedChatComponentAdmin(ChatMessage message) {
-		String oMessage = message.getComponent().getJson().substring(1, message.getComponent().getJson().length() - 11);
-		if(message.getMessage().contains(ChatColor.stripColor(Format.FormatStringAll(plugin.getConfig().getString("guiicon"))))) {
-			oMessage = oMessage.substring(0, oMessage.length() - ChatColor.stripColor(Format.FormatStringAll(plugin.getConfig().getString("guiicon"))).length() - 3) + "\"}]";
-		}
-		return WrappedChatComponent.fromJson(Format.FormatStringAll("{\"text\":\"\",\"extra\":[{\"text\":\"" + Format.FormatStringAll(plugin.getConfig().getString("messageremovertext")) + "\",\"hoverEvent\":{\"action\":\"show_text\",\"value\":{\"text\":\"&7Message: \"," + oMessage + "}}}]}"));
+		return WrappedChatComponent.fromJson("[{\"text\":\"\",\"extra\":[{\"text\":\"\",\"extra\":[" + Format.convertToJsonColors(Format.FormatStringAll(plugin.getConfig().getString("messageremovertext"))) + "],\"hoverEvent\":{\"action\":\"show_text\",\"value\":{\"text\":\"\"," + message.getColoredMessage() + "}}}]}]");
 	}
 }

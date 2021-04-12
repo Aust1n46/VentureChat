@@ -14,6 +14,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
+import org.json.simple.JSONObject;
 
 import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.ProtocolLibrary;
@@ -266,7 +267,7 @@ public class Format {
 	 * @param s
 	 * @return {@link String}
 	 */
-	private static String convertToJsonColors(String s) {
+	public static String convertToJsonColors(String s) {
 		return convertToJsonColors(s, "");
 	}
 
@@ -488,6 +489,51 @@ public class Format {
 			e.printStackTrace();
 		}
 	}
+	
+	@SuppressWarnings("unchecked")
+	public static String toColoredText(Object o, Class<?> c) {
+		if (VersionHandler.is1_7_10()) {
+			return "This method is not currently supported in 1.7";
+		} 
+		List<Object> finalList = new ArrayList<>();
+		StringBuilder stringbuilder = new StringBuilder();
+		stringbuilder.append("\"extra\":[");
+		try {
+			splitComponents(finalList, o, c);
+			for (Object component : finalList) {		
+				try {
+					String text = (String) component.getClass().getMethod("getText").invoke(component);
+					Object chatModifier = component.getClass().getMethod("getChatModifier").invoke(component);
+					String color = chatModifier.getClass().getMethod("getColor").invoke(chatModifier).toString();
+					boolean bold = (boolean) chatModifier.getClass().getMethod("isBold").invoke(chatModifier);
+					boolean strikethrough = (boolean) chatModifier.getClass().getMethod("isStrikethrough").invoke(chatModifier);
+					boolean italic = (boolean) chatModifier.getClass().getMethod("isItalic").invoke(chatModifier);
+					boolean underlined = (boolean) chatModifier.getClass().getMethod("isUnderlined").invoke(chatModifier);
+					boolean obfuscated = (boolean) chatModifier.getClass().getMethod("isRandom").invoke(chatModifier);
+					JSONObject jsonObject = new JSONObject();
+					jsonObject.put("text", text);
+					jsonObject.put("color", color);
+					jsonObject.put("bold", bold);
+					jsonObject.put("strikethrough", strikethrough);
+					jsonObject.put("italic", italic);
+					jsonObject.put("underlined", underlined);
+					jsonObject.put("obfuscated", obfuscated);
+					stringbuilder.append(jsonObject.toJSONString() + ",");
+				}
+				catch(Exception e) {
+					return "Something went wrong. Could not access color.";
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		String coloredText = stringbuilder.toString();
+		if(coloredText.endsWith(",")) {
+			coloredText = coloredText.substring(0, coloredText.length() - 1);
+		}
+		coloredText += "]";
+		return coloredText;
+	}
 
 	public static String toPlainText(Object o, Class<?> c) {
 		List<Object> finalList = new ArrayList<>();
@@ -516,11 +562,10 @@ public class Format {
 	}
 
 	private static void splitComponents(List<Object> finalList, Object o, Class<?> c) throws Exception {
-		// if(plugin.getConfig().getString("loglevel", "info").equals("debug")) {
-		// for(Method m : c.getMethods()) {
-		// System.out.println(m.getName());
-		// }
-		// }
+//		 for(Method m : c.getMethods()) {
+//		 System.out.println(m.getName());
+//		 }
+		 
 		if (VersionHandler.is1_7() || VersionHandler.is1_8() || VersionHandler.is1_9() || VersionHandler.is1_10()
 				|| VersionHandler.is1_11() || VersionHandler.is1_12() || VersionHandler.is1_13()
 				|| (VersionHandler.is1_14() && !VersionHandler.is1_14_4())) {
