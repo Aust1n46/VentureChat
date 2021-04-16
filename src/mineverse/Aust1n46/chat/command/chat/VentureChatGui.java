@@ -105,7 +105,7 @@ public class VentureChatGui implements VentureCommand {
 		skull.setDurability((short) 3);
 		inv.setItem(0, skull);
 
-		for(GuiSlot g : MineverseChat.gsInfo.getGuiSlots()) {
+		for(GuiSlot g : GuiSlot.getGuiSlots()) {
 			if(!g.hasPermission() || mcp.getPlayer().hasPermission(g.getPermission())) {
 				if(this.checkSlot(g.getSlot())) {
 					MineverseChat.getInstance().getServer().getConsoleSender().sendMessage(Format.FormatStringAll("&cGUI: " + g.getName() + " has invalid slot: " + g.getSlot() + "!"));
@@ -164,7 +164,7 @@ public class VentureChatGui implements VentureCommand {
 		skull.setDurability((short) 3);
 		inv.setItem(0, skull);
 
-		for(GuiSlot g : MineverseChat.gsInfo.getGuiSlots()) {
+		for(GuiSlot g : GuiSlot.getGuiSlots()) {
 			if(!g.hasPermission() || mcp.getPlayer().hasPermission(g.getPermission())) {
 				if(this.checkSlot(g.getSlot())) {
 					MineverseChat.getInstance().getServer().getConsoleSender().sendMessage(Format.FormatStringAll("&cGUI: " + g.getName() + " has invalid slot: " + g.getSlot() + "!"));
