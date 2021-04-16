@@ -92,6 +92,7 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 	@Override
 	public void onEnable() {
 		ccInfo = new ChatChannelInfo();
+		
 		try {
 			Bukkit.getConsoleSender().sendMessage(Format.FormatStringAll("&8[&eVentureChat&8]&e - Initializing..."));
 			if(!getDataFolder().exists()) {
@@ -109,25 +110,17 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 			saveResource("example_config_always_up_to_date!.yml", true);
 		}
 		catch(Exception ex) {
-			Bukkit.getConsoleSender().sendMessage(Format.FormatStringAll("&8[&eVentureChat&8]&c - Could not load configuration! Something unexpected went wrong!"));
+			Bukkit.getConsoleSender().sendMessage(Format.FormatStringAll("&8[&eVentureChat&8]&e - &cCould not load configuration! Something unexpected went wrong!"));
 		}
 		
 		Bukkit.getConsoleSender().sendMessage(Format.FormatStringAll("&8[&eVentureChat&8]&e - Checking for Vault..."));
-		// Set up Vault
-		if(!this.setupPermissions()) {
+		
+		if(!setupPermissions() || !setupChat()) {
 			Bukkit.getConsoleSender().sendMessage(Format.FormatStringAll("&8[&eVentureChat&8]&e - &cCould not find Vault dependency, disabling."));
 			Bukkit.getPluginManager().disablePlugin(this);
 		}
-		this.setupChat();
-		// Log completion of initialization
-		Bukkit.getConsoleSender().sendMessage(Format.FormatStringAll("&8[&eVentureChat&8]&e - Enabled Successfully"));
-		// Get config and handle
-		// Configuration
 
 		Localization.initialize();
-		
-		Bukkit.getConsoleSender().sendMessage(Format.FormatStringAll("&8[&eVentureChat&8]&e - Registering Listeners"));
-		
 		Alias.initialize();
 		JsonFormat.initialize();
 		GuiSlot.initialize();
@@ -136,7 +129,7 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 		Bukkit.getConsoleSender().sendMessage(Format.FormatStringAll("&8[&eVentureChat&8]&e - Loading player data"));
 		PlayerData.loadLegacyPlayerData();
 		PlayerData.loadPlayerData();
-		for(Player p : this.getServer().getOnlinePlayers()) {
+		for(Player p : getServer().getOnlinePlayers()) {
 			MineverseChatPlayer mcp = MineverseChatAPI.getMineverseChatPlayer(p);
 			if(mcp == null) {
 				Bukkit.getConsoleSender().sendMessage(Format.FormatStringAll("&8[&eVentureChat&8]&c - Could not find player data post reload for currently online player: " + p.getName()));
@@ -158,39 +151,10 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 
 		VentureCommandExecutor.initialize();
 
-		this.registerListeners();
-		this.registerPacketListeners();
-		this.loadNMS();
+		registerListeners();
+		Bukkit.getConsoleSender().sendMessage(Format.FormatStringAll("&8[&eVentureChat&8]&e - Registering Listeners"));
+		loadNMS();
 		Bukkit.getConsoleSender().sendMessage(Format.FormatStringAll("&8[&eVentureChat&8]&e - Attaching to Executors"));
-		
-		//if(commandMapObj == null) {
-			//this.quickchat = false;
-			
-			// log.info(String.format("[" + String.format("VentureChat" + "]" +
-			// " - Unrecognized server version, Quickchat commands not
-			// registering",
-			// getDescription().getName())));
-			// log.info(String.format("[" + String.format("VentureChat" + "]" +
-			// " - Unrecognized server version, Alias commands not registering",
-			// getDescription().getName())));
-		//}
-		//else {
-			//this.quickchat = true;
-			
-			/*
-			 * Don't run this code right now for(ChatChannel c :
-			 * ccInfo.getChannelsInfo()) { CCommand cmd = new
-			 * CCommand(c.getAlias()); cmap.register("", cmd);
-			 * cmd.setExecutor(commandListener); } for(Alias a :
-			 * aaInfo.getAliases()) { CCommand cmd = new CCommand(a.getName());
-			 * cmap.register("", cmd); }
-			 * Bukkit.getConsoleSender().sendMessage(Format.
-			 * FormatStringAll("&8[&eVentureChat&8]&e - Registering Alias commands"
-			 * )); Bukkit.getConsoleSender().sendMessage(Format.
-			 * FormatStringAll("&8[&eVentureChat&8]&e - Registering Quickchat commands"
-			 * ));
-			 */
-		//}
 		
 		Bukkit.getConsoleSender().sendMessage(Format.FormatStringAll("&8[&eVentureChat&8]&e - Establishing BungeeCord"));
 		Bukkit.getMessenger().registerOutgoingPluginChannel(this, PLUGIN_MESSAGING_CHANNEL);
@@ -213,6 +177,22 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 		
 		new VentureChatPlaceholders().register();
 		
+		startRepeatingTasks();
+		
+		Bukkit.getConsoleSender().sendMessage(Format.FormatStringAll("&8[&eVentureChat&8]&e - Enabled Successfully"));	
+	}
+	
+	@Override
+	public void onDisable() {
+		PlayerData.savePlayerData();
+		MineverseChatAPI.clearMineverseChatPlayerMap();
+		MineverseChatAPI.clearNameMap();
+		MineverseChatAPI.clearOnlineMineverseChatPlayerMap();
+		Bukkit.getConsoleSender().sendMessage(Format.FormatStringAll("&8[&eVentureChat&8]&e - Disabling..."));
+		Bukkit.getConsoleSender().sendMessage(Format.FormatStringAll("&8[&eVentureChat&8]&e - Disabled Successfully"));
+	}
+	
+	private void startRepeatingTasks() {
 		BukkitScheduler scheduler = Bukkit.getServer().getScheduler();
 		scheduler.runTaskTimerAsynchronously(this, new Runnable() {
 			@Override
@@ -260,16 +240,6 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 			}
 		}, 0L, 60L); // three second interval
 	}
-	
-	@Override
-	public void onDisable() {
-		PlayerData.savePlayerData();
-		MineverseChatAPI.clearMineverseChatPlayerMap();
-		MineverseChatAPI.clearNameMap();
-		MineverseChatAPI.clearOnlineMineverseChatPlayerMap();
-		Bukkit.getConsoleSender().sendMessage(Format.FormatStringAll("&8[&eVentureChat&8]&e - Disabling..."));
-		Bukkit.getConsoleSender().sendMessage(Format.FormatStringAll("&8[&eVentureChat&8]&e - Disabled Successfully"));
-	}
 
 	@SuppressWarnings("unused")
 	private void loadCommandMap() {
@@ -290,14 +260,8 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 		pluginManager.registerEvents(new SignListener(), this);
 		pluginManager.registerEvents(new CommandListener(), this);
 		pluginManager.registerEvents(new LoginListener(), this);
-	}
-
-	private void registerPacketListeners() {
 		ProtocolLibrary.getProtocolManager().addPacketListener(new PacketListener());
 	}
-	
-	
-	
 	
 	private void loadNMS() {	
 		try {
@@ -351,10 +315,6 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 		}
 		return(chat != null);
 	}
-	
-	
-	
-	
 	
 	public static MineverseChat getInstance() {
 		return getPlugin(MineverseChat.class);	
@@ -492,7 +452,7 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 		}
 		try {
 			DataInputStream msgin = new DataInputStream(new ByteArrayInputStream(inputStream));
-			if(this.getConfig().getString("loglevel", "info").equals("debug")) {
+			if(getConfig().getString("loglevel", "info").equals("debug")) {
 				System.out.println(msgin.available() + " size on receiving end");
 			}
 			String subchannel = msgin.readUTF();
@@ -552,7 +512,7 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 						String json = Format.formatModerationGUI(globalJSON, p.getPlayer(), senderName, chatchannel, hash);
 						PacketContainer packet = Format.createPacketPlayOutChat(json);
 						
-						if(this.getConfig().getBoolean("ignorechat", false)) {
+						if(getConfig().getBoolean("ignorechat", false)) {
 							if(!p.getIgnores().contains(senderUUID)) {
 								// System.out.println("Chat sent");
 								Format.sendPacketPlayOutChat(p.getPlayer(), packet);							
@@ -642,10 +602,10 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 			}
 			if(subchannel.equals("RemoveMessage")) {
 				String hash = msgin.readUTF();
-				this.getServer().dispatchCommand(this.getServer().getConsoleSender(), "removemessage " + hash);
+				getServer().dispatchCommand(this.getServer().getConsoleSender(), "removemessage " + hash);
 			}
 			if(subchannel.equals("Sync")) {
-				if(this.getConfig().getString("loglevel", "info").equals("debug")) {
+				if(getConfig().getString("loglevel", "info").equals("debug")) {
 					Bukkit.getConsoleSender().sendMessage(Format.FormatStringAll("&8[&eVentureChat&8]&e - Received update..."));
 				}
 				String uuid = msgin.readUTF();
@@ -720,7 +680,7 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 					String receiver = msgin.readUTF();
 					MineverseChatPlayer p = MineverseChatAPI.getOnlineMineverseChatPlayer(receiver);
 					UUID sender = UUID.fromString(msgin.readUTF());
-					if(!this.getConfig().getBoolean("bungeecordmessaging", true) || p == null || !p.isOnline()) {
+					if(!getConfig().getBoolean("bungeecordmessaging", true) || p == null || !p.isOnline()) {
 						out.writeUTF("Ignore");
 						out.writeUTF("Offline");
 						out.writeUTF(server);
@@ -1095,7 +1055,7 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 					String echo = msgin.readUTF();
 					String spy = msgin.readUTF();
 					String msg = msgin.readUTF();
-					if(!this.getConfig().getBoolean("bungeecordmessaging", true) || p == null) {
+					if(!getConfig().getBoolean("bungeecordmessaging", true) || p == null) {
 						out.writeUTF("Message");
 						out.writeUTF("Offline");
 						out.writeUTF(server);
