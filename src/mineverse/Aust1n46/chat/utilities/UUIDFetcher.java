@@ -120,7 +120,7 @@ public class UUIDFetcher implements Callable<Map<String, UUID>> { //unimplemente
     }
     
     public static boolean shouldSkipOfflineUUIDBungee(UUID uuid) {
-    	return (uuidIsOffline(uuid) && !MineverseChatBungee.getInstance().getBungeeConfig().getBoolean("offline_server_acknowledgement", false));
+    	return (uuidIsOffline(uuid) && !MineverseChatBungee.getBungeeConfig().getBoolean("offline_server_acknowledgement", false));
     }
     
     public static void checkOfflineUUIDWarning(UUID uuid) {

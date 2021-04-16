@@ -30,7 +30,7 @@ import net.md_5.bungee.event.EventHandler;
 //This is the main class for the BungeeCord version of the plugin.
 public class MineverseChatBungee extends Plugin implements Listener {
 	private static MineverseChatBungee instance;
-	private Configuration bungeeConfig;
+	private static Configuration bungeeConfig;
 	public static String PLUGIN_MESSAGING_CHANNEL = "venturechat:data";
 
 	@Override
@@ -54,7 +54,7 @@ public class MineverseChatBungee extends Plugin implements Listener {
 		BungeePlayerData.loadLegacyBungeePlayerData();
 		BungeePlayerData.loadBungeePlayerData();
 		
-		this.getProxy().registerChannel(MineverseChatBungee.PLUGIN_MESSAGING_CHANNEL);
+		this.getProxy().registerChannel(PLUGIN_MESSAGING_CHANNEL);
 		this.getProxy().getPluginManager().registerListener(this, this);
 	}
 
@@ -67,7 +67,7 @@ public class MineverseChatBungee extends Plugin implements Listener {
 		return instance;
 	}
 	
-	public Configuration getBungeeConfig() {
+	public static Configuration getBungeeConfig() {
 		return bungeeConfig;
 	}
 	
@@ -91,14 +91,14 @@ public class MineverseChatBungee extends Plugin implements Listener {
 			ByteArrayOutputStream outstream = new ByteArrayOutputStream();
 			DataOutputStream out = new DataOutputStream(outstream);
 			out.writeUTF("PlayerNames");
-			out.writeInt(this.getProxy().getPlayers().size());
-			for(ProxiedPlayer pp : this.getProxy().getPlayers()) {
+			out.writeInt(getProxy().getPlayers().size());
+			for(ProxiedPlayer pp : getProxy().getPlayers()) {
 				out.writeUTF(pp.getName());
 			}
 			
 			for(String send : getProxy().getServers().keySet()) {
 				if(getProxy().getServers().get(send).getPlayers().size() > 0) {
-					getProxy().getServers().get(send).sendData(MineverseChatBungee.PLUGIN_MESSAGING_CHANNEL, outstream.toByteArray());
+					getProxy().getServers().get(send).sendData(PLUGIN_MESSAGING_CHANNEL, outstream.toByteArray());
 				}
 			}
 		}
@@ -110,7 +110,7 @@ public class MineverseChatBungee extends Plugin implements Listener {
 	@EventHandler
 	public void onPluginMessage(PluginMessageEvent ev) {
 		//System.out.println(ev.getTag() + "," + ev.getSender().toString() + "," + (ev.getSender() instanceof Server));
-		if(!ev.getTag().equals(MineverseChatBungee.PLUGIN_MESSAGING_CHANNEL) && !ev.getTag().contains("viaversion:")) {
+		if(!ev.getTag().equals(PLUGIN_MESSAGING_CHANNEL) && !ev.getTag().contains("viaversion:")) {
 			return;
 		}
 		if(!(ev.getSender() instanceof Server)) {
@@ -151,7 +151,7 @@ public class MineverseChatBungee extends Plugin implements Listener {
 						if(!bungeeToggle && !getProxy().getServers().get(send).getName().equalsIgnoreCase(ser.getInfo().getName())) {
 							continue;
 						}
-						getProxy().getServers().get(send).sendData(MineverseChatBungee.PLUGIN_MESSAGING_CHANNEL, outstream.toByteArray());
+						getProxy().getServers().get(send).sendData(PLUGIN_MESSAGING_CHANNEL, outstream.toByteArray());
 					}
 				}
 			}
@@ -163,7 +163,7 @@ public class MineverseChatBungee extends Plugin implements Listener {
 				out.writeUTF(message);
 				for(String send : getProxy().getServers().keySet()) {
 					if(getProxy().getServers().get(send).getPlayers().size() > 0) {
-						getProxy().getServers().get(send).sendData(MineverseChatBungee.PLUGIN_MESSAGING_CHANNEL, outstream.toByteArray());
+						getProxy().getServers().get(send).sendData(PLUGIN_MESSAGING_CHANNEL, outstream.toByteArray());
 					}
 				}
 			}
@@ -183,7 +183,7 @@ public class MineverseChatBungee extends Plugin implements Listener {
 					out.writeUTF(channel);
 					for(String send : getProxy().getServers().keySet()) {
 						if(getProxy().getServers().get(send).getPlayers().size() > 0) {
-							getProxy().getServers().get(send).sendData(MineverseChatBungee.PLUGIN_MESSAGING_CHANNEL, outstream.toByteArray());
+							getProxy().getServers().get(send).sendData(PLUGIN_MESSAGING_CHANNEL, outstream.toByteArray());
 						}
 					}
 				}
@@ -215,7 +215,7 @@ public class MineverseChatBungee extends Plugin implements Listener {
 						}
 						smcp.clearMessageData();
 						Server server = getProxy().getPlayer(name).getServer();
-						server.sendData(MineverseChatBungee.PLUGIN_MESSAGING_CHANNEL, outstream.toByteArray());
+						server.sendData(PLUGIN_MESSAGING_CHANNEL, outstream.toByteArray());
 					}	
 				}
 			}
@@ -225,7 +225,7 @@ public class MineverseChatBungee extends Plugin implements Listener {
 				out.writeUTF(hash);
 				for(String send : getProxy().getServers().keySet()) {
 					if(getProxy().getServers().get(send).getPlayers().size() > 0) {
-						getProxy().getServers().get(send).sendData(MineverseChatBungee.PLUGIN_MESSAGING_CHANNEL, outstream.toByteArray());
+						getProxy().getServers().get(send).sendData(PLUGIN_MESSAGING_CHANNEL, outstream.toByteArray());
 					}
 				}
 			}
@@ -244,7 +244,7 @@ public class MineverseChatBungee extends Plugin implements Listener {
 					out.writeUTF(sender);
 					for(String send : getProxy().getServers().keySet()) {
 						if(getProxy().getServers().get(send).getPlayers().size() > 0) {
-							getProxy().getServers().get(send).sendData(MineverseChatBungee.PLUGIN_MESSAGING_CHANNEL, outstream.toByteArray());
+							getProxy().getServers().get(send).sendData(PLUGIN_MESSAGING_CHANNEL, outstream.toByteArray());
 						}
 					}
 				}
@@ -267,7 +267,7 @@ public class MineverseChatBungee extends Plugin implements Listener {
 						out.writeUTF(player);
 						out.writeUTF(sender);
 						if(getProxy().getServers().get(server).getPlayers().size() > 0) {
-							getProxy().getServers().get(server).sendData(MineverseChatBungee.PLUGIN_MESSAGING_CHANNEL, outstream.toByteArray());
+							getProxy().getServers().get(server).sendData(PLUGIN_MESSAGING_CHANNEL, outstream.toByteArray());
 						}
 					}	
 				}
@@ -282,7 +282,7 @@ public class MineverseChatBungee extends Plugin implements Listener {
 					out.writeUTF(receiverName);
 					out.writeUTF(sender);
 					if(getProxy().getServers().get(server).getPlayers().size() > 0) {
-						getProxy().getServers().get(server).sendData(MineverseChatBungee.PLUGIN_MESSAGING_CHANNEL, outstream.toByteArray());
+						getProxy().getServers().get(server).sendData(PLUGIN_MESSAGING_CHANNEL, outstream.toByteArray());
 					}
 				}
 			}
@@ -307,7 +307,7 @@ public class MineverseChatBungee extends Plugin implements Listener {
 					out.writeUTF(reason);
 					for(String send : getProxy().getServers().keySet()) {
 						if(getProxy().getServers().get(send).getPlayers().size() > 0) {
-							getProxy().getServers().get(send).sendData(MineverseChatBungee.PLUGIN_MESSAGING_CHANNEL, outstream.toByteArray());
+							getProxy().getServers().get(send).sendData(PLUGIN_MESSAGING_CHANNEL, outstream.toByteArray());
 						}
 					}
 				}
@@ -326,7 +326,7 @@ public class MineverseChatBungee extends Plugin implements Listener {
 					out.writeLong(time);
 					out.writeUTF(reason);
 					if(getProxy().getServers().get(server).getPlayers().size() > 0) {
-						getProxy().getServers().get(server).sendData(MineverseChatBungee.PLUGIN_MESSAGING_CHANNEL, outstream.toByteArray());
+						getProxy().getServers().get(server).sendData(PLUGIN_MESSAGING_CHANNEL, outstream.toByteArray());
 					}
 				}
 				if(identifier.equals("Offline")) {
@@ -349,7 +349,7 @@ public class MineverseChatBungee extends Plugin implements Listener {
 						out.writeUTF(senderIdentifier);
 						out.writeUTF(playerToMute);
 						if(getProxy().getServers().get(server).getPlayers().size() > 0) {
-							getProxy().getServers().get(server).sendData(MineverseChatBungee.PLUGIN_MESSAGING_CHANNEL, outstream.toByteArray());
+							getProxy().getServers().get(server).sendData(PLUGIN_MESSAGING_CHANNEL, outstream.toByteArray());
 						}
 					}	
 				}
@@ -364,7 +364,7 @@ public class MineverseChatBungee extends Plugin implements Listener {
 					out.writeUTF(playerToMute);
 					out.writeUTF(channelName);
 					if(getProxy().getServers().get(server).getPlayers().size() > 0) {
-						getProxy().getServers().get(server).sendData(MineverseChatBungee.PLUGIN_MESSAGING_CHANNEL, outstream.toByteArray());
+						getProxy().getServers().get(server).sendData(PLUGIN_MESSAGING_CHANNEL, outstream.toByteArray());
 					}
 				}
 			}
@@ -385,7 +385,7 @@ public class MineverseChatBungee extends Plugin implements Listener {
 					out.writeUTF(channelName);
 					for(String send : getProxy().getServers().keySet()) {
 						if(getProxy().getServers().get(send).getPlayers().size() > 0) {
-							getProxy().getServers().get(send).sendData(MineverseChatBungee.PLUGIN_MESSAGING_CHANNEL, outstream.toByteArray());
+							getProxy().getServers().get(send).sendData(PLUGIN_MESSAGING_CHANNEL, outstream.toByteArray());
 						}
 					}
 				}
@@ -400,7 +400,7 @@ public class MineverseChatBungee extends Plugin implements Listener {
 					out.writeUTF(playerToUnmute);
 					out.writeUTF(channelName);
 					if(getProxy().getServers().get(server).getPlayers().size() > 0) {
-						getProxy().getServers().get(server).sendData(MineverseChatBungee.PLUGIN_MESSAGING_CHANNEL, outstream.toByteArray());
+						getProxy().getServers().get(server).sendData(PLUGIN_MESSAGING_CHANNEL, outstream.toByteArray());
 					}
 				}
 				if(identifier.equals("Offline")) {
@@ -423,7 +423,7 @@ public class MineverseChatBungee extends Plugin implements Listener {
 						out.writeUTF(senderIdentifier);
 						out.writeUTF(playerToUnmute);
 						if(getProxy().getServers().get(server).getPlayers().size() > 0) {
-							getProxy().getServers().get(server).sendData(MineverseChatBungee.PLUGIN_MESSAGING_CHANNEL, outstream.toByteArray());
+							getProxy().getServers().get(server).sendData(PLUGIN_MESSAGING_CHANNEL, outstream.toByteArray());
 						}
 					}	
 				}
@@ -438,7 +438,7 @@ public class MineverseChatBungee extends Plugin implements Listener {
 					out.writeUTF(playerToUnmute);
 					out.writeUTF(channelName);
 					if(getProxy().getServers().get(server).getPlayers().size() > 0) {
-						getProxy().getServers().get(server).sendData(MineverseChatBungee.PLUGIN_MESSAGING_CHANNEL, outstream.toByteArray());
+						getProxy().getServers().get(server).sendData(PLUGIN_MESSAGING_CHANNEL, outstream.toByteArray());
 					}
 				}
 			}
@@ -467,7 +467,7 @@ public class MineverseChatBungee extends Plugin implements Listener {
 					out.writeUTF(msg);
 					for(String serv : getProxy().getServers().keySet()) {
 						if(getProxy().getServers().get(serv).getPlayers().size() > 0) {
-							getProxy().getServers().get(serv).sendData(MineverseChatBungee.PLUGIN_MESSAGING_CHANNEL, outstream.toByteArray());
+							getProxy().getServers().get(serv).sendData(PLUGIN_MESSAGING_CHANNEL, outstream.toByteArray());
 						}
 					}
 				}
@@ -490,7 +490,7 @@ public class MineverseChatBungee extends Plugin implements Listener {
 						out.writeUTF(player);
 						out.writeUTF(sender);
 						if(getProxy().getServers().get(server).getPlayers().size() > 0) {
-							getProxy().getServers().get(server).sendData(MineverseChatBungee.PLUGIN_MESSAGING_CHANNEL, outstream.toByteArray());
+							getProxy().getServers().get(server).sendData(PLUGIN_MESSAGING_CHANNEL, outstream.toByteArray());
 						}
 					}	
 				}
@@ -503,7 +503,7 @@ public class MineverseChatBungee extends Plugin implements Listener {
 					out.writeUTF(player);
 					out.writeUTF(sender);
 					if(getProxy().getServers().get(server).getPlayers().size() > 0) {
-						getProxy().getServers().get(server).sendData(MineverseChatBungee.PLUGIN_MESSAGING_CHANNEL, outstream.toByteArray());
+						getProxy().getServers().get(server).sendData(PLUGIN_MESSAGING_CHANNEL, outstream.toByteArray());
 					}
 				}
 				if(identifier.equals("Blocked")) {
@@ -515,7 +515,7 @@ public class MineverseChatBungee extends Plugin implements Listener {
 					out.writeUTF(player);
 					out.writeUTF(sender);
 					if(getProxy().getServers().get(server).getPlayers().size() > 0) {
-						getProxy().getServers().get(server).sendData(MineverseChatBungee.PLUGIN_MESSAGING_CHANNEL, outstream.toByteArray());
+						getProxy().getServers().get(server).sendData(PLUGIN_MESSAGING_CHANNEL, outstream.toByteArray());
 					}
 				}
 				if(identifier.equals("Echo")) {
@@ -533,7 +533,7 @@ public class MineverseChatBungee extends Plugin implements Listener {
 					out.writeUTF(sender);
 					out.writeUTF(echo);
 					if(getProxy().getServers().get(server).getPlayers().size() > 0) {
-						getProxy().getServers().get(server).sendData(MineverseChatBungee.PLUGIN_MESSAGING_CHANNEL, outstream.toByteArray());
+						getProxy().getServers().get(server).sendData(PLUGIN_MESSAGING_CHANNEL, outstream.toByteArray());
 					}
 					outstream = new ByteArrayOutputStream();
 					out = new DataOutputStream(outstream);
@@ -544,7 +544,7 @@ public class MineverseChatBungee extends Plugin implements Listener {
 					out.writeUTF(spy);
 					for(String send : getProxy().getServers().keySet()) {
 						if(getProxy().getServers().get(send).getPlayers().size() > 0) {
-							getProxy().getServers().get(send).sendData(MineverseChatBungee.PLUGIN_MESSAGING_CHANNEL, outstream.toByteArray());
+							getProxy().getServers().get(send).sendData(PLUGIN_MESSAGING_CHANNEL, outstream.toByteArray());
 						}
 					}
 				}
@@ -589,7 +589,7 @@ public class MineverseChatBungee extends Plugin implements Listener {
 						out.writeUTF(ignore.toString());
 					}
 					if(getProxy().getServers().get(server).getPlayers().size() > 0) 
-						getProxy().getServers().get(server).sendData(MineverseChatBungee.PLUGIN_MESSAGING_CHANNEL, outstream.toByteArray());
+						getProxy().getServers().get(server).sendData(PLUGIN_MESSAGING_CHANNEL, outstream.toByteArray());
 				}
 				if(identifier.equals("Update")) {
 					UUID uuid = UUID.fromString(in.readUTF());
