@@ -5,11 +5,11 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;
 
 import mineverse.Aust1n46.chat.MineverseChat;
-import mineverse.Aust1n46.chat.command.MineverseCommand;
+import mineverse.Aust1n46.chat.command.VentureCommand;
 import mineverse.Aust1n46.chat.localization.LocalizedMessage;
 import mineverse.Aust1n46.chat.utilities.Format;
 
-public class Broadcast extends MineverseCommand {
+public class Broadcast implements VentureCommand {
 	private MineverseChat plugin = MineverseChat.getInstance();
 
 	@Override

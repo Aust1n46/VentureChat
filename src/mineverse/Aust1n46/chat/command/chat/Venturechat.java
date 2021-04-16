@@ -1,7 +1,7 @@
 package mineverse.Aust1n46.chat.command.chat;
 
 import mineverse.Aust1n46.chat.MineverseChat;
-import mineverse.Aust1n46.chat.command.MineverseCommand;
+import mineverse.Aust1n46.chat.command.VentureCommand;
 import mineverse.Aust1n46.chat.localization.InternalMessage;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
@@ -15,7 +15,7 @@ import org.bukkit.command.CommandSender;
 //import org.bukkit.craftbukkit.v1_15_R1.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 
-public class Venturechat extends MineverseCommand {
+public class Venturechat implements VentureCommand {
 	private MineverseChat plugin = MineverseChat.getInstance();
 
 	@Override

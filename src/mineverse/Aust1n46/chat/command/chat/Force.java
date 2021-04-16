@@ -4,10 +4,10 @@ import org.bukkit.command.CommandSender;
 
 import mineverse.Aust1n46.chat.api.MineverseChatAPI;
 import mineverse.Aust1n46.chat.api.MineverseChatPlayer;
-import mineverse.Aust1n46.chat.command.MineverseCommand;
+import mineverse.Aust1n46.chat.command.VentureCommand;
 import mineverse.Aust1n46.chat.localization.LocalizedMessage;
 
-public class Force extends MineverseCommand {
+public class Force implements VentureCommand {
 
 	@Override
 	public void execute(CommandSender sender, String command, String[] args) {

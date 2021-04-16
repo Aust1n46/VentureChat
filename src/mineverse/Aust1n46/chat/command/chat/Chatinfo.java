@@ -8,10 +8,10 @@ import org.bukkit.entity.Player;
 import mineverse.Aust1n46.chat.api.MineverseChatAPI;
 import mineverse.Aust1n46.chat.api.MineverseChatPlayer;
 import mineverse.Aust1n46.chat.channel.ChatChannel;
-import mineverse.Aust1n46.chat.command.MineverseCommand;
+import mineverse.Aust1n46.chat.command.VentureCommand;
 import mineverse.Aust1n46.chat.command.mute.MuteContainer;
 
-public class Chatinfo extends MineverseCommand {
+public class Chatinfo implements VentureCommand {
 
 	@Override
 	public void execute(CommandSender sender, String command, String[] args) {

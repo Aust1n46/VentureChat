@@ -7,10 +7,10 @@ import org.bukkit.command.CommandSender;
 import mineverse.Aust1n46.chat.MineverseChat;
 import mineverse.Aust1n46.chat.api.MineverseChatAPI;
 import mineverse.Aust1n46.chat.api.MineverseChatPlayer;
-import mineverse.Aust1n46.chat.command.MineverseCommand;
+import mineverse.Aust1n46.chat.command.VentureCommand;
 import mineverse.Aust1n46.chat.localization.LocalizedMessage;
 
-public class Commandblock extends MineverseCommand {
+public class Commandblock implements VentureCommand {
 	private MineverseChat plugin = MineverseChat.getInstance();
 
 	@Override

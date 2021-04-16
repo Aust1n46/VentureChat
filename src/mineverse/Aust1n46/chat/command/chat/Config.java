@@ -7,10 +7,10 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 
 import mineverse.Aust1n46.chat.MineverseChat;
-import mineverse.Aust1n46.chat.command.MineverseCommand;
+import mineverse.Aust1n46.chat.command.VentureCommand;
 import mineverse.Aust1n46.chat.utilities.Format;
 
-public class Config extends MineverseCommand {
+public class Config implements VentureCommand {
 	private MineverseChat plugin = MineverseChat.getInstance();
 
 	@Override

@@ -12,10 +12,10 @@ import mineverse.Aust1n46.chat.api.MineverseChatAPI;
 import mineverse.Aust1n46.chat.api.MineverseChatPlayer;
 import mineverse.Aust1n46.chat.api.events.ChannelJoinEvent;
 import mineverse.Aust1n46.chat.channel.ChatChannel;
-import mineverse.Aust1n46.chat.command.MineverseCommand;
+import mineverse.Aust1n46.chat.command.VentureCommand;
 import mineverse.Aust1n46.chat.localization.LocalizedMessage;
 
-public class Channel extends MineverseCommand implements Listener {
+public class Channel implements VentureCommand, Listener {
 
 	@Override
 	public void execute(CommandSender sender, String command, String[] args) {

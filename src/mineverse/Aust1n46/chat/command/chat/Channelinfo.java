@@ -4,10 +4,10 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 
 import mineverse.Aust1n46.chat.channel.ChatChannel;
-import mineverse.Aust1n46.chat.command.MineverseCommand;
+import mineverse.Aust1n46.chat.command.VentureCommand;
 import mineverse.Aust1n46.chat.utilities.Format;
 
-public class Channelinfo extends MineverseCommand {
+public class Channelinfo implements VentureCommand {
 
 	@Override
 	public void execute(CommandSender sender, String command, String[] args) {

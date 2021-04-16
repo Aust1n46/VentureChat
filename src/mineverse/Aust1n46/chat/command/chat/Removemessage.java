@@ -12,7 +12,7 @@ import mineverse.Aust1n46.chat.MineverseChat;
 import mineverse.Aust1n46.chat.api.MineverseChatAPI;
 import mineverse.Aust1n46.chat.api.MineverseChatPlayer;
 import mineverse.Aust1n46.chat.channel.ChatChannel;
-import mineverse.Aust1n46.chat.command.MineverseCommand;
+import mineverse.Aust1n46.chat.command.VentureCommand;
 import mineverse.Aust1n46.chat.localization.LocalizedMessage;
 import mineverse.Aust1n46.chat.utilities.Format;
 
@@ -24,7 +24,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.wrappers.WrappedChatComponent;
 
-public class Removemessage extends MineverseCommand {
+public class Removemessage implements VentureCommand {
 	private MineverseChat plugin = MineverseChat.getInstance();
 	private PacketContainer emptyLinePacketContainer = Format.createPacketPlayOutChat("{\"extra\":[\" \"],\"text\":\"\"}");
 	private WrappedChatComponent messageDeletedComponentPlayer = WrappedChatComponent.fromJson("{\"text\":\"\",\"extra\":[{\"text\":\"\",\"extra\":[" + Format.convertToJsonColors(Format.FormatStringAll(plugin.getConfig().getString("messageremovertext"))) + "],\"hoverEvent\":{\"action\":\"show_text\",\"value\":{\"text\":\"\",\"extra\":[" + Format.convertToJsonColors(Format.FormatStringAll(plugin.getConfig().getString("messageremoverpermissions"))) + "]}}}]}");;

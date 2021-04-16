@@ -52,10 +52,10 @@ import mineverse.Aust1n46.chat.command.mute.Unmuteall;
 /**
  * Class that initializes and executes the plugin's commands.
  */
-public class MineverseCommandExecutor implements TabExecutor {
-	private static Map<String, MineverseCommand> commands = new HashMap<String, MineverseCommand>();
+public class VentureCommandExecutor implements TabExecutor {
+	private static Map<String, VentureCommand> commands = new HashMap<String, VentureCommand>();
 	private static MineverseChat plugin = MineverseChat.getInstance();
-	private static MineverseCommandExecutor commandExecutor;
+	private static VentureCommandExecutor commandExecutor;
 
 	@Override
 	public boolean onCommand(CommandSender sender, Command command, String label, String[] parameters) {
@@ -69,7 +69,7 @@ public class MineverseCommandExecutor implements TabExecutor {
 	}
 	
 	public static void initialize() {
-		commandExecutor = new MineverseCommandExecutor();
+		commandExecutor = new VentureCommandExecutor();
 		commands.put("broadcast", new Broadcast());
 		commands.put("channel", new Channel());
 		commands.put("join", new Channel());
@@ -108,7 +108,7 @@ public class MineverseCommandExecutor implements TabExecutor {
 		}
 		
 		plugin.getServer().getScheduler().runTaskLater(plugin, () -> {
-			MineverseCommand reply = new Reply();
+			VentureCommand reply = new Reply();
 			commands.put("reply", reply);
 			commands.put("r", reply);
 			plugin.getCommand("reply").setExecutor(commandExecutor);

@@ -16,11 +16,11 @@ import mineverse.Aust1n46.chat.ChatMessage;
 import mineverse.Aust1n46.chat.MineverseChat;
 import mineverse.Aust1n46.chat.api.MineverseChatAPI;
 import mineverse.Aust1n46.chat.api.MineverseChatPlayer;
-import mineverse.Aust1n46.chat.command.MineverseCommand;
+import mineverse.Aust1n46.chat.command.VentureCommand;
 import mineverse.Aust1n46.chat.localization.LocalizedMessage;
 import mineverse.Aust1n46.chat.utilities.Format;
 
-public class Edit extends MineverseCommand {
+public class Edit implements VentureCommand {
 	private PacketContainer emptyLinePacketContainer = Format.createPacketPlayOutChat("{\"extra\":[\" \"],\"text\":\"\"}");
 	private MineverseChat plugin = MineverseChat.getInstance();
 	private WrappedChatComponent messageDeletedComponentPlayer;

@@ -17,11 +17,11 @@ import mineverse.Aust1n46.chat.MineverseChat;
 import mineverse.Aust1n46.chat.api.MineverseChatAPI;
 import mineverse.Aust1n46.chat.api.MineverseChatPlayer;
 import mineverse.Aust1n46.chat.channel.ChatChannel;
-import mineverse.Aust1n46.chat.command.MineverseCommand;
+import mineverse.Aust1n46.chat.command.VentureCommand;
 import mineverse.Aust1n46.chat.localization.LocalizedMessage;
 import mineverse.Aust1n46.chat.utilities.Format;
 
-public class Mute extends MineverseCommand {
+public class Mute implements VentureCommand {
 	private static final List<String> COMMON_MUTE_TIMES = Collections.unmodifiableList(Arrays.asList(new String[]{"12h", "15m", "1d", "1h", "1m", "30s"}));
 
 	@Override
