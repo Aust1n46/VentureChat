@@ -71,7 +71,7 @@ public class Channel implements VentureCommand, Listener {
 		mcp.setCurrentChannel(channel);
 		mcp.getPlayer().sendMessage(event.getMessage());
 		if(channel.getBungee()) {
-			MineverseChat.getInstance().synchronize(mcp, true);
+			MineverseChat.synchronize(mcp, true);
 		}
 		return;
 	}

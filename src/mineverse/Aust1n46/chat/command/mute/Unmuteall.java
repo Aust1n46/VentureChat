@@ -34,7 +34,7 @@ public class Unmuteall implements VentureCommand {
 				}
 			}
 			if(bungee) {
-				MineverseChat.getInstance().synchronize(player, true);
+				MineverseChat.synchronize(player, true);
 			}
 			sender.sendMessage(LocalizedMessage.UNMUTE_PLAYER_ALL_SENDER.toString()
 					.replace("{player}", player.getName()));

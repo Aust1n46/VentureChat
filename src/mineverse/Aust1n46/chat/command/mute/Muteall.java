@@ -45,7 +45,7 @@ public class Muteall implements VentureCommand {
 					}
 				}
 				if(bungee) {
-					MineverseChat.getInstance().synchronize(player, true);
+					MineverseChat.synchronize(player, true);
 				}
 				sender.sendMessage(LocalizedMessage.MUTE_PLAYER_ALL_SENDER.toString()
 						.replace("{player}", player.getName()));
@@ -67,7 +67,7 @@ public class Muteall implements VentureCommand {
 					}
 				}
 				if(bungee) {
-					MineverseChat.getInstance().synchronize(player, true);
+					MineverseChat.synchronize(player, true);
 				}
 				sender.sendMessage(LocalizedMessage.MUTE_PLAYER_ALL_SENDER_REASON.toString()
 						.replace("{player}", player.getName())

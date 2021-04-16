@@ -148,7 +148,7 @@ public class CommandListener implements CommandExecutor, Listener {
 						mcp.addListening(channel.getName());
 						mcp.setCurrentChannel(channel);
 						if(channel.getBungee()) {
-							MineverseChat.getInstance().synchronize(mcp, true);
+							MineverseChat.synchronize(mcp, true);
 						}
 						event.setCancelled(true);
 						return;
@@ -157,7 +157,7 @@ public class CommandListener implements CommandExecutor, Listener {
 						message = message.substring(channel.getAlias().length() + 1);
 						mcp.addListening(channel.getName());
 						if(channel.getBungee()) {
-							MineverseChat.getInstance().synchronize(mcp, true);
+							MineverseChat.synchronize(mcp, true);
 						}
 						mcp.setQuickChannel(channel);
 						/*String format = "";
@@ -208,7 +208,7 @@ public class CommandListener implements CommandExecutor, Listener {
 				mcp.setQuickChannel(channel);
 				mcp.addListening(channel.getName());
 				if(channel.getBungee()) {
-					MineverseChat.getInstance().synchronize(mcp, true);
+					MineverseChat.synchronize(mcp, true);
 				}
 				String msg = "";
 				for(int x = 0; x < args.length; x++) {

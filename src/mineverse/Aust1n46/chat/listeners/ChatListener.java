@@ -315,7 +315,7 @@ public class ChatListener implements Listener {
 										.replace("{reason}", LocalizedMessage.SPAM_MUTE_REASON_TEXT.toString()));
 					}
 					if(eventChannel.getBungee()) {
-						plugin.synchronize(mcp, true);
+						MineverseChat.synchronize(mcp, true);
 					}
 					mcp.getSpam().get(eventChannel).set(0, 0L);
 					mcp.setQuickChat(false);

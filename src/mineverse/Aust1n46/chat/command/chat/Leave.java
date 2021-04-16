@@ -41,7 +41,7 @@ public class Leave implements VentureCommand {
 						.replace("{channel_name}", ChatChannel.getDefaultChannel().getName()));
 			}
 			if(channel.getBungee()) {
-				MineverseChat.getInstance().synchronize(mcp, true);
+				MineverseChat.synchronize(mcp, true);
 			}
 			return;
 		}

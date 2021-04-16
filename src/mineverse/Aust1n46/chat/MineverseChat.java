@@ -193,8 +193,9 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 		//}
 		
 		Bukkit.getConsoleSender().sendMessage(Format.FormatStringAll("&8[&eVentureChat&8]&e - Establishing BungeeCord"));
-		Bukkit.getMessenger().registerOutgoingPluginChannel(this, MineverseChat.PLUGIN_MESSAGING_CHANNEL);
-		Bukkit.getMessenger().registerIncomingPluginChannel(this, MineverseChat.PLUGIN_MESSAGING_CHANNEL, this);
+		Bukkit.getMessenger().registerOutgoingPluginChannel(this, PLUGIN_MESSAGING_CHANNEL);
+		Bukkit.getMessenger().registerIncomingPluginChannel(this, PLUGIN_MESSAGING_CHANNEL, this);
+		
 		PluginManager pluginManager = getServer().getPluginManager();
 		if(pluginManager.isPluginEnabled("Towny")) {
 			Bukkit.getConsoleSender().sendMessage(Format.FormatStringAll("&8[&eVentureChat&8]&e - Enabling Towny Formatting"));
@@ -246,7 +247,7 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 										.replace("{player}", p.getName()).replace("{channel_color}", channel.getColor())
 										.replace("{channel_name}", mute.getChannel()));
 								if(channel.getBungee()) {
-									MineverseChat.getInstance().synchronize(p, true);
+									synchronize(p, true);
 								}
 							}
 						}
@@ -270,15 +271,6 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 		Bukkit.getConsoleSender().sendMessage(Format.FormatStringAll("&8[&eVentureChat&8]&e - Disabled Successfully"));
 	}
 
-	@SuppressWarnings("unchecked")
-	public static void unregister(String name) {
-		try {
-			((Map<String, Command>) knownCommands.get((SimpleCommandMap) commandMap.get(Bukkit.getServer()))).remove(name);
-		}
-		catch(Exception e) {
-		}
-	}
-
 	@SuppressWarnings("unused")
 	private void loadCommandMap() {
 		try {
@@ -289,10 +281,6 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 		}
 		catch(Exception e) {
 		}
-	}
-
-	public static MineverseChat getInstance() {
-		return getPlugin(MineverseChat.class);	
 	}
 	
 	private void registerListeners() {
@@ -308,14 +296,9 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 		ProtocolLibrary.getProtocolManager().addPacketListener(new PacketListener());
 	}
 	
-	public static Field getPosField() {
-		return posField;
-	}
 	
-	public static Class<?> getChatMessageType() {
-		return chatMessageType;
-	}
-
+	
+	
 	private void loadNMS() {	
 		try {
 			posField = MinecraftReflection.getMinecraftClass("PacketPlayOutChat").getDeclaredField("b");
@@ -347,11 +330,12 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 			return null;
 		}
 	}
-
+	
 	private String getVersion() {
 		return Bukkit.getServer().getClass().getPackage().getName().split("\\.")[3];
 	}
-
+	
+	
 	private boolean setupPermissions() {
 		RegisteredServiceProvider<Permission> permissionProvider = getServer().getServicesManager().getRegistration(net.milkbowl.vault.permission.Permission.class);
 		if(permissionProvider != null) {
@@ -368,6 +352,31 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 		return(chat != null);
 	}
 	
+	
+	
+	
+	
+	public static MineverseChat getInstance() {
+		return getPlugin(MineverseChat.class);	
+	}
+	
+	@SuppressWarnings("unchecked")
+	public static void unregister(String name) {
+		try {
+			((Map<String, Command>) knownCommands.get((SimpleCommandMap) commandMap.get(Bukkit.getServer()))).remove(name);
+		}
+		catch(Exception e) {
+		}
+	}
+	
+	public static Field getPosField() {
+		return posField;
+	}
+	
+	public static Class<?> getChatMessageType() {
+		return chatMessageType;
+	}
+	
 	public static Chat getVaultChat() {
 		return chat;
 	}
@@ -376,7 +385,7 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 		return permission;
 	}
 
-	public void synchronize(MineverseChatPlayer mcp, boolean changes) {
+	public static void synchronize(MineverseChatPlayer mcp, boolean changes) {
 		// System.out.println("Sync started...");
 		ByteArrayOutputStream outstream = new ByteArrayOutputStream();
 		DataOutputStream out = new DataOutputStream(outstream);
@@ -387,7 +396,7 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 				// System.out.println(mcp.getPlayer().getServer().getServerName());
 				// out.writeUTF(mcp.getPlayer().getServer().getServerName());
 				out.writeUTF(mcp.getUUID().toString());
-				Bukkit.getServer().getScheduler().runTaskLaterAsynchronously(this, new Runnable() {
+				Bukkit.getServer().getScheduler().runTaskLaterAsynchronously(getInstance(), new Runnable() {
 					@Override
 					public void run() {
 						if(mcp.hasPlayed()) {
@@ -445,10 +454,7 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 				out.writeBoolean(mcp.isSpy());
 				out.writeBoolean(mcp.getMessageToggle());
 			}
-			for(MineverseChatPlayer p : MineverseChatAPI.getOnlineMineverseChatPlayers()) {
-				p.getPlayer().sendPluginMessage(this, MineverseChat.PLUGIN_MESSAGING_CHANNEL, outstream.toByteArray());
-				break;
-			}
+			sendPluginMessage(outstream);
 			// System.out.println("Sync start bottom...");
 			out.close();
 		}
@@ -458,21 +464,20 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 	}
 	
 	public static void sendPluginMessage(ByteArrayOutputStream byteOutStream) {
-		MineverseChatAPI.getOnlineMineverseChatPlayers().iterator().next().getPlayer().sendPluginMessage(MineverseChat.getInstance(), MineverseChat.PLUGIN_MESSAGING_CHANNEL, byteOutStream.toByteArray());
+		MineverseChatAPI.getOnlineMineverseChatPlayers().iterator().next().getPlayer().sendPluginMessage(getInstance(), PLUGIN_MESSAGING_CHANNEL, byteOutStream.toByteArray());
 	}
 	
 	public static void sendDiscordSRVPluginMessage(String chatChannel, String message) {
 		if(MineverseChatAPI.getOnlineMineverseChatPlayers().size() == 0) {
 			return;
 		}
-		Player host = MineverseChatAPI.getOnlineMineverseChatPlayers().iterator().next().getPlayer();
 		ByteArrayOutputStream byteOutStream = new ByteArrayOutputStream();
 		DataOutputStream out = new DataOutputStream(byteOutStream);
 		try {
 			out.writeUTF("DiscordSRV");
 			out.writeUTF(chatChannel);
 			out.writeUTF(message);
-			host.sendPluginMessage(MineverseChat.getInstance(), MineverseChat.PLUGIN_MESSAGING_CHANNEL, byteOutStream.toByteArray());
+			sendPluginMessage(byteOutStream);
 			out.close();
 		}
 		catch(Exception e) {
@@ -482,7 +487,7 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 
 	@Override
 	public void onPluginMessageReceived(String channel, Player player, byte[] inputStream) {
-		if(!channel.equals(MineverseChat.PLUGIN_MESSAGING_CHANNEL)) {
+		if(!channel.equals(PLUGIN_MESSAGING_CHANNEL)) {
 			return;
 		}
 		try {
@@ -614,7 +619,7 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 					for(String s : listening) {
 						out.writeUTF(s);
 					}
-					player.sendPluginMessage(this, MineverseChat.PLUGIN_MESSAGING_CHANNEL, stream.toByteArray());
+					sendPluginMessage(stream);
 				}
 				if(identifier.equals("Receive")) {
 					String sender = msgin.readUTF();
@@ -704,7 +709,7 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 					p.setHasPlayed(true);
 					// Only run a sync update if the player joined a BungeeCord channel
 					if(isThereABungeeChannel) {
-						this.synchronize(p, true);
+						synchronize(p, true);
 					}
 				}
 			}
@@ -721,7 +726,7 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 						out.writeUTF(server);
 						out.writeUTF(receiver);
 						out.writeUTF(sender.toString());
-						player.sendPluginMessage(this, MineverseChat.PLUGIN_MESSAGING_CHANNEL, stream.toByteArray());
+						sendPluginMessage(stream);
 						return;
 					}
 					out.writeUTF("Ignore");
@@ -730,7 +735,7 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 					out.writeUTF(p.getUUID().toString());
 					out.writeUTF(receiver);
 					out.writeUTF(sender.toString());
-					player.sendPluginMessage(this, MineverseChat.PLUGIN_MESSAGING_CHANNEL, stream.toByteArray());
+					sendPluginMessage(stream);
 					return;
 				}
 				if(identifier.equals("Offline")) {
@@ -750,14 +755,14 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 						p.getPlayer().sendMessage(LocalizedMessage.IGNORE_PLAYER_OFF.toString()
 								.replace("{player}", receiverName));
 						p.removeIgnore(receiver);
-						this.synchronize(p, true);
+						synchronize(p, true);
 						return;
 					}
 					
 					p.addIgnore(receiver);
 					p.getPlayer().sendMessage(LocalizedMessage.IGNORE_PLAYER_ON.toString()
 							.replace("{player}", receiverName));
-					this.synchronize(p, true);
+					synchronize(p, true);
 				}
 			}
 			if(subchannel.equals("Mute")) {
@@ -1096,7 +1101,7 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 						out.writeUTF(server);
 						out.writeUTF(receiver);
 						out.writeUTF(sender.toString());
-						player.sendPluginMessage(this, MineverseChat.PLUGIN_MESSAGING_CHANNEL, stream.toByteArray());
+						sendPluginMessage(stream);
 						return;
 					}
 					if(p.getIgnores().contains(sender)) {
@@ -1105,7 +1110,7 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 						out.writeUTF(server);
 						out.writeUTF(receiver);
 						out.writeUTF(sender.toString());
-						player.sendPluginMessage(this, MineverseChat.PLUGIN_MESSAGING_CHANNEL, stream.toByteArray());
+						sendPluginMessage(stream);
 						return;
 					}
 					if(!p.getMessageToggle()) {
@@ -1114,7 +1119,7 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 						out.writeUTF(server);
 						out.writeUTF(receiver);
 						out.writeUTF(sender.toString());
-						player.sendPluginMessage(this, MineverseChat.PLUGIN_MESSAGING_CHANNEL, stream.toByteArray());
+						sendPluginMessage(stream);
 						return;
 					}
 					p.getPlayer().sendMessage(Format.FormatStringAll(PlaceholderAPI.setBracketPlaceholders(p.getPlayer(), send.replaceAll("receiver_", ""))) + msg);
@@ -1136,7 +1141,7 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 					out.writeUTF(sName);
 					out.writeUTF(Format.FormatStringAll(PlaceholderAPI.setBracketPlaceholders(p.getPlayer(), echo.replaceAll("receiver_", ""))) + msg);
 					out.writeUTF(Format.FormatStringAll(PlaceholderAPI.setBracketPlaceholders(p.getPlayer(), spy.replaceAll("receiver_", ""))) + msg);
-					player.sendPluginMessage(this, MineverseChat.PLUGIN_MESSAGING_CHANNEL, stream.toByteArray());
+					sendPluginMessage(stream);
 					return;
 				}
 				if(identifier.equals("Offline")) {

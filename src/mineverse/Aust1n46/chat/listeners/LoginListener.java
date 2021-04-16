@@ -101,7 +101,7 @@ public class LoginListener implements Listener {
 			final MineverseChatPlayer sync = mcp;
 			plugin.getServer().getScheduler().runTaskLaterAsynchronously(plugin, new Runnable() {
 				public void run() {
-					plugin.synchronize(sync, false);
+					MineverseChat.synchronize(sync, false);
 				}
 			}, delayInTicks);
 		}

@@ -23,12 +23,12 @@ public class BungeeToggle implements VentureCommand {
 			if(!mcp.getBungeeToggle()) {				
 				mcp.setBungeeToggle(true);
 				mcp.getPlayer().sendMessage(LocalizedMessage.BUNGEE_TOGGLE_ON.toString());
-				MineverseChat.getInstance().synchronize(mcp, true);
+				MineverseChat.synchronize(mcp, true);
 				return;
 			}			
 			mcp.setBungeeToggle(false);
 			mcp.getPlayer().sendMessage(LocalizedMessage.BUNGEE_TOGGLE_OFF.toString());
-			MineverseChat.getInstance().synchronize(mcp, true);
+			MineverseChat.synchronize(mcp, true);
 			return;
 		}
 		mcp.getPlayer().sendMessage(LocalizedMessage.COMMAND_NO_PERMISSION.toString());

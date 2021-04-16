@@ -23,12 +23,12 @@ public class Spy implements VentureCommand {
 			if(!mcp.isSpy()) {				
 				mcp.setSpy(true);
 				mcp.getPlayer().sendMessage(LocalizedMessage.SPY_ON.toString());
-				MineverseChat.getInstance().synchronize(mcp, true);
+				MineverseChat.synchronize(mcp, true);
 				return;
 			}			
 			mcp.setSpy(false);
 			mcp.getPlayer().sendMessage(LocalizedMessage.SPY_OFF.toString());
-			MineverseChat.getInstance().synchronize(mcp, true);
+			MineverseChat.synchronize(mcp, true);
 			return;
 		}
 		mcp.getPlayer().sendMessage(LocalizedMessage.COMMAND_NO_PERMISSION.toString());

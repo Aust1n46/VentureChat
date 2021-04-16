@@ -23,12 +23,12 @@ public class MessageToggle implements VentureCommand {
 			if(!mcp.getMessageToggle()) {				
 				mcp.setMessageToggle(true);
 				mcp.getPlayer().sendMessage(LocalizedMessage.MESSAGE_TOGGLE_ON.toString());
-				MineverseChat.getInstance().synchronize(mcp, true);
+				MineverseChat.synchronize(mcp, true);
 				return;
 			}			
 			mcp.setMessageToggle(false);
 			mcp.getPlayer().sendMessage(LocalizedMessage.MESSAGE_TOGGLE_OFF.toString());
-			MineverseChat.getInstance().synchronize(mcp, true);
+			MineverseChat.synchronize(mcp, true);
 			return;
 		}
 		mcp.getPlayer().sendMessage(LocalizedMessage.COMMAND_NO_PERMISSION.toString());

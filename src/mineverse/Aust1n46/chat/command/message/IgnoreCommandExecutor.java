@@ -80,7 +80,7 @@ public class IgnoreCommandExecutor implements TabExecutor {
 			mcp.getPlayer().sendMessage(LocalizedMessage.IGNORE_PLAYER_OFF.toString()
 					.replace("{player}", player.getName()));
 			mcp.removeIgnore(player.getUUID());
-			plugin.synchronize(mcp, true);
+			MineverseChat.synchronize(mcp, true);
 			return true;
 		}
 		if(player.getPlayer().hasPermission("venturechat.ignore.bypass")) {
@@ -91,7 +91,7 @@ public class IgnoreCommandExecutor implements TabExecutor {
 		mcp.getPlayer().sendMessage(LocalizedMessage.IGNORE_PLAYER_ON.toString()
 				.replace("{player}", player.getName()));
 		mcp.addIgnore(player.getUUID());
-		plugin.synchronize(mcp, true);
+		MineverseChat.synchronize(mcp, true);
 		return true;
 	}
 	
