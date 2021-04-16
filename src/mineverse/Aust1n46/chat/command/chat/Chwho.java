@@ -1,5 +1,7 @@
 package mineverse.Aust1n46.chat.command.chat;
 
+import static mineverse.Aust1n46.chat.MineverseChat.LINE_LENGTH;
+
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 
@@ -22,10 +24,6 @@ import mineverse.Aust1n46.chat.localization.LocalizedMessage;
 
 public class Chwho extends MineverseCommand {
 	private MineverseChat plugin = MineverseChat.getInstance();
-	
-	public Chwho(String name) {
-		super(name);
-	}
 
 	@Override
 	public void execute(CommandSender sender, String command, String[] args) {
@@ -63,7 +61,7 @@ public class Chwho extends MineverseCommand {
 					}
 					
 					PluginManager pluginManager = plugin.getServer().getPluginManager();
-					long linecount = plugin.getLineLength();
+					long linecount = LINE_LENGTH;
 					for(MineverseChatPlayer p : MineverseChatAPI.getOnlineMineverseChatPlayers()) {
 						if(p.getListening().contains(channel.getName())) {
 							if(sender instanceof Player) {
@@ -85,7 +83,7 @@ public class Chwho extends MineverseCommand {
 										if(!pp.hasTown()) {
 											if(playerlist.length() + p.getName().length() > linecount) {
 												playerlist += "\n";
-												linecount = linecount + plugin.getLineLength();
+												linecount = linecount + LINE_LENGTH;
 											}
 											if(!p.isMuted(channel.getName())) {
 												playerlist += ChatColor.WHITE + p.getName();
@@ -109,7 +107,7 @@ public class Chwho extends MineverseCommand {
 										if(!pp.hasNation()) {
 											if(playerlist.length() + p.getName().length() > linecount) {
 												playerlist += "\n";
-												linecount = linecount + plugin.getLineLength();
+												linecount = linecount + LINE_LENGTH;
 											}
 											if(!p.isMuted(channel.getName())) {
 												playerlist += ChatColor.WHITE + p.getName();
@@ -140,7 +138,7 @@ public class Chwho extends MineverseCommand {
 										if(!mplayerp.hasFaction()) {
 											if(playerlist.length() + p.getName().length() > linecount) {
 												playerlist += "\n";
-												linecount = linecount + plugin.getLineLength();
+												linecount = linecount + LINE_LENGTH;
 											}
 											if(!p.isMuted(channel.getName())) {
 												playerlist += ChatColor.WHITE + p.getName();
@@ -165,7 +163,7 @@ public class Chwho extends MineverseCommand {
 							}
 							if(playerlist.length() + p.getName().length() > linecount) {
 								playerlist += "\n";
-								linecount = linecount + plugin.getLineLength();
+								linecount = linecount + LINE_LENGTH;
 							}
 							if(!p.isMuted(channel.getName())) {
 								playerlist += ChatColor.WHITE + p.getName();

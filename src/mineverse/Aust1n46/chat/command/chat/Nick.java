@@ -12,12 +12,7 @@ import mineverse.Aust1n46.chat.localization.LocalizedMessage;
 import mineverse.Aust1n46.chat.utilities.Format;
 
 public class Nick extends MineverseCommand {
-	private MineverseChat plugin;
-
-	public Nick(String name) {
-		super(name);
-		this.plugin = MineverseChat.getInstance();
-	}
+	private MineverseChat plugin = MineverseChat.getInstance();
 
 	@Override
 	public void execute(CommandSender sender, String command, String[] args) {

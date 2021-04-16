@@ -1,5 +1,7 @@
 package mineverse.Aust1n46.chat.command.chat;
 
+import static mineverse.Aust1n46.chat.MineverseChat.LINE_LENGTH;
+
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -12,10 +14,6 @@ import mineverse.Aust1n46.chat.utilities.Format;
 
 public class Party extends MineverseCommand {
 	private MineverseChat plugin = MineverseChat.getInstance();
-
-	public Party(String name) {
-		super(name);
-	}
 
 	@Override
 	public void execute(CommandSender sender, String command, String[] args) {
@@ -251,12 +249,12 @@ public class Party extends MineverseCommand {
 					if(player != null) {
 						if(player.isHost()) {
 							String members = "";
-							long linecount = plugin.getLineLength();
+							long linecount = LINE_LENGTH;
 							for(MineverseChatPlayer p : MineverseChatAPI.getMineverseChatPlayers()) {
 								if(p.getParty() != null && p.getParty().equals(player.getUUID())) {
 									if(members.length() + p.getName().length() > linecount) {
 										members += "\n";
-										linecount = linecount + plugin.getLineLength();
+										linecount = linecount + LINE_LENGTH;
 									}
 									if(p.isOnline()) {
 										members += ChatColor.GREEN + p.getName() + ChatColor.WHITE + ", ";

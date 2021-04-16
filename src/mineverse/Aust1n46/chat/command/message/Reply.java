@@ -17,10 +17,6 @@ import mineverse.Aust1n46.chat.utilities.Format;
 public class Reply extends MineverseCommand {
 	private MineverseChat plugin = MineverseChat.getInstance();
 
-	public Reply(String name) {
-		super(name);
-	}
-
 	@Override
 	public void execute(CommandSender sender, String command, String[] args) {
 		if(!(sender instanceof Player)) {

@@ -10,12 +10,7 @@ import mineverse.Aust1n46.chat.command.MineverseCommand;
 import mineverse.Aust1n46.chat.localization.LocalizedMessage;
 
 public class Chatreload extends MineverseCommand {
-	private MineverseChat plugin;
-
-	public Chatreload(String name) {
-		super(name);
-		this.plugin = MineverseChat.getInstance();
-	}
+	private MineverseChat plugin = MineverseChat.getInstance();
 
 	@Override
 	public void execute(CommandSender sender, String command, String[] args) {

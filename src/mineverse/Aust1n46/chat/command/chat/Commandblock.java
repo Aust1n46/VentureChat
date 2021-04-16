@@ -11,12 +11,7 @@ import mineverse.Aust1n46.chat.command.MineverseCommand;
 import mineverse.Aust1n46.chat.localization.LocalizedMessage;
 
 public class Commandblock extends MineverseCommand {
-	private MineverseChat plugin;
-
-	public Commandblock(String name) {
-		super(name);
-		this.plugin = MineverseChat.getInstance();
-	}
+	private MineverseChat plugin = MineverseChat.getInstance();
 
 	@Override
 	public void execute(CommandSender sender, String command, String[] args) {

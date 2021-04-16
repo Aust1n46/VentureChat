@@ -25,10 +25,6 @@ public class Edit extends MineverseCommand {
 	private MineverseChat plugin = MineverseChat.getInstance();
 	private WrappedChatComponent messageDeletedComponentPlayer;
 
-	public Edit(String name) {
-		super(name);
-	}
-
 	@Override
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public void execute(CommandSender sender, String command, String[] args) {

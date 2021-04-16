@@ -24,16 +24,12 @@ import mineverse.Aust1n46.chat.utilities.Format;
 import mineverse.Aust1n46.chat.versions.VersionHandler;
 
 public class VentureChatGui extends MineverseCommand {
-	private MineverseChat plugin = MineverseChat.getInstance();;
-
-	public VentureChatGui(String name) {
-		super(name);
-	}
+	private MineverseChat plugin = MineverseChat.getInstance();
 
 	@Override
 	public void execute(CommandSender sender, String command, String[] args) {
 		if(!(sender instanceof Player)) {
-			plugin.getServer().getConsoleSender().sendMessage(LocalizedMessage.COMMAND_MUST_BE_RUN_BY_PLAYER.toString());
+			Bukkit.getServer().getConsoleSender().sendMessage(LocalizedMessage.COMMAND_MUST_BE_RUN_BY_PLAYER.toString());
 			return;
 		}
 		if(args.length < 3) {

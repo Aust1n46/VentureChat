@@ -9,7 +9,6 @@ import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -18,73 +17,6 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
-import net.milkbowl.vault.chat.Chat;
-import net.milkbowl.vault.permission.Permission;
-import mineverse.Aust1n46.chat.json.JsonFormatInfo;
-import mineverse.Aust1n46.chat.listeners.CommandListener;
-import mineverse.Aust1n46.chat.listeners.LoginListener;
-import mineverse.Aust1n46.chat.listeners.ChatListener;
-import mineverse.Aust1n46.chat.listeners.PacketListener;
-import mineverse.Aust1n46.chat.listeners.SignListener;
-import mineverse.Aust1n46.chat.localization.Localization;
-import mineverse.Aust1n46.chat.localization.LocalizedMessage;
-//import mineverse.Aust1n46.chat.alias.Alias;
-import mineverse.Aust1n46.chat.alias.AliasInfo;
-import mineverse.Aust1n46.chat.api.MineverseChatAPI;
-import mineverse.Aust1n46.chat.api.MineverseChatPlayer;
-import mineverse.Aust1n46.chat.api.events.VentureChatEvent;
-import mineverse.Aust1n46.chat.channel.ChatChannel;
-import mineverse.Aust1n46.chat.channel.ChatChannelInfo;
-//import mineverse.Aust1n46.chat.command.CCommand;
-import mineverse.Aust1n46.chat.command.MineverseCommand;
-import mineverse.Aust1n46.chat.command.MineverseCommandExecutor;
-import mineverse.Aust1n46.chat.command.chat.Broadcast;
-import mineverse.Aust1n46.chat.command.chat.BungeeToggle;
-import mineverse.Aust1n46.chat.command.chat.Channel;
-import mineverse.Aust1n46.chat.command.chat.Channelinfo;
-import mineverse.Aust1n46.chat.command.chat.Chatinfo;
-import mineverse.Aust1n46.chat.command.chat.Chatreload;
-import mineverse.Aust1n46.chat.command.chat.Chlist;
-import mineverse.Aust1n46.chat.command.chat.Chwho;
-import mineverse.Aust1n46.chat.command.chat.Clearchat;
-import mineverse.Aust1n46.chat.command.chat.Commandblock;
-import mineverse.Aust1n46.chat.command.chat.Commandspy;
-import mineverse.Aust1n46.chat.command.chat.Config;
-import mineverse.Aust1n46.chat.command.chat.Edit;
-import mineverse.Aust1n46.chat.command.chat.Filter;
-import mineverse.Aust1n46.chat.command.chat.Force;
-import mineverse.Aust1n46.chat.command.chat.Forceall;
-import mineverse.Aust1n46.chat.command.chat.Kickchannel;
-import mineverse.Aust1n46.chat.command.chat.Kickchannelall;
-import mineverse.Aust1n46.chat.command.chat.Leave;
-import mineverse.Aust1n46.chat.command.chat.Listen;
-import mineverse.Aust1n46.chat.command.chat.Me;
-import mineverse.Aust1n46.chat.command.chat.Nick;
-import mineverse.Aust1n46.chat.command.chat.Party;
-import mineverse.Aust1n46.chat.command.chat.RangedSpy;
-import mineverse.Aust1n46.chat.command.chat.Removemessage;
-import mineverse.Aust1n46.chat.command.chat.Setchannel;
-import mineverse.Aust1n46.chat.command.chat.Setchannelall;
-import mineverse.Aust1n46.chat.command.chat.VentureChatGui;
-import mineverse.Aust1n46.chat.command.chat.Venturechat;
-import mineverse.Aust1n46.chat.command.message.IgnoreCommandExecutor;
-import mineverse.Aust1n46.chat.command.message.MessageCommandExecutor;
-import mineverse.Aust1n46.chat.command.message.MessageToggle;
-import mineverse.Aust1n46.chat.command.message.Notifications;
-import mineverse.Aust1n46.chat.command.message.Reply;
-import mineverse.Aust1n46.chat.command.message.Spy;
-import mineverse.Aust1n46.chat.command.mute.Mute;
-import mineverse.Aust1n46.chat.command.mute.MuteContainer;
-import mineverse.Aust1n46.chat.command.mute.Muteall;
-import mineverse.Aust1n46.chat.command.mute.Unmute;
-import mineverse.Aust1n46.chat.command.mute.Unmuteall;
-import mineverse.Aust1n46.chat.database.Database;
-import mineverse.Aust1n46.chat.database.PlayerData;
-import mineverse.Aust1n46.chat.gui.GuiSlotInfo;
-import mineverse.Aust1n46.chat.utilities.Format;
-import mineverse.Aust1n46.chat.versions.V1_8;
-import mineverse.Aust1n46.chat.versions.VersionHandler;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -103,18 +35,37 @@ import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.utility.MinecraftReflection;
 
 import me.clip.placeholderapi.PlaceholderAPI;
+import mineverse.Aust1n46.chat.alias.AliasInfo;
+import mineverse.Aust1n46.chat.api.MineverseChatAPI;
+import mineverse.Aust1n46.chat.api.MineverseChatPlayer;
+import mineverse.Aust1n46.chat.api.events.VentureChatEvent;
+import mineverse.Aust1n46.chat.channel.ChatChannel;
+import mineverse.Aust1n46.chat.channel.ChatChannelInfo;
+import mineverse.Aust1n46.chat.command.MineverseCommandExecutor;
+import mineverse.Aust1n46.chat.command.chat.Channel;
+import mineverse.Aust1n46.chat.command.mute.MuteContainer;
+import mineverse.Aust1n46.chat.database.Database;
+import mineverse.Aust1n46.chat.database.PlayerData;
+import mineverse.Aust1n46.chat.gui.GuiSlotInfo;
+import mineverse.Aust1n46.chat.json.JsonFormatInfo;
+import mineverse.Aust1n46.chat.listeners.ChatListener;
+import mineverse.Aust1n46.chat.listeners.CommandListener;
+import mineverse.Aust1n46.chat.listeners.LoginListener;
+import mineverse.Aust1n46.chat.listeners.PacketListener;
+import mineverse.Aust1n46.chat.listeners.SignListener;
+import mineverse.Aust1n46.chat.localization.Localization;
+import mineverse.Aust1n46.chat.localization.LocalizedMessage;
+import mineverse.Aust1n46.chat.utilities.Format;
+import mineverse.Aust1n46.chat.versions.V1_8;
+import mineverse.Aust1n46.chat.versions.VersionHandler;
+import net.milkbowl.vault.chat.Chat;
+import net.milkbowl.vault.permission.Permission;
 
 /**
   * VentureChat Minecraft plugin for servers running Spigot or Paper software.
   * @author Aust1n46
   */
 public class MineverseChat extends JavaPlugin implements PluginMessageListener {
-	// Listeners --------------------------------
-	private ChatListener chatListener;
-	private LoginListener loginListener;
-	private SignListener signListener;
-	private CommandListener commandListener;
-	private Channel channelListener;
 	public static String[] playerlist;
 	public static String playerlist_server;
 	public boolean ircListen;
@@ -125,10 +76,6 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 	public static Class<?> chatMessageType;
 	private static Field commandMap;
 	private static Field knownCommands;
-
-	// Executors --------------------------------
-	private MineverseCommandExecutor commandExecutor;
-	private Map<String, MineverseCommand> commands = new HashMap<String, MineverseCommand>();
 
 	// Misc --------------------------------
 	public static AliasInfo aaInfo;
@@ -143,7 +90,6 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 	public static Set<MineverseChatPlayer> onlinePlayers = new HashSet<MineverseChatPlayer>();
 	
 	public static List<String> networkPlayerNames = new ArrayList<String>();
-	//private boolean firstRun = true;
 	
 	// Plugin Messaging Channel
 	public static final String PLUGIN_MESSAGING_CHANNEL = "venturechat:data";
@@ -155,14 +101,11 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 	// Vault --------------------------------
 	public static Permission permission = null;
 	public static Chat chat = null;
-	public static CommandMap cmap;
+	private static CommandMap cmap;
 
-	// Offline data ----------------------------
-	public Map<String, String> mutes = new HashMap<String, String>();
-
+	public static final int LINE_LENGTH = 40;
+	
 	private LogLevels curLogLevel;
-
-	public long LINELENGTH = 40;
 	
 	// DiscordSRV backwards compatibility
 	@Deprecated
@@ -216,6 +159,7 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 		jfInfo = new JsonFormatInfo(this);
 		gsInfo = new GuiSlotInfo();
 		
+		Bukkit.getConsoleSender().sendMessage(Format.FormatStringAll("&8[&eVentureChat&8]&e - Loading player data"));
 		PlayerData.loadLegacyPlayerData();
 		PlayerData.loadPlayerData();
 		for(Player p : this.getServer().getOnlinePlayers()) {
@@ -238,72 +182,13 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 			Database.initializeMySQL();
 		});
 
-		commands.put("broadcast", new Broadcast("broadcast"));
-		commands.put("channel", new Channel("channel"));
-		commands.put("join", new Channel("join"));
-		commands.put("channelinfo", new Channelinfo("channelinfo"));
-		commands.put("chatinfo", new Chatinfo("chatinfo"));
-		commands.put("chatreload", new Chatreload("chatreload"));
-		commands.put("chlist", new Chlist("chlist"));
-		commands.put("chwho", new Chwho("chwho"));
-		commands.put("clearchat", new Clearchat("clearchat"));
-		commands.put("commandblock", new Commandblock("commandblock"));
-		commands.put("commandspy", new Commandspy("commandspy"));
-		commands.put("config", new Config("config"));
-		commands.put("edit", new Edit("edit"));
-		commands.put("filter", new Filter("filter"));
-		commands.put("force", new Force("force"));
-		commands.put("forceall", new Forceall("forceall"));
-		commands.put("kickchannel", new Kickchannel("kickchannel"));
-		commands.put("kickchannelall", new Kickchannelall("kickchannelall"));
-		commands.put("leave", new Leave("leave"));
-		commands.put("listen", new Listen("listen"));
-		commands.put("me", new Me("me"));
-		commands.put("venturechat", new Venturechat("venturechat"));
-		commands.put("mute", new Mute("mute"));
-		commands.put("muteall", new Muteall("muteall"));
-		commands.put("setnickname", new Nick("setnickname"));
-		commands.put("notifications", new Notifications("notifications"));
-		commands.put("party", new Party("party"));
-		commands.put("rangedspy", new RangedSpy("rangedspy"));
-		commands.put("removemessage", new Removemessage("removemessage"));
-		commands.put("reply", new Reply("reply"));
-		commands.put("r", new Reply("r"));
-		commands.put("setchannel", new Setchannel("setchannel"));
-		commands.put("setchannelall", new Setchannelall("setchannelall"));
-		commands.put("spy", new Spy("spy"));
-		commands.put("unmute", new Unmute("unmute"));
-		commands.put("unmuteall", new Unmuteall("unmuteall"));
-		commands.put("venturechatgui", new VentureChatGui("venturechatgui"));
-		commands.put("messagetoggle", new MessageToggle("messagetoggle"));
-		commands.put("bungeetoggle", new BungeeToggle("bungeetoggle"));
-		commandExecutor = new MineverseCommandExecutor(commands);
-		for(String command : commands.keySet()) {
-			this.getCommand(command).setExecutor(commandExecutor);
-		}
-		
-		MessageCommandExecutor messageCommandExecutor = new MessageCommandExecutor();
-		this.getCommand("message").setExecutor(messageCommandExecutor);
-		this.getCommand("msg").setExecutor(messageCommandExecutor);
-		this.getCommand("tell").setExecutor(messageCommandExecutor);
-		this.getCommand("whisper").setExecutor(messageCommandExecutor);
-		this.getCommand("ignore").setExecutor(new IgnoreCommandExecutor());
+		MineverseCommandExecutor.initialize();
 
-		channelListener = new Channel();
-		signListener = new SignListener();
-		chatListener = new ChatListener();
-		commandListener = new CommandListener(aaInfo);
-
-		PluginManager pluginManager = getServer().getPluginManager();
-		pluginManager.registerEvents(channelListener, this);
-		pluginManager.registerEvents(chatListener, this);
-		pluginManager.registerEvents(signListener, this);
-		pluginManager.registerEvents(commandListener, this);
-		loginListener = new LoginListener();
-		pluginManager.registerEvents(loginListener, this);
+		this.registerListeners();
 		this.registerPacketListeners();
 		this.loadNMS();
 		Bukkit.getConsoleSender().sendMessage(Format.FormatStringAll("&8[&eVentureChat&8]&e - Attaching to Executors"));
+		
 		try {
 			// if(VersionHandler.is1_7_9()) cmap = V1_7_9.v1_7_9();
 			// if(VersionHandler.is1_7_10()) cmap = V1_7_10.v1_7_10();
@@ -338,9 +223,11 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 			 * ));
 			 */
 		}
+		
 		Bukkit.getConsoleSender().sendMessage(Format.FormatStringAll("&8[&eVentureChat&8]&e - Establishing BungeeCord"));
 		Bukkit.getMessenger().registerOutgoingPluginChannel(this, MineverseChat.PLUGIN_MESSAGING_CHANNEL);
 		Bukkit.getMessenger().registerIncomingPluginChannel(this, MineverseChat.PLUGIN_MESSAGING_CHANNEL, this);
+		PluginManager pluginManager = getServer().getPluginManager();
 		if(pluginManager.isPluginEnabled("Towny")) {
 			Bukkit.getConsoleSender().sendMessage(Format.FormatStringAll("&8[&eVentureChat&8]&e - Enabling Towny Formatting"));
 		}
@@ -351,14 +238,12 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 			String version = pluginManager.getPlugin("Factions").getDescription().getVersion();
 			Bukkit.getConsoleSender().sendMessage(Format.FormatStringAll("&8[&eVentureChat&8]&e - Enabling Factions Formatting version " + version));
 		}
-		if(pluginManager.isPluginEnabled("Heroes")) {
-			Bukkit.getConsoleSender().sendMessage(Format.FormatStringAll("&8[&eVentureChat&8]&e - Enabling Heroes Formatting"));
-		}
 		if(pluginManager.isPluginEnabled("PlaceholderAPI")) {
 			Bukkit.getConsoleSender().sendMessage(Format.FormatStringAll("&8[&eVentureChat&8]&e - Enabling PlaceholderAPI Hook"));
 		}
+		
 		new VentureChatPlaceholders().register();
-		Bukkit.getConsoleSender().sendMessage(Format.FormatStringAll("&8[&eVentureChat&8]&e - Loading player data"));
+		
 		BukkitScheduler scheduler = Bukkit.getServer().getScheduler();
 		scheduler.runTaskTimerAsynchronously(this, new Runnable() {
 			@Override
@@ -418,7 +303,7 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 	}
 
 	@SuppressWarnings("unchecked")
-	public void unregister(String name) {
+	public static void unregister(String name) {
 		try {
 			((Map<String, Command>) knownCommands.get((SimpleCommandMap) commandMap.get(Bukkit.getServer()))).remove(name);
 		}
@@ -438,13 +323,22 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 		}
 	}
 
-	public CommandMap getCommandMap() {
+	public static CommandMap getCommandMap() {
 		return cmap;
 	}
 
 	public static MineverseChat getInstance() {
 		return getPlugin(MineverseChat.class);
 		
+	}
+	
+	private void registerListeners() {
+		PluginManager pluginManager = getServer().getPluginManager();
+		pluginManager.registerEvents(new Channel(), this);
+		pluginManager.registerEvents(new ChatListener(), this);
+		pluginManager.registerEvents(new SignListener(), this);
+		pluginManager.registerEvents(new CommandListener(aaInfo), this);
+		pluginManager.registerEvents(new LoginListener(), this);
 	}
 
 	private void registerPacketListeners() {
@@ -501,10 +395,6 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 			chat = chatProvider.getProvider();
 		}
 		return(chat != null);
-	}
-
-	public long getLineLength() {
-		return LINELENGTH;
 	}
 
 	public void setLogLevel(String loglevel) {

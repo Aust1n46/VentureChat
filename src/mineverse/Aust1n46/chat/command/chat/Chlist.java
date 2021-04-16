@@ -8,10 +8,6 @@ import mineverse.Aust1n46.chat.localization.LocalizedMessage;
 
 public class Chlist extends MineverseCommand {
 
-	public Chlist(String name) {
-		super(name);
-	}
-
 	@Override
 	public void execute(CommandSender sender, String command, String[] args) {
 		sender.sendMessage(LocalizedMessage.CHANNEL_LIST_HEADER.toString());

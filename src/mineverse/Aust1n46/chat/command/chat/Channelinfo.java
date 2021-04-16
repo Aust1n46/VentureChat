@@ -9,10 +9,6 @@ import mineverse.Aust1n46.chat.utilities.Format;
 
 public class Channelinfo extends MineverseCommand {
 
-	public Channelinfo(String name) {
-		super(name);
-	}
-
 	@Override
 	public void execute(CommandSender sender, String command, String[] args) {
 		if(sender.hasPermission("venturechat.channelinfo")) {

@@ -9,10 +9,6 @@ import mineverse.Aust1n46.chat.localization.LocalizedMessage;
 
 public class Force extends MineverseCommand {
 
-	public Force(String name) {
-		super(name);
-	}
-
 	@Override
 	public void execute(CommandSender sender, String command, String[] args) {
 		if(sender.hasPermission("venturechat.force")) {

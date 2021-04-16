@@ -29,10 +29,6 @@ public class Removemessage extends MineverseCommand {
 	private PacketContainer emptyLinePacketContainer = Format.createPacketPlayOutChat("{\"extra\":[\" \"],\"text\":\"\"}");
 	private WrappedChatComponent messageDeletedComponentPlayer = WrappedChatComponent.fromJson("{\"text\":\"\",\"extra\":[{\"text\":\"\",\"extra\":[" + Format.convertToJsonColors(Format.FormatStringAll(plugin.getConfig().getString("messageremovertext"))) + "],\"hoverEvent\":{\"action\":\"show_text\",\"value\":{\"text\":\"\",\"extra\":[" + Format.convertToJsonColors(Format.FormatStringAll(plugin.getConfig().getString("messageremoverpermissions"))) + "]}}}]}");;
 
-	public Removemessage(String name) {
-		super(name);
-	}
-
 	@Override
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public void execute(CommandSender sender, String command, String[] args) {

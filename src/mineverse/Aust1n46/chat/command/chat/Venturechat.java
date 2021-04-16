@@ -16,12 +16,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 public class Venturechat extends MineverseCommand {
-	private MineverseChat plugin;
-
-	public Venturechat(String name) {
-		super(name);
-		this.plugin = MineverseChat.getInstance();
-	}
+	private MineverseChat plugin = MineverseChat.getInstance();
 
 	@Override
 	public void execute(CommandSender sender, String command, String[] args) {

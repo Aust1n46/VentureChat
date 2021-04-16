@@ -13,10 +13,6 @@ import mineverse.Aust1n46.chat.utilities.Format;
 public class Config extends MineverseCommand {
 	private MineverseChat plugin = MineverseChat.getInstance();
 
-	public Config(String name) {
-		super(name);
-	}
-
 	@Override
 	public void execute(CommandSender sender, String command, String[] args) {
 		if(sender.hasPermission("venturechat.edit")) {

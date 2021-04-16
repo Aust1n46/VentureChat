@@ -3,18 +3,12 @@ package mineverse.Aust1n46.chat.command.chat;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import mineverse.Aust1n46.chat.MineverseChat;
 import mineverse.Aust1n46.chat.api.MineverseChatAPI;
 import mineverse.Aust1n46.chat.command.MineverseCommand;
 import mineverse.Aust1n46.chat.localization.LocalizedMessage;
 import mineverse.Aust1n46.chat.utilities.Format;
 
 public class Me extends MineverseCommand {
-	private MineverseChat plugin = MineverseChat.getInstance();
-
-	public Me(String name) {
-		super(name);
-	}
 
 	@Override
 	public void execute(CommandSender sender, String command, String[] args) {
@@ -36,10 +30,10 @@ public class Me extends MineverseCommand {
 					msg = Format.FormatString(msg);
 				if(sender instanceof Player) {
 					Player p = (Player) sender;
-					plugin.getServer().broadcastMessage("* " + p.getDisplayName() + msg);
+					Format.broadcastToServer("* " + p.getDisplayName() + msg);
 					return;
 				}
-				plugin.getServer().broadcastMessage("* " + sender.getName() + msg);
+				Format.broadcastToServer("* " + sender.getName() + msg);
 				return;
 			}
 			sender.sendMessage(LocalizedMessage.COMMAND_INVALID_ARGUMENTS.toString()
