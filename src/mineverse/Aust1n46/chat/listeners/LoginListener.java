@@ -95,11 +95,5 @@ public class LoginListener implements Listener {
 				}
 			}, delayInTicks);
 		}
-		if(!plugin.getConfig().getConfigurationSection("login").getString("message", "Default").equalsIgnoreCase("Default")) {
-			event.setJoinMessage(Format.FormatStringAll(plugin.getConfig().getConfigurationSection("login").getString("message", "Default").replace("{player}", event.getPlayer().getName())));
-		}
-		if(!plugin.getConfig().getConfigurationSection("login").getBoolean("enabled", true)) {
-			event.setJoinMessage("");
-		}
 	}
 }
