@@ -25,18 +25,8 @@ public class LoginListener implements Listener {
 	private MineverseChat plugin = MineverseChat.getInstance();
 
 	@EventHandler(priority = EventPriority.LOW)
-	public void onPlayerQuit(PlayerQuitEvent plog) {
-		if(!plugin.getConfig().getConfigurationSection("logout").getString("message", "Default").equalsIgnoreCase("Default")) {
-			plog.setQuitMessage(Format.FormatStringAll(plugin.getConfig().getConfigurationSection("logout").getString("message", "Default").replace("{player}", plog.getPlayer().getName())));
-		}
-		if(!plugin.getConfig().getConfigurationSection("logout").getBoolean("enabled", true)) {
-			plog.setQuitMessage("");
-		}
-		playerLeaving(plog.getPlayer());
-	}
-	
-	private void playerLeaving(Player player) {
-		MineverseChatPlayer mcp = MineverseChatAPI.getOnlineMineverseChatPlayer(player);
+	public void onPlayerQuit(PlayerQuitEvent playerQuitEvent) {
+		MineverseChatPlayer mcp = MineverseChatAPI.getOnlineMineverseChatPlayer(playerQuitEvent.getPlayer());
 		PlayerData.savePlayerData(mcp);
 		mcp.clearMessages();
 		mcp.setOnline(false);

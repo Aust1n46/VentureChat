@@ -76,15 +76,6 @@ mysql:
   host: localhost
   database: Database
 
-# Login and logout messages
-# Use Default for the vanilla login and logout messages
-login:
-  enabled: true
-  message: Default
-logout:
-  enabled: true
-  message: Default
-
 # Loglevel feature is still in the works for adding of debug messages
 # Valid loglevels:
 # Info: Regular logging
