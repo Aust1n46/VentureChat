@@ -131,6 +131,7 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 		Alias.initialize();
 		JsonFormat.initialize();
 		GuiSlot.initialize();
+		ChatChannel.initialize(false);
 		
 		Bukkit.getConsoleSender().sendMessage(Format.FormatStringAll("&8[&eVentureChat&8]&e - Loading player data"));
 		PlayerData.loadLegacyPlayerData();
@@ -190,8 +191,6 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 			 * ));
 			 */
 		//}
-		
-		ChatChannel.initialize(false);
 		
 		Bukkit.getConsoleSender().sendMessage(Format.FormatStringAll("&8[&eVentureChat&8]&e - Establishing BungeeCord"));
 		Bukkit.getMessenger().registerOutgoingPluginChannel(this, MineverseChat.PLUGIN_MESSAGING_CHANNEL);
@@ -293,8 +292,7 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 	}
 
 	public static MineverseChat getInstance() {
-		return getPlugin(MineverseChat.class);
-		
+		return getPlugin(MineverseChat.class);	
 	}
 	
 	private void registerListeners() {
