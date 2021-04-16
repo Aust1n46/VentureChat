@@ -23,6 +23,7 @@ public class ChatChannel {
 
 	private static MineverseChat plugin = MineverseChat.getInstance();
 	private static ChatChannel defaultChatChannel;
+	private static boolean aliasesRegisteredAsCommands;
 	
 	@Deprecated
 	private static ChatChannel[] channels;
@@ -48,7 +49,8 @@ public class ChatChannel {
 	/**
 	 * Read chat channels from config file and initialize channel array.
 	 */
-	public static void initialize() {
+	public static void initialize(boolean aliasesRegisteredAsCommands) {
+		ChatChannel.aliasesRegisteredAsCommands = aliasesRegisteredAsCommands;
 		ConfigurationSection cs = plugin.getConfig().getConfigurationSection("channels");
 		int len = (cs.getKeys(false)).size();
 		channels = new ChatChannel[len];
@@ -78,6 +80,10 @@ public class ChatChannel {
 				defaultColor = color;
 			}
 		}
+	}
+	
+	public static boolean areAliasesRegisteredAsCommands() {
+		return aliasesRegisteredAsCommands;
 	}
 
 	/**

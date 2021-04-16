@@ -7,7 +7,6 @@ import java.io.DataOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Field;
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -15,13 +14,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
-import org.bukkit.command.CommandMap;
 import org.bukkit.command.SimpleCommandMap;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.PluginManager;
@@ -56,7 +52,6 @@ import mineverse.Aust1n46.chat.listeners.SignListener;
 import mineverse.Aust1n46.chat.localization.Localization;
 import mineverse.Aust1n46.chat.localization.LocalizedMessage;
 import mineverse.Aust1n46.chat.utilities.Format;
-import mineverse.Aust1n46.chat.versions.V1_8;
 import mineverse.Aust1n46.chat.versions.VersionHandler;
 import net.milkbowl.vault.chat.Chat;
 import net.milkbowl.vault.permission.Permission;
@@ -66,49 +61,33 @@ import net.milkbowl.vault.permission.Permission;
   * @author Aust1n46
   */
 public class MineverseChat extends JavaPlugin implements PluginMessageListener {
-	public static String[] playerlist;
-	public static String playerlist_server;
-	public boolean ircListen;
-	public static ChatMessage lastChatMessage;
-	public static String lastJson;
-	public static Method messageMethod;
-	public static Field posField;
-	public static Class<?> chatMessageType;
-	private static Field commandMap;
-	private static Field knownCommands;
-
-	// Misc --------------------------------
-	public boolean quickchat = true;
-	private static final Logger log = Logger.getLogger("Minecraft");
-	
-	@Deprecated
-	public static Set<MineverseChatPlayer> players = new HashSet<MineverseChatPlayer>();
-	@Deprecated
-	public static Set<MineverseChatPlayer> onlinePlayers = new HashSet<MineverseChatPlayer>();
-	
-	public static List<String> networkPlayerNames = new ArrayList<String>();
-	
 	// Plugin Messaging Channel
 	public static final String PLUGIN_MESSAGING_CHANNEL = "venturechat:data";
 	
 	// Event constants
 	public static final boolean ASYNC = true;
 	public static final boolean SYNC = false;
-
-	// Vault --------------------------------
-	public static Permission permission = null;
-	public static Chat chat = null;
-	private static CommandMap cmap;
-
-	public static final int LINE_LENGTH = 40;
 	
-	private LogLevels curLogLevel;
+	public static final int LINE_LENGTH = 40;
 	
 	// DiscordSRV backwards compatibility
 	@Deprecated
 	public static ChatChannelInfo ccInfo;
+
+	@Deprecated
+	public static Set<MineverseChatPlayer> players = new HashSet<MineverseChatPlayer>();
+	@Deprecated
+	public static Set<MineverseChatPlayer> onlinePlayers = new HashSet<MineverseChatPlayer>();
+
+	// Vault
+	private static Permission permission = null;
+	private static Chat chat = null;
 	
-	public static void main(String[] args) {}
+	// NMS
+	private static Field posField;
+	private static Class<?> chatMessageType;
+	private static Field commandMap;
+	private static Field knownCommands;
 	
 	@Override
 	public void onEnable() {
@@ -130,11 +109,8 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 			saveResource("example_config_always_up_to_date!.yml", true);
 		}
 		catch(Exception ex) {
-			log.severe(String.format("[" + String.format("VentureChat") + "]" + " - Could not load configuration!\n " + ex, getDescription().getName()));
+			Bukkit.getConsoleSender().sendMessage(Format.FormatStringAll("&8[&eVentureChat&8]&c - Could not load configuration! Something unexpected went wrong!"));
 		}
-		
-		this.setLogLevel(this.getConfig().getString("loglevel", "INFO").toUpperCase());
-		ChatChannel.initialize();
 		
 		Bukkit.getConsoleSender().sendMessage(Format.FormatStringAll("&8[&eVentureChat&8]&e - Checking for Vault..."));
 		// Set up Vault
@@ -186,17 +162,9 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 		this.loadNMS();
 		Bukkit.getConsoleSender().sendMessage(Format.FormatStringAll("&8[&eVentureChat&8]&e - Attaching to Executors"));
 		
-		try {
-			// if(VersionHandler.is1_7_9()) cmap = V1_7_9.v1_7_9();
-			// if(VersionHandler.is1_7_10()) cmap = V1_7_10.v1_7_10();
-			if(VersionHandler.is1_8()) cmap = V1_8.v1_8();
-		}
-		catch(Exception e) {
-			e.printStackTrace();
-		}
-		this.quickchat = false;
-		if(cmap == null) {
-			this.quickchat = false;
+		//if(commandMapObj == null) {
+			//this.quickchat = false;
+			
 			// log.info(String.format("[" + String.format("VentureChat" + "]" +
 			// " - Unrecognized server version, Quickchat commands not
 			// registering",
@@ -204,8 +172,10 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 			// log.info(String.format("[" + String.format("VentureChat" + "]" +
 			// " - Unrecognized server version, Alias commands not registering",
 			// getDescription().getName())));
-		}
-		else {
+		//}
+		//else {
+			//this.quickchat = true;
+			
 			/*
 			 * Don't run this code right now for(ChatChannel c :
 			 * ccInfo.getChannelsInfo()) { CCommand cmd = new
@@ -219,7 +189,9 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 			 * FormatStringAll("&8[&eVentureChat&8]&e - Registering Quickchat commands"
 			 * ));
 			 */
-		}
+		//}
+		
+		ChatChannel.initialize(false);
 		
 		Bukkit.getConsoleSender().sendMessage(Format.FormatStringAll("&8[&eVentureChat&8]&e - Establishing BungeeCord"));
 		Bukkit.getMessenger().registerOutgoingPluginChannel(this, MineverseChat.PLUGIN_MESSAGING_CHANNEL);
@@ -320,10 +292,6 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 		}
 	}
 
-	public static CommandMap getCommandMap() {
-		return cmap;
-	}
-
 	public static MineverseChat getInstance() {
 		return getPlugin(MineverseChat.class);
 		
@@ -341,11 +309,19 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 	private void registerPacketListeners() {
 		ProtocolLibrary.getProtocolManager().addPacketListener(new PacketListener());
 	}
+	
+	public static Field getPosField() {
+		return posField;
+	}
+	
+	public static Class<?> getChatMessageType() {
+		return chatMessageType;
+	}
 
 	private void loadNMS() {	
 		try {
-			MineverseChat.posField = MinecraftReflection.getMinecraftClass("PacketPlayOutChat").getDeclaredField("b");
-			MineverseChat.posField.setAccessible(true);
+			posField = MinecraftReflection.getMinecraftClass("PacketPlayOutChat").getDeclaredField("b");
+			posField.setAccessible(true);
 			
 			
 			//MineverseChat.messageMethod = MinecraftReflection.getMinecraftClass("ChatBaseComponent").getDeclaredMethod("getString");
@@ -356,7 +332,7 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 		}
 		if(!VersionHandler.is1_7_10() && !VersionHandler.is1_8() && !VersionHandler.is1_9() && !VersionHandler.is1_10() && !VersionHandler.is1_11()) {
 			try {
-				MineverseChat.chatMessageType = getNMSClass("ChatMessageType");
+				chatMessageType = getNMSClass("ChatMessageType");
 			}
 			catch(Exception e) {
 				e.printStackTrace();
@@ -393,20 +369,13 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 		}
 		return(chat != null);
 	}
-
-	public void setLogLevel(String loglevel) {
-		if(LogLevels.valueOf(loglevel) != null) {
-			curLogLevel = LogLevels.valueOf(loglevel);
-		}
-		else {
-			curLogLevel = LogLevels.INFO;
-		}
+	
+	public static Chat getVaultChat() {
+		return chat;
 	}
-
-	public void logme(LogLevels level, String location, String logline) {
-		if(level.ordinal() >= curLogLevel.ordinal()) {
-			log.log(Level.INFO, "[VentureChat]: {0}:{1} : {2}", new Object[] { level.toString(), location, logline });
-		}
+	
+	public static Permission getVaultPermission() {
+		return permission;
 	}
 
 	public void synchronize(MineverseChatPlayer mcp, boolean changes) {
@@ -614,10 +583,10 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 				}	
 			}
 			if(subchannel.equals("PlayerNames")) {
-				networkPlayerNames.clear();
+				MineverseChatAPI.clearNetworkPlayerNames();
 				int playerCount = msgin.readInt();
 				for(int a = 0; a < playerCount; a ++) {
-					networkPlayerNames.add(msgin.readUTF());
+					MineverseChatAPI.addNetworkPlayerName(msgin.readUTF());
 				}
 			}
 			if(subchannel.equals("Chwho")) {

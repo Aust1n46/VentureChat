@@ -1,7 +1,9 @@
 package mineverse.Aust1n46.chat.api;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.UUID;
 
 import org.bukkit.entity.Player;
@@ -18,9 +20,22 @@ public final class MineverseChatAPI {
 	private static HashMap<UUID, MineverseChatPlayer> playerMap = new HashMap<UUID, MineverseChatPlayer>();
 	private static HashMap<String, UUID> namesMap = new HashMap<String, UUID>();
 	private static HashMap<UUID, MineverseChatPlayer> onlinePlayerMap = new HashMap<UUID, MineverseChatPlayer>();
+	private static List<String> networkPlayerNames = new ArrayList<String>();
 	
 	private static HashMap<UUID, SynchronizedMineverseChatPlayer> bungeePlayerMap = new HashMap<UUID, SynchronizedMineverseChatPlayer>();
 
+	public static List<String> getNetworkPlayerNames() {
+		return networkPlayerNames;
+	}
+	
+	public static void clearNetworkPlayerNames() {
+		networkPlayerNames.clear();
+	}
+	
+	public static void addNetworkPlayerName(String name) {
+		networkPlayerNames.add(name);
+	}
+	
 	public static void addSynchronizedMineverseChatPlayerToMap(SynchronizedMineverseChatPlayer smcp) {
 		bungeePlayerMap.put(smcp.getUUID(), smcp);
 	}

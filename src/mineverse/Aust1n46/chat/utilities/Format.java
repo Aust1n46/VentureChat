@@ -73,8 +73,8 @@ public class Format {
 		String prefix = "";
 		String suffix = "";
 		try {
-			prefix = FormatStringAll(MineverseChat.chat.getPlayerPrefix(sender.getPlayer()));
-			suffix = FormatStringAll(MineverseChat.chat.getPlayerSuffix(sender.getPlayer()));
+			prefix = FormatStringAll(MineverseChat.getVaultChat().getPlayerPrefix(sender.getPlayer()));
+			suffix = FormatStringAll(MineverseChat.getVaultChat().getPlayerSuffix(sender.getPlayer()));
 			// Don't apply JSON if the prefix or suffix is just a color code
 			if (suffix.isEmpty() || (suffix.length() == 2 && suffix.substring(1).matches("[0-9a-fA-F]"))) {
 				suffix = "venturechat_no_suffix_code";

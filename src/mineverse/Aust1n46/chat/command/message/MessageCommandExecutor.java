@@ -158,7 +158,7 @@ public class MessageCommandExecutor implements TabExecutor {
 	public List<String> onTabComplete(CommandSender sender, Command command, String label, String[] args) {
 		if(plugin.getConfig().getBoolean("bungeecordmessaging", true)) {
 			List<String> completions = new ArrayList<>();
-			StringUtil.copyPartialMatches(args[args.length - 1], MineverseChat.networkPlayerNames, completions);
+			StringUtil.copyPartialMatches(args[args.length - 1], MineverseChatAPI.getNetworkPlayerNames(), completions);
 			Collections.sort(completions);
 	        return completions;
 		}

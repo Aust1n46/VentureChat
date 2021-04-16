@@ -7,6 +7,8 @@ import mineverse.Aust1n46.chat.api.MineverseChatPlayer;
 import mineverse.Aust1n46.chat.utilities.Format;
 import mineverse.Aust1n46.chat.versions.VersionHandler;
 
+import java.lang.reflect.Field;
+
 import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.events.ListenerPriority;
 import com.comphenix.protocol.events.PacketAdapter;
@@ -39,23 +41,24 @@ public class PacketListener extends PacketAdapter {
 			return;
 		}
 		
-		if(MineverseChat.posField == null) {
+		Field posField = MineverseChat.getPosField();
+		if(posField == null) {
 			return;
 		}
 		
 		try {
 			if(VersionHandler.is1_7_2() || VersionHandler.is1_7_10() || VersionHandler.is1_7_9()) {
-				if(!(((boolean) MineverseChat.posField.get(packet.getHandle())))) {
+				if(!(((boolean) posField.get(packet.getHandle())))) {
 					return;
 				}
 			}
 			else if(VersionHandler.is1_8() || VersionHandler.is1_9() || VersionHandler.is1_10() || VersionHandler.is1_11()){
-				if(((Byte) MineverseChat.posField.get(packet.getHandle())).intValue() > 1) {
+				if(((Byte) posField.get(packet.getHandle())).intValue() > 1) {
 					return;
 				}
 			}
 			else {
-				if(((Object) MineverseChat.posField.get(packet.getHandle())) == MineverseChat.chatMessageType.getEnumConstants()[2]) {
+				if(((Object) posField.get(packet.getHandle())) == MineverseChat.getChatMessageType().getEnumConstants()[2]) {
 					return;
 				}
 			}

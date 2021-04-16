@@ -80,7 +80,7 @@ public class Unmute implements VentureCommand {
 			if(ChatChannel.isChannel(args[0])) {
 				ChatChannel chatChannelObj = ChatChannel.getChannel(args[0]);
 				if(chatChannelObj.getBungee()) {
-					StringUtil.copyPartialMatches(args[1], MineverseChat.networkPlayerNames, completions);
+					StringUtil.copyPartialMatches(args[1], MineverseChatAPI.getNetworkPlayerNames(), completions);
 					Collections.sort(completions);
 			        return completions;
 				}

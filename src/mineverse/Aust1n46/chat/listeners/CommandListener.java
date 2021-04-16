@@ -126,7 +126,7 @@ public class CommandListener implements CommandExecutor, Listener {
 			}
 		}
 
-		if(!plugin.quickchat) {
+		if(!ChatChannel.areAliasesRegisteredAsCommands()) {
 			for(ChatChannel channel : ChatChannel.getChatChannels()) {
 				if(!channel.hasPermission() || mcp.getPlayer().hasPermission(channel.getPermission())) {
 					if(message.equals("/" + channel.getAlias())) {
