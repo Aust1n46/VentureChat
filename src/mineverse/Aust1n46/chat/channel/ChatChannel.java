@@ -1,6 +1,8 @@
 package mineverse.Aust1n46.chat.channel;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 
 import org.bukkit.ChatColor;
@@ -21,10 +23,12 @@ public class ChatChannel {
 
 	private static MineverseChat plugin = MineverseChat.getInstance();
 	private static ChatChannel defaultChatChannel;
+	
 	@Deprecated
 	private static ChatChannel[] channels;
+	
 	private static String defaultColor;
-	private static List<ChatChannel> chatChannels = new ArrayList<ChatChannel>();
+	private static HashMap<String, ChatChannel> chatChannels = new HashMap<String, ChatChannel>();
 
 	private String name;
 	private String permission;
@@ -67,7 +71,8 @@ public class ChatChannel {
 			ChatChannel chatChannel = new ChatChannel(name, color, chatColor, permission, speakPermission, mutable,
 					filter, defaultChannel, alias, distance, autojoin, bungee, cooldown, format);
 			channels[counter++] = chatChannel;
-			chatChannels.add(chatChannel);
+			chatChannels.put(name.toLowerCase(), chatChannel);
+			chatChannels.put(alias.toLowerCase(), chatChannel);
 			if (defaultChannel) {
 				defaultChatChannel = chatChannel;
 				defaultColor = color;
@@ -90,8 +95,8 @@ public class ChatChannel {
 	 * 
 	 * @return {@link List}&lt{@link ChatChannel}&gt
 	 */
-	public static List<ChatChannel> getChatChannels() {
-		return chatChannels;
+	public static Collection<ChatChannel> getChatChannels() {
+		return chatChannels.values();
 	}
 
 	/**
@@ -102,12 +107,7 @@ public class ChatChannel {
 	 * @return {@link ChatChannel}
 	 */
 	public static ChatChannel getChannel(String channelName) {
-		for (ChatChannel c : channels) {
-			if (c.getName().equalsIgnoreCase(channelName) || c.getAlias().equalsIgnoreCase(channelName)) {
-				return c;
-			}
-		}
-		return null;
+		return chatChannels.get(channelName.toLowerCase());
 	}
 
 	/**

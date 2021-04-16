@@ -9,7 +9,6 @@ import java.util.Set;
 import java.util.UUID;
 
 import mineverse.Aust1n46.chat.ChatMessage;
-import mineverse.Aust1n46.chat.MineverseChat;
 import mineverse.Aust1n46.chat.channel.ChatChannel;
 import mineverse.Aust1n46.chat.command.mute.MuteContainer;
 import mineverse.Aust1n46.chat.json.JsonFormat;
@@ -527,9 +526,9 @@ public class MineverseChatPlayer {
 
 	public void setJsonFormat() {
 		this.jsonFormat = "Default";
-		for(JsonFormat j : MineverseChat.jfInfo.getJsonFormats()) {
+		for(JsonFormat j : JsonFormat.getJsonFormats()) {
 			if(this.getPlayer().isPermissionSet("venturechat.json." + j.getName())) {
-				if(MineverseChat.jfInfo.getJsonFormat(this.getJsonFormat()).getPriority() > j.getPriority()) {
+				if(JsonFormat.getJsonFormat(this.getJsonFormat()).getPriority() > j.getPriority()) {
 					this.jsonFormat = j.getName();
 				}
 			}

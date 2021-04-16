@@ -47,7 +47,7 @@ import mineverse.Aust1n46.chat.command.mute.MuteContainer;
 import mineverse.Aust1n46.chat.database.Database;
 import mineverse.Aust1n46.chat.database.PlayerData;
 import mineverse.Aust1n46.chat.gui.GuiSlot;
-import mineverse.Aust1n46.chat.json.JsonFormatInfo;
+import mineverse.Aust1n46.chat.json.JsonFormat;
 import mineverse.Aust1n46.chat.listeners.ChatListener;
 import mineverse.Aust1n46.chat.listeners.CommandListener;
 import mineverse.Aust1n46.chat.listeners.LoginListener;
@@ -79,7 +79,6 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 
 	// Misc --------------------------------
 	public static AliasInfo aaInfo;
-	public static JsonFormatInfo jfInfo;
 	public boolean quickchat = true;
 	private static final Logger log = Logger.getLogger("Minecraft");
 	
@@ -155,8 +154,8 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 		Bukkit.getConsoleSender().sendMessage(Format.FormatStringAll("&8[&eVentureChat&8]&e - Registering Listeners"));
 		// Channel information reference
 		aaInfo = new AliasInfo(this);
-		jfInfo = new JsonFormatInfo(this);
 		
+		JsonFormat.initialize();
 		GuiSlot.initialize();
 		
 		Bukkit.getConsoleSender().sendMessage(Format.FormatStringAll("&8[&eVentureChat&8]&e - Loading player data"));

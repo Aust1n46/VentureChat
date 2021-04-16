@@ -66,7 +66,7 @@ public class Format {
 	 * @return {@link String}
 	 */
 	public static String convertToJson(MineverseChatPlayer sender, String format, String chat) {
-		JsonFormat JSONformat = MineverseChat.jfInfo.getJsonFormat(sender.getJsonFormat());
+		JsonFormat JSONformat = JsonFormat.getJsonFormat(sender.getJsonFormat());
 		String f = escapeJsonChars(format);
 		String c = escapeJsonChars(chat);
 		String json = "[\"\",{\"text\":\"\",\"extra\":[";
