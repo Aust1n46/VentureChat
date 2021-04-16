@@ -35,7 +35,7 @@ import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.utility.MinecraftReflection;
 
 import me.clip.placeholderapi.PlaceholderAPI;
-import mineverse.Aust1n46.chat.alias.AliasInfo;
+import mineverse.Aust1n46.chat.alias.Alias;
 import mineverse.Aust1n46.chat.api.MineverseChatAPI;
 import mineverse.Aust1n46.chat.api.MineverseChatPlayer;
 import mineverse.Aust1n46.chat.api.events.VentureChatEvent;
@@ -78,7 +78,6 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 	private static Field knownCommands;
 
 	// Misc --------------------------------
-	public static AliasInfo aaInfo;
 	public boolean quickchat = true;
 	private static final Logger log = Logger.getLogger("Minecraft");
 	
@@ -152,9 +151,8 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 		Localization.initialize();
 		
 		Bukkit.getConsoleSender().sendMessage(Format.FormatStringAll("&8[&eVentureChat&8]&e - Registering Listeners"));
-		// Channel information reference
-		aaInfo = new AliasInfo(this);
 		
+		Alias.initialize();
 		JsonFormat.initialize();
 		GuiSlot.initialize();
 		
@@ -336,7 +334,7 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 		pluginManager.registerEvents(new Channel(), this);
 		pluginManager.registerEvents(new ChatListener(), this);
 		pluginManager.registerEvents(new SignListener(), this);
-		pluginManager.registerEvents(new CommandListener(aaInfo), this);
+		pluginManager.registerEvents(new CommandListener(), this);
 		pluginManager.registerEvents(new LoginListener(), this);
 	}
 

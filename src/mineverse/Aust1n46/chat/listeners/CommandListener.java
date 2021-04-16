@@ -4,7 +4,6 @@ import java.io.FileNotFoundException;
 
 import mineverse.Aust1n46.chat.MineverseChat;
 import mineverse.Aust1n46.chat.alias.Alias;
-import mineverse.Aust1n46.chat.alias.AliasInfo;
 import mineverse.Aust1n46.chat.api.MineverseChatAPI;
 import mineverse.Aust1n46.chat.api.MineverseChatPlayer;
 import mineverse.Aust1n46.chat.channel.ChatChannel;
@@ -36,11 +35,6 @@ import me.clip.placeholderapi.PlaceholderAPI;
 //in the custom commands such as aliases.
 public class CommandListener implements CommandExecutor, Listener {
 	private MineverseChat plugin = MineverseChat.getInstance();
-	private AliasInfo aa;
-
-	public CommandListener(AliasInfo aa) {
-		this.aa = aa;
-	}
 
 	@EventHandler
 	public void onPlayerCommandPreprocess(PlayerCommandPreprocessEvent event) throws FileNotFoundException {
@@ -81,7 +75,7 @@ public class CommandListener implements CommandExecutor, Listener {
 			Database.writeVentureChat(mcp.getUUID().toString(), mcp.getName(), "Local", "Command_Component", event.getMessage().replace("'", "''"), "Command");
 		}
 
-		for(Alias a : aa.getAliases()) {
+		for(Alias a : Alias.getAliases()) {
 			if(message.toLowerCase().substring(1).split(" ")[0].equals(a.getName().toLowerCase())) {
 				for(String s : a.getComponents()) {
 					if(!mcp.getPlayer().hasPermission(a.getPermission()) && a.hasPermission()) {
