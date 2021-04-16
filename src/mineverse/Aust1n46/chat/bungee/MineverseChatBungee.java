@@ -27,7 +27,10 @@ import net.md_5.bungee.config.ConfigurationProvider;
 import net.md_5.bungee.config.YamlConfiguration;
 import net.md_5.bungee.event.EventHandler;
 
-//This is the main class for the BungeeCord version of the plugin.
+/**
+ * VentureChat Minecraft plugin for BungeeCord.
+ * @author Aust1n46
+ */
 public class MineverseChatBungee extends Plugin implements Listener {
 	private static MineverseChatBungee instance;
 	private static Configuration bungeeConfig;
