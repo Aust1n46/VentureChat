@@ -359,7 +359,7 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 				Bukkit.getServer().getScheduler().runTaskLaterAsynchronously(getInstance(), new Runnable() {
 					@Override
 					public void run() {
-						if(mcp.hasPlayed()) {
+						if(!mcp.isOnline() || mcp.hasPlayed()) {
 							return;
 						}
 						synchronize(mcp, false);
@@ -424,7 +424,9 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 	}
 	
 	public static void sendPluginMessage(ByteArrayOutputStream byteOutStream) {
-		MineverseChatAPI.getOnlineMineverseChatPlayers().iterator().next().getPlayer().sendPluginMessage(getInstance(), PLUGIN_MESSAGING_CHANNEL, byteOutStream.toByteArray());
+		if(MineverseChatAPI.getOnlineMineverseChatPlayers().size() > 0) {
+			MineverseChatAPI.getOnlineMineverseChatPlayers().iterator().next().getPlayer().sendPluginMessage(getInstance(), PLUGIN_MESSAGING_CHANNEL, byteOutStream.toByteArray());
+		}
 	}
 	
 	public static void sendDiscordSRVPluginMessage(String chatChannel, String message) {
@@ -609,8 +611,8 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 					Bukkit.getConsoleSender().sendMessage(Format.FormatStringAll("&8[&eVentureChat&8]&e - Received update..."));
 				}
 				String uuid = msgin.readUTF();
-				MineverseChatPlayer p = MineverseChatAPI.getMineverseChatPlayer(UUID.fromString(uuid));
-				if(p.hasPlayed()) {
+				MineverseChatPlayer p = MineverseChatAPI.getOnlineMineverseChatPlayer(UUID.fromString(uuid));
+				if(p == null || p.hasPlayed()) {
 					return;
 				}
 				for(Object ch : p.getListening().toArray()) {
