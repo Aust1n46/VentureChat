@@ -3,6 +3,7 @@ package mineverse.Aust1n46.chat.channel;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 
 import org.bukkit.ChatColor;
@@ -99,10 +100,10 @@ public class ChatChannel {
 	/**
 	 * Get list of chat channels.
 	 * 
-	 * @return {@link List}&lt{@link ChatChannel}&gt
+	 * @return {@link Collection}&lt{@link ChatChannel}&gt
 	 */
 	public static Collection<ChatChannel> getChatChannels() {
-		return chatChannels.values();
+		return new HashSet<ChatChannel>(chatChannels.values());
 	}
 
 	/**
