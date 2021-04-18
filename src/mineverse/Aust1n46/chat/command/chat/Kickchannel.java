@@ -3,6 +3,7 @@ package mineverse.Aust1n46.chat.command.chat;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 
+import mineverse.Aust1n46.chat.MineverseChat;
 import mineverse.Aust1n46.chat.api.MineverseChatAPI;
 import mineverse.Aust1n46.chat.api.MineverseChatPlayer;
 import mineverse.Aust1n46.chat.channel.ChatChannel;
@@ -42,10 +43,16 @@ public class Kickchannel implements VentureCommand {
 						.replace("{channel_color}", channel.getColor() + "")
 						.replace("{channel_name}", channel.getName()));
 			}
-			else 
+			else {
 				player.setModified(true);
+			}
+			boolean isThereABungeeChannel = channel.getBungee();
 			if(player.getListening().size() == 0) {
+				player.addListening(ChatChannel.getDefaultChannel().getName());
 				player.setCurrentChannel(ChatChannel.getDefaultChannel());
+				if(ChatChannel.getDefaultChannel().getBungee()) {
+					isThereABungeeChannel = true;
+				}
 				if(player.isOnline()) {
 					player.getPlayer().sendMessage(LocalizedMessage.MUST_LISTEN_ONE_CHANNEL.toString());
 					player.getPlayer().sendMessage(LocalizedMessage.SET_CHANNEL.toString()
@@ -54,6 +61,9 @@ public class Kickchannel implements VentureCommand {
 				}
 				else 
 					player.setModified(true);
+			}
+			if(isThereABungeeChannel) {
+				MineverseChat.synchronize(player, true);
 			}
 			return;
 		}

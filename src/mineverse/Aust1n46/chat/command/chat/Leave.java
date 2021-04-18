@@ -32,15 +32,19 @@ public class Leave implements VentureCommand {
 			mcp.getPlayer().sendMessage(LocalizedMessage.LEAVE_CHANNEL.toString()
 					.replace("{channel_color}", channel.getColor() + "")
 					.replace("{channel_name}", channel.getName()));
+			boolean isThereABungeeChannel = channel.getBungee();
 			if(mcp.getListening().size() == 0) {
 				mcp.addListening(ChatChannel.getDefaultChannel().getName());
 				mcp.setCurrentChannel(ChatChannel.getDefaultChannel());
+				if(ChatChannel.getDefaultChannel().getBungee()) {
+					isThereABungeeChannel = true;
+				}
 				mcp.getPlayer().sendMessage(LocalizedMessage.MUST_LISTEN_ONE_CHANNEL.toString());
 				mcp.getPlayer().sendMessage(LocalizedMessage.SET_CHANNEL.toString()
 						.replace("{channel_color}", ChatColor.valueOf(ChatChannel.getDefaultColor().toUpperCase()) + "")
 						.replace("{channel_name}", ChatChannel.getDefaultChannel().getName()));
 			}
-			if(channel.getBungee()) {
+			if(isThereABungeeChannel) {
 				MineverseChat.synchronize(mcp, true);
 			}
 			return;

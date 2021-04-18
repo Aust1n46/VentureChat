@@ -4,6 +4,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import mineverse.Aust1n46.chat.MineverseChat;
 import mineverse.Aust1n46.chat.api.MineverseChatAPI;
 import mineverse.Aust1n46.chat.api.MineverseChatPlayer;
 import mineverse.Aust1n46.chat.channel.ChatChannel;
@@ -37,6 +38,9 @@ public class Listen implements VentureCommand {
 			mcp.getPlayer().sendMessage(LocalizedMessage.LISTEN_CHANNEL.toString()
 			.replace("{channel_color}", channel.getColor() + "")
 			.replace("{channel_name}", channel.getName()));
+			if(channel.getBungee()) {
+				MineverseChat.synchronize(mcp, true);
+			}
 			return;
 		}
 		mcp.getPlayer().sendMessage(LocalizedMessage.COMMAND_INVALID_ARGUMENTS.toString()

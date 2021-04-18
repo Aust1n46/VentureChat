@@ -2,6 +2,7 @@ package mineverse.Aust1n46.chat.command.chat;
 
 import org.bukkit.command.CommandSender;
 
+import mineverse.Aust1n46.chat.MineverseChat;
 import mineverse.Aust1n46.chat.api.MineverseChatAPI;
 import mineverse.Aust1n46.chat.api.MineverseChatPlayer;
 import mineverse.Aust1n46.chat.channel.ChatChannel;
@@ -70,8 +71,12 @@ public class Setchannel implements VentureCommand {
 				player.getPlayer().sendMessage(LocalizedMessage.SET_CHANNEL.toString()
 						.replace("{channel_color}", channel.getColor() + "")
 						.replace("{channel_name}", channel.getName()));
-			else 
+			else {
 				player.setModified(true);
+			}
+			if(channel.getBungee()) {
+				MineverseChat.synchronize(player, true);
+			}
 			return;
 		}
 		sender.sendMessage(LocalizedMessage.COMMAND_NO_PERMISSION.toString());

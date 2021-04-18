@@ -3,6 +3,7 @@ package mineverse.Aust1n46.chat.command.chat;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 
+import mineverse.Aust1n46.chat.MineverseChat;
 import mineverse.Aust1n46.chat.api.MineverseChatAPI;
 import mineverse.Aust1n46.chat.api.MineverseChatPlayer;
 import mineverse.Aust1n46.chat.channel.ChatChannel;
@@ -26,11 +27,26 @@ public class Kickchannelall implements VentureCommand {
 						.replace("{args}", args[0]));
 				return;
 			}
+			boolean isThereABungeeChannel = false;
+			for(String channel : player.getListening()) {
+				if(ChatChannel.isChannel(channel)) {
+					ChatChannel chatChannelObj = ChatChannel.getChannel(channel);
+					if(chatChannelObj.getBungee()) {
+						isThereABungeeChannel = true;
+					}
+				}
+			}
 			player.clearListening();
 			sender.sendMessage(LocalizedMessage.KICK_CHANNEL_ALL_SENDER.toString()
 					.replace("{player}", player.getName()));
 			player.addListening(ChatChannel.getDefaultChannel().getName());
 			player.setCurrentChannel(ChatChannel.getDefaultChannel());
+			if(ChatChannel.getDefaultChannel().getBungee()) {
+				isThereABungeeChannel = true;
+			}
+			if(isThereABungeeChannel) {
+				MineverseChat.synchronize(player, true);
+			}
 			if(player.isOnline()) {
 				player.getPlayer().sendMessage(LocalizedMessage.KICK_CHANNEL_ALL_PLAYER.toString());
 				player.getPlayer().sendMessage(LocalizedMessage.MUST_LISTEN_ONE_CHANNEL.toString());
@@ -38,8 +54,9 @@ public class Kickchannelall implements VentureCommand {
 						.replace("{channel_color}", ChatColor.valueOf(ChatChannel.getDefaultColor().toUpperCase()) + "")
 						.replace("{channel_name}", ChatChannel.getDefaultChannel().getName()));
 			}
-			else 
+			else {
 				player.setModified(true);
+			}
 			return;
 		}
 		sender.sendMessage(LocalizedMessage.COMMAND_NO_PERMISSION.toString());

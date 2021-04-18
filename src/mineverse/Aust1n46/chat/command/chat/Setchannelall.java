@@ -2,6 +2,7 @@ package mineverse.Aust1n46.chat.command.chat;
 
 import org.bukkit.command.CommandSender;
 
+import mineverse.Aust1n46.chat.MineverseChat;
 import mineverse.Aust1n46.chat.api.MineverseChatAPI;
 import mineverse.Aust1n46.chat.api.MineverseChatPlayer;
 import mineverse.Aust1n46.chat.channel.ChatChannel;
@@ -25,6 +26,7 @@ public class Setchannelall implements VentureCommand {
 						.replace("{args}", args[0]));
 				return;
 			}
+			boolean isThereABungeeChannel = false;
 			for(ChatChannel channel : ChatChannel.getChatChannels()) {
 				if(channel.hasPermission()) {
 					if(!player.isOnline()) {
@@ -41,6 +43,9 @@ public class Setchannelall implements VentureCommand {
 				else {
 					player.addListening(channel.getName());
 				}
+				if(channel.getBungee()) {
+					isThereABungeeChannel = true;
+				}
 			}
 			sender.sendMessage(LocalizedMessage.SET_CHANNEL_ALL_SENDER.toString()
 					.replace("{player}", player.getName()));
@@ -48,6 +53,9 @@ public class Setchannelall implements VentureCommand {
 				player.getPlayer().sendMessage(LocalizedMessage.SET_CHANNEL_ALL_PLAYER.toString());
 			else
 				player.setModified(true);
+			if(isThereABungeeChannel) {
+				MineverseChat.synchronize(player, true);
+			}
 			return;
 		}
 		sender.sendMessage(LocalizedMessage.COMMAND_NO_PERMISSION.toString());
