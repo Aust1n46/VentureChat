@@ -10,7 +10,7 @@ import mineverse.Aust1n46.chat.MineverseChat;
 
 public class GuiSlot {
 	private static MineverseChat plugin = MineverseChat.getInstance();
-	private static List<GuiSlot> guiSlots = new ArrayList<GuiSlot>();
+	private static List<GuiSlot> guiSlots;
 
 	private String text;
 	private String command;
@@ -31,6 +31,7 @@ public class GuiSlot {
 	}
 
 	public static void initialize() {
+		guiSlots  = new ArrayList<GuiSlot>();
 		ConfigurationSection cs = plugin.getConfig().getConfigurationSection("venturegui");
 		for (String key : cs.getKeys(false)) {
 			String name = key;

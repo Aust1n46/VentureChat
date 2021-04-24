@@ -10,7 +10,7 @@ import mineverse.Aust1n46.chat.MineverseChat;
 
 public class JsonFormat {
 	private static MineverseChat plugin = MineverseChat.getInstance();
-	private static HashMap<String, JsonFormat> jsonFormats = new HashMap<String, JsonFormat>();
+	private static HashMap<String, JsonFormat> jsonFormats;
 	
 	private List<String> hoverTextName;
 	private List<String> hoverTextPrefix;
@@ -39,6 +39,7 @@ public class JsonFormat {
 	}
 	
 	public static void initialize() {
+		jsonFormats = new HashMap<String, JsonFormat>();
 		ConfigurationSection cs = plugin.getConfig().getConfigurationSection("jsonformatting");
 		for(String key : cs.getKeys(false)) {
 			String name = key;

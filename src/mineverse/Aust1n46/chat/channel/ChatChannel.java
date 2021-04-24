@@ -30,7 +30,7 @@ public class ChatChannel {
 	private static ChatChannel[] channels;
 	
 	private static String defaultColor;
-	private static HashMap<String, ChatChannel> chatChannels = new HashMap<String, ChatChannel>();
+	private static HashMap<String, ChatChannel> chatChannels;
 
 	private String name;
 	private String permission;
@@ -51,6 +51,7 @@ public class ChatChannel {
 	 * Read chat channels from config file and initialize channel array.
 	 */
 	public static void initialize(boolean aliasesRegisteredAsCommands) {
+		chatChannels = new HashMap<String, ChatChannel>();
 		ChatChannel.aliasesRegisteredAsCommands = aliasesRegisteredAsCommands;
 		ConfigurationSection cs = plugin.getConfig().getConfigurationSection("channels");
 		int len = (cs.getKeys(false)).size();

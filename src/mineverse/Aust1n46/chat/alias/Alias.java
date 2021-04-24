@@ -9,7 +9,7 @@ import mineverse.Aust1n46.chat.MineverseChat;
 
 public class Alias {
 	private static MineverseChat plugin = MineverseChat.getInstance();
-	private static List<Alias> aliases = new ArrayList<Alias>();
+	private static List<Alias> aliases;
 	
 	private String name;
 	private int arguments;
@@ -24,6 +24,7 @@ public class Alias {
 	}
 	
 	public static void initialize() {
+		aliases = new ArrayList<Alias>();
 		ConfigurationSection cs = plugin.getConfig().getConfigurationSection("alias");
 		for(String key : cs.getKeys(false)) {
 			String name = key;
