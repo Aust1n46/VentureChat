@@ -244,31 +244,6 @@ alias:
     permissions: None
     components:
     - 'Message: &aThis is our website: www.site.net'
-  tell:
-    arguments: 0
-    permissions: None
-    components:
-    - 'Command: /vtell$'
-  whisper:
-    arguments: 0
-    permissions: None
-    components:
-    - 'Command: /vwhisper$'
-  w:
-    arguments: 0
-    permissions: None
-    components:
-    - 'Command: /vwhisper$' 
-  msg:
-    arguments: 0
-    permissions: None
-    components:
-    - 'Command: /vmessage$' 
-  message:
-    arguments: 0
-    permissions: None
-    components:
-    - 'Command: /vmessage$'
   
 # Enables the creation of special Towny channels: Town and Nation
 # To create these channels, simply name two channels below "Town" and "Nation"
