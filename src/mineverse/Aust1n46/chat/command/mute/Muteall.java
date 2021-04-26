@@ -8,6 +8,7 @@ import mineverse.Aust1n46.chat.api.MineverseChatPlayer;
 import mineverse.Aust1n46.chat.channel.ChatChannel;
 import mineverse.Aust1n46.chat.command.VentureCommand;
 import mineverse.Aust1n46.chat.localization.LocalizedMessage;
+import mineverse.Aust1n46.chat.utilities.Format;
 
 public class Muteall implements VentureCommand {
 
@@ -30,9 +31,9 @@ public class Muteall implements VentureCommand {
 			if(args.length > 1) {
 				StringBuilder reasonBuilder = new StringBuilder();
 				for(int a = 1; a < args.length; a ++) {
-					reasonBuilder.append(args[a]);
+					reasonBuilder.append(args[a] + " ");
 				}
-				reason = reasonBuilder.toString();
+				reason = Format.FormatStringAll(reasonBuilder.toString().trim());
 			}
 			if(reason.isEmpty()) {
 				boolean bungee = false;

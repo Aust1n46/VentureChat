@@ -51,9 +51,9 @@ public class Mute implements VentureCommand {
 						}
 						StringBuilder reasonBuilder = new StringBuilder();
 						for(int a = reasonStartPos; a < args.length; a ++) {
-							reasonBuilder.append(args[a]);
+							reasonBuilder.append(args[a] + " ");
 						}
-						reason = reasonBuilder.toString();
+						reason = Format.FormatStringAll(reasonBuilder.toString().trim());
 					}
 					if(channel.getBungee()) {
 						sendBungeeCordMute(sender, args[1], channel, time, reason);
