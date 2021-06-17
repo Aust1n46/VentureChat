@@ -7,8 +7,6 @@ import mineverse.Aust1n46.chat.api.MineverseChatPlayer;
 import mineverse.Aust1n46.chat.utilities.Format;
 import mineverse.Aust1n46.chat.versions.VersionHandler;
 
-import java.lang.reflect.Field;
-
 import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.events.ListenerPriority;
 import com.comphenix.protocol.events.PacketAdapter;
@@ -41,24 +39,22 @@ public class PacketListener extends PacketAdapter {
 			return;
 		}
 		
-		Field posField = MineverseChat.getPosField();
-		if(posField == null) {
-			return;
-		}
-		
 		try {
-			if(VersionHandler.is1_7_2() || VersionHandler.is1_7_10() || VersionHandler.is1_7_9()) {
-				if(!(((boolean) posField.get(packet.getHandle())))) {
+			if(VersionHandler.is1_7()) {
+				packet.getBooleans().getField(0).setAccessible(true);
+				if(!((boolean) packet.getBooleans().getField(0).get(packet.getHandle()))) {
 					return;
 				}
 			}
-			else if(VersionHandler.is1_8() || VersionHandler.is1_9() || VersionHandler.is1_10() || VersionHandler.is1_11()){
-				if(((Byte) posField.get(packet.getHandle())).intValue() > 1) {
+			else if(VersionHandler.is1_8() || VersionHandler.is1_9() || VersionHandler.is1_10() || VersionHandler.is1_11()) {
+				packet.getBytes().getField(0).setAccessible(true);
+				if(((Byte) packet.getBytes().getField(0).get(packet.getHandle())).intValue() > 1) {
 					return;
 				}
 			}
 			else {
-				if(((Object) posField.get(packet.getHandle())) == MineverseChat.getChatMessageType().getEnumConstants()[2]) {
+				packet.getChatTypes().getField(0).setAccessible(true);
+				if(packet.getChatTypes().getField(0).get(packet.getHandle()) == packet.getChatTypes().getField(0).getType().getEnumConstants()[2]) {
 					return;
 				}
 			}

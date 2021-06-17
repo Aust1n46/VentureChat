@@ -492,8 +492,8 @@ public class Format {
 	
 	@SuppressWarnings("unchecked")
 	public static String toColoredText(Object o, Class<?> c) {
-		if (VersionHandler.is1_7_10()) {
-			return "This method is not currently supported in 1.7";
+		if (VersionHandler.is1_7()) {
+			return "\"extra\":[{\"text\":\"Hover to see original message is not currently supported in 1.7\",\"color\":\"red\"}]";
 		} 
 		List<Object> finalList = new ArrayList<>();
 		StringBuilder stringbuilder = new StringBuilder();
@@ -521,7 +521,7 @@ public class Format {
 					stringbuilder.append(jsonObject.toJSONString() + ",");
 				}
 				catch(Exception e) {
-					return "Something went wrong. Could not access color.";
+					return "\"extra\":[{\"text\":\"Something went wrong. Could not access color.\",\"color\":\"red\"}]";
 				}
 			}
 		} catch (Exception e) {
@@ -541,7 +541,7 @@ public class Format {
 		try {
 			splitComponents(finalList, o, c);
 			for (Object component : finalList) {
-				if (VersionHandler.is1_7_10()) {
+				if (VersionHandler.is1_7()) {
 					stringbuilder.append((String) component.getClass().getMethod("e").invoke(component));
 				} else {
 					stringbuilder.append((String) component.getClass().getMethod("getText").invoke(component));
@@ -915,7 +915,7 @@ public class Format {
 	}
 	
 	private static Sound getDefaultMessageSound() {
-		if(VersionHandler.is1_8() || VersionHandler.is1_7_10() || VersionHandler.is1_7_2() || VersionHandler.is1_7_9()) {
+		if(VersionHandler.is1_7() || VersionHandler.is1_8()) {
 			return Sound.valueOf(DEFAULT_LEGACY_MESSAGE_SOUND);
 		}
 		else {

@@ -236,7 +236,7 @@ public class CommandListener implements CommandExecutor, Listener {
 		SkullMeta skullMeta = (SkullMeta) skull.getItemMeta();
 		ChatChannel channel = ChatChannel.getChannel(ChatColor.stripColor(skullMeta.getLore().get(0)).replace("Channel: ", ""));
 		int hash = Integer.parseInt(ChatColor.stripColor(skullMeta.getLore().get(1).replace("Hash: ", "")));
-		if(VersionHandler.is1_7_10()) {
+		if(VersionHandler.is1_7()) {
 			if(item.getType() == Material.BEDROCK) {
 				mcp.getPlayer().closeInventory();
 			}

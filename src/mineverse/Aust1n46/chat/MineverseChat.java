@@ -6,19 +6,15 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.File;
 import java.io.IOException;
-import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.command.Command;
-import org.bukkit.command.SimpleCommandMap;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.RegisteredServiceProvider;
@@ -28,7 +24,6 @@ import org.bukkit.scheduler.BukkitScheduler;
 
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.events.PacketContainer;
-import com.comphenix.protocol.utility.MinecraftReflection;
 
 import me.clip.placeholderapi.PlaceholderAPI;
 import mineverse.Aust1n46.chat.alias.Alias;
@@ -52,7 +47,6 @@ import mineverse.Aust1n46.chat.listeners.SignListener;
 import mineverse.Aust1n46.chat.localization.Localization;
 import mineverse.Aust1n46.chat.localization.LocalizedMessage;
 import mineverse.Aust1n46.chat.utilities.Format;
-import mineverse.Aust1n46.chat.versions.VersionHandler;
 import net.milkbowl.vault.chat.Chat;
 import net.milkbowl.vault.permission.Permission;
 
@@ -82,12 +76,6 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 	// Vault
 	private static Permission permission = null;
 	private static Chat chat = null;
-	
-	// NMS
-	private static Field posField;
-	private static Class<?> chatMessageType;
-	private static Field commandMap;
-	private static Field knownCommands;
 	
 	@Override
 	public void onEnable() {
@@ -153,7 +141,6 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 
 		registerListeners();
 		Bukkit.getConsoleSender().sendMessage(Format.FormatStringAll("&8[&eVentureChat&8]&e - Registering Listeners"));
-		loadNMS();
 		Bukkit.getConsoleSender().sendMessage(Format.FormatStringAll("&8[&eVentureChat&8]&e - Attaching to Executors"));
 		
 		Bukkit.getConsoleSender().sendMessage(Format.FormatStringAll("&8[&eVentureChat&8]&e - Establishing BungeeCord"));
@@ -240,18 +227,6 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 			}
 		}, 0L, 60L); // three second interval
 	}
-
-	@SuppressWarnings("unused")
-	private void loadCommandMap() {
-		try {
-			commandMap = Bukkit.getServer().getClass().getDeclaredField("commandMap");
-			commandMap.setAccessible(true);
-			knownCommands = SimpleCommandMap.class.getDeclaredField("knownCommands");
-			knownCommands.setAccessible(true);
-		}
-		catch(Exception e) {
-		}
-	}
 	
 	private void registerListeners() {
 		PluginManager pluginManager = getServer().getPluginManager();
@@ -262,43 +237,6 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 		pluginManager.registerEvents(new LoginListener(), this);
 		ProtocolLibrary.getProtocolManager().addPacketListener(new PacketListener());
 	}
-	
-	private void loadNMS() {	
-		try {
-			posField = MinecraftReflection.getMinecraftClass("PacketPlayOutChat").getDeclaredField("b");
-			posField.setAccessible(true);
-			
-			
-			//MineverseChat.messageMethod = MinecraftReflection.getMinecraftClass("ChatBaseComponent").getDeclaredMethod("getString");
-			//MineverseChat.messageMethod.setAccessible(true);
-		}
-		catch(Exception e) {
-			e.printStackTrace();
-		}
-		if(!VersionHandler.is1_7_10() && !VersionHandler.is1_8() && !VersionHandler.is1_9() && !VersionHandler.is1_10() && !VersionHandler.is1_11()) {
-			try {
-				chatMessageType = getNMSClass("ChatMessageType");
-			}
-			catch(Exception e) {
-				e.printStackTrace();
-			}
-		}
-	}
-
-	private Class<?> getNMSClass(String name) {
-		try {
-			return Class.forName("net.minecraft.server." + getVersion() + "." + name);
-		}
-		catch(ClassNotFoundException e) {
-			e.printStackTrace();
-			return null;
-		}
-	}
-	
-	private String getVersion() {
-		return Bukkit.getServer().getClass().getPackage().getName().split("\\.")[3];
-	}
-	
 	
 	private boolean setupPermissions() {
 		RegisteredServiceProvider<Permission> permissionProvider = getServer().getServicesManager().getRegistration(net.milkbowl.vault.permission.Permission.class);
@@ -318,23 +256,6 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 	
 	public static MineverseChat getInstance() {
 		return getPlugin(MineverseChat.class);	
-	}
-	
-	@SuppressWarnings("unchecked")
-	public static void unregister(String name) {
-		try {
-			((Map<String, Command>) knownCommands.get((SimpleCommandMap) commandMap.get(Bukkit.getServer()))).remove(name);
-		}
-		catch(Exception e) {
-		}
-	}
-	
-	public static Field getPosField() {
-		return posField;
-	}
-	
-	public static Class<?> getChatMessageType() {
-		return chatMessageType;
 	}
 	
 	public static Chat getVaultChat() {

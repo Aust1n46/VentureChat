@@ -76,7 +76,7 @@ public class VentureChatGui implements VentureCommand {
 		Inventory inv = Bukkit.createInventory(null, this.getSlots(), "VentureChat: " + target.getName() + " GUI");
 		ItemStack close = null;
 		ItemStack skull = null;
-		if(VersionHandler.is1_7_10()) {
+		if(VersionHandler.is1_7()) {
 			close = new ItemStack(Material.BEDROCK);
 		}
 		else {
@@ -135,7 +135,7 @@ public class VentureChatGui implements VentureCommand {
 		Inventory inv = Bukkit.createInventory(null, this.getSlots(), "VentureChat: Discord_Message GUI");
 		ItemStack close = null;
 		ItemStack skull = null;
-		if(VersionHandler.is1_7_10()) {
+		if(VersionHandler.is1_7()) {
 			close = new ItemStack(Material.BEDROCK);
 		}
 		else {
