@@ -1,0 +1,151 @@
+mute:
+  usage: /mute [playername] [channel]
+  aliases: [mp]
+  
+unmute:
+  usage: /unmute [playername] [channel]
+  aliases: [ump]
+       
+tell:
+  usage: /tell [playername] [msg]
+  aliases: []
+       
+ignore:
+  usage: /ignore [playername] or /ignore ? for more information
+  aliases: []
+       
+whisper:
+  usage: /whisper [playername] [msg]
+  aliases: [w]
+       
+channel:
+  usage: /channel [channelname]
+  aliases: [ch]
+       
+leave:
+  usage: /leave [channelname]
+  aliases: [lev]
+        
+join:
+  usage: /join [channelname]
+  aliases: []
+        
+chlist:
+  usage: /chlist
+  aliases: [chl]
+        
+chwho:
+  usage: /chwho [channelname]
+  aliases: [chw]
+        
+setchannel:
+  usage: /setchannel [playername] [channel]
+  aliases: [sc]
+        
+kickchannel:
+  usage: /kickchannel [playername] [channel]
+  aliases: [kc]
+        
+message:
+  usage: /message [playername] [msg]
+  aliases: [msg,pm]
+  
+muteall:
+  usage: /muteall [playername]
+  aliases: [mpa]
+        
+unmuteall:
+  usage: /unmuteall [playername]
+  aliases: [umpa]
+        
+kickchannelall:
+  usage: /kickchannelall [playername]
+  aliases: [kca]
+        
+setchannelall:
+  usage: /setchannelall [playername]
+  aliases: [sca]
+        
+force:
+  usage: /force [playername] [message]
+  aliases: [for]
+ 
+forceall:
+  usage: /forceall [message]
+  aliases: [fora]
+        
+listen:
+  usage: /listen [channel]
+  aliases: [lis]
+       
+chatreload:
+  usage: /chatreload
+  aliases: [cr]
+        
+afk:
+  usage: /afk
+  aliases: []
+        
+reply:
+  usage: /reply [msg]
+  aliases: [r]
+     
+spy:
+  usage: /spy
+  aliases: []
+       
+commandspy:
+  usage: /commandspy
+  aliases: [comspy]
+        
+chatinfo:
+  usage: /chatinfo
+  aliases: [ci]
+       
+channelinfo:
+  usage: /channelinfo
+  aliases: [chi]
+        
+mineversechat:
+  usage: /mineversechat
+  aliases: [mc]
+        
+me:
+  usage: /me
+  aliases: []
+        
+filter:
+  usage: /filter
+  aliases: [fil]
+        
+broadcast:
+  usage: /broadcast [msg]
+  aliases: [bc]
+        
+commandblock:
+  usage: /commandblock [player] [command]
+  aliases: [cb]
+        
+nick:
+  usage: /nick {player} [nickname]
+  aliases: []
+        
+party:
+  usage: /party help
+  aliases: [p,chatparty,cp]
+       
+edit:
+  usage: /edit help
+  aliases: []
+        
+clearchat:
+  usage: /clearchat
+  aliases: [cc]
+        
+notifications:
+  usage: /notifications
+  aliases: [notify]
+        
+mail:
+  usage: /mail help
+  aliases: []
