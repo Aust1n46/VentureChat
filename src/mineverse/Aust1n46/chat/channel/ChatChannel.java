@@ -21,16 +21,16 @@ import mineverse.Aust1n46.chat.utilities.Format;
 public class ChatChannel {
 	private static final String PERMISSION_PREFIX = "venturechat.";
 	private static final String NO_PERMISSIONS = "venturechat.none";
+	
+	private static boolean aliasesRegisteredAsCommands;
 
 	private static MineverseChat plugin = MineverseChat.getInstance();
 	private static ChatChannel defaultChatChannel;
-	private static boolean aliasesRegisteredAsCommands;
+	private static String defaultColor;
+	private static HashMap<String, ChatChannel> chatChannels;
 	
 	@Deprecated
 	private static ChatChannel[] channels;
-	
-	private static String defaultColor;
-	private static HashMap<String, ChatChannel> chatChannels;
 
 	private String name;
 	private String permission;
