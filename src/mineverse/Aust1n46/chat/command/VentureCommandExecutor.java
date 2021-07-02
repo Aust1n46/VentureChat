@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.bukkit.command.Command;
+import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabExecutor;
 
@@ -104,31 +105,38 @@ public class VentureCommandExecutor implements TabExecutor {
 		commands.put("messagetoggle", new MessageToggle());
 		commands.put("bungeetoggle", new BungeeToggle());
 		for(String command : commands.keySet()) {
-			plugin.getCommand(command).setExecutor(commandExecutor);
+			registerCommand(command, commandExecutor);
 		}
 		
 		plugin.getServer().getScheduler().runTaskLater(plugin, () -> {
 			VentureCommand reply = new Reply();
 			commands.put("reply", reply);
 			commands.put("r", reply);
-			plugin.getCommand("reply").setExecutor(commandExecutor);
-			plugin.getCommand("r").setExecutor(commandExecutor);
+			registerCommand("reply", commandExecutor);
+			registerCommand("r", commandExecutor);
 			
 			commands.put("mute", new Mute());
 			commands.put("muteall", new Muteall());
 			commands.put("unmute", new Unmute());
 			commands.put("unmuteall", new Unmuteall());
-			plugin.getCommand("mute").setExecutor(commandExecutor);
-			plugin.getCommand("muteall").setExecutor(commandExecutor);
-			plugin.getCommand("unmute").setExecutor(commandExecutor);
-			plugin.getCommand("unmuteall").setExecutor(commandExecutor);
+			registerCommand("mute", commandExecutor);
+			registerCommand("muteall", commandExecutor);
+			registerCommand("unmute", commandExecutor);
+			registerCommand("unmuteall", commandExecutor);
 			
 			MessageCommandExecutor messageCommandExecutor = new MessageCommandExecutor();
-			plugin.getCommand("message").setExecutor(messageCommandExecutor);
-			plugin.getCommand("msg").setExecutor(messageCommandExecutor);
-			plugin.getCommand("tell").setExecutor(messageCommandExecutor);
-			plugin.getCommand("whisper").setExecutor(messageCommandExecutor);
-			plugin.getCommand("ignore").setExecutor(new IgnoreCommandExecutor());
+			registerCommand("message", messageCommandExecutor);
+			registerCommand("msg", messageCommandExecutor);
+			registerCommand("tell", messageCommandExecutor);
+			registerCommand("whisper", messageCommandExecutor);
+			
+			registerCommand("ignore", new IgnoreCommandExecutor());
 		}, 0);
+	}
+	
+	private static void registerCommand(String command, CommandExecutor commandExecutor) {
+		if(plugin.getCommand(command) != null) {
+			plugin.getCommand(command).setExecutor(commandExecutor);
+		}
 	}
 }
