@@ -902,8 +902,11 @@ public class Format {
 	
 	public static void playMessageSound(MineverseChatPlayer mcp) {
 		Player player = mcp.getPlayer();
-		Sound messageSound = getSound(getInstance().getConfig().getString("message_sound", DEFAULT_MESSAGE_SOUND));
-		player.playSound(player.getLocation(), messageSound, 1, 0);
+		String soundName = getInstance().getConfig().getString("message_sound", DEFAULT_MESSAGE_SOUND);
+		if(!soundName.equalsIgnoreCase("None")) {
+			Sound messageSound = getSound(soundName);
+			player.playSound(player.getLocation(), messageSound, 1, 0);
+		}
 	}
 	
 	private static Sound getSound(String soundName) {
