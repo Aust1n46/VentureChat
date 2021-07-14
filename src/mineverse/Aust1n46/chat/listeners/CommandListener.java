@@ -13,6 +13,7 @@ import mineverse.Aust1n46.chat.localization.LocalizedMessage;
 import mineverse.Aust1n46.chat.utilities.Format;
 import mineverse.Aust1n46.chat.versions.VersionHandler;
 
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.command.Command;
@@ -38,6 +39,10 @@ public class CommandListener implements CommandExecutor, Listener {
 
 	@EventHandler
 	public void onPlayerCommandPreprocess(PlayerCommandPreprocessEvent event) throws FileNotFoundException {
+		if(event.getPlayer() == null) {
+			Bukkit.getConsoleSender().sendMessage(Format.FormatStringAll("&8[&eVentureChat&8]&c - Event.getPlayer() returned null in PlayerCommandPreprocessEvent"));	
+			return;
+		}
 		ConfigurationSection cs = plugin.getConfig().getConfigurationSection("commandspy");
 		Boolean wec = cs.getBoolean("worldeditcommands", true);
 		MineverseChatPlayer mcp = MineverseChatAPI.getOnlineMineverseChatPlayer(event.getPlayer());
