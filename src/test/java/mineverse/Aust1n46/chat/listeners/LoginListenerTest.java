@@ -19,7 +19,6 @@ import mineverse.Aust1n46.chat.MineverseChat;
 import mineverse.Aust1n46.chat.api.MineverseChatAPI;
 import mineverse.Aust1n46.chat.api.MineverseChatPlayer;
 import mineverse.Aust1n46.chat.database.PlayerData;
-import mineverse.Aust1n46.chat.listeners.LoginListener;;
 
 /**
  * Tests {@link LoginListener}.
