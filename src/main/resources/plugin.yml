@@ -1,5 +1,4 @@
 name: VentureChat
-<<<<<<< HEAD:src/main/resources/plugin.yml
 version: ${project.version}
 api-version: 1.13
 main: mineverse.Aust1n46.chat.MineverseChat
@@ -8,7 +7,6 @@ softdepend: [Towny, Factions, Heroes]
 author: Aust1n46
 website: https://bitbucket.org/Aust1n46/venturechat/
 description: #1 Channels Chat plugin! Spigot + Bungee. Supports PlaceholderAPI + JSON formatting. Moderation GUI!
-commands:
     mute:
         usage: /mute [playername] [channel]
         aliases: [mp,vmute]
@@ -18,26 +16,6 @@ commands:
         usage: /unmute [playername] [channel]
         aliases: [ump,vunmute]
         description: Unmutes player in a channel so they can talk again.
-=======
-version: 2.23.3
-api-version: 1.13
-main: mineverse.Aust1n46.chat.MineverseChat
-depend: [Vault, ProtocolLib, PlaceholderAPI]
-softdepend: [Towny, Factions, Heroes]
-author: Aust1n46
-website: https://bitbucket.org/Aust1n46/venturechat/
-description: #1 Channels Chat plugin! Spigot + Bungee. Supports PlaceholderAPI + JSON formatting. Moderation GUI!
-commands:
-    mute:
-        usage: /mute [playername] [channel]
-        aliases: [mp,vmute]
-        description: Mutes player in a channel so they cannot talk.
-        permission-message: You don't have <permission>
-    unmute:
-        usage: /unmute [playername] [channel]
-        aliases: [ump,vunmute]
-        description: Unmutes player in a channel so they can talk again.
->>>>>>> master:src/plugin.yml
         permission-message: You don't have <permission>
     msg:
         usage: /msg [playername] [msg]
