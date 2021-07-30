@@ -7,6 +7,7 @@ softdepend: [Towny, Factions, Heroes]
 author: Aust1n46
 website: https://bitbucket.org/Aust1n46/venturechat/
 description: #1 Channels Chat plugin! Spigot + Bungee. Supports PlaceholderAPI + JSON formatting. Moderation GUI!
+commands:
     mute:
         usage: /mute [playername] [channel]
         aliases: [mp,vmute]
