@@ -12,3 +12,5 @@ buildNumber.properties
 
 # IDE
 .idea/
+/.classpath
+/.project
