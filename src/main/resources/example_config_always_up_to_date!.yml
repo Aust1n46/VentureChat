@@ -100,6 +100,7 @@ unmuteinterval: 60
 bungeecordmessaging: false
 
 # Sound for message notification
+# Enter 'None' to disable the sound
 message_sound: ENTITY_PLAYER_LEVELUP
 
 # This will allow vanished players to be exempt from being sent private messages, and will act as if they aren't online
