@@ -1,0 +1,108 @@
+Outdated###Add per color and format code permissions
+Done###Add separate hex color permission
+Done###Add easy hex format to placeholders and prefixes
+Done###Potentially allow color format '&#ffffff'
+Done###Auto remove spy and commandspy flags when permissions are removed
+
+Done###Add PlaceholderAPI placeholders to /message
+Done###Make spying not show your own messages
+Done###Add tab completion across bungee
+
+Done###Commit towny changes
+Done###Add permission check for ranged spy
+
+Done###Overhaul player data system
+Done###Use more efficient data structures
+
+Done###Check error on player leaving mcp = null???
+
+Done###Check null player data on reload config.  Create new MCP data profile if MCP == null because of failed load attempt of player data file.
+
+Done###Fix and update timed muting system
+Done###Overhaul timed mute system
+Done###Add reason message to mute
+Done###Add tab completion for channels to mute command
+Done###Overhaul muting over bungee
+
+Done###Fix sync delay issue. Buffer the call or something else.
+
+Done###Look into change username not working with nickname
+
+Done###Update usage of Spigot.broadcastToServer (doesn't support URL's)
+
+Done###Add configurable message chime/sound.
+
+Done###Add override permission for commandspy.
+Done###Add override permission for spy over Bungee.
+
+Done###Fix SSL certificate warnings in MySQL database.
+
+Done###Add multiple color code support to GUI icon
+Done###Add hex color support to message remover configuration
+
+Done###Fix /chatreload
+
+
+
+
+
+OnHold###Add partial name/nickname compatibility for private messaging
+Add JSON to private messaging
+Add toggle support for bungee messaging
+Add configuration for /reply to be either last player who sent you a message or last player you messaged
+Add configuration for spying on private conversation join/leave
+Possible???Make player name matching not case sensitive for private messaging
+Add vanish support for BungeeCord private messaging.
+Add partial name recognition for messaging
+
+Add chime on name mention in chat
+
+Add localization for /setnickname command
+Add localization for /channelinfo command
+
+Look into SQL database losing connection
+
+Update out dated party system
+
+Send message to channel from console
+
+Add config option to disable chat logging in the console
+
+Make filters not case insensitive
+Update filter system
+
+Add GUI for /channel to join channels
+Add configurable channel icon block/item
+
+Add flag for "always_joined" channel
+Rework flag "autojoin" to only join on player's first ever login to the server
+
+Make message remover work with Spigot API Chat
+
+Add spy command for Towny and Factions channels
+Add alliance channel for Towny
+
+Add support for Velocity proxy
+
+Add hover for channels to show who is received it.
+
+Command blacklist for commandspy
+
+Enhanced antispam/anticaps
+
+Make moderation GUI button work on messages from Bungee from players that have never played on receiving server
+
+Make message remover admin hover not show GUI icon
+Add message remover support back to 1.7
+
+Add list to disable commands in the config.
+
+Add toggle for moderation gui
+
+Add cost to chat in a channel through Vault?
+
+Add custom JSON hovers to any placeholder
+
+Add clans channel from SimpleClans
+
+Add check for missing default channel
