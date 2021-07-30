@@ -1,4 +1,4 @@
 name: VentureChat
 main: mineverse.Aust1n46.chat.bungee.MineverseChatBungee
-version: 2.23.3
+version: ${project.version}
 author: Aust1n46
