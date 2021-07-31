@@ -163,8 +163,10 @@ public class Format {
 						hover += Format.FormatStringAll(st) + "\n";
 					}
 				}
-				hover = Format.FormatStringAll(
-						PlaceholderAPI.setBracketPlaceholders(icp.getPlayer(), hover.substring(0, hover.length() - 1)));
+				if(!hover.isEmpty()) {
+					hover = Format.FormatStringAll(
+							PlaceholderAPI.setBracketPlaceholders(icp.getPlayer(), hover.substring(0, hover.length() - 1)));
+				}
 				temp += convertToJsonColors(lastCode + placeholder,
 						",\"clickEvent\":{\"action\":\"" + action + "\",\"value\":\"" + text
 								+ "\"},\"hoverEvent\":{\"action\":\"show_text\",\"value\":{\"text\":\"\",\"extra\":["
