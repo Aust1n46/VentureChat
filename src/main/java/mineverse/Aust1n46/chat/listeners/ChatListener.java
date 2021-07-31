@@ -343,11 +343,6 @@ public class ChatListener implements Listener {
 			chDistance = eventChannel.getDistance();
 		}
 		
-//		format = Format.FormatStringAll(PlaceholderAPI.setBracketPlaceholders(mcp.getPlayer(), Format.FormatStringAll(eventChannel.getFormat())));
-//		if(plugin.getConfig().getBoolean("formatcleaner", false)) {
-//			format = format.replace("[]", " ");
-//			format = format.replace("    ", " ").replace("   ", " ").replace("  ", " ");
-//		}
 		format = Format.FormatStringAll(eventChannel.getFormat());
 		
 		filterthis = eventChannel.isFiltered();
