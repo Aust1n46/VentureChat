@@ -42,6 +42,8 @@ Done###Add hex color support to message remover configuration
 
 Done###Fix /chatreload
 
+Done###Add check for missing default channel
+
 
 
 
@@ -105,4 +107,4 @@ Add custom JSON hovers to any placeholder
 
 Add clans channel from SimpleClans
 
-Add check for missing default channel
+Look into changing Bukkit chat event to not be cancelled.
