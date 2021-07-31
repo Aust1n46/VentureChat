@@ -140,33 +140,41 @@ messageremovertext: '&c&o<message removed>'
 jsonformatting:
   Default: # This default format is required!  Do not delete or rename it!
     priority: 2147483647 # Integer.MAX_VALUE
-    hover_name:
-    - '&6I have no rank!'
-    click_name: 'suggest_command'
-    click_name_text: '/msg {player_name}'
-    hover_prefix:
-    - '&dI am default!'
-    click_prefix: 'run_command'
-    click_prefix_text: '/help'
-    hover_suffix:
-    - '&dI am default suffix!'
-    click_suffix: 'suggest_command'
-    click_suffix_text: '/msg {player_name}'
+    json_attributes:
+      player_displayname:
+        hover_text:
+        - '&6I have no rank!'
+        click_action: 'suggest_command'
+        click_text: '/msg {player_name}'
+      vault_prefix:
+        hover_text:
+        - '&cI am default!'
+        click_action: 'run_command'
+        click_text: '/help'
+      venturechat_channel_prefix:
+        hover_text:
+        - '&fChannel: {venturechat_channel_color}{venturechat_channel_name}'
+        click_action: 'run_command'
+        click_text: '/chlist'
   Owner:
-    priority: 1 # Lowest Priority
-    hover_name:
-    - '&cOwner of the server!'
-    - '&bMessage me for help!'
-    click_name: 'suggest_command'
-    click_name_text: '/msg {player_name}'
-    hover_prefix:
-    - '&dServer Owner'
-    click_prefix: 'run_command'
-    click_prefix_text: '/help'
-    hover_suffix:
-    - '&dI am Owner suffix!'
-    click_suffix: 'suggest_command'
-    click_suffix_text: '/msg {player_name}'
+    priority: 1
+    json_attributes:
+      player_displayname:
+        hover_text:
+        - '&cOwner of the server!'
+        - '&bMessage me for help!'
+        click_action: 'suggest_command'
+        click_text: '/msg {player_name}'
+      vault_prefix:
+        hover_text:
+        - '&dServer Owner'
+        click_action: 'run_command'
+        click_text: '/help'
+      venturechat_channel_prefix:
+        hover_text:
+        - '&fChannel: {venturechat_channel_color}{venturechat_channel_name}'
+        click_action: 'run_command'
+        click_text: '/chlist'
     
 # The icon is the block shown in the GUI
 # The text is the display name of the block icon
@@ -281,63 +289,7 @@ enable_factions_channel: false
 # Important!!!
 # Important!!!
 # If you delete a channel, restart the server! Do not use /chatreload!!!
-channels:
-  GroupChatColorExample:
-    color: '#706C1E'
-    chatcolor: 'None'
-    mutable: true
-    filter: true
-    autojoin: true
-    default: false
-    distance: 0
-    cooldown: 0
-    bungeecord: false
-    alias: ge
-    permissions: None
-    speak_permissions: None
-    format: '&f[#706C1EGroupColorChat&f] {vault_prefix} {player_displayname}#706C1E:{vault_suffix}'
-  HexExample:
-    color: '#ff0000'
-    chatcolor: '#ff0000'
-    mutable: true
-    filter: true
-    autojoin: true
-    default: false
-    distance: 0
-    cooldown: 0
-    bungeecord: false
-    alias: he
-    permissions: None
-    speak_permissions: None
-    format: '&f[#ff0000Hex&f] {vault_prefix} {player_displayname}#ff0000:'
-  BungeeExample:
-    color: gold
-    chatcolor: gold
-    mutable: true
-    filter: true
-    autojoin: true
-    default: false
-    distance: 0
-    cooldown: 3
-    bungeecord: true
-    alias: be
-    permissions: None
-    speak_permissions: None
-    format: '&f[&6Network&f] {vault_prefix} {player_displayname}&6:'
-  AnnouncementExample:
-    color: red
-    chatcolor: red
-    mutable: false
-    filter: false
-    autojoin: true
-    default: false
-    distance: 0
-    cooldown: 0
-    bungeecord: true
-    alias: announce
-    permissions: None
-    speak_permissions: announcement
-    format: '&f[&aServer Announcement&f] {vault_prefix} {player_displayname}&c:'
+channels: 
   Global:
     color: dark_green
     chatcolor: dark_green
@@ -351,7 +303,38 @@ channels:
     alias: g
     permissions: None
     speak_permissions: None
-    format: '&f[&2Global&f] {vault_prefix} {player_displayname}&2:'
+    channel_prefix: '&f[&2Global&f]'
+    format: '{venturechat_channel_prefix} {vault_prefix}{player_displayname}&2:'
+  Network:
+    color: gold
+    chatcolor: gold
+    mutable: true
+    filter: true
+    autojoin: true
+    default: false
+    distance: 0
+    cooldown: 3
+    bungeecord: true
+    alias: be
+    permissions: None
+    speak_permissions: None
+    channel_prefix: '&f[&6Network&f]'
+    format: '{venturechat_channel_prefix} {vault_prefix}{player_displayname}&6:'
+  Announcement:
+    color: red
+    chatcolor: red
+    mutable: false
+    filter: false
+    autojoin: true
+    default: false
+    distance: 0
+    cooldown: 0
+    bungeecord: true
+    alias: announce
+    permissions: None
+    speak_permissions: announcement
+    channel_prefix: '&f[&aServer Announcement&f]'
+    format: '{venturechat_channel_prefix} {vault_prefix}{player_displayname}&c:'
   Staff:
     color: green
     chatcolor: green
@@ -365,7 +348,8 @@ channels:
     alias: st
     permissions: staffchannel
     speak_permissions: None
-    format: '&f[&aStaff&f] {vault_prefix} {player_displayname}&a:'
+    channel_prefix: '&f[&aStaff&f]'
+    format: '{venturechat_channel_prefix} {vault_prefix}{player_displayname}&a:'
   Donator:
     color: light_purple
     chatcolor: light_purple
@@ -379,7 +363,8 @@ channels:
     alias: d
     permissions: donatorchannel
     speak_permissions: None
-    format: '&f[&dDonator&f] {vault_prefix} {player_displayname}&d:'
+    channel_prefix: '&f[&dDonator&f]'
+    format: '{venturechat_channel_prefix} {vault_prefix}{player_displayname}&d:'
   Help:
     color: aqua
     chatcolor: aqua
@@ -393,7 +378,8 @@ channels:
     alias: h
     permissions: None
     speak_permissions: None
-    format: '&f[&bHelp&f] {vault_prefix} {player_displayname}&b:'
+    channel_prefix: '&f[&bHelp&f]'
+    format: '{venturechat_channel_prefix} {vault_prefix}{player_displayname}&b:'
   Trade:
     color: dark_aqua
     chatcolor: dark_aqua
@@ -407,7 +393,8 @@ channels:
     alias: t
     permissions: None
     speak_permissions: None
-    format: '&f[&3Trade&f] {vault_prefix} {player_displayname}&3:'
+    channel_prefix: '&f[&3Trade&f]'
+    format: '{venturechat_channel_prefix} {vault_prefix}{player_displayname}&3:'
   Local:
     color: yellow
     chatcolor: yellow
@@ -421,4 +408,5 @@ channels:
     alias: l
     permissions: None
     speak_permissions: None
-    format: '&f[&eLocal&f] {vault_prefix} {player_displayname}&e:'
+    channel_prefix: '&f[&eLocal&f]'
+    format: '{venturechat_channel_prefix} {vault_prefix}{player_displayname}&e:'

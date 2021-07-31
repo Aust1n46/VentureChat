@@ -43,8 +43,7 @@ Done###Add hex color support to message remover configuration
 Done###Fix /chatreload
 
 Done###Add check for missing default channel
-
-
+Done###Add custom JSON hovers to any placeholder
 
 
 
@@ -102,8 +101,6 @@ Add list to disable commands in the config.
 Add toggle for moderation gui
 
 Add cost to chat in a channel through Vault?
-
-Add custom JSON hovers to any placeholder
 
 Add clans channel from SimpleClans
 
