@@ -22,9 +22,9 @@ import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.wrappers.WrappedChatComponent;
 
 import me.clip.placeholderapi.PlaceholderAPI;
-import mineverse.Aust1n46.chat.MineverseChat;
 import mineverse.Aust1n46.chat.api.MineverseChatAPI;
 import mineverse.Aust1n46.chat.api.MineverseChatPlayer;
+import mineverse.Aust1n46.chat.json.JsonAttribute;
 import mineverse.Aust1n46.chat.json.JsonFormat;
 import mineverse.Aust1n46.chat.localization.LocalizedMessage;
 import mineverse.Aust1n46.chat.versions.VersionHandler;
@@ -67,32 +67,7 @@ public class Format {
 		String f = escapeJsonChars(format);
 		String c = escapeJsonChars(chat);
 		String json = "[\"\",{\"text\":\"\",\"extra\":[";
-		String prefix = "";
-		String suffix = "";
-		try {
-			prefix = FormatStringAll(MineverseChat.getVaultChat().getPlayerPrefix(sender.getPlayer()));
-			suffix = FormatStringAll(MineverseChat.getVaultChat().getPlayerSuffix(sender.getPlayer()));
-			// Don't apply JSON if the prefix or suffix is just a color code
-			if (suffix.isEmpty() || (suffix.length() == 2 && suffix.substring(1).matches("[0-9a-fA-F]"))) {
-				suffix = "venturechat_no_suffix_code";
-			}
-			if (prefix.isEmpty() || (prefix.length() == 2 && prefix.substring(1).matches("[0-9a-fA-F]"))) {
-				prefix = "venturechat_no_prefix_code";
-			}
-		} catch (Exception e) {
-			System.out.println("Exception?" + e.getLocalizedMessage());
-			if (getInstance().getConfig().getString("loglevel", "info").equals("debug")) {
-				Bukkit.getConsoleSender().sendMessage(Format.FormatStringAll(
-						"&8[&eVentureChat&8]&e - Prefix and / or suffix don't exist, setting to nothing."));
-			}
-			suffix = "venturechat_no_suffix_code";
-			prefix = "venturechat_no_prefix_code";
-		}
-		String nickname = "";
-		if (sender.getPlayer() != null) {
-			nickname = FormatStringAll(sender.getPlayer().getDisplayName());
-		}
-		json += convertPlaceholders(f, JSONformat, prefix, nickname, suffix, sender);
+		json += convertPlaceholders(f, JSONformat, sender);
 		json += "]}";
 		json += "," + convertLinks(c);
 		json += "]";
@@ -118,61 +93,47 @@ public class Format {
      * @param icp
      * @return {@link String}
      */
-	private static String convertPlaceholders(String s, JsonFormat format, String prefix, String nickname,
-			String suffix, MineverseChatPlayer icp) {
+	private static String convertPlaceholders(String s, JsonFormat format, MineverseChatPlayer icp) {
 		String remaining = s;
 		String temp = "";
 		int indexStart = -1;
 		int indexEnd = -1;
 		String placeholder = "";
+		String formattedPlaceholder = "";
 		String lastCode = DEFAULT_COLOR_CODE;
 		do {
-			Pattern pattern = Pattern.compile(
-					"(" + escapeAllRegex(prefix) + "|" + escapeAllRegex(nickname) + "|" + escapeAllRegex(suffix) + ")");
+			Pattern pattern = Pattern.compile("(\\{[A-Za-z0-9-_]+\\})");
 			Matcher matcher = pattern.matcher(remaining);
 			if (matcher.find()) {
 				indexStart = matcher.start();
 				indexEnd = matcher.end();
 				placeholder = remaining.substring(indexStart, indexEnd);
+				formattedPlaceholder = PlaceholderAPI.setBracketPlaceholders(icp.getPlayer(), placeholder);
 				temp += convertToJsonColors(lastCode + remaining.substring(0, indexStart)) + ",";
 				lastCode = getLastCode(lastCode + remaining.substring(0, indexStart));
 				String action = "";
 				String text = "";
 				String hover = "";
-				if (placeholder.contains(prefix)) {
-					action = format.getClickPrefix();
-					text = Format.FormatStringAll(
-							PlaceholderAPI.setBracketPlaceholders(icp.getPlayer(), format.getClickPrefixText()));
-					for (String st : format.getHoverTextPrefix()) {
-						hover += Format.FormatStringAll(st) + "\n";
-					}
-				}
-				if (placeholder.contains(nickname)) {
-					action = format.getClickName();
-					text = Format.FormatStringAll(
-							PlaceholderAPI.setBracketPlaceholders(icp.getPlayer(), format.getClickNameText()));
-					for (String st : format.getHoverTextName()) {
-						hover += Format.FormatStringAll(st) + "\n";
-					}
-				}
-				if (placeholder.contains(suffix)) {
-					action = format.getClickSuffix();
-					text = Format.FormatStringAll(
-							PlaceholderAPI.setBracketPlaceholders(icp.getPlayer(), format.getClickSuffixText()));
-					for (String st : format.getHoverTextSuffix()) {
-						hover += Format.FormatStringAll(st) + "\n";
+				for (JsonAttribute jsonAttribute : format.getJsonAttributes()) {
+					if (placeholder.contains(jsonAttribute.getName().replace("{", "").replace("}", ""))) {
+						action = jsonAttribute.getClickAction();
+						text = Format.FormatStringAll(
+								PlaceholderAPI.setBracketPlaceholders(icp.getPlayer(), jsonAttribute.getClickText()));
+						for (String st : jsonAttribute.getHoverText()) {
+							hover += Format.FormatStringAll(st) + "\n";
+						}
 					}
 				}
 				if(!hover.isEmpty()) {
 					hover = Format.FormatStringAll(
 							PlaceholderAPI.setBracketPlaceholders(icp.getPlayer(), hover.substring(0, hover.length() - 1)));
 				}
-				temp += convertToJsonColors(lastCode + placeholder,
+				temp += convertToJsonColors(lastCode + formattedPlaceholder,
 						",\"clickEvent\":{\"action\":\"" + action + "\",\"value\":\"" + text
 								+ "\"},\"hoverEvent\":{\"action\":\"show_text\",\"value\":{\"text\":\"\",\"extra\":["
 								+ convertToJsonColors(hover) + "]}}")
 						+ ",";
-				lastCode = getLastCode(lastCode + placeholder);
+				lastCode = getLastCode(lastCode + formattedPlaceholder);
 				remaining = remaining.substring(indexEnd);
 			} else {
 				temp += convertToJsonColors(lastCode + remaining);

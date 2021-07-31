@@ -343,11 +343,12 @@ public class ChatListener implements Listener {
 			chDistance = eventChannel.getDistance();
 		}
 		
-		format = Format.FormatStringAll(PlaceholderAPI.setBracketPlaceholders(mcp.getPlayer(), Format.FormatStringAll(eventChannel.getFormat())));
-		if(plugin.getConfig().getBoolean("formatcleaner", false)) {
-			format = format.replace("[]", " ");
-			format = format.replace("    ", " ").replace("   ", " ").replace("  ", " ");
-		}
+//		format = Format.FormatStringAll(PlaceholderAPI.setBracketPlaceholders(mcp.getPlayer(), Format.FormatStringAll(eventChannel.getFormat())));
+//		if(plugin.getConfig().getBoolean("formatcleaner", false)) {
+//			format = format.replace("[]", " ");
+//			format = format.replace("    ", " ").replace("   ", " ").replace("  ", " ");
+//		}
+		format = Format.FormatStringAll(eventChannel.getFormat());
 		
 		filterthis = eventChannel.isFiltered();
 		if(filterthis) {
@@ -478,7 +479,6 @@ public class ChatListener implements Listener {
 		if(!mcp.isQuickChat()) {
 			chat = " " + chat;
 		}
-		mcp.setQuickChat(false);
 		if(curColor.equalsIgnoreCase("None")) {
 			chat = Format.getLastCode(format) + chat;
 		}
@@ -497,6 +497,8 @@ public class ChatListener implements Listener {
 		Bukkit.getServer().getPluginManager().callEvent(ventureChatEvent);
 		//Call method to send the processed chat
 		handleVentureChatEvent(ventureChatEvent);
+		// Reset quick chat flag
+		mcp.setQuickChat(false);
 	}
 	
 	public void handleVentureChatEvent(VentureChatEvent event) {

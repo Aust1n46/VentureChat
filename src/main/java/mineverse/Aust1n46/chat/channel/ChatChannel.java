@@ -47,6 +47,7 @@ public class ChatChannel {
 	private boolean bungee;
 	private String format;
 	private int cooldown;
+	private String prefix;
 
 	/**
 	 * Read chat channels from config file and initialize channel array.
@@ -73,8 +74,9 @@ public class ChatChannel {
 			double distance = cs.getDouble(key + ".distance", (double) 0);
 			int cooldown = cs.getInt(key + ".cooldown", 0);
 			boolean autojoin = cs.getBoolean(key + ".autojoin", false);
+			String prefix = cs.getString(key + ".channel_prefix");
 			ChatChannel chatChannel = new ChatChannel(name, color, chatColor, permission, speakPermission, mutable,
-					filter, defaultChannel, alias, distance, autojoin, bungee, cooldown, format);
+					filter, defaultChannel, alias, distance, autojoin, bungee, cooldown, prefix, format);
 			channels[counter++] = chatChannel;
 			chatChannels.put(name.toLowerCase(), chatChannel);
 			chatChannels.put(alias.toLowerCase(), chatChannel);
@@ -87,7 +89,7 @@ public class ChatChannel {
 		if(defaultChatChannel == null) {
 			Bukkit.getConsoleSender().sendMessage(Format.FormatStringAll("&8[&eVentureChat&8]&e - &cNo default channel found!"));
 			defaultChatChannel = new ChatChannel("MissingDefault", "red", "red", "None", "None", false,
-					true, true, "md", 0, true, false, 0, "&f[&cMissingDefault&f] {vault_prefix} {player_displayname}&c:");
+					true, true, "md", 0, true, false, 0, "&f[&cMissingDefault&f]", "{venturechat_channel_prefix} {vault_prefix}{player_displayname}&c:");
 			defaultColor = defaultChatChannel.getColor();
 			chatChannels.put("missingdefault", defaultChatChannel);
 			chatChannels.put("md", defaultChatChannel);
@@ -192,7 +194,7 @@ public class ChatChannel {
 	 */
 	public ChatChannel(String name, String color, String chatColor, String permission, String speakPermission,
 			boolean mutable, boolean filter, boolean defaultChannel, String alias, double distance, boolean autojoin,
-			boolean bungee, int cooldown, String format) {
+			boolean bungee, int cooldown, String prefix, String format) {
 		this.name = name;
 		this.color = color;
 		this.chatColor = chatColor;
@@ -207,6 +209,7 @@ public class ChatChannel {
 		this.bungee = bungee;
 		this.cooldown = cooldown;
 		this.format = format;
+		this.prefix = prefix;
 	}
 
 	/**
@@ -272,6 +275,14 @@ public class ChatChannel {
 	 */
 	public int getCooldown() {
 		return cooldown;
+	}
+	
+	/**
+	 * Get the prefix of the chat channel.
+	 * @return String
+	 */
+	public String getPrefix() {
+		return prefix;
 	}
 
 	/**

@@ -6,6 +6,7 @@ import me.clip.placeholderapi.PlaceholderAPIPlugin;
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 import mineverse.Aust1n46.chat.api.MineverseChatAPI;
 import mineverse.Aust1n46.chat.api.MineverseChatPlayer;
+import mineverse.Aust1n46.chat.channel.ChatChannel;
 
 public class VentureChatPlaceholders extends PlaceholderExpansion {
     @Override
@@ -24,47 +25,30 @@ public class VentureChatPlaceholders extends PlaceholderExpansion {
             return "value for that identifier *";
         }
         if (identifier.startsWith("channel_")) {
-            if (mcp.getCurrentChannel() == null) {
+            ChatChannel currentChannel = mcp.hasQuickChannel() ? mcp.getQuickChannel() : mcp.getCurrentChannel();
+            if (currentChannel == null) {
                 return "";
             }
             switch (identifier) {
                 case "channel_name":
-                    return mcp.getCurrentChannel().getName();
+                    return currentChannel.getName();
                 case "channel_alias":
-                    return mcp.getCurrentChannel().getAlias();
+                    return currentChannel.getAlias();
                 case "channel_color":
-                    return this.textToHex(mcp.getCurrentChannel().getColor());
+                    return currentChannel.getColor();
                 case "channel_chatcolor":
-                    return this.textToHex(mcp.getCurrentChannel().getChatColor());
+                    return currentChannel.getChatColor();
                 case "channel_is_bungee":
-                    return mcp.getCurrentChannel().getBungee() ? PlaceholderAPIPlugin.booleanTrue() : PlaceholderAPIPlugin.booleanFalse();
+                    return currentChannel.getBungee() ? PlaceholderAPIPlugin.booleanTrue() : PlaceholderAPIPlugin.booleanFalse();
                 case "channel_cooldown":
-                    return mcp.getCurrentChannel().getCooldown() + "";
+                    return currentChannel.getCooldown() + "";
                 case "channel_distance":
-                    return mcp.getCurrentChannel().getDistance() + "";
+                    return currentChannel.getDistance() + "";
+                case "channel_prefix":
+                	return currentChannel.getPrefix();
             }
         }
         return null;
-    }
-
-    private String textToHex(String color) {
-        if (color.equalsIgnoreCase("black")) return "0";
-        if (color.equalsIgnoreCase("dark_blue")) return "1";
-        if (color.equalsIgnoreCase("dark_green")) return "2";
-        if (color.equalsIgnoreCase("dark_aqua")) return "3";
-        if (color.equalsIgnoreCase("dark_red")) return "4";
-        if (color.equalsIgnoreCase("dark_purple")) return "5";
-        if (color.equalsIgnoreCase("gold")) return "6";
-        if (color.equalsIgnoreCase("gray")) return "7";
-        if (color.equalsIgnoreCase("dark_gray")) return "8";
-        if (color.equalsIgnoreCase("blue")) return "9";
-        if (color.equalsIgnoreCase("green")) return "a";
-        if (color.equalsIgnoreCase("aqua")) return "b";
-        if (color.equalsIgnoreCase("red")) return "c";
-        if (color.equalsIgnoreCase("light_purple")) return "d";
-        if (color.equalsIgnoreCase("yellow")) return "e";
-        if (color.equalsIgnoreCase("white")) return "f";
-        return "f";
     }
 
     @Override
