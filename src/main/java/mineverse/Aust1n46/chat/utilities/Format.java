@@ -108,7 +108,7 @@ public class Format {
 				indexStart = matcher.start();
 				indexEnd = matcher.end();
 				placeholder = remaining.substring(indexStart, indexEnd);
-				formattedPlaceholder = PlaceholderAPI.setBracketPlaceholders(icp.getPlayer(), placeholder);
+				formattedPlaceholder = Format.FormatStringAll(PlaceholderAPI.setBracketPlaceholders(icp.getPlayer(), placeholder));
 				temp += convertToJsonColors(lastCode + remaining.substring(0, indexStart)) + ",";
 				lastCode = getLastCode(lastCode + remaining.substring(0, indexStart));
 				String action = "";

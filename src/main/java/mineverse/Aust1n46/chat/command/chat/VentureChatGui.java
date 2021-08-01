@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -88,15 +89,15 @@ public class VentureChatGui implements VentureCommand {
         }
 
         ItemMeta closeMeta = close.getItemMeta();
-        closeMeta.setDisplayName("�oClose GUI");
+        closeMeta.setDisplayName(ChatColor.RED + "" + ChatColor.ITALIC + "Close GUI");
         close.setItemMeta(closeMeta);
 
         SkullMeta skullMeta = (SkullMeta) skull.getItemMeta();
         skullMeta.setOwner(target.getName());
-        skullMeta.setDisplayName("�b" + target.getName());
+        skullMeta.setDisplayName(ChatColor.AQUA + target.getName());
         List<String> skullLore = new ArrayList<String>();
-        skullLore.add("�7Channel: " + channel.getColor() + channel.getName());
-        skullLore.add("�7Hash: " + channel.getColor() + hash);
+        skullLore.add(ChatColor.GRAY + "Channel: " + channel.getColor() + channel.getName());
+        skullLore.add(ChatColor.GRAY + "Hash: " + channel.getColor() + hash);
         skullMeta.setLore(skullLore);
         skull.setItemMeta(skullMeta);
         skull.setDurability((short) 3);
