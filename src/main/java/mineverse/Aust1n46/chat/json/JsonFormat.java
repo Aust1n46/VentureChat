@@ -30,11 +30,13 @@ public class JsonFormat {
             int priority = jsonFormatSection.getInt(jsonFormat + ".priority", 0);
             List<JsonAttribute> jsonAttributes = new ArrayList<>();
             ConfigurationSection jsonAttributeSection = jsonFormatSection.getConfigurationSection(jsonFormat + ".json_attributes");
-            for (String attribute : jsonAttributeSection.getKeys(false)) {
-            	List<String> hoverText = jsonAttributeSection.getStringList(attribute + ".hover_text");
-            	String clickAction = jsonAttributeSection.getString(attribute + ".click_action");
-            	String clickText = jsonAttributeSection.getString(attribute + ".click_text");
-            	jsonAttributes.add(new JsonAttribute(attribute, hoverText, clickAction, clickText));
+            if (jsonAttributeSection != null) {
+	            for (String attribute : jsonAttributeSection.getKeys(false)) {
+	            	List<String> hoverText = jsonAttributeSection.getStringList(attribute + ".hover_text");
+	            	String clickAction = jsonAttributeSection.getString(attribute + ".click_action", "");
+	            	String clickText = jsonAttributeSection.getString(attribute + ".click_text", "");
+	            	jsonAttributes.add(new JsonAttribute(attribute, hoverText, clickAction, clickText));
+	            }
             }
             jsonFormats.put(jsonFormat.toLowerCase(), new JsonFormat(jsonFormat, priority, jsonAttributes));
         }
