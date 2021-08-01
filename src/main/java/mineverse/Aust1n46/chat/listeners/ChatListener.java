@@ -475,7 +475,8 @@ public class ChatListener implements Listener {
 			chat = " " + chat;
 		}
 		if(curColor.equalsIgnoreCase("None")) {
-			chat = Format.getLastCode(format) + chat;
+			// Format the placeholders and their color codes to determine the last color code to use for the chat message color
+			chat = Format.getLastCode(Format.FormatStringAll(PlaceholderAPI.setBracketPlaceholders(mcp.getPlayer(), format))) + chat;
 		}
 		else {
 			chat = curColor + chat;

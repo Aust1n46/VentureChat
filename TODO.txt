@@ -71,6 +71,7 @@ Add config option to disable chat logging in the console
 
 Make filters not case insensitive
 Update filter system
+Add option to disable filters without having to remove them all
 
 Add GUI for /channel to join channels
 Add configurable channel icon block/item
