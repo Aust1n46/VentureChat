@@ -433,6 +433,11 @@ public class MineverseChatPlayer {
 		return false;
 	}
 
+	@Deprecated
+	/**
+	 * Not needed and never resets to it's original null value after being set once.
+	 * @return
+	 */
 	public boolean hasQuickChannel() {
 		return this.quickChannel != null;
 	}
