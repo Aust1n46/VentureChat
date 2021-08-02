@@ -25,7 +25,7 @@ public class VentureChatPlaceholders extends PlaceholderExpansion {
             return "value for that identifier *";
         }
         if (identifier.startsWith("channel_")) {
-            ChatChannel currentChannel = mcp.hasQuickChannel() ? mcp.getQuickChannel() : mcp.getCurrentChannel();
+            ChatChannel currentChannel = mcp.isQuickChat() ? mcp.getQuickChannel() : mcp.getCurrentChannel();
             if (currentChannel == null) {
                 return "";
             }
