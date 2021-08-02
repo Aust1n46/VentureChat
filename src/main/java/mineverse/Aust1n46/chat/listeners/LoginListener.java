@@ -86,7 +86,7 @@ public class LoginListener implements Listener {
 			}
 		}
 
-		if(plugin.getServer().spigot().getConfig().getBoolean("settings-bungeecord")) {
+		if(plugin.getServer().spigot().getConfig().getBoolean("settings.bungeecord")) {
 			long delayInTicks = 20L;
 			final MineverseChatPlayer sync = mcp;
 			plugin.getServer().getScheduler().runTaskLaterAsynchronously(plugin, new Runnable() {
