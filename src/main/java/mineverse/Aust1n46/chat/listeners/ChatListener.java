@@ -4,6 +4,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.util.Set;
 
+import net.essentialsx.api.v2.services.discord.DiscordService;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -33,6 +34,7 @@ import mineverse.Aust1n46.chat.utilities.Format;
 
 //This class listens to chat through the chat event and handles the bulk of the chat channels and formatting.
 public class ChatListener implements Listener {
+	private final boolean essentialsDiscordHook = Bukkit.getPluginManager().isPluginEnabled("EssentialsDiscord");
 	private MineverseChat plugin = MineverseChat.getInstance();
 
 	@EventHandler(priority = EventPriority.NORMAL)
@@ -525,6 +527,10 @@ public class ChatListener implements Listener {
 				Format.sendPacketPlayOutChat(p, packet);
 			}
 			Bukkit.getConsoleSender().sendMessage(consoleChat);
+
+			if (essentialsDiscordHook && channel.isDefaultchannel()) {
+				Bukkit.getServicesManager().load(DiscordService.class).sendChatMessage(mcp.getPlayer(), chat);
+			}
 			return;
 		}
 		else {
