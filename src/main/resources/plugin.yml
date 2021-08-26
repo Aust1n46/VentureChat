@@ -3,7 +3,7 @@ version: ${project.version}
 api-version: 1.13
 main: mineverse.Aust1n46.chat.MineverseChat
 depend: [Vault, ProtocolLib, PlaceholderAPI]
-softdepend: [Towny, Factions, Heroes, EssentialsDiscord]
+softdepend: [Towny, Factions, EssentialsDiscord]
 author: Aust1n46
 website: https://bitbucket.org/Aust1n46/venturechat/
 description: #1 Channels Chat plugin! Spigot + Bungee. Supports PlaceholderAPI + JSON formatting. Moderation GUI!
