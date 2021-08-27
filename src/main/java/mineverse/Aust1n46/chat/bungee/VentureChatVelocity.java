@@ -23,7 +23,7 @@ import com.velocitypowered.api.proxy.messages.ChannelIdentifier;
 import com.velocitypowered.api.proxy.messages.MinecraftChannelIdentifier;
 import com.velocitypowered.api.proxy.server.RegisteredServer;
 
-@Plugin(id = "venturechat", name = "VentureChat", version = "${project.version}",
+@Plugin(id = "venturechat", name = "VentureChat", version = "3.1.0",
 description = "#1 Channels Chat plugin! Spigot + Bungee. Supports PlaceholderAPI + JSON formatting. Moderation GUI!", authors = {"Aust1n46"})
 public class VentureChatVelocity implements VentureChatProxySource {
 	private final ProxyServer proxyServer;
