@@ -468,8 +468,8 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 			if(subchannel.equals("Chwho")) {
 				String identifier = msgin.readUTF();
 				if(identifier.equals("Get")) {
+					String server = msgin.readUTF();
 					String sender = msgin.readUTF();
-					String name = msgin.readUTF();
 					String chatchannel = msgin.readUTF();
 					List<String> listening = new ArrayList<String>();
 					if(ChatChannel.isChannel(chatchannel)) {
@@ -485,8 +485,8 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 					}
 					out.writeUTF("Chwho");
 					out.writeUTF("Receive");
+					out.writeUTF(server);
 					out.writeUTF(sender);
-					out.writeUTF(name);
 					out.writeUTF(chatchannel);
 					out.writeInt(listening.size());
 					for(String s : listening) {

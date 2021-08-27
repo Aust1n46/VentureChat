@@ -49,7 +49,6 @@ public class Chwho implements VentureCommand {
                             out.writeUTF("Chwho");
                             out.writeUTF("Get");
                             out.writeUTF(mcp.getUUID().toString());
-                            out.writeUTF(mcp.getName());
                             out.writeUTF(channel.getName());
                             mcp.getPlayer().sendPluginMessage(plugin, MineverseChat.PLUGIN_MESSAGING_CHANNEL, byteOutStream.toByteArray());
                             out.close();
