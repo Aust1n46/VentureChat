@@ -878,4 +878,8 @@ public class Format {
 			return Sound.valueOf(DEFAULT_MESSAGE_SOUND);
 		}
 	}
+	
+	public static String stripColor(String message) {
+		return message.replaceAll("(\u00A7([a-z0-9]))", "");
+	}
 }

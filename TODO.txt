@@ -108,3 +108,5 @@ Add clans channel from SimpleClans
 Look into changing Bukkit chat event to not be cancelled.
 
 Expand on EssentialsDiscord integration to allow for custom MessageTypes for each channel
+
+Expand placeholder matching regex in convertToJson method

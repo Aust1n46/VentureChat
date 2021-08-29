@@ -1,0 +1,11 @@
+#===============================================================
+#                 MineverseChat Velocity Config                  =
+#                       Author: Aust1n46                       =                  
+#===============================================================
+
+# If you're running a "cracked" server, player data might not be stored properly, and thus, you are on your own.
+# If you run your server in offline mode, you might have to reset your player data when switching to online mode!
+# If you see this warning by accident and you are using Velocity, make sure you have properly setup IP Forwarding.
+# https://www.spigotmc.org/wiki/bungeecord-ip-forwarding/
+# No player data will be saved in offline mode unless you set this acknowledgement to 'true'
+offline_server_acknowledgement: false

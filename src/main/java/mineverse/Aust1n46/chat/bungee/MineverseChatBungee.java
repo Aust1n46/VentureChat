@@ -7,9 +7,11 @@ import java.nio.file.Files;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import mineverse.Aust1n46.chat.database.BungeePlayerData;
+import mineverse.Aust1n46.chat.database.ProxyPlayerData;
+import mineverse.Aust1n46.chat.utilities.Format;
 import mineverse.Aust1n46.chat.utilities.UUIDFetcher;
 import net.md_5.bungee.api.ProxyServer;
+import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.connection.Server;
 import net.md_5.bungee.api.event.PluginMessageEvent;
@@ -29,13 +31,11 @@ import net.md_5.bungee.event.EventHandler;
  * @author Aust1n46
  */
 public class MineverseChatBungee extends Plugin implements Listener, VentureChatProxySource {
-	private static MineverseChatBungee instance;
 	private static Configuration bungeeConfig;
+	private File BUNGEE_PLAYER_DATA_DIRECTORY_PATH;
 
 	@Override
 	public void onEnable() {
-		instance = this;
-		
 		if(!getDataFolder().exists()) {
 			getDataFolder().mkdir();
 		}
@@ -50,8 +50,9 @@ public class MineverseChatBungee extends Plugin implements Listener, VentureChat
 			e.printStackTrace();
 		}
 		
-		BungeePlayerData.loadLegacyBungeePlayerData();
-		BungeePlayerData.loadBungeePlayerData();
+		BUNGEE_PLAYER_DATA_DIRECTORY_PATH = new File(getDataFolder().getAbsolutePath() + "/PlayerData");
+		ProxyPlayerData.loadLegacyBungeePlayerData(BUNGEE_PLAYER_DATA_DIRECTORY_PATH, this);
+		ProxyPlayerData.loadProxyPlayerData(BUNGEE_PLAYER_DATA_DIRECTORY_PATH, this);
 		
 		this.getProxy().registerChannel(VentureChatProxy.PLUGIN_MESSAGING_CHANNEL_STRING);
 		this.getProxy().getPluginManager().registerListener(this, this);
@@ -59,15 +60,7 @@ public class MineverseChatBungee extends Plugin implements Listener, VentureChat
 
 	@Override
 	public void onDisable() {
-		BungeePlayerData.saveBungeePlayerData();
-	}
-	
-	public static MineverseChatBungee getInstance() {
-		return instance;
-	}
-	
-	public static Configuration getBungeeConfig() {
-		return bungeeConfig;
+		ProxyPlayerData.saveProxyPlayerData(BUNGEE_PLAYER_DATA_DIRECTORY_PATH, this);
 	}
 	
 	@EventHandler
@@ -82,7 +75,7 @@ public class MineverseChatBungee extends Plugin implements Listener, VentureChat
 	
 	@EventHandler
 	public void onPlayerJoinNetwork(PostLoginEvent event) {
-		UUIDFetcher.checkOfflineUUIDWarningBungee(event.getPlayer().getUniqueId());
+		UUIDFetcher.checkOfflineUUIDWarningProxy(event.getPlayer().getUniqueId(), this);
 	}
 	
 	private void updatePlayerNames() {
@@ -132,5 +125,15 @@ public class MineverseChatBungee extends Plugin implements Listener, VentureChat
 	public VentureChatProxyServer getServer(String serverName) {
 		ProxyServer server = (ProxyServer) getProxy().getServers().get(serverName);
 		return new VentureChatProxyServer(serverName, server.getPlayers().isEmpty());
+	}
+
+	@Override
+	public void sendConsoleMessage(String message) {
+		ProxyServer.getInstance().getConsole().sendMessage(TextComponent.fromLegacyText(Format.FormatStringAll(message)));
+	}
+
+	@Override
+	public boolean isOfflineServerAcknowledgementSet() {
+		return bungeeConfig.getBoolean("offline_server_acknowledgement");
 	}
 }

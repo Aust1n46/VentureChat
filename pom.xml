@@ -61,6 +61,7 @@
          			<artifactSet>
          				<includes>
          					<include>com.zaxxer:HikariCP</include>
+         					<include>net.md-5:bungeecord-config</include>
          				</includes>
          			</artifactSet>
         		</configuration>
@@ -185,7 +186,7 @@
             <artifactId>bungeecord-api</artifactId>
             <version>1.13-SNAPSHOT</version>
             <type>jar</type>
-            <scope>provided</scope>
+            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>net.md-5</groupId>

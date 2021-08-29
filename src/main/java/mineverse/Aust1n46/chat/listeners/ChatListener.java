@@ -486,7 +486,7 @@ public class ChatListener implements Listener {
 		
 		String globalJSON = Format.convertToJson(mcp, format, chat); 
 		format = Format.FormatStringAll(PlaceholderAPI.setBracketPlaceholders(mcp.getPlayer(), Format.FormatStringAll(format)));
-		String message = (format + chat).replaceAll("(\u00A7([a-z0-9]))", ""); // UTF-8 encoding issues.
+		String message = Format.stripColor(format + chat); // UTF-8 encoding issues.
 		int hash = message.hashCode();
 		
 		//Create VentureChatEvent

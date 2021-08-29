@@ -2,6 +2,10 @@ package mineverse.Aust1n46.chat.bungee;
 
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -15,7 +19,9 @@ import com.velocitypowered.api.event.connection.PluginMessageEvent;
 import com.velocitypowered.api.event.connection.PluginMessageEvent.ForwardResult;
 import com.velocitypowered.api.event.player.ServerPostConnectEvent;
 import com.velocitypowered.api.event.proxy.ProxyInitializeEvent;
+import com.velocitypowered.api.event.proxy.ProxyShutdownEvent;
 import com.velocitypowered.api.plugin.Plugin;
+import com.velocitypowered.api.plugin.annotation.DataDirectory;
 import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.api.proxy.ProxyServer;
 import com.velocitypowered.api.proxy.ServerConnection;
@@ -23,20 +29,62 @@ import com.velocitypowered.api.proxy.messages.ChannelIdentifier;
 import com.velocitypowered.api.proxy.messages.MinecraftChannelIdentifier;
 import com.velocitypowered.api.proxy.server.RegisteredServer;
 
+import mineverse.Aust1n46.chat.database.ProxyPlayerData;
+import mineverse.Aust1n46.chat.utilities.Format;
+import net.md_5.bungee.config.Configuration;
+import net.md_5.bungee.config.ConfigurationProvider;
+import net.md_5.bungee.config.YamlConfiguration;
+
 @Plugin(id = "venturechat", name = "VentureChat", version = "3.1.0",
 description = "#1 Channels Chat plugin! Spigot + Bungee. Supports PlaceholderAPI + JSON formatting. Moderation GUI!", authors = {"Aust1n46"})
 public class VentureChatVelocity implements VentureChatProxySource {
 	private final ProxyServer proxyServer;
 	private final ChannelIdentifier channelIdentifier = MinecraftChannelIdentifier.create(VentureChatProxy.PLUGIN_MESSAGING_CHANNEL_NAMESPACE, VentureChatProxy.PLUGIN_MESSAGING_CHANNEL_NAME);
-
+	private final Logger logger;
+	
+	@Inject
+	@DataDirectory
+	private Path dataPath;
+	private File velocityPlayerDataDirectory;
+	
+	private static Configuration velocityConfig;
+	
 	@Inject
 	public VentureChatVelocity(ProxyServer server, Logger logger) {
 		this.proxyServer = server;
+		this.logger = logger;
+	}
+	
+	public static Configuration getVelocityConfig() {
+		return velocityConfig;
 	}
 	
 	@Subscribe
 	public void onInitialize(ProxyInitializeEvent event) {
 		proxyServer.getChannelRegistrar().register(channelIdentifier);
+		
+		File dataFolder = dataPath.toFile();
+		if(!dataFolder.exists()) {
+			dataFolder.mkdir();
+		}
+		File config = new File(dataFolder, "velocityconfig.yml");
+		try {
+			if(!config.exists()) {
+				Files.copy(getClass().getClassLoader().getResourceAsStream("velocityconfig.yml"), config.toPath());
+			}
+			velocityConfig = ConfigurationProvider.getProvider(YamlConfiguration.class).load(new File(dataFolder, "velocityconfig.yml"));
+		}
+		catch(Exception e) {
+			e.printStackTrace();
+		}
+		
+		velocityPlayerDataDirectory = new File(dataPath.toAbsolutePath().toString() + "/PlayerData");
+		ProxyPlayerData.loadProxyPlayerData(velocityPlayerDataDirectory, this);
+	}
+	
+	@Subscribe
+	public void onShutdown(ProxyShutdownEvent event) {
+		ProxyPlayerData.saveProxyPlayerData(velocityPlayerDataDirectory, this);
 	}
 	
 	@Subscribe
@@ -64,7 +112,10 @@ public class VentureChatVelocity implements VentureChatProxySource {
 				}
 			});
 		}
-		catch(Exception e) {
+		catch(IllegalStateException e) {
+			sendConsoleMessage("Velocity being finicky");
+		} 
+		catch (IOException e) {
 			e.printStackTrace();
 		}
 	}
@@ -100,5 +151,15 @@ public class VentureChatVelocity implements VentureChatProxySource {
 	public VentureChatProxyServer getServer(String serverName) {
 		RegisteredServer server = proxyServer.getServer(serverName).get();
 		return new VentureChatProxyServer(serverName, server.getPlayersConnected().isEmpty());
+	}
+
+	@Override
+	public void sendConsoleMessage(String message) {
+		logger.info(Format.stripColor(message));
+	}
+
+	@Override
+	public boolean isOfflineServerAcknowledgementSet() {
+		return velocityConfig.getBoolean("offline_server_acknowledgement");
 	}
 }

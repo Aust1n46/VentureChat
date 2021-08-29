@@ -8,4 +8,8 @@ public interface VentureChatProxySource {
 	public List<VentureChatProxyServer> getServers();
 	
 	public VentureChatProxyServer getServer(String serverName);
+	
+	public void sendConsoleMessage(String message);
+	
+	public boolean isOfflineServerAcknowledgementSet();
 }
