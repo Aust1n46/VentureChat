@@ -20,7 +20,6 @@ import com.velocitypowered.api.event.connection.PluginMessageEvent.ForwardResult
 import com.velocitypowered.api.event.player.ServerPostConnectEvent;
 import com.velocitypowered.api.event.proxy.ProxyInitializeEvent;
 import com.velocitypowered.api.event.proxy.ProxyShutdownEvent;
-import com.velocitypowered.api.plugin.Plugin;
 import com.velocitypowered.api.plugin.annotation.DataDirectory;
 import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.api.proxy.ProxyServer;
@@ -40,8 +39,6 @@ import net.md_5.bungee.config.YamlConfiguration;
  *
  * @author Aust1n46
  */
-@Plugin(id = "venturechat", name = "VentureChat", version = "3.1.0",
-description = "#1 Channels Chat plugin! Spigot + Bungee. Supports PlaceholderAPI + JSON formatting. Moderation GUI!", authors = {"Aust1n46"})
 public class VentureChatVelocity implements VentureChatProxySource {
 	private final ProxyServer proxyServer;
 	private final ChannelIdentifier channelIdentifier = MinecraftChannelIdentifier.create(VentureChatProxy.PLUGIN_MESSAGING_CHANNEL_NAMESPACE, VentureChatProxy.PLUGIN_MESSAGING_CHANNEL_NAME);

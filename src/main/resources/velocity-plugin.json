@@ -1,0 +1,1 @@
+{"id":"venturechat","name":"VentureChat","version":"${project.version}","description":"#1 Channels Chat plugin! Spigot + Bungee. Supports PlaceholderAPI + JSON formatting. Moderation GUI!","authors":["Aust1n46"],"dependencies":[],"main":"mineverse.Aust1n46.chat.proxy.VentureChatVelocity"}
