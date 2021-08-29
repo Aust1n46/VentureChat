@@ -58,6 +58,16 @@
         		<artifactId>maven-shade-plugin</artifactId>
         		<version>3.2.4</version>
         		<configuration>
+        			<relocations>
+                		<relocation>
+                  			<pattern>com.zaxxer.hikari</pattern>
+                  			<shadedPattern>shaded.com.zaxxer.hikari</shadedPattern>
+               			</relocation>
+               			<relocation>
+                  			<pattern>net.md_5.bungee.config</pattern>
+                  			<shadedPattern>shaded.net.md_5.bungee.config</shadedPattern>
+               			</relocation>
+             		</relocations>
          			<artifactSet>
          				<includes>
          					<include>com.zaxxer:HikariCP</include>
