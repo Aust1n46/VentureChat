@@ -31,9 +31,9 @@ import net.md_5.bungee.event.EventHandler;
  *
  * @author Aust1n46
  */
-public class MineverseChatBungee extends Plugin implements Listener, VentureChatProxySource {
+public class VentureChatBungee extends Plugin implements Listener, VentureChatProxySource {
 	private static Configuration bungeeConfig;
-	private File BUNGEE_PLAYER_DATA_DIRECTORY_PATH;
+	private File bungeePlayerDataDirectory;
 
 	@Override
 	public void onEnable() {
@@ -51,9 +51,9 @@ public class MineverseChatBungee extends Plugin implements Listener, VentureChat
 			e.printStackTrace();
 		}
 		
-		BUNGEE_PLAYER_DATA_DIRECTORY_PATH = new File(getDataFolder().getAbsolutePath() + "/PlayerData");
-		ProxyPlayerData.loadLegacyBungeePlayerData(BUNGEE_PLAYER_DATA_DIRECTORY_PATH, this);
-		ProxyPlayerData.loadProxyPlayerData(BUNGEE_PLAYER_DATA_DIRECTORY_PATH, this);
+		bungeePlayerDataDirectory = new File(getDataFolder().getAbsolutePath() + "/PlayerData");
+		ProxyPlayerData.loadLegacyBungeePlayerData(bungeePlayerDataDirectory, this);
+		ProxyPlayerData.loadProxyPlayerData(bungeePlayerDataDirectory, this);
 		
 		this.getProxy().registerChannel(VentureChatProxy.PLUGIN_MESSAGING_CHANNEL_STRING);
 		this.getProxy().getPluginManager().registerListener(this, this);
@@ -61,7 +61,7 @@ public class MineverseChatBungee extends Plugin implements Listener, VentureChat
 
 	@Override
 	public void onDisable() {
-		ProxyPlayerData.saveProxyPlayerData(BUNGEE_PLAYER_DATA_DIRECTORY_PATH, this);
+		ProxyPlayerData.saveProxyPlayerData(bungeePlayerDataDirectory, this);
 	}
 	
 	@EventHandler

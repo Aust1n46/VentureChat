@@ -35,6 +35,11 @@ import net.md_5.bungee.config.Configuration;
 import net.md_5.bungee.config.ConfigurationProvider;
 import net.md_5.bungee.config.YamlConfiguration;
 
+/**
+ * VentureChat Minecraft plugin for Velocity.
+ *
+ * @author Aust1n46
+ */
 @Plugin(id = "venturechat", name = "VentureChat", version = "3.1.0",
 description = "#1 Channels Chat plugin! Spigot + Bungee. Supports PlaceholderAPI + JSON formatting. Moderation GUI!", authors = {"Aust1n46"})
 public class VentureChatVelocity implements VentureChatProxySource {
