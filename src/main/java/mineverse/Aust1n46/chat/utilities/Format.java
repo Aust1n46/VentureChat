@@ -45,6 +45,8 @@ public class Format {
 	private static final Pattern LEGACY_CHAT_COLOR_PATTERN = Pattern.compile(
 			"(?<!(&x(&[a-fA-F0-9]){5}))(?<!(&x(&[a-fA-F0-9]){4}))(?<!(&x(&[a-fA-F0-9]){3}))(?<!(&x(&[a-fA-F0-9]){2}))(?<!(&x(&[a-fA-F0-9]){1}))(?<!(&x))(&)([0-9a-fA-F])");
 	
+	private static final Pattern PLACEHOLDERAPI_PLACEHOLDER_PATTERN = Pattern.compile("\\{([^\\{\\}]+)\\}");
+	
 	public static final long MILLISECONDS_PER_DAY = 86400000;
 	public static final long MILLISECONDS_PER_HOUR = 3600000;
 	public static final long MILLISECONDS_PER_MINUTE = 60000;
@@ -102,8 +104,7 @@ public class Format {
 		String formattedPlaceholder = "";
 		String lastCode = DEFAULT_COLOR_CODE;
 		do {
-			Pattern pattern = Pattern.compile("(\\{[A-Za-z0-9-_]+\\})");
-			Matcher matcher = pattern.matcher(remaining);
+			Matcher matcher = PLACEHOLDERAPI_PLACEHOLDER_PATTERN.matcher(remaining);
 			if (matcher.find()) {
 				indexStart = matcher.start();
 				indexEnd = matcher.end();
