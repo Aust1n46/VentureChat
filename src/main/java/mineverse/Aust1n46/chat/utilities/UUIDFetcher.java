@@ -20,7 +20,7 @@ import org.json.simple.parser.JSONParser;
 import com.google.common.collect.ImmutableList;
 
 import mineverse.Aust1n46.chat.MineverseChat;
-import mineverse.Aust1n46.chat.bungee.VentureChatProxySource;
+import mineverse.Aust1n46.chat.proxy.VentureChatProxySource;
 
 public class UUIDFetcher implements Callable<Map<String, UUID>> {
 	private static final double PROFILES_PER_REQUEST = 100;

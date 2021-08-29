@@ -40,10 +40,10 @@ public final class MineverseChatAPI {
         proxyPlayerMap.put(smcp.getUUID(), smcp);
     }
 
-    @Deprecated
-    public static void clearBungeePlayerMap() {
-        clearProxyPlayerMap();
-    }
+//    @Deprecated
+//    public static void clearBungeePlayerMap() {
+//        clearProxyPlayerMap();
+//    }
     
     public static void clearProxyPlayerMap() {
         proxyPlayerMap.clear();

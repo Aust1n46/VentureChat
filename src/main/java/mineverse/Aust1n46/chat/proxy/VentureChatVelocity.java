@@ -1,4 +1,4 @@
-package mineverse.Aust1n46.chat.bungee;
+package mineverse.Aust1n46.chat.proxy;
 
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;

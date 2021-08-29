@@ -13,8 +13,8 @@ import java.util.UUID;
 
 import mineverse.Aust1n46.chat.api.MineverseChatAPI;
 import mineverse.Aust1n46.chat.api.SynchronizedMineverseChatPlayer;
-import mineverse.Aust1n46.chat.bungee.VentureChatProxySource;
 import mineverse.Aust1n46.chat.command.mute.MuteContainer;
+import mineverse.Aust1n46.chat.proxy.VentureChatProxySource;
 import mineverse.Aust1n46.chat.utilities.UUIDFetcher;
 import net.md_5.bungee.config.Configuration;
 import net.md_5.bungee.config.ConfigurationProvider;
@@ -65,7 +65,7 @@ public class ProxyPlayerData {
                 MineverseChatAPI.addSynchronizedMineverseChatPlayerToMap(new SynchronizedMineverseChatPlayer(uuid, listening, mutes, ignores, spy, messageToggle));
             }
         } catch (Exception e) {
-            MineverseChatAPI.clearBungeePlayerMap();
+            MineverseChatAPI.clearProxyPlayerMap();
             source.sendConsoleMessage("&8[&eVentureChat&8]&c - Error Loading Legacy Player Data!");
             source.sendConsoleMessage("&8[&eVentureChat&8]&c - Deleted BungeePlayers.yml file!");
         } finally {
