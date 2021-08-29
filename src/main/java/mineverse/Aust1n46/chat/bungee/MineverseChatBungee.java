@@ -12,6 +12,7 @@ import mineverse.Aust1n46.chat.utilities.Format;
 import mineverse.Aust1n46.chat.utilities.UUIDFetcher;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.chat.TextComponent;
+import net.md_5.bungee.api.config.ServerInfo;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.connection.Server;
 import net.md_5.bungee.api.event.PluginMessageEvent;
@@ -123,7 +124,7 @@ public class MineverseChatBungee extends Plugin implements Listener, VentureChat
 
 	@Override
 	public VentureChatProxyServer getServer(String serverName) {
-		ProxyServer server = (ProxyServer) getProxy().getServers().get(serverName);
+		ServerInfo server = (ServerInfo) getProxy().getServers().get(serverName);
 		return new VentureChatProxyServer(serverName, server.getPlayers().isEmpty());
 	}
 
