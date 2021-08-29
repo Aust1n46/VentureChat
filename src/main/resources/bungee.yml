@@ -1,4 +1,4 @@
 name: VentureChat
-main: mineverse.Aust1n46.chat.proxy.MineverseChatBungee
+main: mineverse.Aust1n46.chat.proxy.VentureChatBungee
 version: ${project.version}
 author: Aust1n46
