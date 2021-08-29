@@ -22,7 +22,7 @@ public final class MineverseChatAPI {
     private static HashMap<UUID, MineverseChatPlayer> onlinePlayerMap = new HashMap<UUID, MineverseChatPlayer>();
     private static List<String> networkPlayerNames = new ArrayList<String>();
 
-    private static HashMap<UUID, SynchronizedMineverseChatPlayer> bungeePlayerMap = new HashMap<UUID, SynchronizedMineverseChatPlayer>();
+    private static HashMap<UUID, SynchronizedMineverseChatPlayer> proxyPlayerMap = new HashMap<UUID, SynchronizedMineverseChatPlayer>();
 
     public static List<String> getNetworkPlayerNames() {
         return networkPlayerNames;
@@ -37,15 +37,20 @@ public final class MineverseChatAPI {
     }
 
     public static void addSynchronizedMineverseChatPlayerToMap(SynchronizedMineverseChatPlayer smcp) {
-        bungeePlayerMap.put(smcp.getUUID(), smcp);
+        proxyPlayerMap.put(smcp.getUUID(), smcp);
     }
 
+    @Deprecated
     public static void clearBungeePlayerMap() {
-        bungeePlayerMap.clear();
+        clearProxyPlayerMap();
+    }
+    
+    public static void clearProxyPlayerMap() {
+        proxyPlayerMap.clear();
     }
 
     public static Collection<SynchronizedMineverseChatPlayer> getSynchronizedMineverseChatPlayers() {
-        return bungeePlayerMap.values();
+        return proxyPlayerMap.values();
     }
 
     public static void addNameToMap(MineverseChatPlayer mcp) {
@@ -168,6 +173,6 @@ public final class MineverseChatAPI {
      * @return {@link SynchronizedMineverseChatPlayer}
      */
     public static SynchronizedMineverseChatPlayer getSynchronizedMineverseChatPlayer(UUID uuid) {
-        return bungeePlayerMap.get(uuid);
+        return proxyPlayerMap.get(uuid);
     }
 }
