@@ -8,6 +8,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
@@ -96,7 +97,12 @@ public class VentureChatVelocity implements VentureChatProxySource {
 	
 	@Subscribe
 	public void onPlayerQuit(DisconnectEvent event) {
-		updatePlayerNames();
+		// Delay sending plugin message to make sure disconnecting player is truly disconnected.
+		proxyServer.getScheduler().buildTask(this, () -> {
+			updatePlayerNames();
+		})
+		.delay(1, TimeUnit.SECONDS)
+		.schedule();
 	}
 	
 	private void updatePlayerNames() {
@@ -112,7 +118,7 @@ public class VentureChatVelocity implements VentureChatProxySource {
 				if(!send.isEmpty()) {
 					sendPluginMessage(send.getName(), outstream.toByteArray());
 				}
-			});
+			});	
 		}
 		catch(IllegalStateException e) {
 			sendConsoleMessage("Velocity being finicky with DisconnectEvent.");
