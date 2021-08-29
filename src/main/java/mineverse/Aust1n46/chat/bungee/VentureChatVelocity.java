@@ -113,7 +113,7 @@ public class VentureChatVelocity implements VentureChatProxySource {
 			});
 		}
 		catch(IllegalStateException e) {
-			sendConsoleMessage("Velocity being finicky");
+			sendConsoleMessage("Velocity being finicky with DisconnectEvent.");
 		} 
 		catch (IOException e) {
 			e.printStackTrace();
