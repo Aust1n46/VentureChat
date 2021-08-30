@@ -7,13 +7,12 @@ import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.junit.After;
+import org.junit.AfterClass;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.mockito.MockedStatic;
 import org.mockito.Mockito;
-import org.powermock.api.mockito.PowerMockito;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
 
 import mineverse.Aust1n46.chat.MineverseChat;
 import mineverse.Aust1n46.chat.api.MineverseChatAPI;
@@ -23,41 +22,51 @@ import mineverse.Aust1n46.chat.database.PlayerData;
 /**
  * Tests {@link LoginListener}.
  */
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({ MineverseChat.class, MineverseChatAPI.class, Bukkit.class, PlayerData.class, PlayerQuitEvent.class})
 public class LoginListenerTest {
-	private MineverseChat mockPlugin;
+	private static MockedStatic<MineverseChat> mockedMineverseChat;
+	private static MockedStatic<Bukkit> mockedBukkit;
+	private static MockedStatic<PlayerData> mockedPlayerData;
+	private static MockedStatic<MineverseChatAPI> mockedMineverseChatAPI;
+	
+	private static MineverseChat mockPlugin;
 	private Player mockPlayer;
 	private MineverseChatPlayer mockMCP;
 	private ConsoleCommandSender mockConsoleSender;
 	private LoginListener testLoginListener;
 	private PlayerQuitEvent mockPlayerQuitEvent;
-	private File mockDataFile;
+	private static File mockDataFile;
+	
+	@BeforeClass
+	public static void init() {
+		mockedMineverseChat = Mockito.mockStatic(MineverseChat.class);
+		mockPlugin = Mockito.mock(MineverseChat.class);
+		Mockito.when(MineverseChat.getInstance()).thenReturn(mockPlugin);
+		mockedBukkit = Mockito.mockStatic(Bukkit.class);
+		mockDataFile = Mockito.mock(File.class);
+		Mockito.when(mockPlugin.getDataFolder()).thenReturn(mockDataFile);
+		Mockito.when(mockDataFile.getAbsolutePath()).thenReturn("");
+		mockedPlayerData = Mockito.mockStatic(PlayerData.class);
+		mockedMineverseChatAPI = Mockito.mockStatic(MineverseChatAPI.class);	
+	}
+	
+	@AfterClass
+	public static void close() {
+		mockedMineverseChat.close();
+		mockedBukkit.close();
+		mockedPlayerData.close();
+		mockedMineverseChatAPI.close();
+	}
 	
 	@Before
 	public void setUp() {
-		mockPlugin = PowerMockito.mock(MineverseChat.class);
 		mockPlayer = Mockito.mock(Player.class);
 		mockMCP = Mockito.mock(MineverseChatPlayer.class);
 		mockConsoleSender = Mockito.mock(ConsoleCommandSender.class);
-		mockDataFile = Mockito.mock(File.class);
-		
-		mockPlayerQuitEvent = PowerMockito.mock(PlayerQuitEvent.class);
-		PowerMockito.when(mockPlayerQuitEvent.getPlayer()).thenReturn(mockPlayer);
-		
-		PowerMockito.mockStatic(MineverseChat.class);
-		PowerMockito.when(MineverseChat.getInstance()).thenReturn(mockPlugin);
-		PowerMockito.when(mockPlugin.getDataFolder()).thenReturn(mockDataFile);
-		
-		PowerMockito.mockStatic(MineverseChatAPI.class);
-		PowerMockito.when(MineverseChatAPI.getMineverseChatPlayer(Mockito.any(Player.class))).thenReturn(mockMCP);
-		PowerMockito.when(MineverseChatAPI.getOnlineMineverseChatPlayer(Mockito.any(Player.class))).thenReturn(mockMCP);
-		
-		PowerMockito.mockStatic(Bukkit.class);
-		PowerMockito.when(Bukkit.getConsoleSender()).thenReturn(mockConsoleSender);
-		
-		PowerMockito.mockStatic(PlayerData.class);
-		
+		mockPlayerQuitEvent = Mockito.mock(PlayerQuitEvent.class);
+		Mockito.when(mockPlayerQuitEvent.getPlayer()).thenReturn(mockPlayer);
+		Mockito.when(MineverseChatAPI.getMineverseChatPlayer(Mockito.any(Player.class))).thenReturn(mockMCP);
+		Mockito.when(MineverseChatAPI.getOnlineMineverseChatPlayer(Mockito.any(Player.class))).thenReturn(mockMCP);		
+		Mockito.when(Bukkit.getConsoleSender()).thenReturn(mockConsoleSender);
 		testLoginListener = new LoginListener();
 	}
 
@@ -70,9 +79,8 @@ public class LoginListenerTest {
 	public void testLoginWithNameChange() throws Exception {
 		Mockito.when(mockPlayer.getName()).thenReturn("NewName");
 		Mockito.when(mockMCP.getName()).thenReturn("OldName");
-		Mockito.when(mockPlayer.getDisplayName()).thenReturn("OldName");
 		testLoginListener.handleNameChange(mockMCP, mockPlayer);
-		Mockito.verify(mockMCP, Mockito.times(1)).setNickname("NewName");
+		Mockito.verify(mockMCP, Mockito.times(1)).setName("NewName");
 	}
 	
 	@Test

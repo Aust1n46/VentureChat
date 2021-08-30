@@ -10,46 +10,50 @@ import java.util.List;
 
 import org.bukkit.configuration.file.FileConfiguration;
 import org.junit.After;
+import org.junit.AfterClass;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.mockito.MockedStatic;
 import org.mockito.Mockito;
-import org.powermock.api.mockito.PowerMockito;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
 
 import mineverse.Aust1n46.chat.MineverseChat;
 
 /**
  * Tests {@link Format}.
  */
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({ MineverseChat.class })
 public class FormatTest {
+	private static MockedStatic<MineverseChat> mockedMineverseChat;
 
-	private MineverseChat mockPlugin;
+	private static MineverseChat mockPlugin;
 	private FileConfiguration mockConfig;
 
 	private List<String> filters;
 
+	@BeforeClass
+	public static void init() {
+		mockedMineverseChat = Mockito.mockStatic(MineverseChat.class);
+		mockPlugin = Mockito.mock(MineverseChat.class);
+		Mockito.when(MineverseChat.getInstance()).thenReturn(mockPlugin);
+	}
+	
+	@AfterClass
+	public static void close() {
+		mockedMineverseChat.close();
+	}
+	
 	@Before
 	public void setUp() {
 		filters = new ArrayList<String>();
 		filters.add("ass,donut");
 
-		mockPlugin = Mockito.mock(MineverseChat.class);
 		mockConfig = Mockito.mock(FileConfiguration.class);
-
-		PowerMockito.mockStatic(MineverseChat.class);
-		PowerMockito.when(MineverseChat.getInstance()).thenReturn(mockPlugin);
 		Mockito.when(mockPlugin.getConfig()).thenReturn(mockConfig);
 		Mockito.when(mockConfig.getStringList("filters")).thenReturn(filters);
 	}
 
 	@After
 	public void tearDown() {
-		mockPlugin = null;
-		mockConfig = null;
 		filters = new ArrayList<String>();
 	}
 

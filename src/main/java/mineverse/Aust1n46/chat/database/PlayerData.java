@@ -88,14 +88,13 @@ public class PlayerData {
                 UUID party = playerData.getConfigurationSection("players." + uuidString).getString("party").length() > 0 ? UUID.fromString(playerData.getConfigurationSection("players." + uuidString).getString("party")) : null;
                 boolean filter = playerData.getConfigurationSection("players." + uuidString).getBoolean("filter");
                 boolean notifications = playerData.getConfigurationSection("players." + uuidString).getBoolean("notifications");
-                String nickname = playerData.getConfigurationSection("players." + uuidString).getString("nickname");
                 String jsonFormat = "Default";
                 boolean spy = playerData.getConfigurationSection("players." + uuidString).getBoolean("spy", false);
                 boolean commandSpy = playerData.getConfigurationSection("players." + uuidString).getBoolean("commandspy", false);
                 boolean rangedSpy = playerData.getConfigurationSection("players." + uuidString).getBoolean("rangedspy", false);
                 boolean messageToggle = playerData.getConfigurationSection("players." + uuidString).getBoolean("messagetoggle", true);
                 boolean bungeeToggle = playerData.getConfigurationSection("players." + uuidString).getBoolean("bungeetoggle", true);
-                MineverseChatPlayer mcp = new MineverseChatPlayer(uuid, name, currentChannel, ignores, listening, mutes, blockedCommands, host, party, filter, notifications, nickname, jsonFormat, spy, commandSpy, rangedSpy, messageToggle, bungeeToggle);
+                MineverseChatPlayer mcp = new MineverseChatPlayer(uuid, name, currentChannel, ignores, listening, mutes, blockedCommands, host, party, filter, notifications, jsonFormat, spy, commandSpy, rangedSpy, messageToggle, bungeeToggle);
                 mcp.setModified(true);
                 MineverseChatAPI.addMineverseChatPlayerToMap(mcp);
                 MineverseChatAPI.addNameToMap(mcp);
@@ -177,14 +176,13 @@ public class PlayerData {
             UUID party = playerDataFileYamlConfiguration.getString("party").length() > 0 ? UUID.fromString(playerDataFileYamlConfiguration.getString("party")) : null;
             boolean filter = playerDataFileYamlConfiguration.getBoolean("filter");
             boolean notifications = playerDataFileYamlConfiguration.getBoolean("notifications");
-            String nickname = playerDataFileYamlConfiguration.getString("nickname");
             String jsonFormat = "Default";
             boolean spy = playerDataFileYamlConfiguration.getBoolean("spy", false);
             boolean commandSpy = playerDataFileYamlConfiguration.getBoolean("commandspy", false);
             boolean rangedSpy = playerDataFileYamlConfiguration.getBoolean("rangedspy", false);
             boolean messageToggle = playerDataFileYamlConfiguration.getBoolean("messagetoggle", true);
             boolean bungeeToggle = playerDataFileYamlConfiguration.getBoolean("bungeetoggle", true);
-            mcp = new MineverseChatPlayer(uuid, name, currentChannel, ignores, listening, mutes, blockedCommands, host, party, filter, notifications, nickname, jsonFormat, spy, commandSpy, rangedSpy, messageToggle, bungeeToggle);
+            mcp = new MineverseChatPlayer(uuid, name, currentChannel, ignores, listening, mutes, blockedCommands, host, party, filter, notifications, jsonFormat, spy, commandSpy, rangedSpy, messageToggle, bungeeToggle);
         } catch (Exception e) {
             Bukkit.getConsoleSender().sendMessage(Format.FormatStringAll("&8[&eVentureChat&8]&c - Error Loading Data File: " + playerDataFile.getName()));
             Bukkit.getConsoleSender().sendMessage(Format.FormatStringAll("&8[&eVentureChat&8]&c - File will be skipped and deleted."));
@@ -241,7 +239,6 @@ public class PlayerData {
             playerDataFileYamlConfiguration.set("party", mcp.hasParty() ? mcp.getParty().toString() : "");
             playerDataFileYamlConfiguration.set("filter", mcp.hasFilter());
             playerDataFileYamlConfiguration.set("notifications", mcp.hasNotifications());
-            playerDataFileYamlConfiguration.set("nickname", mcp.getNickname());
             playerDataFileYamlConfiguration.set("spy", mcp.isSpy());
             playerDataFileYamlConfiguration.set("commandspy", mcp.hasCommandSpy());
             playerDataFileYamlConfiguration.set("rangedspy", mcp.getRangedSpy());
