@@ -85,15 +85,20 @@ public class LoginListener implements Listener {
 				mcp.addListening(ch.getName());
 			}
 		}
-
-		if(plugin.getServer().spigot().getConfig().getBoolean("settings.bungeecord")) {
-			long delayInTicks = 20L;
-			final MineverseChatPlayer sync = mcp;
-			plugin.getServer().getScheduler().runTaskLaterAsynchronously(plugin, new Runnable() {
-				public void run() {
-					MineverseChat.synchronize(sync, false);
-				}
-			}, delayInTicks);
+		
+		try {
+			if(plugin.getServer().spigot().getPaperConfig().getBoolean("settings.velocity-support.enabled") || plugin.getServer().spigot().getConfig().getBoolean("settings.bungeecord")) {
+				long delayInTicks = 20L;
+				final MineverseChatPlayer sync = mcp;
+				plugin.getServer().getScheduler().runTaskLaterAsynchronously(plugin, new Runnable() {
+					public void run() {
+						MineverseChat.synchronize(sync, false);
+					}
+				}, delayInTicks);
+			}
+		}
+		catch(NoSuchMethodError exception) { // Thrown if server isn't Paper.
+			// Do nothing
 		}
 	}
 }
