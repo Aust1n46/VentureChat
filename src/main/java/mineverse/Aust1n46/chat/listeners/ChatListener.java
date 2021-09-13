@@ -510,6 +510,10 @@ public class ChatListener implements Listener {
 		String globalJSON = event.getGlobalJSON();
 		int hash = event.getHash();
 		boolean bungee = event.isBungee();
+
+		if (essentialsDiscordHook && channel.isDefaultchannel()) {
+			Bukkit.getServicesManager().load(DiscordService.class).sendChatMessage(mcp.getPlayer(), chat);
+		}
 		
 		if(!bungee) {
 			if(Database.isEnabled()) {
@@ -527,10 +531,6 @@ public class ChatListener implements Listener {
 				Format.sendPacketPlayOutChat(p, packet);
 			}
 			Bukkit.getConsoleSender().sendMessage(consoleChat);
-
-			if (essentialsDiscordHook && channel.isDefaultchannel()) {
-				Bukkit.getServicesManager().load(DiscordService.class).sendChatMessage(mcp.getPlayer(), chat);
-			}
 			return;
 		}
 		else {
