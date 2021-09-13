@@ -8,16 +8,19 @@ import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
+import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
+
 import mineverse.Aust1n46.chat.ChatMessage;
 import mineverse.Aust1n46.chat.channel.ChatChannel;
 import mineverse.Aust1n46.chat.command.mute.MuteContainer;
 import mineverse.Aust1n46.chat.json.JsonFormat;
 
-import org.bukkit.Bukkit;
-import org.bukkit.entity.Player;
-
-//Wrapper class for Player, this class stores additional information along with a players Player pointer.  
-//This data is read in from the PlayerData file and is also saved to that file when the server is closed.
+/**
+ * Wrapper for {@link Player}
+ * 
+ * @author Aust1n46
+ */
 public class MineverseChatPlayer {
 	private UUID uuid;
 	private String name;
@@ -30,7 +33,6 @@ public class MineverseChatPlayer {
 	private UUID party;
 	private boolean filter;
 	private boolean notifications;
-	private String nickname;
 	private boolean online;
 	private Player player;
 	private boolean hasPlayed;
@@ -52,7 +54,12 @@ public class MineverseChatPlayer {
 	private boolean messageToggle;
 	private boolean bungeeToggle;
 	
+	@Deprecated
 	public MineverseChatPlayer(UUID uuid, String name, ChatChannel currentChannel, Set<UUID> ignores, Set<String> listening, HashMap<String, MuteContainer> mutes, Set<String> blockedCommands, boolean host, UUID party, boolean filter, boolean notifications, String nickname, String jsonFormat, boolean spy, boolean commandSpy, boolean rangedSpy, boolean messageToggle, boolean bungeeToggle) {
+		this(uuid, name, currentChannel, ignores, listening, mutes, blockedCommands, host, party, filter, notifications, jsonFormat, spy, commandSpy, rangedSpy, messageToggle, bungeeToggle);
+	}
+	
+	public MineverseChatPlayer(UUID uuid, String name, ChatChannel currentChannel, Set<UUID> ignores, Set<String> listening, HashMap<String, MuteContainer> mutes, Set<String> blockedCommands, boolean host, UUID party, boolean filter, boolean notifications, String jsonFormat, boolean spy, boolean commandSpy, boolean rangedSpy, boolean messageToggle, boolean bungeeToggle) {
 		this.uuid = uuid;
 		this.name = name;
 		this.currentChannel = currentChannel;
@@ -64,7 +71,6 @@ public class MineverseChatPlayer {
 		this.party = party;
 		this.filter = filter;
 		this.notifications = notifications;
-		this.nickname = nickname;
 		this.online = false;
 		this.player = null;
 		this.hasPlayed = false;
@@ -98,7 +104,6 @@ public class MineverseChatPlayer {
 		this.party = null;
 		this.filter = true;
 		this.notifications = true;
-		this.nickname = name;
 		this.online = false;
 		this.player = null;
 		this.hasPlayed = false;
@@ -117,6 +122,19 @@ public class MineverseChatPlayer {
 		this.spam = new HashMap<ChatChannel, List<Long>>();
 		this.messageToggle = true;
 		this.bungeeToggle = true;
+	}
+	
+	@Deprecated
+	public String getNickname() {
+		return this.online ? this.player.getDisplayName() : "";
+	}
+
+	@Deprecated
+	public void setNickname(String nick) {}
+
+	@Deprecated
+	public boolean hasNickname() {
+		return false;
 	}
 	
 	public boolean getBungeeToggle() {
@@ -333,18 +351,6 @@ public class MineverseChatPlayer {
 
 	public void setNotifications(boolean notifications) {
 		this.notifications = notifications;
-	}
-
-	public String getNickname() {
-		return this.online ? this.player.getDisplayName() : this.nickname;
-	}
-
-	public void setNickname(String nick) {
-		this.nickname = nick;
-	}
-
-	public boolean hasNickname() {
-		return !this.name.equals(this.nickname);
 	}
 
 	public boolean isOnline() {

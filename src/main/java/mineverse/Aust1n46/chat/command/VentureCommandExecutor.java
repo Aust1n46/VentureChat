@@ -31,7 +31,6 @@ import mineverse.Aust1n46.chat.command.chat.Kickchannelall;
 import mineverse.Aust1n46.chat.command.chat.Leave;
 import mineverse.Aust1n46.chat.command.chat.Listen;
 import mineverse.Aust1n46.chat.command.chat.Me;
-import mineverse.Aust1n46.chat.command.chat.Nick;
 import mineverse.Aust1n46.chat.command.chat.Party;
 import mineverse.Aust1n46.chat.command.chat.RangedSpy;
 import mineverse.Aust1n46.chat.command.chat.Removemessage;
@@ -93,7 +92,6 @@ public class VentureCommandExecutor implements TabExecutor {
 		commands.put("listen", new Listen());
 		commands.put("me", new Me());
 		commands.put("venturechat", new Venturechat());
-		commands.put("setnickname", new Nick());
 		commands.put("notifications", new Notifications());
 		commands.put("party", new Party());
 		commands.put("rangedspy", new RangedSpy());

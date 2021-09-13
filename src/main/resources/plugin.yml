@@ -173,11 +173,6 @@ commands:
         aliases: [cb,vcommandblock]
         description: Toggle a player blocked from entering a command
         permission-message: You don't have <permission>
-    setnickname:
-        usage: /setnickname {player} [nickname]
-        aliases: [vnick]
-        description: Set a players nickname
-        permission-message: You don't have <permission>
     party:
         usage: /party help
         aliases: [p,chatparty,cp,vparty]
