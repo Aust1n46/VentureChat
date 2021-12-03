@@ -463,7 +463,7 @@ public class Format {
 			splitComponents(finalList, o, c);
 			for (Object component : finalList) {		
 				try {
-					if (VersionHandler.is1_8() || VersionHandler.is1_9() || VersionHandler.is1_10() || VersionHandler.is1_11() || VersionHandler.is1_12() || VersionHandler.is1_13() || VersionHandler.is1_14_4() || VersionHandler.is1_15() || VersionHandler.is1_16() || VersionHandler.is1_17()) {
+					if (VersionHandler.is1_8() || VersionHandler.is1_9() || VersionHandler.is1_10() || VersionHandler.is1_11() || VersionHandler.is1_12() || VersionHandler.is1_13() || VersionHandler.is1_14() || VersionHandler.is1_15() || VersionHandler.is1_16() || VersionHandler.is1_17()) {
 						String text = (String) component.getClass().getMethod("getText").invoke(component);
 						Object chatModifier = component.getClass().getMethod("getChatModifier").invoke(component);
 						Object color = chatModifier.getClass().getMethod("getColor").invoke(chatModifier);
@@ -532,7 +532,7 @@ public class Format {
 			for (Object component : finalList) {
 				if (VersionHandler.is1_7()) {
 					stringbuilder.append((String) component.getClass().getMethod("e").invoke(component));
-				} else if(VersionHandler.is1_8() || VersionHandler.is1_9() || VersionHandler.is1_10() || VersionHandler.is1_11() || VersionHandler.is1_12() || VersionHandler.is1_13() || VersionHandler.is1_14_4() || VersionHandler.is1_15() || VersionHandler.is1_16() || VersionHandler.is1_17()){
+				} else if(VersionHandler.is1_8() || VersionHandler.is1_9() || VersionHandler.is1_10() || VersionHandler.is1_11() || VersionHandler.is1_12() || VersionHandler.is1_13() || VersionHandler.is1_14() || VersionHandler.is1_15() || VersionHandler.is1_16() || VersionHandler.is1_17()){
 					stringbuilder.append((String) component.getClass().getMethod("getText").invoke(component));
 				}
 				else {
