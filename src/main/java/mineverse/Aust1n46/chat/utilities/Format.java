@@ -463,23 +463,51 @@ public class Format {
 			splitComponents(finalList, o, c);
 			for (Object component : finalList) {		
 				try {
-					String text = (String) component.getClass().getMethod("getText").invoke(component);
-					Object chatModifier = component.getClass().getMethod("getChatModifier").invoke(component);
-					String color = chatModifier.getClass().getMethod("getColor").invoke(chatModifier).toString();
-					boolean bold = (boolean) chatModifier.getClass().getMethod("isBold").invoke(chatModifier);
-					boolean strikethrough = (boolean) chatModifier.getClass().getMethod("isStrikethrough").invoke(chatModifier);
-					boolean italic = (boolean) chatModifier.getClass().getMethod("isItalic").invoke(chatModifier);
-					boolean underlined = (boolean) chatModifier.getClass().getMethod("isUnderlined").invoke(chatModifier);
-					boolean obfuscated = (boolean) chatModifier.getClass().getMethod("isRandom").invoke(chatModifier);
-					JSONObject jsonObject = new JSONObject();
-					jsonObject.put("text", text);
-					jsonObject.put("color", color);
-					jsonObject.put("bold", bold);
-					jsonObject.put("strikethrough", strikethrough);
-					jsonObject.put("italic", italic);
-					jsonObject.put("underlined", underlined);
-					jsonObject.put("obfuscated", obfuscated);
-					stringbuilder.append(jsonObject.toJSONString() + ",");
+					if (VersionHandler.is1_8() || VersionHandler.is1_9() || VersionHandler.is1_10() || VersionHandler.is1_11() || VersionHandler.is1_12() || VersionHandler.is1_13() || VersionHandler.is1_14_4() || VersionHandler.is1_15() || VersionHandler.is1_16() || VersionHandler.is1_17()) {
+						String text = (String) component.getClass().getMethod("getText").invoke(component);
+						Object chatModifier = component.getClass().getMethod("getChatModifier").invoke(component);
+						Object color = chatModifier.getClass().getMethod("getColor").invoke(chatModifier);
+						String colorString = "white";
+						if (color != null ) {
+							colorString = color.getClass().getMethod("b").invoke(color).toString();
+						}
+						boolean bold = (boolean) chatModifier.getClass().getMethod("isBold").invoke(chatModifier);
+						boolean strikethrough = (boolean) chatModifier.getClass().getMethod("isStrikethrough").invoke(chatModifier);
+						boolean italic = (boolean) chatModifier.getClass().getMethod("isItalic").invoke(chatModifier);
+						boolean underlined = (boolean) chatModifier.getClass().getMethod("isUnderlined").invoke(chatModifier);
+						boolean obfuscated = (boolean) chatModifier.getClass().getMethod("isRandom").invoke(chatModifier);
+						JSONObject jsonObject = new JSONObject();
+						jsonObject.put("text", text);
+						jsonObject.put("color", colorString);
+						jsonObject.put("bold", bold);
+						jsonObject.put("strikethrough", strikethrough);
+						jsonObject.put("italic", italic);
+						jsonObject.put("underlined", underlined);
+						jsonObject.put("obfuscated", obfuscated);
+						stringbuilder.append(jsonObject.toJSONString() + ",");
+					} else {
+						String text = (String) component.getClass().getMethod("getString").invoke(component);
+						Object chatModifier = component.getClass().getMethod("c").invoke(component);
+						Object color = chatModifier.getClass().getMethod("a").invoke(chatModifier);
+						String colorString = "white";
+						if (color != null ) {
+							colorString = color.getClass().getMethod("b").invoke(color).toString();
+						}
+						boolean bold = (boolean) chatModifier.getClass().getMethod("b").invoke(chatModifier);
+						boolean italic = (boolean) chatModifier.getClass().getMethod("c").invoke(chatModifier);
+						boolean strikethrough = (boolean) chatModifier.getClass().getMethod("d").invoke(chatModifier);
+						boolean underlined = (boolean) chatModifier.getClass().getMethod("e").invoke(chatModifier);
+						boolean obfuscated = (boolean) chatModifier.getClass().getMethod("f").invoke(chatModifier);
+						JSONObject jsonObject = new JSONObject();
+						jsonObject.put("text", text);
+						jsonObject.put("color", colorString);
+						jsonObject.put("bold", bold);
+						jsonObject.put("strikethrough", strikethrough);
+						jsonObject.put("italic", italic);
+						jsonObject.put("underlined", underlined);
+						jsonObject.put("obfuscated", obfuscated);
+						stringbuilder.append(jsonObject.toJSONString() + ",");
+					}
 				}
 				catch(Exception e) {
 					return "\"extra\":[{\"text\":\"Something went wrong. Could not access color.\",\"color\":\"red\"}]";
@@ -504,29 +532,20 @@ public class Format {
 			for (Object component : finalList) {
 				if (VersionHandler.is1_7()) {
 					stringbuilder.append((String) component.getClass().getMethod("e").invoke(component));
-				} else {
+				} else if(VersionHandler.is1_8() || VersionHandler.is1_9() || VersionHandler.is1_10() || VersionHandler.is1_11() || VersionHandler.is1_12() || VersionHandler.is1_13() || VersionHandler.is1_14_4() || VersionHandler.is1_15() || VersionHandler.is1_16() || VersionHandler.is1_17()){
 					stringbuilder.append((String) component.getClass().getMethod("getText").invoke(component));
+				}
+				else {
+					stringbuilder.append((String) component.getClass().getMethod("getString").invoke(component));
 				}
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		// if(plugin.getConfig().getString("loglevel", "info").equals("debug")) {
-		// System.out.println("my string");
-		// System.out.println("my string");
-		// System.out.println("my string");
-		// System.out.println("my string");
-		// System.out.println("my string");
-		// System.out.println(stringbuilder.toString());
-		// }
 		return stringbuilder.toString();
 	}
 
 	private static void splitComponents(List<Object> finalList, Object o, Class<?> c) throws Exception {
-//		 for(Method m : c.getMethods()) {
-//		 System.out.println(m.getName());
-//		 }
-		 
 		if (VersionHandler.is1_7() || VersionHandler.is1_8() || VersionHandler.is1_9() || VersionHandler.is1_10()
 				|| VersionHandler.is1_11() || VersionHandler.is1_12() || VersionHandler.is1_13()
 				|| (VersionHandler.is1_14() && !VersionHandler.is1_14_4())) {
@@ -539,10 +558,21 @@ public class Format {
 					finalList.add(component);
 				}
 			}
-		} else {
+		} else if(VersionHandler.is1_14_4() || VersionHandler.is1_15() || VersionHandler.is1_16() || VersionHandler.is1_17()) {
 			ArrayList<?> list = (ArrayList<?>) c.getMethod("getSiblings").invoke(o, new Object[0]);
 			for (Object component : list) {
 				ArrayList<?> innerList = (ArrayList<?>) c.getMethod("getSiblings").invoke(component, new Object[0]);
+				if (innerList.size() > 0) {
+					splitComponents(finalList, component, c);
+				} else {
+					finalList.add(component);
+				}
+			}
+		}
+		else {
+			ArrayList<?> list = (ArrayList<?>) c.getMethod("b").invoke(o, new Object[0]);
+			for (Object component : list) {
+				ArrayList<?> innerList = (ArrayList<?>) c.getMethod("b").invoke(component, new Object[0]);
 				if (innerList.size() > 0) {
 					splitComponents(finalList, component, c);
 				} else {
