@@ -1,6 +1,6 @@
 package mineverse.Aust1n46.chat.localization;
 
-import mineverse.Aust1n46.chat.utilities.Format;
+import mineverse.Aust1n46.chat.utilities.FormatUtils;
 
 /**
  * Messages configurable in Messages.yml file.
@@ -115,6 +115,6 @@ public enum LocalizedMessage {
 
     @Override
     public String toString() {
-        return Format.FormatStringAll(Localization.getLocalization().getString(this.message));
+        return FormatUtils.FormatStringAll(Localization.getLocalization().getString(this.message));
     }
 }

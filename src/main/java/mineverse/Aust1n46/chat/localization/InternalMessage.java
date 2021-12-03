@@ -1,6 +1,6 @@
 package mineverse.Aust1n46.chat.localization;
 
-import mineverse.Aust1n46.chat.utilities.Format;
+import mineverse.Aust1n46.chat.utilities.FormatUtils;
 
 /**
  * Messages internal to the plugin
@@ -18,6 +18,6 @@ public enum InternalMessage {
 
     @Override
     public String toString() {
-        return Format.FormatStringAll(this.message);
+        return FormatUtils.FormatStringAll(this.message);
     }
 }

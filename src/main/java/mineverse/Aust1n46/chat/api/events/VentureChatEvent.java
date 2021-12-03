@@ -6,9 +6,9 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 
-import mineverse.Aust1n46.chat.MineverseChat;
-import mineverse.Aust1n46.chat.api.MineverseChatPlayer;
-import mineverse.Aust1n46.chat.channel.ChatChannel;
+import venture.Aust1n46.chat.VentureChat;
+import venture.Aust1n46.chat.model.ChatChannel;
+import venture.Aust1n46.chat.model.VentureChatPlayer;
 
 /**
  * Event called when a message has been sent to a channel.
@@ -18,9 +18,8 @@ import mineverse.Aust1n46.chat.channel.ChatChannel;
  */
 public class VentureChatEvent extends Event {
 	private static final HandlerList handlers = new HandlerList();
-	private final MineverseChatPlayer mcp;
+	private final VentureChatPlayer mcp;
 	private final String username;
-	private final String nickname;
 	private final String playerPrimaryGroup;
 	private final ChatChannel channel;
 	private final Set<Player> recipients;
@@ -31,11 +30,10 @@ public class VentureChatEvent extends Event {
 	private final int hash;
 	private final boolean bungee;
 	
-	public VentureChatEvent(MineverseChatPlayer mcp, String username, String nickname, String playerPrimaryGroup, ChatChannel channel, Set<Player> recipients, int recipientCount, String format, String chat, String globalJSON, int hash, boolean bungee) {
-		super(MineverseChat.ASYNC);
+	public VentureChatEvent(VentureChatPlayer mcp, String username, String playerPrimaryGroup, ChatChannel channel, Set<Player> recipients, int recipientCount, String format, String chat, String globalJSON, int hash, boolean bungee) {
+		super(VentureChat.ASYNC);
 		this.mcp = mcp;
 		this.username = username;
-		this.nickname = nickname;
 		this.playerPrimaryGroup = playerPrimaryGroup;
 		this.channel = channel;
 		this.recipients = recipients;
@@ -47,16 +45,12 @@ public class VentureChatEvent extends Event {
 		this.bungee = bungee;
 	}
 	
-	public MineverseChatPlayer getMineverseChatPlayer() {
+	public VentureChatPlayer getMineverseChatPlayer() {
 		return this.mcp;
 	}
 	
 	public String getUsername() {
 		return this.username;
-	}
-	
-	public String getNickname() {
-		return this.nickname;
 	}
 	
 	public String getPlayerPrimaryGroup() {

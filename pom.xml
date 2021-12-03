@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>mineverse.Aust1n46.chat</groupId>
     <artifactId>VentureChat</artifactId>
-    <version>3.2.2</version>
+    <version>4.0.0</version>
     <url>https://bitbucket.org/Aust1n46/venturechat/src/master</url>
     <scm>
         <url>https://bitbucket.org/Aust1n46/venturechat/src/master</url>
@@ -67,11 +67,21 @@
                   			<pattern>net.md_5.bungee.config</pattern>
                   			<shadedPattern>shaded.net.md_5.bungee.config</shadedPattern>
                			</relocation>
+               			<relocation>
+                  			<pattern>com.google.inject</pattern>
+                  			<shadedPattern>shaded.com.google.inject</shadedPattern>
+               			</relocation>
+               			<relocation>
+                  			<pattern>org.aopalliance</pattern>
+                  			<shadedPattern>shaded.org.aopalliance</shadedPattern>
+               			</relocation>
              		</relocations>
          			<artifactSet>
          				<includes>
          					<include>com.zaxxer:HikariCP</include>
          					<include>net.md-5:bungeecord-config</include>
+         					<include>com.google.inject:guice</include>
+         					<include>aopalliance:aopalliance</include>
          				</includes>
          			</artifactSet>
         		</configuration>
@@ -118,6 +128,10 @@
         <repository>
     		<id>papermc</id>
     		<url>https://papermc.io/repo/repository/maven-public/</url>
+		</repository>
+		<repository>
+    		<id>google-guice</id>
+    		<url>https://mvnrepository.com/artifact/com.google.inject/guice</url>
 		</repository>
     </repositories>
     <dependencies>
@@ -195,6 +209,13 @@
                 </exclusion>
             </exclusions>
         </dependency>
+        <!-- https://mvnrepository.com/artifact/com.google.inject/guice -->
+		<dependency>
+			<groupId>com.google.inject</groupId>
+			<artifactId>guice</artifactId>
+			<scope>compile</scope>
+			<version>5.0.1</version>
+		</dependency>
         <dependency>
 	        <groupId>com.velocitypowered</groupId>
 	        <artifactId>velocity-api</artifactId>
@@ -221,6 +242,12 @@
             <version>1.13-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
+		<dependency>
+			<groupId>org.projectlombok</groupId>
+			<artifactId>lombok</artifactId>
+			<version>1.18.22</version>
+			<scope>provided</scope>
+		</dependency>
         <dependency>
 	        <groupId>junit</groupId>
 	        <artifactId>junit</artifactId>

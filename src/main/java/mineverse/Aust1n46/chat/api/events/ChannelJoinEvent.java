@@ -1,11 +1,11 @@
 package mineverse.Aust1n46.chat.api.events;
 
-import mineverse.Aust1n46.chat.channel.ChatChannel;
-
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
+
+import venture.Aust1n46.chat.model.ChatChannel;
 
 /**
  * Event called when a player attempts to join a valid channel

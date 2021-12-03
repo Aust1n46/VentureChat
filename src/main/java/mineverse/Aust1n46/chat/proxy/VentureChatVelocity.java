@@ -29,11 +29,11 @@ import com.velocitypowered.api.proxy.messages.ChannelIdentifier;
 import com.velocitypowered.api.proxy.messages.MinecraftChannelIdentifier;
 import com.velocitypowered.api.proxy.server.RegisteredServer;
 
-import mineverse.Aust1n46.chat.database.ProxyPlayerData;
-import mineverse.Aust1n46.chat.utilities.Format;
+import mineverse.Aust1n46.chat.utilities.FormatUtils;
 import net.md_5.bungee.config.Configuration;
 import net.md_5.bungee.config.ConfigurationProvider;
 import net.md_5.bungee.config.YamlConfiguration;
+import venture.Aust1n46.chat.controllers.VentureChatProxyFlatFileController;
 
 /**
  * VentureChat Minecraft plugin for Velocity.
@@ -44,6 +44,11 @@ public class VentureChatVelocity implements VentureChatProxySource {
 	private final ProxyServer proxyServer;
 	private final ChannelIdentifier channelIdentifier = MinecraftChannelIdentifier.create(VentureChatProxy.PLUGIN_MESSAGING_CHANNEL_NAMESPACE, VentureChatProxy.PLUGIN_MESSAGING_CHANNEL_NAME);
 	private final Logger logger;
+	
+	@Inject 
+	private VentureChatProxyFlatFileController proxyFlatFileController;
+	@Inject
+	private VentureChatProxy proxy;
 	
 	@Inject
 	@DataDirectory
@@ -82,12 +87,12 @@ public class VentureChatVelocity implements VentureChatProxySource {
 		}
 		
 		velocityPlayerDataDirectory = new File(dataPath.toAbsolutePath().toString() + "/PlayerData");
-		ProxyPlayerData.loadProxyPlayerData(velocityPlayerDataDirectory, this);
+		proxyFlatFileController.loadProxyPlayerData(velocityPlayerDataDirectory, this);
 	}
 	
 	@Subscribe
 	public void onShutdown(ProxyShutdownEvent event) {
-		ProxyPlayerData.saveProxyPlayerData(velocityPlayerDataDirectory, this);
+		proxyFlatFileController.saveProxyPlayerData(velocityPlayerDataDirectory, this);
 	}
 	
 	@Subscribe
@@ -138,7 +143,7 @@ public class VentureChatVelocity implements VentureChatProxySource {
 			return;
 		}
 		String serverName = ((ServerConnection) event.getSource()).getServerInfo().getName();
-		VentureChatProxy.onPluginMessage(event.getData(), serverName, this);
+		proxy.onPluginMessage(event.getData(), serverName, this);
 		event.setResult(ForwardResult.handled());
 	}
 
@@ -163,7 +168,7 @@ public class VentureChatVelocity implements VentureChatProxySource {
 
 	@Override
 	public void sendConsoleMessage(String message) {
-		logger.info(Format.stripColor(message));
+		logger.info(FormatUtils.stripColor(message));
 	}
 
 	@Override

@@ -7,9 +7,9 @@ import java.nio.file.Files;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import mineverse.Aust1n46.chat.database.ProxyPlayerData;
-import mineverse.Aust1n46.chat.utilities.Format;
-import mineverse.Aust1n46.chat.utilities.UUIDFetcher;
+import com.google.inject.Inject;
+
+import mineverse.Aust1n46.chat.utilities.FormatUtils;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.config.ServerInfo;
@@ -25,6 +25,8 @@ import net.md_5.bungee.config.Configuration;
 import net.md_5.bungee.config.ConfigurationProvider;
 import net.md_5.bungee.config.YamlConfiguration;
 import net.md_5.bungee.event.EventHandler;
+import venture.Aust1n46.chat.controllers.VentureChatProxyFlatFileController;
+import venture.Aust1n46.chat.service.UUIDService;
 
 /**
  * VentureChat Minecraft plugin for BungeeCord.
@@ -34,6 +36,13 @@ import net.md_5.bungee.event.EventHandler;
 public class VentureChatBungee extends Plugin implements Listener, VentureChatProxySource {
 	private static Configuration bungeeConfig;
 	private File bungeePlayerDataDirectory;
+	
+	@Inject
+	private UUIDService uuidService;
+	@Inject 
+	private VentureChatProxyFlatFileController proxyFlatFileController;
+	@Inject
+	private VentureChatProxy proxy;
 
 	@Override
 	public void onEnable() {
@@ -52,8 +61,8 @@ public class VentureChatBungee extends Plugin implements Listener, VentureChatPr
 		}
 		
 		bungeePlayerDataDirectory = new File(getDataFolder().getAbsolutePath() + "/PlayerData");
-		ProxyPlayerData.loadLegacyBungeePlayerData(bungeePlayerDataDirectory, this);
-		ProxyPlayerData.loadProxyPlayerData(bungeePlayerDataDirectory, this);
+		proxyFlatFileController.loadLegacyBungeePlayerData(bungeePlayerDataDirectory, this);
+		proxyFlatFileController.loadProxyPlayerData(bungeePlayerDataDirectory, this);
 		
 		this.getProxy().registerChannel(VentureChatProxy.PLUGIN_MESSAGING_CHANNEL_STRING);
 		this.getProxy().getPluginManager().registerListener(this, this);
@@ -61,7 +70,7 @@ public class VentureChatBungee extends Plugin implements Listener, VentureChatPr
 
 	@Override
 	public void onDisable() {
-		ProxyPlayerData.saveProxyPlayerData(bungeePlayerDataDirectory, this);
+		proxyFlatFileController.saveProxyPlayerData(bungeePlayerDataDirectory, this);
 	}
 	
 	@EventHandler
@@ -76,7 +85,7 @@ public class VentureChatBungee extends Plugin implements Listener, VentureChatPr
 	
 	@EventHandler
 	public void onPlayerJoinNetwork(PostLoginEvent event) {
-		UUIDFetcher.checkOfflineUUIDWarningProxy(event.getPlayer().getUniqueId(), this);
+		uuidService.checkOfflineUUIDWarningProxy(event.getPlayer().getUniqueId(), this);
 	}
 	
 	private void updatePlayerNames() {
@@ -109,7 +118,7 @@ public class VentureChatBungee extends Plugin implements Listener, VentureChatPr
 			return;
 		}
 		String serverName = ((Server) event.getSender()).getInfo().getName();
-		VentureChatProxy.onPluginMessage(event.getData(), serverName, this);
+		proxy.onPluginMessage(event.getData(), serverName, this);
 	}
 
 	@Override
@@ -130,7 +139,7 @@ public class VentureChatBungee extends Plugin implements Listener, VentureChatPr
 
 	@Override
 	public void sendConsoleMessage(String message) {
-		ProxyServer.getInstance().getConsole().sendMessage(TextComponent.fromLegacyText(Format.FormatStringAll(message)));
+		ProxyServer.getInstance().getConsole().sendMessage(TextComponent.fromLegacyText(FormatUtils.FormatStringAll(message)));
 	}
 
 	@Override

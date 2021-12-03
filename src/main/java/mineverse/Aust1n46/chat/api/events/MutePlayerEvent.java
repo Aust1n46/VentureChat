@@ -1,11 +1,11 @@
 package mineverse.Aust1n46.chat.api.events;
 
-import mineverse.Aust1n46.chat.channel.ChatChannel;
-
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
+
+import venture.Aust1n46.chat.model.ChatChannel;
 
 //This class is a custom event that is part of the plugins API.  It is called when a player executes the mute command.
 public class MutePlayerEvent extends Event implements Cancellable {	//unimplemented

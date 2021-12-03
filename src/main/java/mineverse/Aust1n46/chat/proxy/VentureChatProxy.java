@@ -7,17 +7,22 @@ import java.io.DataOutputStream;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import mineverse.Aust1n46.chat.api.MineverseChatAPI;
-import mineverse.Aust1n46.chat.api.SynchronizedMineverseChatPlayer;
-import mineverse.Aust1n46.chat.command.mute.MuteContainer;
-import mineverse.Aust1n46.chat.database.TemporaryDataInstance;
+import com.google.inject.Inject;
+
+import venture.Aust1n46.chat.controllers.commands.MuteContainer;
+import venture.Aust1n46.chat.model.SynchronizedVentureChatPlayer;
+import venture.Aust1n46.chat.model.TemporaryDataInstance;
+import venture.Aust1n46.chat.service.VentureChatPlayerApiService;
 
 public class VentureChatProxy {
 	public static String PLUGIN_MESSAGING_CHANNEL_NAMESPACE = "venturechat";
 	public static String PLUGIN_MESSAGING_CHANNEL_NAME = "data";
 	public static String PLUGIN_MESSAGING_CHANNEL_STRING = "venturechat:data";
 	
-	public static void onPluginMessage(byte[] data, String serverName, VentureChatProxySource source) {
+	@Inject
+	private VentureChatPlayerApiService playerApiService;
+	
+	public void onPluginMessage(byte[] data, String serverName, VentureChatProxySource source) {
 		ByteArrayInputStream instream = new ByteArrayInputStream(data);
 		DataInputStream in = new DataInputStream(instream);
 		try {
@@ -74,7 +79,7 @@ public class VentureChatProxy {
 					String server = serverName;
 					String sender = in.readUTF();
 					String channel = in.readUTF();
-					SynchronizedMineverseChatPlayer smcp = MineverseChatAPI.getSynchronizedMineverseChatPlayer(UUID.fromString(sender));
+					SynchronizedVentureChatPlayer smcp = playerApiService.getSynchronizedMineverseChatPlayer(UUID.fromString(sender));
 					if(smcp == null) {
 						source.sendConsoleMessage("&8[&eVentureChat&8]&c Synchronized player instance is null!  This shouldn't be!");
 						source.sendConsoleMessage("&8[&eVentureChat&8]&c You probably have an issue with your player data saving and/or your login data sync!");
@@ -97,7 +102,7 @@ public class VentureChatProxy {
 					String server = in.readUTF();
 					String sender = in.readUTF();
 					String channel = in.readUTF();
-					SynchronizedMineverseChatPlayer smcp = MineverseChatAPI.getSynchronizedMineverseChatPlayer(UUID.fromString(sender));
+					SynchronizedVentureChatPlayer smcp = playerApiService.getSynchronizedMineverseChatPlayer(UUID.fromString(sender));
 					if(smcp == null) {
 						source.sendConsoleMessage("&8[&eVentureChat&8]&c Synchronized player instance is null!  This shouldn't be!");
 						source.sendConsoleMessage("&8[&eVentureChat&8]&c You probably have an issue with your player data saving and/or your login data sync!");
@@ -145,7 +150,7 @@ public class VentureChatProxy {
 					String server = serverName;
 					String player = in.readUTF();
 					String sender = in.readUTF();
-					SynchronizedMineverseChatPlayer smcp = MineverseChatAPI.getSynchronizedMineverseChatPlayer(UUID.fromString(sender));
+					SynchronizedVentureChatPlayer smcp = playerApiService.getSynchronizedMineverseChatPlayer(UUID.fromString(sender));
 					if(smcp == null) {
 						source.sendConsoleMessage("&8[&eVentureChat&8]&c Synchronized player instance is null!  This shouldn't be!");
 						source.sendConsoleMessage("&8[&eVentureChat&8]&c You probably have an issue with your player data saving and/or your login data sync!");
@@ -167,7 +172,7 @@ public class VentureChatProxy {
 					String server = in.readUTF();
 					String player = in.readUTF();
 					String sender = in.readUTF();
-					SynchronizedMineverseChatPlayer smcp = MineverseChatAPI.getSynchronizedMineverseChatPlayer(UUID.fromString(sender));
+					SynchronizedVentureChatPlayer smcp = playerApiService.getSynchronizedMineverseChatPlayer(UUID.fromString(sender));
 					if(smcp == null) {
 						source.sendConsoleMessage("&8[&eVentureChat&8]&c Synchronized player instance is null!  This shouldn't be!");
 						source.sendConsoleMessage("&8[&eVentureChat&8]&c You probably have an issue with your player data saving and/or your login data sync!");
@@ -373,7 +378,7 @@ public class VentureChatProxy {
 					String echo = in.readUTF();
 					String spy = in.readUTF();
 					String msg = in.readUTF();
-					SynchronizedMineverseChatPlayer smcp = MineverseChatAPI.getSynchronizedMineverseChatPlayer(UUID.fromString(sender));
+					SynchronizedVentureChatPlayer smcp = playerApiService.getSynchronizedMineverseChatPlayer(UUID.fromString(sender));
 					if(smcp == null) {
 						source.sendConsoleMessage("&8[&eVentureChat&8]&c Synchronized player instance is null!  This shouldn't be!");
 						source.sendConsoleMessage("&8[&eVentureChat&8]&c You probably have an issue with your player data saving and/or your login data sync!");
@@ -400,7 +405,7 @@ public class VentureChatProxy {
 					String server = in.readUTF();
 					String player = in.readUTF();
 					String sender = in.readUTF();
-					SynchronizedMineverseChatPlayer smcp = MineverseChatAPI.getSynchronizedMineverseChatPlayer(UUID.fromString(sender));
+					SynchronizedVentureChatPlayer smcp = playerApiService.getSynchronizedMineverseChatPlayer(UUID.fromString(sender));
 					if(smcp == null) {
 						source.sendConsoleMessage("&8[&eVentureChat&8]&c Synchronized player instance is null!  This shouldn't be!");
 						source.sendConsoleMessage("&8[&eVentureChat&8]&c You probably have an issue with your player data saving and/or your login data sync!");
@@ -486,10 +491,10 @@ public class VentureChatProxy {
 					//System.out.println("Sending update...");
 					String server = serverName;
 					UUID uuid = UUID.fromString(in.readUTF());
-					SynchronizedMineverseChatPlayer smcp = MineverseChatAPI.getSynchronizedMineverseChatPlayer(uuid);
+					SynchronizedVentureChatPlayer smcp = playerApiService.getSynchronizedMineverseChatPlayer(uuid);
 					if(smcp == null) {
-						smcp = new SynchronizedMineverseChatPlayer(uuid);
-						MineverseChatAPI.addSynchronizedMineverseChatPlayerToMap(smcp);
+						smcp = new SynchronizedVentureChatPlayer(uuid);
+						playerApiService.addSynchronizedMineverseChatPlayerToMap(smcp);
 					}
 					out.writeUTF("Sync");
 					out.writeUTF(uuid.toString());
@@ -524,10 +529,10 @@ public class VentureChatProxy {
 				}
 				if(identifier.equals("Update")) {
 					UUID uuid = UUID.fromString(in.readUTF());
-					SynchronizedMineverseChatPlayer smcp = MineverseChatAPI.getSynchronizedMineverseChatPlayer(uuid);
+					SynchronizedVentureChatPlayer smcp = playerApiService.getSynchronizedMineverseChatPlayer(uuid);
 					if(smcp == null) {
-						smcp = new SynchronizedMineverseChatPlayer(uuid);
-						MineverseChatAPI.addSynchronizedMineverseChatPlayerToMap(smcp);
+						smcp = new SynchronizedVentureChatPlayer(uuid);
+						playerApiService.addSynchronizedMineverseChatPlayerToMap(smcp);
 					}		
 					smcp.getListening().clear();
 					smcp.clearMutes();
@@ -549,7 +554,7 @@ public class VentureChatProxy {
 					for(int c = 0; c < sizeI; c++) {
 						String ignore = in.readUTF();
 						//System.out.println(mute);
-						smcp.addIgnore(MineverseChatAPI.getSynchronizedMineverseChatPlayer(UUID.fromString(ignore)));
+						smcp.addIgnore(playerApiService.getSynchronizedMineverseChatPlayer(UUID.fromString(ignore)));
 					}
 					smcp.setSpy(in.readBoolean());
 					smcp.setMessageToggle(in.readBoolean());

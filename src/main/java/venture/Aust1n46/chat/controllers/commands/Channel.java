@@ -1,0 +1,83 @@
+package venture.Aust1n46.chat.controllers.commands;
+
+import org.bukkit.Bukkit;
+import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
+
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
+
+import mineverse.Aust1n46.chat.api.events.ChannelJoinEvent;
+import mineverse.Aust1n46.chat.localization.LocalizedMessage;
+import venture.Aust1n46.chat.controllers.PluginMessageController;
+import venture.Aust1n46.chat.model.ChatChannel;
+import venture.Aust1n46.chat.model.VentureChatPlayer;
+import venture.Aust1n46.chat.model.VentureCommand;
+import venture.Aust1n46.chat.service.VentureChatPlayerApiService;
+
+@Singleton
+public class Channel implements VentureCommand {
+	@Inject
+	private PluginMessageController pluginMessageController;
+	@Inject
+	private VentureChatPlayerApiService playerApiService;
+
+    @Override
+    public void execute(CommandSender sender, String command, String[] args) {
+        if (!(sender instanceof Player)) {
+            Bukkit.getServer().getConsoleSender().sendMessage(LocalizedMessage.COMMAND_MUST_BE_RUN_BY_PLAYER.toString());
+            return;
+        }
+        VentureChatPlayer mcp = playerApiService.getOnlineMineverseChatPlayer((Player) sender);
+        if (args.length > 0) {
+            if (!ChatChannel.isChannel(args[0])) {
+                mcp.getPlayer().sendMessage(LocalizedMessage.INVALID_CHANNEL.toString()
+                        .replace("{args}", args[0]));
+                return;
+            }
+            ChatChannel channel = ChatChannel.getChannel(args[0]);
+            ChannelJoinEvent channelJoinEvent = new ChannelJoinEvent(mcp.getPlayer(), channel, LocalizedMessage.SET_CHANNEL.toString()
+                    .replace("{channel_color}", channel.getColor() + "")
+                    .replace("{channel_name}", channel.getName()));
+            Bukkit.getServer().getPluginManager().callEvent(channelJoinEvent);
+            handleChannelJoinEvent(channelJoinEvent);
+            return;
+        }
+        mcp.getPlayer().sendMessage(LocalizedMessage.COMMAND_INVALID_ARGUMENTS.toString()
+                .replace("{command}", "/channel")
+                .replace("{args}", "[channel]"));
+        return;
+    }
+    
+    private void handleChannelJoinEvent(final ChannelJoinEvent event) {
+    	 if (event.isCancelled())
+             return;
+    	 ChatChannel channel = event.getChannel();
+         VentureChatPlayer mcp = playerApiService.getOnlineMineverseChatPlayer(event.getPlayer());
+         if (channel.hasPermission()) {
+             if (!mcp.getPlayer().hasPermission(channel.getPermission())) {
+                 mcp.removeListening(channel.getName());
+                 mcp.getPlayer().sendMessage(LocalizedMessage.CHANNEL_NO_PERMISSION.toString());
+                 return;
+             }
+         }
+         if (mcp.hasConversation()) {
+             for (VentureChatPlayer p : playerApiService.getOnlineMineverseChatPlayers()) {
+                 if (p.isSpy()) {
+                     p.getPlayer().sendMessage(LocalizedMessage.EXIT_PRIVATE_CONVERSATION_SPY.toString()
+                             .replace("{player_sender}", mcp.getName())
+                             .replace("{player_receiver}", playerApiService.getMineverseChatPlayer(mcp.getConversation()).getName()));
+                 }
+             }
+             mcp.getPlayer().sendMessage(LocalizedMessage.EXIT_PRIVATE_CONVERSATION.toString()
+                     .replace("{player_receiver}", playerApiService.getMineverseChatPlayer(mcp.getConversation()).getName()));
+             mcp.setConversation(null);
+         }
+         mcp.addListening(channel.getName());
+         mcp.setCurrentChannel(channel);
+         mcp.getPlayer().sendMessage(event.getMessage());
+         if (channel.getBungee()) {
+             pluginMessageController.synchronize(mcp, true);
+         }
+    }
+}

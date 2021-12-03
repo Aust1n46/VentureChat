@@ -1,7 +1,7 @@
 name: VentureChat
 version: ${project.version}
 api-version: 1.13
-main: mineverse.Aust1n46.chat.MineverseChat
+main: venture.Aust1n46.chat.VentureChat
 depend: [Vault, ProtocolLib, PlaceholderAPI]
 softdepend: [Towny, Factions, EssentialsDiscord]
 author: Aust1n46
