@@ -15,13 +15,14 @@ import org.bukkit.util.StringUtil;
 
 import com.google.inject.Inject;
 
-import mineverse.Aust1n46.chat.localization.LocalizedMessage;
-import mineverse.Aust1n46.chat.utilities.FormatUtils;
 import venture.Aust1n46.chat.controllers.PluginMessageController;
+import venture.Aust1n46.chat.localization.LocalizedMessage;
 import venture.Aust1n46.chat.model.ChatChannel;
 import venture.Aust1n46.chat.model.VentureChatPlayer;
 import venture.Aust1n46.chat.model.VentureCommand;
+import venture.Aust1n46.chat.service.ConfigService;
 import venture.Aust1n46.chat.service.VentureChatPlayerApiService;
+import venture.Aust1n46.chat.utilities.FormatUtils;
 
 public class Mute implements VentureCommand {
     private static final List<String> COMMON_MUTE_TIMES = Collections.unmodifiableList(Arrays.asList(new String[]{"12h", "15m", "1d", "1h", "1m", "30s"}));
@@ -30,6 +31,8 @@ public class Mute implements VentureCommand {
 	private PluginMessageController pluginMessageController;
     @Inject
 	private VentureChatPlayerApiService playerApiService;
+    @Inject
+	private ConfigService configService;
 
     @Override
     public void execute(CommandSender sender, String command, String[] args) {
@@ -39,8 +42,8 @@ public class Mute implements VentureCommand {
                         .replace("{args}", "[channel] [player] {time} {reason}"));
                 return;
             }
-            if (ChatChannel.isChannel(args[0])) {
-                ChatChannel channel = ChatChannel.getChannel(args[0]);
+            if (configService.isChannel(args[0])) {
+                ChatChannel channel = configService.getChannel(args[0]);
                 if (channel.isMutable()) {
                     long datetime = System.currentTimeMillis();
                     long time = 0;
@@ -167,13 +170,13 @@ public class Mute implements VentureCommand {
     public List<String> onTabComplete(CommandSender sender, Command command, String label, String[] args) {
         List<String> completions = new ArrayList<>();
         if (args.length == 1) {
-            StringUtil.copyPartialMatches(args[0], ChatChannel.getChatChannels().stream().map(ChatChannel::getName).collect(Collectors.toList()), completions);
+            StringUtil.copyPartialMatches(args[0], configService.getChatChannels().stream().map(ChatChannel::getName).collect(Collectors.toList()), completions);
             Collections.sort(completions);
             return completions;
         }
         if (args.length == 2) {
-            if (ChatChannel.isChannel(args[0])) {
-                ChatChannel chatChannelObj = ChatChannel.getChannel(args[0]);
+            if (configService.isChannel(args[0])) {
+                ChatChannel chatChannelObj = configService.getChannel(args[0]);
                 if (chatChannelObj.getBungee()) {
                     StringUtil.copyPartialMatches(args[1], playerApiService.getNetworkPlayerNames(), completions);
                     Collections.sort(completions);

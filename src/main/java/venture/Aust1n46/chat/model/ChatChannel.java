@@ -1,18 +1,9 @@
 package venture.Aust1n46.chat.model;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.configuration.ConfigurationSection;
 
-import mineverse.Aust1n46.chat.utilities.FormatUtils;
-import venture.Aust1n46.chat.VentureChat;
 import venture.Aust1n46.chat.service.VentureChatFormatService;
+import venture.Aust1n46.chat.utilities.FormatUtils;
 
 /**
  * Chat channel object pojo. Class also contains static initialization methods
@@ -23,11 +14,6 @@ import venture.Aust1n46.chat.service.VentureChatFormatService;
 public class ChatChannel {
 	private static final String PERMISSION_PREFIX = "venturechat.";
 	private static final String NO_PERMISSIONS = "venturechat.none";
-	
-	private static boolean aliasesRegisteredAsCommands;
-	private static ChatChannel defaultChatChannel;
-	private static String defaultColor;
-	private static HashMap<String, ChatChannel> chatChannels;
 	
 	private String name;
 	private String permission;
@@ -44,117 +30,6 @@ public class ChatChannel {
 	private String format;
 	private int cooldown;
 	private String prefix;
-
-	/**
-	 * Read chat channels from config file and initialize channel array.
-	 */
-	public static void initialize(final VentureChat plugin, final VentureChatFormatService formatter, final boolean aliasesRegisteredAsCommands) {
-		chatChannels = new HashMap<String, ChatChannel>();
-		ChatChannel.aliasesRegisteredAsCommands = aliasesRegisteredAsCommands;
-		ConfigurationSection cs = plugin.getConfig().getConfigurationSection("channels");
-		for (String key : cs.getKeys(false)) {
-			String color = cs.getString(key + ".color", "white");
-			String chatColor = cs.getString(key + ".chatcolor", "white");
-			String name = key;
-			String permission = cs.getString(key + ".permissions", "None");
-			String speakPermission = cs.getString(key + ".speak_permissions", "None");
-			boolean mutable = cs.getBoolean(key + ".mutable", false);
-			boolean filter = cs.getBoolean(key + ".filter", true);
-			boolean bungee = cs.getBoolean(key + ".bungeecord", false);
-			String format = cs.getString(key + ".format", "Default");
-			boolean defaultChannel = cs.getBoolean(key + ".default", false);
-			String alias = cs.getString(key + ".alias", "None");
-			double distance = cs.getDouble(key + ".distance", (double) 0);
-			int cooldown = cs.getInt(key + ".cooldown", 0);
-			boolean autojoin = cs.getBoolean(key + ".autojoin", false);
-			String prefix = cs.getString(key + ".channel_prefix");
-			ChatChannel chatChannel = new ChatChannel(name, color, chatColor, permission, speakPermission, mutable,
-					filter, defaultChannel, alias, distance, autojoin, bungee, cooldown, prefix, format);
-			chatChannels.put(name.toLowerCase(), chatChannel);
-			chatChannels.put(alias.toLowerCase(), chatChannel);
-			if (defaultChannel) {
-				defaultChatChannel = chatChannel;
-				defaultColor = color;
-			}
-		}
-		// Error handling for missing default channel in the config.
-		if(defaultChatChannel == null) {
-			Bukkit.getConsoleSender().sendMessage(FormatUtils.FormatStringAll("&8[&eVentureChat&8]&e - &cNo default channel found!"));
-			defaultChatChannel = new ChatChannel("MissingDefault", "red", "red", "None", "None", false,
-					true, true, "md", 0, true, false, 0, "&f[&cMissingDefault&f]", "{venturechat_channel_prefix} {vault_prefix}{player_displayname}&c:");
-			defaultColor = defaultChatChannel.getColor();
-			chatChannels.put("missingdefault", defaultChatChannel);
-			chatChannels.put("md", defaultChatChannel);
-		}
-	}
-	
-	public static boolean areAliasesRegisteredAsCommands() {
-		return aliasesRegisteredAsCommands;
-	}
-	
-	/**
-	 * Get list of chat channels.
-	 * 
-	 * @return {@link Collection}&lt{@link ChatChannel}&gt
-	 */
-	public static Collection<ChatChannel> getChatChannels() {
-		return new HashSet<ChatChannel>(chatChannels.values());
-	}
-
-	/**
-	 * Get a chat channel by name.
-	 * 
-	 * @param channelName
-	 *            name of channel to get.
-	 * @return {@link ChatChannel}
-	 */
-	public static ChatChannel getChannel(String channelName) {
-		return chatChannels.get(channelName.toLowerCase());
-	}
-
-	/**
-	 * Checks if the chat channel exists.
-	 * 
-	 * @param channelName
-	 *            name of channel to check.
-	 * @return true if channel exists, false otherwise.
-	 */
-	public static boolean isChannel(String channelName) {
-		return getChannel(channelName) != null;
-	}
-
-	/**
-	 * Get default chat channel color.
-	 * 
-	 * @return {@link String}
-	 */
-	public static String getDefaultColor() {
-		return defaultColor;
-	}
-
-	/**
-	 * Get default chat channel.
-	 * 
-	 * @return {@link ChatChannel}
-	 */
-	public static ChatChannel getDefaultChannel() {
-		return defaultChatChannel;
-	}
-
-	/**
-	 * Get list of chat channels with autojoin set to true.
-	 * 
-	 * @return {@link List}&lt{@link ChatChannel}&gt
-	 */
-	public static List<ChatChannel> getAutojoinList() {
-		List<ChatChannel> joinlist = new ArrayList<ChatChannel>();
-		for (ChatChannel c : chatChannels.values()) {
-			if (c.getAutojoin()) {
-				joinlist.add(c);
-			}
-		}
-		return joinlist;
-	}
 
 	/**
 	 * Parameterized constructor a {@link ChatChannel}.

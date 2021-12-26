@@ -14,8 +14,8 @@ import com.google.inject.Singleton;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 
-import mineverse.Aust1n46.chat.utilities.FormatUtils;
-import venture.Aust1n46.chat.VentureChat;
+import venture.Aust1n46.chat.initiators.application.VentureChat;
+import venture.Aust1n46.chat.utilities.FormatUtils;
 
 /**
  * Initializes and handles writing to the chat logging database.

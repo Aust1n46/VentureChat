@@ -1,6 +1,6 @@
 package venture.Aust1n46.chat.controllers.commands;
 
-import static venture.Aust1n46.chat.VentureChat.LINE_LENGTH;
+import static venture.Aust1n46.chat.utilities.FormatUtils.LINE_LENGTH;
 
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
@@ -8,12 +8,12 @@ import org.bukkit.entity.Player;
 
 import com.google.inject.Inject;
 
-import mineverse.Aust1n46.chat.utilities.FormatUtils;
-import venture.Aust1n46.chat.VentureChat;
+import venture.Aust1n46.chat.initiators.application.VentureChat;
 import venture.Aust1n46.chat.model.VentureChatPlayer;
 import venture.Aust1n46.chat.model.VentureCommand;
-import venture.Aust1n46.chat.service.VentureChatPlayerApiService;
 import venture.Aust1n46.chat.service.VentureChatFormatService;
+import venture.Aust1n46.chat.service.VentureChatPlayerApiService;
+import venture.Aust1n46.chat.utilities.FormatUtils;
 
 public class Party implements VentureCommand {
 	@Inject

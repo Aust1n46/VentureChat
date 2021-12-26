@@ -12,15 +12,17 @@ import org.bukkit.event.player.PlayerQuitEvent;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
-import mineverse.Aust1n46.chat.utilities.FormatUtils;
 import venture.Aust1n46.chat.Logger;
-import venture.Aust1n46.chat.VentureChat;
 import venture.Aust1n46.chat.controllers.PluginMessageController;
 import venture.Aust1n46.chat.controllers.VentureChatSpigotFlatFileController;
+import venture.Aust1n46.chat.initiators.application.VentureChat;
 import venture.Aust1n46.chat.model.ChatChannel;
+import venture.Aust1n46.chat.model.JsonFormat;
 import venture.Aust1n46.chat.model.VentureChatPlayer;
+import venture.Aust1n46.chat.service.ConfigService;
 import venture.Aust1n46.chat.service.UUIDService;
 import venture.Aust1n46.chat.service.VentureChatPlayerApiService;
+import venture.Aust1n46.chat.utilities.FormatUtils;
 
 /**
  * Manages player login and logout events.
@@ -40,6 +42,8 @@ public class LoginListener implements Listener {
 	@Inject
 	private VentureChatPlayerApiService playerApiService;
 	@Inject
+	private ConfigService configService;
+	@Inject
 	private Logger log;
 
 	@EventHandler(priority = EventPriority.LOW)
@@ -55,58 +59,55 @@ public class LoginListener implements Listener {
 			log.debug("onPlayerQuit() ventureChatPlayer:{} quit", ventureChatPlayer);
 		}
 	}
-	
-	void handleNameChange(VentureChatPlayer mcp, Player eventPlayerInstance) {
-		plugin.getServer().getConsoleSender().sendMessage(FormatUtils.FormatStringAll("&8[&eVentureChat&8]&e - Detected Name Change. Old Name:&c " + mcp.getName() + " &eNew Name:&c " + eventPlayerInstance.getName()));
+
+	private void handleNameChange(VentureChatPlayer mcp, Player eventPlayerInstance) {
+		plugin.getServer().getConsoleSender().sendMessage(
+				FormatUtils.FormatStringAll("&8[&eVentureChat&8]&e - Detected Name Change. Old Name:&c " + mcp.getName() + " &eNew Name:&c " + eventPlayerInstance.getName()));
 		playerApiService.removeNameFromMap(mcp.getName());
 		mcp.setName(eventPlayerInstance.getName());
 		playerApiService.addNameToMap(mcp);
 	}
 
 	@EventHandler(priority = EventPriority.LOW)
-	public void onPlayerJoin(PlayerJoinEvent event) throws Exception {
+	public void onPlayerJoin(PlayerJoinEvent event) {
 		VentureChatPlayer mcp = playerApiService.getMineverseChatPlayer(event.getPlayer());
 		Player player = event.getPlayer();
 		String name = player.getName();
-		if(mcp == null) {
+		if (mcp == null) {
 			UUID uuid = player.getUniqueId();
-			mcp = new VentureChatPlayer(uuid, name);
+			mcp = new VentureChatPlayer(uuid, name, configService.getDefaultChannel());
 			playerApiService.addMineverseChatPlayerToMap(mcp);
 			playerApiService.addNameToMap(mcp);
 		}
 		uuidService.checkOfflineUUIDWarning(mcp.getUuid());
-		//check for name change
-		if(!mcp.getName().equals(name)) {
+		// check for name change
+		if (!mcp.getName().equals(name)) {
 			handleNameChange(mcp, event.getPlayer());
 		}
 		mcp.setOnline(true);
+		mcp.setPlayer(player);
 		mcp.setHasPlayed(false);
 		playerApiService.addMineverseChatOnlinePlayerToMap(mcp);
-		mcp.setJsonFormat();
-		for(ChatChannel ch : ChatChannel.getAutojoinList()) {
-			if(ch.hasPermission()) {
-				if(mcp.getPlayer().hasPermission(ch.getPermission())) {
-					mcp.addListening(ch.getName());
+		String jsonFormat = mcp.getJsonFormat();
+		for (JsonFormat j : configService.getJsonFormats()) {
+			if (mcp.getPlayer().hasPermission("venturechat.json." + j.getName())) {
+				if (configService.getJsonFormat(mcp.getJsonFormat()).getPriority() > j.getPriority()) {
+					jsonFormat = j.getName();
 				}
 			}
-			else {
+		}
+		mcp.setJsonFormat(jsonFormat);
+		for (ChatChannel ch : configService.getAutojoinList()) {
+			if (ch.hasPermission()) {
+				if (mcp.getPlayer().hasPermission(ch.getPermission())) {
+					mcp.addListening(ch.getName());
+				}
+			} else {
 				mcp.addListening(ch.getName());
 			}
 		}
-		
-		try {
-			if(plugin.getServer().spigot().getConfig().getBoolean("settings.bungeecord") || plugin.getServer().spigot().getPaperConfig().getBoolean("settings.velocity-support.enabled")) {
-				long delayInTicks = 20L;
-				final VentureChatPlayer sync = mcp;
-				plugin.getServer().getScheduler().runTaskLaterAsynchronously(plugin, new Runnable() {
-					public void run() {
-						pluginMessageController.synchronize(sync, false);
-					}
-				}, delayInTicks);
-			}
-		}
-		catch(NoSuchMethodError exception) { // Thrown if server isn't Paper.
-			// Do nothing
+		if (configService.isProxyEnabled()) {
+			pluginMessageController.synchronizeWithDelay(mcp, false);
 		}
 	}
 }

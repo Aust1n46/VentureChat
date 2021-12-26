@@ -8,7 +8,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 import lombok.AccessLevel;
@@ -56,11 +55,6 @@ public class VentureChatPlayer {
 	private boolean messageToggle;
 	private boolean bungeeToggle;
 	
-	@Deprecated
-	public VentureChatPlayer(UUID uuid, String name, ChatChannel currentChannel, Set<UUID> ignores, Set<String> listening, HashMap<String, MuteContainer> mutes, Set<String> blockedCommands, boolean host, UUID party, boolean filter, boolean notifications, String nickname, String jsonFormat, boolean spy, boolean commandSpy, boolean rangedSpy, boolean messageToggle, boolean bungeeToggle) {
-		this(uuid, name, currentChannel, ignores, listening, mutes, blockedCommands, host, party, filter, notifications, jsonFormat, spy, commandSpy, rangedSpy, messageToggle, bungeeToggle);
-	}
-	
 	public VentureChatPlayer(UUID uuid, String name, ChatChannel currentChannel, Set<UUID> ignores, Set<String> listening, HashMap<String, MuteContainer> mutes, Set<String> blockedCommands, boolean host, UUID party, boolean filter, boolean notifications, String jsonFormat, boolean spy, boolean commandSpy, boolean rangedSpy, boolean messageToggle, boolean bungeeToggle) {
 		this.uuid = uuid;
 		this.name = name;
@@ -93,10 +87,10 @@ public class VentureChatPlayer {
 		this.bungeeToggle = bungeeToggle;
 	}
 	
-	public VentureChatPlayer(UUID uuid, String name) {
+	public VentureChatPlayer(UUID uuid, String name, ChatChannel currentChannel) {
 		this.uuid = uuid;
 		this.name = name;
-		this.currentChannel = ChatChannel.getDefaultChannel();
+		this.currentChannel = currentChannel;
 		this.ignores = new HashSet<UUID>();
 		this.listening = new HashSet<String>();
 		listening.add(currentChannel.getName());
@@ -151,27 +145,9 @@ public class VentureChatPlayer {
 	public void removeIgnore(UUID ignore) {
 		this.ignores.remove(ignore);
 	}
-
-	public Set<String> getListening() {
-		return this.listening;
-	}
 	
 	public boolean isListening(String channel) {
-		if(this.isOnline()) {
-			if(ChatChannel.isChannel(channel)) {
-				ChatChannel chatChannel = ChatChannel.getChannel(channel);
-				if(chatChannel.hasPermission()) {
-					if(!this.getPlayer().hasPermission(chatChannel.getPermission())) {
-						if(this.getCurrentChannel().equals(chatChannel)) {
-							this.setCurrentChannel(ChatChannel.getDefaultChannel());
-						}
-						this.removeListening(channel);
-						return false;
-					}
-				}
-			}
-		}
-		return this.listening.contains(channel);
+		return listening.contains(channel);
 	}
 
 	public boolean addListening(String channel) {
@@ -234,10 +210,6 @@ public class VentureChatPlayer {
 		return channel != null ? this.mutes.containsKey(channel) : false;
 	}
 
-	public Set<String> getBlockedCommands() {
-		return this.blockedCommands;
-	}
-
 	public void addBlockedCommand(String command) {
 		this.blockedCommands.add(command);
 	}
@@ -254,26 +226,8 @@ public class VentureChatPlayer {
 		return this.party != null;
 	}
 
-	public void setOnline(boolean online) {
-		this.online = online;
-		if(this.online) {
-			this.player = Bukkit.getPlayer(name);
-		}
-		else {
-			this.player = null;
-		}
-	}
-
 	public Player getPlayer() {
 		return this.online ? this.player : null;
-	}
-
-	public UUID getConversation() {
-		return this.conversation;
-	}
-
-	public void setConversation(UUID conversation) {
-		this.conversation = conversation;
 	}
 
 	public boolean hasConversation() {
@@ -290,10 +244,6 @@ public class VentureChatPlayer {
 		return this.spy;
 	}
 
-	public void setSpy(boolean spy) {
-		this.spy = spy;
-	}
-
 	public boolean hasCommandSpy() {
 		if(this.isOnline()) {
 			if(!this.getPlayer().hasPermission("venturechat.commandspy")) {
@@ -304,22 +254,6 @@ public class VentureChatPlayer {
 		return this.commandSpy;
 	}
 
-	public void setCommandSpy(boolean commandSpy) {
-		this.commandSpy = commandSpy;
-	}
-
-	public boolean isQuickChat() {
-		return this.quickChat;
-	}
-
-	public void setQuickChat(boolean quickChat) {
-		this.quickChat = quickChat;
-	}
-
-	public ChatChannel getQuickChannel() {
-		return this.quickChannel;
-	}
-
 	public boolean setQuickChannel(ChatChannel channel) {
 		if(channel != null) {
 			this.quickChannel = channel;
@@ -328,37 +262,8 @@ public class VentureChatPlayer {
 		return false;
 	}
 
-	@Deprecated
-	/**
-	 * Not needed and never resets to it's original null value after being set once.
-	 * @return
-	 */
-	public boolean hasQuickChannel() {
-		return this.quickChannel != null;
-	}
-
-	public UUID getReplyPlayer() {
-		return this.replyPlayer;
-	}
-
-	public void setReplyPlayer(UUID replyPlayer) {
-		this.replyPlayer = replyPlayer;
-	}
-
 	public boolean hasReplyPlayer() {
 		return this.replyPlayer != null;
-	}
-
-	public boolean isPartyChat() {
-		return this.partyChat;
-	}
-
-	public void setPartyChat(boolean partyChat) {
-		this.partyChat = partyChat;
-	}
-
-	public HashMap<ChatChannel, Long> getCooldowns() {
-		return this.cooldowns;
 	}
 
 	public boolean addCooldown(ChatChannel channel, long time) {
@@ -381,10 +286,6 @@ public class VentureChatPlayer {
 		return channel != null && this.cooldowns != null ? this.cooldowns.containsKey(channel) : false;
 	}
 	
-	public HashMap<ChatChannel, List<Long>> getSpam() {
-		return this.spam;
-	}
-	
 	public boolean hasSpam(ChatChannel channel) {
 		return channel != null && this.spam != null ? this.spam.containsKey(channel) : false;
 	}
@@ -397,18 +298,6 @@ public class VentureChatPlayer {
 		return false;
 	}
 
-	public void setModified(boolean modified) {
-		this.modified = modified;
-	}
-
-	public boolean wasModified() {
-		return this.modified;
-	}
-
-	public List<ChatMessage> getMessages() {
-		return this.messages;
-	}
-
 	public void addMessage(ChatMessage message) {
 		if(this.messages.size() >= 100) {
 			this.messages.remove(0);
@@ -418,20 +307,5 @@ public class VentureChatPlayer {
 
 	public void clearMessages() {
 		this.messages.clear();
-	}
-
-	public String getJsonFormat() {
-		return this.jsonFormat;
-	}
-
-	public void setJsonFormat() {
-		this.jsonFormat = "Default";
-		for(JsonFormat j : JsonFormat.getJsonFormats()) {
-			if(this.getPlayer().hasPermission("venturechat.json." + j.getName())) {
-				if(JsonFormat.getJsonFormat(this.getJsonFormat()).getPriority() > j.getPriority()) {
-					this.jsonFormat = j.getName();
-				}
-			}
-		}
 	}
 }

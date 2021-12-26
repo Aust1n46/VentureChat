@@ -13,13 +13,13 @@ import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.wrappers.WrappedChatComponent;
 import com.google.inject.Inject;
 
-import mineverse.Aust1n46.chat.localization.LocalizedMessage;
-import mineverse.Aust1n46.chat.utilities.FormatUtils;
-import venture.Aust1n46.chat.VentureChat;
+import venture.Aust1n46.chat.initiators.application.VentureChat;
+import venture.Aust1n46.chat.localization.LocalizedMessage;
 import venture.Aust1n46.chat.model.ChatMessage;
 import venture.Aust1n46.chat.model.VentureChatPlayer;
 import venture.Aust1n46.chat.model.VentureCommand;
 import venture.Aust1n46.chat.service.VentureChatPlayerApiService;
+import venture.Aust1n46.chat.utilities.FormatUtils;
 import venture.Aust1n46.chat.service.VentureChatFormatService;
 
 public class Edit implements VentureCommand {

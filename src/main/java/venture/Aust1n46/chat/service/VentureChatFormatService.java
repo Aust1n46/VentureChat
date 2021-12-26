@@ -1,10 +1,10 @@
 package venture.Aust1n46.chat.service;
 
-import static mineverse.Aust1n46.chat.utilities.FormatUtils.BUKKIT_COLOR_CODE_PREFIX;
-import static mineverse.Aust1n46.chat.utilities.FormatUtils.BUKKIT_COLOR_CODE_PREFIX_CHAR;
-import static mineverse.Aust1n46.chat.utilities.FormatUtils.BUKKIT_HEX_COLOR_CODE_PREFIX;
-import static mineverse.Aust1n46.chat.utilities.FormatUtils.DEFAULT_COLOR_CODE;
-import static mineverse.Aust1n46.chat.utilities.FormatUtils.HEX_COLOR_CODE_PREFIX;
+import static venture.Aust1n46.chat.utilities.FormatUtils.BUKKIT_COLOR_CODE_PREFIX;
+import static venture.Aust1n46.chat.utilities.FormatUtils.BUKKIT_COLOR_CODE_PREFIX_CHAR;
+import static venture.Aust1n46.chat.utilities.FormatUtils.BUKKIT_HEX_COLOR_CODE_PREFIX;
+import static venture.Aust1n46.chat.utilities.FormatUtils.DEFAULT_COLOR_CODE;
+import static venture.Aust1n46.chat.utilities.FormatUtils.HEX_COLOR_CODE_PREFIX;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -28,12 +28,12 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
 import me.clip.placeholderapi.PlaceholderAPI;
-import mineverse.Aust1n46.chat.utilities.FormatUtils;
-import mineverse.Aust1n46.chat.versions.VersionHandler;
-import venture.Aust1n46.chat.VentureChat;
+import venture.Aust1n46.chat.initiators.application.VentureChat;
 import venture.Aust1n46.chat.model.JsonAttribute;
 import venture.Aust1n46.chat.model.JsonFormat;
 import venture.Aust1n46.chat.model.VentureChatPlayer;
+import venture.Aust1n46.chat.utilities.FormatUtils;
+import venture.Aust1n46.chat.utilities.VersionHandler;
 
 /**
  * Class containing chat formatting methods.
@@ -45,23 +45,25 @@ public class VentureChatFormatService {
 	private static final Pattern PLACEHOLDERAPI_PLACEHOLDER_PATTERN = Pattern.compile("\\{([^\\{\\}]+)\\}");
 	public static final String DEFAULT_MESSAGE_SOUND = "ENTITY_PLAYER_LEVELUP";
 	public static final String DEFAULT_LEGACY_MESSAGE_SOUND = "LEVEL_UP";
-	
+
 	@Inject
 	private VentureChat plugin;
 	@Inject
 	private VentureChatPlayerApiService playerApiService;
+	@Inject
+	private ConfigService configService;
 
 	/**
-     * Converts a message to Minecraft JSON formatting while applying the
-     * {@link JsonFormat} from the config.
-     *
-     * @param sender {@link VentureChatPlayer} wrapper of the message sender.
-     * @param format The format section of the message.
-     * @param chat   The chat section of the message.
-     * @return {@link String}
-     */
+	 * Converts a message to Minecraft JSON formatting while applying the
+	 * {@link JsonFormat} from the config.
+	 *
+	 * @param sender {@link VentureChatPlayer} wrapper of the message sender.
+	 * @param format The format section of the message.
+	 * @param chat   The chat section of the message.
+	 * @return {@link String}
+	 */
 	public String convertToJson(VentureChatPlayer sender, String format, String chat) {
-		JsonFormat JSONformat = JsonFormat.getJsonFormat(sender.getJsonFormat());
+		JsonFormat JSONformat = configService.getJsonFormat(sender.getJsonFormat());
 		String f = escapeJsonChars(format);
 		String c = escapeJsonChars(chat);
 		String json = "[\"\",{\"text\":\"\",\"extra\":[";
@@ -81,16 +83,16 @@ public class VentureChatFormatService {
 	}
 
 	/**
-     * Converts the format section of a message to JSON using PlaceholderAPI.
-     *
-     * @param s
-     * @param format
-     * @param prefix
-     * @param nickname
-     * @param suffix
-     * @param icp
-     * @return {@link String}
-     */
+	 * Converts the format section of a message to JSON using PlaceholderAPI.
+	 *
+	 * @param s
+	 * @param format
+	 * @param prefix
+	 * @param nickname
+	 * @param suffix
+	 * @param icp
+	 * @return {@link String}
+	 */
 	private String convertPlaceholders(String s, JsonFormat format, VentureChatPlayer icp) {
 		String remaining = s;
 		String temp = "";
@@ -105,7 +107,8 @@ public class VentureChatFormatService {
 				indexStart = matcher.start();
 				indexEnd = matcher.end();
 				placeholder = remaining.substring(indexStart, indexEnd);
-				formattedPlaceholder = FormatUtils.FormatStringAll(PlaceholderAPI.setBracketPlaceholders(icp.getPlayer(), placeholder));
+				formattedPlaceholder = FormatUtils
+						.FormatStringAll(PlaceholderAPI.setBracketPlaceholders(icp.getPlayer(), placeholder));
 				temp += convertToJsonColors(lastCode + remaining.substring(0, indexStart)) + ",";
 				lastCode = getLastCode(lastCode + remaining.substring(0, indexStart));
 				String action = "";
@@ -121,9 +124,9 @@ public class VentureChatFormatService {
 						}
 					}
 				}
-				if(!hover.isEmpty()) {
-					hover = FormatUtils.FormatStringAll(
-							PlaceholderAPI.setBracketPlaceholders(icp.getPlayer(), hover.substring(0, hover.length() - 1)));
+				if (!hover.isEmpty()) {
+					hover = FormatUtils.FormatStringAll(PlaceholderAPI.setBracketPlaceholders(icp.getPlayer(),
+							hover.substring(0, hover.length() - 1)));
 				}
 				temp += convertToJsonColors(lastCode + formattedPlaceholder,
 						",\"clickEvent\":{\"action\":\"" + action + "\",\"value\":\"" + text
@@ -141,11 +144,11 @@ public class VentureChatFormatService {
 	}
 
 	/**
-     * Converts URL's to JSON.
-     *
-     * @param s
-     * @return {@link String}
-     */
+	 * Converts URL's to JSON.
+	 *
+	 * @param s
+	 * @return {@link String}
+	 */
 	private String convertLinks(String s) {
 		String remaining = s;
 		String temp = "";
@@ -219,22 +222,22 @@ public class VentureChatFormatService {
 	}
 
 	/**
-     * Converts a message to JSON colors with no additional JSON extensions.
-     *
-     * @param s
-     * @return {@link String}
-     */
+	 * Converts a message to JSON colors with no additional JSON extensions.
+	 *
+	 * @param s
+	 * @return {@link String}
+	 */
 	public String convertToJsonColors(String s) {
 		return convertToJsonColors(s, "");
 	}
 
 	/**
-     * Converts a message to JSON colors with additional JSON extensions.
-     *
-     * @param s
-     * @param extensions
-     * @return {@link String}
-     */
+	 * Converts a message to JSON colors with additional JSON extensions.
+	 *
+	 * @param s
+	 * @param extensions
+	 * @return {@link String}
+	 */
 	private String convertToJsonColors(String s, String extensions) {
 		String remaining = s;
 		String temp = "";
@@ -404,7 +407,7 @@ public class VentureChatFormatService {
 			return "[" + convertToJsonColors(DEFAULT_COLOR_CODE + s) + "]";
 		}
 	}
-	
+
 	private String escapeJsonChars(String s) {
 		return s.replace("\\", "\\\\").replace("\"", "\\\"");
 	}
@@ -416,8 +419,7 @@ public class VentureChatFormatService {
 					",\"clickEvent\":{\"action\":\"run_command\",\"value\":\"/vchatgui " + sender + " " + channelName
 							+ " " + hash
 							+ "\"},\"hoverEvent\":{\"action\":\"show_text\",\"value\":{\"text\":\"\",\"extra\":["
-							+ convertToJsonColors(
-									FormatUtils.FormatStringAll(plugin.getConfig().getString("guitext")))
+							+ convertToJsonColors(FormatUtils.FormatStringAll(plugin.getConfig().getString("guitext")))
 							+ "]}}")
 					+ "]";
 		}
@@ -446,38 +448,71 @@ public class VentureChatFormatService {
 			e.printStackTrace();
 		}
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	public String toColoredText(Object o, Class<?> c) {
 		if (VersionHandler.is1_7()) {
 			return "\"extra\":[{\"text\":\"Hover to see original message is not currently supported in 1.7\",\"color\":\"red\"}]";
-		} 
+		}
 		List<Object> finalList = new ArrayList<>();
 		StringBuilder stringbuilder = new StringBuilder();
 		stringbuilder.append("\"extra\":[");
 		try {
 			splitComponents(finalList, o, c);
-			for (Object component : finalList) {		
+			for (Object component : finalList) {
 				try {
-					String text = (String) component.getClass().getMethod("getText").invoke(component);
-					Object chatModifier = component.getClass().getMethod("getChatModifier").invoke(component);
-					String color = chatModifier.getClass().getMethod("getColor").invoke(chatModifier).toString();
-					boolean bold = (boolean) chatModifier.getClass().getMethod("isBold").invoke(chatModifier);
-					boolean strikethrough = (boolean) chatModifier.getClass().getMethod("isStrikethrough").invoke(chatModifier);
-					boolean italic = (boolean) chatModifier.getClass().getMethod("isItalic").invoke(chatModifier);
-					boolean underlined = (boolean) chatModifier.getClass().getMethod("isUnderlined").invoke(chatModifier);
-					boolean obfuscated = (boolean) chatModifier.getClass().getMethod("isRandom").invoke(chatModifier);
-					JSONObject jsonObject = new JSONObject();
-					jsonObject.put("text", text);
-					jsonObject.put("color", color);
-					jsonObject.put("bold", bold);
-					jsonObject.put("strikethrough", strikethrough);
-					jsonObject.put("italic", italic);
-					jsonObject.put("underlined", underlined);
-					jsonObject.put("obfuscated", obfuscated);
-					stringbuilder.append(jsonObject.toJSONString() + ",");
-				}
-				catch(Exception e) {
+					if (VersionHandler.is1_8() || VersionHandler.is1_9() || VersionHandler.is1_10()
+							|| VersionHandler.is1_11() || VersionHandler.is1_12() || VersionHandler.is1_13()
+							|| VersionHandler.is1_14() || VersionHandler.is1_15() || VersionHandler.is1_16()
+							|| VersionHandler.is1_17()) {
+						String text = (String) component.getClass().getMethod("getText").invoke(component);
+						Object chatModifier = component.getClass().getMethod("getChatModifier").invoke(component);
+						Object color = chatModifier.getClass().getMethod("getColor").invoke(chatModifier);
+						String colorString = "white";
+						if (color != null) {
+							colorString = color.getClass().getMethod("b").invoke(color).toString();
+						}
+						boolean bold = (boolean) chatModifier.getClass().getMethod("isBold").invoke(chatModifier);
+						boolean strikethrough = (boolean) chatModifier.getClass().getMethod("isStrikethrough")
+								.invoke(chatModifier);
+						boolean italic = (boolean) chatModifier.getClass().getMethod("isItalic").invoke(chatModifier);
+						boolean underlined = (boolean) chatModifier.getClass().getMethod("isUnderlined")
+								.invoke(chatModifier);
+						boolean obfuscated = (boolean) chatModifier.getClass().getMethod("isRandom")
+								.invoke(chatModifier);
+						JSONObject jsonObject = new JSONObject();
+						jsonObject.put("text", text);
+						jsonObject.put("color", colorString);
+						jsonObject.put("bold", bold);
+						jsonObject.put("strikethrough", strikethrough);
+						jsonObject.put("italic", italic);
+						jsonObject.put("underlined", underlined);
+						jsonObject.put("obfuscated", obfuscated);
+						stringbuilder.append(jsonObject.toJSONString() + ",");
+					} else {
+						String text = (String) component.getClass().getMethod("getString").invoke(component);
+						Object chatModifier = component.getClass().getMethod("c").invoke(component);
+						Object color = chatModifier.getClass().getMethod("a").invoke(chatModifier);
+						String colorString = "white";
+						if (color != null) {
+							colorString = color.getClass().getMethod("b").invoke(color).toString();
+						}
+						boolean bold = (boolean) chatModifier.getClass().getMethod("b").invoke(chatModifier);
+						boolean italic = (boolean) chatModifier.getClass().getMethod("c").invoke(chatModifier);
+						boolean strikethrough = (boolean) chatModifier.getClass().getMethod("d").invoke(chatModifier);
+						boolean underlined = (boolean) chatModifier.getClass().getMethod("e").invoke(chatModifier);
+						boolean obfuscated = (boolean) chatModifier.getClass().getMethod("f").invoke(chatModifier);
+						JSONObject jsonObject = new JSONObject();
+						jsonObject.put("text", text);
+						jsonObject.put("color", colorString);
+						jsonObject.put("bold", bold);
+						jsonObject.put("strikethrough", strikethrough);
+						jsonObject.put("italic", italic);
+						jsonObject.put("underlined", underlined);
+						jsonObject.put("obfuscated", obfuscated);
+						stringbuilder.append(jsonObject.toJSONString() + ",");
+					}
+				} catch (Exception e) {
 					return "\"extra\":[{\"text\":\"Something went wrong. Could not access color.\",\"color\":\"red\"}]";
 				}
 			}
@@ -485,7 +520,7 @@ public class VentureChatFormatService {
 			e.printStackTrace();
 		}
 		String coloredText = stringbuilder.toString();
-		if(coloredText.endsWith(",")) {
+		if (coloredText.endsWith(",")) {
 			coloredText = coloredText.substring(0, coloredText.length() - 1);
 		}
 		coloredText += "]";
@@ -500,29 +535,22 @@ public class VentureChatFormatService {
 			for (Object component : finalList) {
 				if (VersionHandler.is1_7()) {
 					stringbuilder.append((String) component.getClass().getMethod("e").invoke(component));
-				} else {
+				} else if (VersionHandler.is1_8() || VersionHandler.is1_9() || VersionHandler.is1_10()
+						|| VersionHandler.is1_11() || VersionHandler.is1_12() || VersionHandler.is1_13()
+						|| VersionHandler.is1_14() || VersionHandler.is1_15() || VersionHandler.is1_16()
+						|| VersionHandler.is1_17()) {
 					stringbuilder.append((String) component.getClass().getMethod("getText").invoke(component));
+				} else {
+					stringbuilder.append((String) component.getClass().getMethod("getString").invoke(component));
 				}
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		// if(plugin.getConfig().getString("loglevel", "info").equals("debug")) {
-		// System.out.println("my string");
-		// System.out.println("my string");
-		// System.out.println("my string");
-		// System.out.println("my string");
-		// System.out.println("my string");
-		// System.out.println(stringbuilder.toString());
-		// }
 		return stringbuilder.toString();
 	}
 
 	private void splitComponents(List<Object> finalList, Object o, Class<?> c) throws Exception {
-//		 for(Method m : c.getMethods()) {
-//		 System.out.println(m.getName());
-//		 }
-		 
 		if (VersionHandler.is1_7() || VersionHandler.is1_8() || VersionHandler.is1_9() || VersionHandler.is1_10()
 				|| VersionHandler.is1_11() || VersionHandler.is1_12() || VersionHandler.is1_13()
 				|| (VersionHandler.is1_14() && !VersionHandler.is1_14_4())) {
@@ -535,10 +563,21 @@ public class VentureChatFormatService {
 					finalList.add(component);
 				}
 			}
-		} else {
+		} else if (VersionHandler.is1_14_4() || VersionHandler.is1_15() || VersionHandler.is1_16()
+				|| VersionHandler.is1_17()) {
 			ArrayList<?> list = (ArrayList<?>) c.getMethod("getSiblings").invoke(o, new Object[0]);
 			for (Object component : list) {
 				ArrayList<?> innerList = (ArrayList<?>) c.getMethod("getSiblings").invoke(component, new Object[0]);
+				if (innerList.size() > 0) {
+					splitComponents(finalList, component, c);
+				} else {
+					finalList.add(component);
+				}
+			}
+		} else {
+			ArrayList<?> list = (ArrayList<?>) c.getMethod("b").invoke(o, new Object[0]);
+			for (Object component : list) {
+				ArrayList<?> innerList = (ArrayList<?>) c.getMethod("b").invoke(component, new Object[0]);
 				if (innerList.size() > 0) {
 					splitComponents(finalList, component, c);
 				} else {
@@ -573,33 +612,34 @@ public class VentureChatFormatService {
 	}
 
 	public void broadcastToServer(String message) {
-		for(VentureChatPlayer mcp : playerApiService.getOnlineMineverseChatPlayers()) {
+		for (VentureChatPlayer mcp : playerApiService.getOnlineMineverseChatPlayers()) {
 			mcp.getPlayer().sendMessage(message);
 		}
 	}
-	
+
 	public void playMessageSound(VentureChatPlayer mcp) {
 		Player player = mcp.getPlayer();
 		String soundName = plugin.getConfig().getString("message_sound", DEFAULT_MESSAGE_SOUND);
-		if(!soundName.equalsIgnoreCase("None")) {
+		if (!soundName.equalsIgnoreCase("None")) {
 			Sound messageSound = getSound(soundName);
 			player.playSound(player.getLocation(), messageSound, 1, 0);
 		}
 	}
-	
+
 	private Sound getSound(String soundName) {
-		if(Arrays.asList(Sound.values()).stream().map(Sound::toString).collect(Collectors.toList()).contains(soundName)) {
+		if (Arrays.asList(Sound.values()).stream().map(Sound::toString).collect(Collectors.toList())
+				.contains(soundName)) {
 			return Sound.valueOf(soundName);
 		}
-		Bukkit.getConsoleSender().sendMessage(FormatUtils.FormatStringAll("&8[&eVentureChat&8]&c - Message sound invalid!"));
+		Bukkit.getConsoleSender()
+				.sendMessage(FormatUtils.FormatStringAll("&8[&eVentureChat&8]&c - Message sound invalid!"));
 		return getDefaultMessageSound();
 	}
-	
+
 	private Sound getDefaultMessageSound() {
-		if(VersionHandler.is1_7() || VersionHandler.is1_8()) {
+		if (VersionHandler.is1_7() || VersionHandler.is1_8()) {
 			return Sound.valueOf(DEFAULT_LEGACY_MESSAGE_SOUND);
-		}
-		else {
+		} else {
 			return Sound.valueOf(DEFAULT_MESSAGE_SOUND);
 		}
 	}

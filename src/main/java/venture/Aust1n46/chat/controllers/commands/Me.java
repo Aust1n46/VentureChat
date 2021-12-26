@@ -5,10 +5,10 @@ import org.bukkit.entity.Player;
 
 import com.google.inject.Inject;
 
-import mineverse.Aust1n46.chat.localization.LocalizedMessage;
-import mineverse.Aust1n46.chat.utilities.FormatUtils;
+import venture.Aust1n46.chat.localization.LocalizedMessage;
 import venture.Aust1n46.chat.model.VentureCommand;
 import venture.Aust1n46.chat.service.VentureChatPlayerApiService;
+import venture.Aust1n46.chat.utilities.FormatUtils;
 import venture.Aust1n46.chat.service.VentureChatFormatService;
 
 public class Me implements VentureCommand {

@@ -1,4 +1,4 @@
-package mineverse.Aust1n46.chat.proxy;
+package venture.Aust1n46.chat.proxy;
 
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
@@ -29,11 +29,11 @@ import com.velocitypowered.api.proxy.messages.ChannelIdentifier;
 import com.velocitypowered.api.proxy.messages.MinecraftChannelIdentifier;
 import com.velocitypowered.api.proxy.server.RegisteredServer;
 
-import mineverse.Aust1n46.chat.utilities.FormatUtils;
 import net.md_5.bungee.config.Configuration;
 import net.md_5.bungee.config.ConfigurationProvider;
 import net.md_5.bungee.config.YamlConfiguration;
 import venture.Aust1n46.chat.controllers.VentureChatProxyFlatFileController;
+import venture.Aust1n46.chat.utilities.FormatUtils;
 
 /**
  * VentureChat Minecraft plugin for Velocity.

@@ -9,11 +9,11 @@ import com.comphenix.protocol.wrappers.WrappedChatComponent;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
-import mineverse.Aust1n46.chat.versions.VersionHandler;
-import venture.Aust1n46.chat.VentureChat;
+import venture.Aust1n46.chat.initiators.application.VentureChat;
 import venture.Aust1n46.chat.model.ChatMessage;
 import venture.Aust1n46.chat.model.VentureChatPlayer;
 import venture.Aust1n46.chat.service.VentureChatPlayerApiService;
+import venture.Aust1n46.chat.utilities.VersionHandler;
 import venture.Aust1n46.chat.service.VentureChatFormatService;
 
 //This class listens for chat packets and intercepts them before they are sent to the Player.

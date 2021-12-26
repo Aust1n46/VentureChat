@@ -6,7 +6,7 @@ import org.bukkit.entity.Player;
 
 import com.google.inject.Inject;
 
-import mineverse.Aust1n46.chat.localization.LocalizedMessage;
+import venture.Aust1n46.chat.localization.LocalizedMessage;
 import venture.Aust1n46.chat.model.VentureChatPlayer;
 import venture.Aust1n46.chat.model.VentureCommand;
 import venture.Aust1n46.chat.service.VentureChatPlayerApiService;

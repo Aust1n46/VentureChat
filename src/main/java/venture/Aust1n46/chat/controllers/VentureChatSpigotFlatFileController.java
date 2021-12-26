@@ -21,13 +21,14 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
-import mineverse.Aust1n46.chat.utilities.FormatUtils;
-import venture.Aust1n46.chat.VentureChat;
 import venture.Aust1n46.chat.controllers.commands.MuteContainer;
+import venture.Aust1n46.chat.initiators.application.VentureChat;
 import venture.Aust1n46.chat.model.ChatChannel;
 import venture.Aust1n46.chat.model.VentureChatPlayer;
+import venture.Aust1n46.chat.service.ConfigService;
 import venture.Aust1n46.chat.service.UUIDService;
 import venture.Aust1n46.chat.service.VentureChatPlayerApiService;
+import venture.Aust1n46.chat.utilities.FormatUtils;
 
 /**
  * Class for reading and writing player data.
@@ -42,6 +43,8 @@ public class VentureChatSpigotFlatFileController {
     private UUIDService uuidService;
     @Inject
     private VentureChatPlayerApiService ventureChatApi;
+    @Inject
+	private ConfigService configService;
     
     private String playerDataDirectoryPath;
     
@@ -67,7 +70,7 @@ public class VentureChatSpigotFlatFileController {
                 }
                 String name = playerData.getConfigurationSection("players." + uuid).getString("name");
                 String currentChannelName = playerData.getConfigurationSection("players." + uuid).getString("current");
-                ChatChannel currentChannel = ChatChannel.isChannel(currentChannelName) ? ChatChannel.getChannel(currentChannelName) : ChatChannel.getDefaultChannel();
+                ChatChannel currentChannel = configService.isChannel(currentChannelName) ? configService.getChannel(currentChannelName) : configService.getDefaultChannel();
                 Set<UUID> ignores = new HashSet<UUID>();
                 StringTokenizer i = new StringTokenizer(playerData.getConfigurationSection("players." + uuidString).getString("ignores"), ",");
                 while (i.hasMoreTokens()) {
@@ -77,7 +80,7 @@ public class VentureChatSpigotFlatFileController {
                 StringTokenizer l = new StringTokenizer(playerData.getConfigurationSection("players." + uuidString).getString("listen"), ",");
                 while (l.hasMoreTokens()) {
                     String channel = l.nextToken();
-                    if (ChatChannel.isChannel(channel)) {
+                    if (configService.isChannel(channel)) {
                         listening.add(channel);
                     }
                 }
@@ -85,7 +88,7 @@ public class VentureChatSpigotFlatFileController {
                 StringTokenizer m = new StringTokenizer(playerData.getConfigurationSection("players." + uuidString).getString("mutes"), ",");
                 while (m.hasMoreTokens()) {
                     String[] parts = m.nextToken().split(":");
-                    if (ChatChannel.isChannel(parts[0])) {
+                    if (configService.isChannel(parts[0])) {
                         if (parts[1].equals("null")) {
                             Bukkit.getConsoleSender().sendMessage("[VentureChat] Null Mute Time: " + parts[0] + " " + name);
                             continue;
@@ -161,7 +164,7 @@ public class VentureChatSpigotFlatFileController {
             }
             String name = playerDataFileYamlConfiguration.getString("name");
             String currentChannelName = playerDataFileYamlConfiguration.getString("current");
-            ChatChannel currentChannel = ChatChannel.isChannel(currentChannelName) ? ChatChannel.getChannel(currentChannelName) : ChatChannel.getDefaultChannel();
+            ChatChannel currentChannel = configService.isChannel(currentChannelName) ? configService.getChannel(currentChannelName) : configService.getDefaultChannel();
             Set<UUID> ignores = new HashSet<UUID>();
             StringTokenizer i = new StringTokenizer(playerDataFileYamlConfiguration.getString("ignores"), ",");
             while (i.hasMoreTokens()) {
@@ -171,7 +174,7 @@ public class VentureChatSpigotFlatFileController {
             StringTokenizer l = new StringTokenizer(playerDataFileYamlConfiguration.getString("listen"), ",");
             while (l.hasMoreTokens()) {
                 String channel = l.nextToken();
-                if (ChatChannel.isChannel(channel)) {
+                if (configService.isChannel(channel)) {
                     listening.add(channel);
                 }
             }
@@ -211,7 +214,7 @@ public class VentureChatSpigotFlatFileController {
     }
 
     public void savePlayerData(VentureChatPlayer mcp) {
-        if (mcp == null || uuidService.shouldSkipOfflineUUID(mcp.getUuid()) || (!mcp.isOnline() && !mcp.wasModified())) {
+        if (mcp == null || uuidService.shouldSkipOfflineUUID(mcp.getUuid()) || (!mcp.isOnline() && !mcp.isModified())) {
             return;
         }
         try {
@@ -230,7 +233,7 @@ public class VentureChatSpigotFlatFileController {
             playerDataFileYamlConfiguration.set("ignores", ignores);
             String listening = "";
             for (String channel : mcp.getListening()) {
-                ChatChannel c = ChatChannel.getChannel(channel);
+                ChatChannel c = configService.getChannel(channel);
                 listening += c.getName() + ",";
             }
             String blockedCommands = "";
@@ -253,7 +256,7 @@ public class VentureChatSpigotFlatFileController {
             playerDataFileYamlConfiguration.set("host", mcp.isHost());
             playerDataFileYamlConfiguration.set("party", mcp.hasParty() ? mcp.getParty().toString() : "");
             playerDataFileYamlConfiguration.set("filter", mcp.isFilter());
-            playerDataFileYamlConfiguration.set("notifications", mcp.hasNotifications());
+            playerDataFileYamlConfiguration.set("notifications", mcp.isNotifications());
             playerDataFileYamlConfiguration.set("spy", mcp.isSpy());
             playerDataFileYamlConfiguration.set("commandspy", mcp.hasCommandSpy());
             playerDataFileYamlConfiguration.set("rangedspy", mcp.getRangedSpy());

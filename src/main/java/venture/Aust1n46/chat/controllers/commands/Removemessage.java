@@ -16,16 +16,16 @@ import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.wrappers.WrappedChatComponent;
 import com.google.inject.Inject;
 
-import mineverse.Aust1n46.chat.localization.LocalizedMessage;
-import mineverse.Aust1n46.chat.utilities.FormatUtils;
-import venture.Aust1n46.chat.VentureChat;
 import venture.Aust1n46.chat.controllers.PluginMessageController;
-import venture.Aust1n46.chat.model.ChatChannel;
+import venture.Aust1n46.chat.initiators.application.VentureChat;
+import venture.Aust1n46.chat.localization.LocalizedMessage;
 import venture.Aust1n46.chat.model.ChatMessage;
 import venture.Aust1n46.chat.model.VentureChatPlayer;
 import venture.Aust1n46.chat.model.VentureCommand;
-import venture.Aust1n46.chat.service.VentureChatPlayerApiService;
+import venture.Aust1n46.chat.service.ConfigService;
 import venture.Aust1n46.chat.service.VentureChatFormatService;
+import venture.Aust1n46.chat.service.VentureChatPlayerApiService;
+import venture.Aust1n46.chat.utilities.FormatUtils;
 
 public class Removemessage implements VentureCommand {
 	@Inject
@@ -36,6 +36,8 @@ public class Removemessage implements VentureCommand {
 	private PluginMessageController pluginMessageController;
 	@Inject
 	private VentureChatPlayerApiService playerApiService;
+	@Inject
+	private ConfigService configService;
 	
     private PacketContainer emptyLinePacketContainer;
     private WrappedChatComponent messageDeletedComponentPlayer;
@@ -62,7 +64,7 @@ public class Removemessage implements VentureCommand {
             sender.sendMessage(LocalizedMessage.INVALID_HASH.toString());
             return;
         }
-        if (args.length > 1 && ChatChannel.isChannel(args[1]) && ChatChannel.getChannel(args[1]).getBungee()) {
+        if (args.length > 1 && configService.isChannel(args[1]) && configService.getChannel(args[1]).getBungee()) {
             ByteArrayOutputStream byteOutStream = new ByteArrayOutputStream();
             DataOutputStream out = new DataOutputStream(byteOutStream);
             try {

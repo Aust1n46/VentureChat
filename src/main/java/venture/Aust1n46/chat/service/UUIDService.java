@@ -7,9 +7,9 @@ import org.bukkit.Bukkit;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
-import mineverse.Aust1n46.chat.proxy.VentureChatProxySource;
-import mineverse.Aust1n46.chat.utilities.FormatUtils;
-import venture.Aust1n46.chat.VentureChat;
+import venture.Aust1n46.chat.initiators.application.VentureChat;
+import venture.Aust1n46.chat.proxy.VentureChatProxySource;
+import venture.Aust1n46.chat.utilities.FormatUtils;
 
 @Singleton
 public class UUIDService {

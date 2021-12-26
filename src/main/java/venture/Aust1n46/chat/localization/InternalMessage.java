@@ -1,6 +1,6 @@
-package mineverse.Aust1n46.chat.localization;
+package venture.Aust1n46.chat.localization;
 
-import mineverse.Aust1n46.chat.utilities.FormatUtils;
+import venture.Aust1n46.chat.utilities.FormatUtils;
 
 /**
  * Messages internal to the plugin

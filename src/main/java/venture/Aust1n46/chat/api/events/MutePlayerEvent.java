@@ -1,4 +1,4 @@
-package mineverse.Aust1n46.chat.api.events;
+package venture.Aust1n46.chat.api.events;
 
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;

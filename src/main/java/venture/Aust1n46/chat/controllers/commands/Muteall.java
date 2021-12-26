@@ -4,19 +4,22 @@ import org.bukkit.command.CommandSender;
 
 import com.google.inject.Inject;
 
-import mineverse.Aust1n46.chat.localization.LocalizedMessage;
-import mineverse.Aust1n46.chat.utilities.FormatUtils;
 import venture.Aust1n46.chat.controllers.PluginMessageController;
+import venture.Aust1n46.chat.localization.LocalizedMessage;
 import venture.Aust1n46.chat.model.ChatChannel;
 import venture.Aust1n46.chat.model.VentureChatPlayer;
 import venture.Aust1n46.chat.model.VentureCommand;
+import venture.Aust1n46.chat.service.ConfigService;
 import venture.Aust1n46.chat.service.VentureChatPlayerApiService;
+import venture.Aust1n46.chat.utilities.FormatUtils;
 
 public class Muteall implements VentureCommand {
 	@Inject
 	private PluginMessageController pluginMessageController;
 	@Inject
 	private VentureChatPlayerApiService playerApiService;
+	@Inject
+	private ConfigService configService;
 
     @Override
     public void execute(CommandSender sender, String command, String[] args) {
@@ -43,7 +46,7 @@ public class Muteall implements VentureCommand {
             }
             if (reason.isEmpty()) {
                 boolean bungee = false;
-                for (ChatChannel channel : ChatChannel.getChatChannels()) {
+                for (ChatChannel channel : configService.getChatChannels()) {
                     if (channel.isMutable()) {
                         player.addMute(channel.getName());
                         if (channel.getBungee()) {
@@ -63,7 +66,7 @@ public class Muteall implements VentureCommand {
                 return;
             } else {
                 boolean bungee = false;
-                for (ChatChannel channel : ChatChannel.getChatChannels()) {
+                for (ChatChannel channel : configService.getChatChannels()) {
                     if (channel.isMutable()) {
                         player.addMute(channel.getName(), reason);
                         if (channel.getBungee()) {

@@ -23,16 +23,17 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
 import me.clip.placeholderapi.PlaceholderAPI;
-import mineverse.Aust1n46.chat.localization.LocalizedMessage;
-import mineverse.Aust1n46.chat.utilities.FormatUtils;
-import mineverse.Aust1n46.chat.versions.VersionHandler;
-import venture.Aust1n46.chat.VentureChat;
 import venture.Aust1n46.chat.controllers.PluginMessageController;
+import venture.Aust1n46.chat.initiators.application.VentureChat;
+import venture.Aust1n46.chat.localization.LocalizedMessage;
 import venture.Aust1n46.chat.model.Alias;
 import venture.Aust1n46.chat.model.ChatChannel;
 import venture.Aust1n46.chat.model.GuiSlot;
 import venture.Aust1n46.chat.model.VentureChatPlayer;
 import venture.Aust1n46.chat.service.VentureChatPlayerApiService;
+import venture.Aust1n46.chat.utilities.FormatUtils;
+import venture.Aust1n46.chat.utilities.VersionHandler;
+import venture.Aust1n46.chat.service.ConfigService;
 import venture.Aust1n46.chat.service.VentureChatDatabaseService;
 import venture.Aust1n46.chat.service.VentureChatFormatService;
 
@@ -50,6 +51,8 @@ public class CommandListener implements CommandExecutor, Listener {
 	private PluginMessageController pluginMessageController;
 	@Inject
 	private VentureChatPlayerApiService playerApiService;
+	@Inject
+	private ConfigService configService;
 
 	@EventHandler
 	public void onPlayerCommandPreprocess(PlayerCommandPreprocessEvent event) throws FileNotFoundException {
@@ -94,7 +97,7 @@ public class CommandListener implements CommandExecutor, Listener {
 			databaseService.writeVentureChat(mcp.getUuid().toString(), mcp.getName(), "Local", "Command_Component", event.getMessage().replace("'", "''"), "Command");
 		}
 
-		for(Alias a : Alias.getAliases()) {
+		for(Alias a : configService.getAliases()) {
 			if(message.toLowerCase().substring(1).split(" ")[0].equals(a.getName().toLowerCase())) {
 				for(String s : a.getComponents()) {
 					if(!mcp.getPlayer().hasPermission(a.getPermission()) && a.hasPermission()) {
@@ -145,8 +148,8 @@ public class CommandListener implements CommandExecutor, Listener {
 			}
 		}
 
-		if(!ChatChannel.areAliasesRegisteredAsCommands()) {
-			for(ChatChannel channel : ChatChannel.getChatChannels()) {
+		if(!configService.areAliasesRegisteredAsCommands()) {
+			for(ChatChannel channel : configService.getChatChannels()) {
 				if(!channel.hasPermission() || mcp.getPlayer().hasPermission(channel.getPermission())) {
 					if(message.equals("/" + channel.getAlias())) {
 						mcp.getPlayer().sendMessage(LocalizedMessage.SET_CHANNEL.toString()
@@ -217,7 +220,7 @@ public class CommandListener implements CommandExecutor, Listener {
 			return true;
 		}
 		VentureChatPlayer mcp = playerApiService.getOnlineMineverseChatPlayer((Player) sender);
-		for(ChatChannel channel : ChatChannel.getChatChannels()) {
+		for(ChatChannel channel : configService.getChatChannels()) {
 			if(command.getName().toLowerCase().equals(channel.getAlias())) {
 				if(args.length == 0) {
 					mcp.getPlayer().sendMessage(ChatColor.RED + "Invalid command: /" + channel.getAlias() + " message");
@@ -253,7 +256,7 @@ public class CommandListener implements CommandExecutor, Listener {
 		VentureChatPlayer target = playerApiService.getMineverseChatPlayer(playerName);
 		ItemStack skull = e.getInventory().getItem(0);
 		SkullMeta skullMeta = (SkullMeta) skull.getItemMeta();
-		ChatChannel channel = ChatChannel.getChannel(ChatColor.stripColor(skullMeta.getLore().get(0)).replace("Channel: ", ""));
+		ChatChannel channel = configService.getChannel(ChatColor.stripColor(skullMeta.getLore().get(0)).replace("Channel: ", ""));
 		int hash = Integer.parseInt(ChatColor.stripColor(skullMeta.getLore().get(1).replace("Hash: ", "")));
 		if(VersionHandler.is1_7()) {
 			if(item.getType() == Material.BEDROCK) {
@@ -265,7 +268,7 @@ public class CommandListener implements CommandExecutor, Listener {
 				mcp.getPlayer().closeInventory();
 			}
 		}
-		for(GuiSlot g : GuiSlot.getGuiSlots()) {
+		for(GuiSlot g : configService.getGuiSlots()) {
 			if(g.getIcon() == item.getType() && g.getDurability() == item.getDurability() && g.getSlot() == e.getSlot()) {
 				String command = g.getCommand().replace("{channel}", channel.getName()).replace("{hash}", hash + "");
 				if(target != null) {

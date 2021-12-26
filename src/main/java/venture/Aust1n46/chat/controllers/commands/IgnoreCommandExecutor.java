@@ -16,9 +16,9 @@ import org.bukkit.util.StringUtil;
 
 import com.google.inject.Inject;
 
-import mineverse.Aust1n46.chat.localization.LocalizedMessage;
-import venture.Aust1n46.chat.VentureChat;
 import venture.Aust1n46.chat.controllers.PluginMessageController;
+import venture.Aust1n46.chat.initiators.application.VentureChat;
+import venture.Aust1n46.chat.localization.LocalizedMessage;
 import venture.Aust1n46.chat.model.VentureChatPlayer;
 import venture.Aust1n46.chat.service.VentureChatPlayerApiService;
 

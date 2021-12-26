@@ -1,4 +1,4 @@
-package mineverse.Aust1n46.chat.api.events;
+package venture.Aust1n46.chat.api.events;
 
 import java.util.Set;
 
@@ -6,7 +6,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 
-import venture.Aust1n46.chat.VentureChat;
 import venture.Aust1n46.chat.model.ChatChannel;
 import venture.Aust1n46.chat.model.VentureChatPlayer;
 
@@ -17,6 +16,8 @@ import venture.Aust1n46.chat.model.VentureChatPlayer;
  * @author Aust1n46
  */
 public class VentureChatEvent extends Event {
+	private static final boolean ASYNC = true;
+	
 	private static final HandlerList handlers = new HandlerList();
 	private final VentureChatPlayer mcp;
 	private final String username;
@@ -31,7 +32,7 @@ public class VentureChatEvent extends Event {
 	private final boolean bungee;
 	
 	public VentureChatEvent(VentureChatPlayer mcp, String username, String playerPrimaryGroup, ChatChannel channel, Set<Player> recipients, int recipientCount, String format, String chat, String globalJSON, int hash, boolean bungee) {
-		super(VentureChat.ASYNC);
+		super(ASYNC);
 		this.mcp = mcp;
 		this.username = username;
 		this.playerPrimaryGroup = playerPrimaryGroup;

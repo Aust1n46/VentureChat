@@ -1,6 +1,6 @@
 package venture.Aust1n46.chat.controllers.commands;
 
-import static venture.Aust1n46.chat.VentureChat.LINE_LENGTH;
+import static venture.Aust1n46.chat.utilities.FormatUtils.LINE_LENGTH;
 
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
@@ -16,12 +16,13 @@ import com.massivecraft.factions.entity.MPlayer;
 import com.palmergames.bukkit.towny.TownyUniverse;
 import com.palmergames.bukkit.towny.object.Resident;
 
-import mineverse.Aust1n46.chat.localization.LocalizedMessage;
-import venture.Aust1n46.chat.VentureChat;
 import venture.Aust1n46.chat.controllers.PluginMessageController;
+import venture.Aust1n46.chat.initiators.application.VentureChat;
+import venture.Aust1n46.chat.localization.LocalizedMessage;
 import venture.Aust1n46.chat.model.ChatChannel;
 import venture.Aust1n46.chat.model.VentureChatPlayer;
 import venture.Aust1n46.chat.model.VentureCommand;
+import venture.Aust1n46.chat.service.ConfigService;
 import venture.Aust1n46.chat.service.VentureChatPlayerApiService;
 
 public class Chwho implements VentureCommand {
@@ -31,13 +32,15 @@ public class Chwho implements VentureCommand {
 	private PluginMessageController pluginMessageController;
 	@Inject
 	private VentureChatPlayerApiService playerApiService;
+	@Inject
+	private ConfigService configService;
 
     @Override
     public void execute(CommandSender sender, String command, String[] args) {
         String playerlist = "";
         if (sender.hasPermission("venturechat.chwho")) {
             if (args.length > 0) {
-                ChatChannel channel = ChatChannel.getChannel(args[0]);
+                ChatChannel channel = configService.getChannel(args[0]);
                 if (channel != null) {
                     if (channel.hasPermission()) {
                         if (!sender.hasPermission(channel.getPermission())) {

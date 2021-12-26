@@ -3,7 +3,11 @@ package venture.Aust1n46.chat;
 import org.slf4j.LoggerFactory;
 
 import com.google.inject.Inject;
+import com.google.inject.Singleton;
 
+import venture.Aust1n46.chat.initiators.application.VentureChat;
+
+@Singleton
 public class Logger {
 	private static final String LOG_PREFIX = "[VentureChat] ";
 	

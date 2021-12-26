@@ -1,11 +1,11 @@
-package mineverse.Aust1n46.chat.utilities;
+package venture.Aust1n46.chat.utilities;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.bukkit.ChatColor;
 
-import mineverse.Aust1n46.chat.localization.LocalizedMessage;
+import venture.Aust1n46.chat.localization.LocalizedMessage;
 
 public class FormatUtils {
 	public static final char BUKKIT_COLOR_CODE_PREFIX_CHAR = '\u00A7';
@@ -18,6 +18,8 @@ public class FormatUtils {
 	public static final long MILLISECONDS_PER_HOUR = 3600000;
 	public static final long MILLISECONDS_PER_MINUTE = 60000;
 	public static final long MILLISECONDS_PER_SECOND = 1000;
+	
+	public static final int LINE_LENGTH = 40;
 	
 	private static final Pattern LEGACY_CHAT_COLOR_DIGITS_PATTERN = Pattern.compile("&([0-9])");
 	private static final Pattern LEGACY_CHAT_COLOR_PATTERN = Pattern.compile(

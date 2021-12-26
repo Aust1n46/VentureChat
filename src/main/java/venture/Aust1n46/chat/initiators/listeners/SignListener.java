@@ -8,9 +8,9 @@ import org.bukkit.event.block.SignChangeEvent;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
-import mineverse.Aust1n46.chat.utilities.FormatUtils;
 import venture.Aust1n46.chat.model.VentureChatPlayer;
 import venture.Aust1n46.chat.service.VentureChatPlayerApiService;
+import venture.Aust1n46.chat.utilities.FormatUtils;
 
 //This class listens for text being added to signs, and it formats them to allow colors and formatting.
 @Singleton

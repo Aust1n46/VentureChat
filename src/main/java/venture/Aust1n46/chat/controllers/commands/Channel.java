@@ -7,12 +7,13 @@ import org.bukkit.entity.Player;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
-import mineverse.Aust1n46.chat.api.events.ChannelJoinEvent;
-import mineverse.Aust1n46.chat.localization.LocalizedMessage;
+import venture.Aust1n46.chat.api.events.ChannelJoinEvent;
 import venture.Aust1n46.chat.controllers.PluginMessageController;
+import venture.Aust1n46.chat.localization.LocalizedMessage;
 import venture.Aust1n46.chat.model.ChatChannel;
 import venture.Aust1n46.chat.model.VentureChatPlayer;
 import venture.Aust1n46.chat.model.VentureCommand;
+import venture.Aust1n46.chat.service.ConfigService;
 import venture.Aust1n46.chat.service.VentureChatPlayerApiService;
 
 @Singleton
@@ -21,6 +22,8 @@ public class Channel implements VentureCommand {
 	private PluginMessageController pluginMessageController;
 	@Inject
 	private VentureChatPlayerApiService playerApiService;
+	@Inject
+	private ConfigService configService;
 
     @Override
     public void execute(CommandSender sender, String command, String[] args) {
@@ -30,12 +33,12 @@ public class Channel implements VentureCommand {
         }
         VentureChatPlayer mcp = playerApiService.getOnlineMineverseChatPlayer((Player) sender);
         if (args.length > 0) {
-            if (!ChatChannel.isChannel(args[0])) {
+            if (!configService.isChannel(args[0])) {
                 mcp.getPlayer().sendMessage(LocalizedMessage.INVALID_CHANNEL.toString()
                         .replace("{args}", args[0]));
                 return;
             }
-            ChatChannel channel = ChatChannel.getChannel(args[0]);
+            ChatChannel channel = configService.getChannel(args[0]);
             ChannelJoinEvent channelJoinEvent = new ChannelJoinEvent(mcp.getPlayer(), channel, LocalizedMessage.SET_CHANNEL.toString()
                     .replace("{channel_color}", channel.getColor() + "")
                     .replace("{channel_name}", channel.getName()));

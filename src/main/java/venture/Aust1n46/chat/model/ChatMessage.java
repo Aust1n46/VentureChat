@@ -2,8 +2,9 @@ package venture.Aust1n46.chat.model;
 
 import com.comphenix.protocol.wrappers.WrappedChatComponent;
 
-//This class is used to create ChatMessage objects, which are used to store information about previous text components
-//that were sent to the player.  This is a main component in making the message remover work.
+import lombok.Data;
+
+@Data
 public class ChatMessage {
 	private WrappedChatComponent component;
 	private String message;
@@ -14,30 +15,6 @@ public class ChatMessage {
 		this.component = component;
 		this.message = message;
 		this.coloredMessage = coloredMessage;
-		this.hash = hash;
-	}
-
-	public WrappedChatComponent getComponent() {
-		return this.component;
-	}
-
-	public void setComponent(WrappedChatComponent component) {
-		this.component = component;
-	}
-
-	public String getMessage() {
-		return this.message;
-	}
-	
-	public String getColoredMessage() {
-		return this.coloredMessage;
-	}
-
-	public int getHash() {
-		return this.hash;
-	}
-
-	public void setHash(int hash) {
 		this.hash = hash;
 	}
 }

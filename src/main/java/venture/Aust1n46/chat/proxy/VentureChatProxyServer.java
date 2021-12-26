@@ -1,4 +1,4 @@
-package mineverse.Aust1n46.chat.proxy;
+package venture.Aust1n46.chat.proxy;
 
 public class VentureChatProxyServer {
 	private String name;

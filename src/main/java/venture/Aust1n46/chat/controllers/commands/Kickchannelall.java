@@ -5,11 +5,12 @@ import org.bukkit.command.CommandSender;
 
 import com.google.inject.Inject;
 
-import mineverse.Aust1n46.chat.localization.LocalizedMessage;
 import venture.Aust1n46.chat.controllers.PluginMessageController;
+import venture.Aust1n46.chat.localization.LocalizedMessage;
 import venture.Aust1n46.chat.model.ChatChannel;
 import venture.Aust1n46.chat.model.VentureChatPlayer;
 import venture.Aust1n46.chat.model.VentureCommand;
+import venture.Aust1n46.chat.service.ConfigService;
 import venture.Aust1n46.chat.service.VentureChatPlayerApiService;
 
 public class Kickchannelall implements VentureCommand {
@@ -17,6 +18,8 @@ public class Kickchannelall implements VentureCommand {
 	private PluginMessageController pluginMessageController;
 	@Inject
 	private VentureChatPlayerApiService playerApiService;
+	@Inject
+	private ConfigService configService;
 
     @Override
     public void execute(CommandSender sender, String command, String[] args) {
@@ -35,8 +38,8 @@ public class Kickchannelall implements VentureCommand {
             }
             boolean isThereABungeeChannel = false;
             for (String channel : player.getListening()) {
-                if (ChatChannel.isChannel(channel)) {
-                    ChatChannel chatChannelObj = ChatChannel.getChannel(channel);
+                if (configService.isChannel(channel)) {
+                    ChatChannel chatChannelObj = configService.getChannel(channel);
                     if (chatChannelObj.getBungee()) {
                         isThereABungeeChannel = true;
                     }
@@ -45,9 +48,9 @@ public class Kickchannelall implements VentureCommand {
             player.clearListening();
             sender.sendMessage(LocalizedMessage.KICK_CHANNEL_ALL_SENDER.toString()
                     .replace("{player}", player.getName()));
-            player.addListening(ChatChannel.getDefaultChannel().getName());
-            player.setCurrentChannel(ChatChannel.getDefaultChannel());
-            if (ChatChannel.getDefaultChannel().getBungee()) {
+            player.addListening(configService.getDefaultChannel().getName());
+            player.setCurrentChannel(configService.getDefaultChannel());
+            if (configService.getDefaultChannel().getBungee()) {
                 isThereABungeeChannel = true;
             }
             if (isThereABungeeChannel) {
@@ -57,8 +60,8 @@ public class Kickchannelall implements VentureCommand {
                 player.getPlayer().sendMessage(LocalizedMessage.KICK_CHANNEL_ALL_PLAYER.toString());
                 player.getPlayer().sendMessage(LocalizedMessage.MUST_LISTEN_ONE_CHANNEL.toString());
                 player.getPlayer().sendMessage(LocalizedMessage.SET_CHANNEL.toString()
-                        .replace("{channel_color}", ChatColor.valueOf(ChatChannel.getDefaultColor().toUpperCase()) + "")
-                        .replace("{channel_name}", ChatChannel.getDefaultChannel().getName()));
+                        .replace("{channel_color}", ChatColor.valueOf(configService.getDefaultColor().toUpperCase()) + "")
+                        .replace("{channel_name}", configService.getDefaultChannel().getName()));
             } else {
                 player.setModified(true);
             }

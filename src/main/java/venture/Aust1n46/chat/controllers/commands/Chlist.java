@@ -2,16 +2,21 @@ package venture.Aust1n46.chat.controllers.commands;
 
 import org.bukkit.command.CommandSender;
 
-import mineverse.Aust1n46.chat.localization.LocalizedMessage;
+import com.google.inject.Inject;
+
+import venture.Aust1n46.chat.localization.LocalizedMessage;
 import venture.Aust1n46.chat.model.ChatChannel;
 import venture.Aust1n46.chat.model.VentureCommand;
+import venture.Aust1n46.chat.service.ConfigService;
 
 public class Chlist implements VentureCommand {
+	@Inject
+	private ConfigService configService;
 
     @Override
     public void execute(CommandSender sender, String command, String[] args) {
         sender.sendMessage(LocalizedMessage.CHANNEL_LIST_HEADER.toString());
-        for (ChatChannel chname : ChatChannel.getChatChannels()) {
+        for (ChatChannel chname : configService.getChatChannels()) {
             if (chname.hasPermission()) {
                 if (sender.hasPermission(chname.getPermission())) {
                     sender.sendMessage(LocalizedMessage.CHANNEL_LIST_WITH_PERMISSIONS.toString()

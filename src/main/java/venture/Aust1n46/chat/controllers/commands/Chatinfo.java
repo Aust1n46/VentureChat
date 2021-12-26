@@ -10,11 +10,14 @@ import com.google.inject.Inject;
 import venture.Aust1n46.chat.model.ChatChannel;
 import venture.Aust1n46.chat.model.VentureChatPlayer;
 import venture.Aust1n46.chat.model.VentureCommand;
+import venture.Aust1n46.chat.service.ConfigService;
 import venture.Aust1n46.chat.service.VentureChatPlayerApiService;
 
 public class Chatinfo implements VentureCommand {
 	@Inject
 	private VentureChatPlayerApiService playerApiService;
+	@Inject
+	private ConfigService configService;
 
     @Override
     public void execute(CommandSender sender, String command, String[] args) {
@@ -31,11 +34,11 @@ public class Chatinfo implements VentureCommand {
                 if (args.length < 1) {
                     mcp.getPlayer().sendMessage(ChatColor.GOLD + "Player: " + ChatColor.GREEN + mcp.getName());
                     for (String c : mcp.getListening()) {
-                        ChatChannel channel = ChatChannel.getChannel(c);
+                        ChatChannel channel = configService.getChannel(c);
                         listen += channel.getColor() + channel.getName() + " ";
                     }
                     for (MuteContainer muteContainer : mcp.getMutes()) {
-                        ChatChannel channel = ChatChannel.getChannel(muteContainer.getChannel());
+                        ChatChannel channel = configService.getChannel(muteContainer.getChannel());
                         mute += channel.getColor() + channel.getName() + " ";
                     }
                     for (String bc : mcp.getBlockedCommands()) {
@@ -86,11 +89,11 @@ public class Chatinfo implements VentureCommand {
                 }
                 sender.sendMessage(ChatColor.GOLD + "Player: " + ChatColor.GREEN + p.getName());
                 for (String c : p.getListening()) {
-                    ChatChannel channel = ChatChannel.getChannel(c);
+                    ChatChannel channel = configService.getChannel(c);
                     listen += channel.getColor() + channel.getName() + " ";
                 }
                 for (MuteContainer muteContainer : p.getMutes()) {
-                    ChatChannel channel = ChatChannel.getChannel(muteContainer.getChannel());
+                    ChatChannel channel = configService.getChannel(muteContainer.getChannel());
                     mute += channel.getColor() + channel.getName() + " ";
                 }
                 for (String bc : p.getBlockedCommands()) {

@@ -3,11 +3,16 @@ package venture.Aust1n46.chat.controllers.commands;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 
-import mineverse.Aust1n46.chat.utilities.FormatUtils;
+import com.google.inject.Inject;
+
 import venture.Aust1n46.chat.model.ChatChannel;
 import venture.Aust1n46.chat.model.VentureCommand;
+import venture.Aust1n46.chat.service.ConfigService;
+import venture.Aust1n46.chat.utilities.FormatUtils;
 
 public class Channelinfo implements VentureCommand {
+	@Inject
+	private ConfigService configService;
 
     @Override
     public void execute(CommandSender sender, String command, String[] args) {
@@ -16,7 +21,7 @@ public class Channelinfo implements VentureCommand {
                 sender.sendMessage(ChatColor.RED + "Invalid command: /channelinfo [channel]");
                 return;
             }
-            ChatChannel chname = ChatChannel.getChannel(args[0]);
+            ChatChannel chname = configService.getChannel(args[0]);
             if (chname == null) {
                 sender.sendMessage(ChatColor.RED + "Invalid channel: " + args[0]);
                 return;

@@ -1,7 +1,7 @@
 package venture.Aust1n46.chat.controllers.commands;
 
-import mineverse.Aust1n46.chat.localization.InternalMessage;
-import venture.Aust1n46.chat.VentureChat;
+import venture.Aust1n46.chat.initiators.application.VentureChat;
+import venture.Aust1n46.chat.localization.InternalMessage;
 //import net.md_5.bungee.api.chat.ClickEvent;
 //import net.md_5.bungee.api.chat.ComponentBuilder;
 //import net.md_5.bungee.api.chat.HoverEvent;

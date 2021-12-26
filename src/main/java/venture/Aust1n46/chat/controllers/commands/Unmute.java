@@ -14,11 +14,12 @@ import org.bukkit.util.StringUtil;
 
 import com.google.inject.Inject;
 
-import mineverse.Aust1n46.chat.localization.LocalizedMessage;
 import venture.Aust1n46.chat.controllers.PluginMessageController;
+import venture.Aust1n46.chat.localization.LocalizedMessage;
 import venture.Aust1n46.chat.model.ChatChannel;
 import venture.Aust1n46.chat.model.VentureChatPlayer;
 import venture.Aust1n46.chat.model.VentureCommand;
+import venture.Aust1n46.chat.service.ConfigService;
 import venture.Aust1n46.chat.service.VentureChatPlayerApiService;
 
 public class Unmute implements VentureCommand {
@@ -26,6 +27,8 @@ public class Unmute implements VentureCommand {
 	private PluginMessageController pluginMessageController;
 	@Inject
 	private VentureChatPlayerApiService playerApiService;
+	@Inject
+	private ConfigService configService;
 
     @Override
     public void execute(CommandSender sender, String command, String[] args) {
@@ -35,8 +38,8 @@ public class Unmute implements VentureCommand {
                         .replace("{args}", "[channel] [player]"));
                 return;
             }
-            if (ChatChannel.isChannel(args[0])) {
-                ChatChannel channel = ChatChannel.getChannel(args[0]);
+            if (configService.isChannel(args[0])) {
+                ChatChannel channel = configService.getChannel(args[0]);
                 if (channel.getBungee()) {
                     sendBungeeCordUnmute(sender, args[1], channel);
                     return;
@@ -77,13 +80,13 @@ public class Unmute implements VentureCommand {
     public List<String> onTabComplete(CommandSender sender, Command command, String label, String[] args) {
         List<String> completions = new ArrayList<>();
         if (args.length == 1) {
-            StringUtil.copyPartialMatches(args[0], ChatChannel.getChatChannels().stream().map(ChatChannel::getName).collect(Collectors.toList()), completions);
+            StringUtil.copyPartialMatches(args[0], configService.getChatChannels().stream().map(ChatChannel::getName).collect(Collectors.toList()), completions);
             Collections.sort(completions);
             return completions;
         }
         if (args.length == 2) {
-            if (ChatChannel.isChannel(args[0])) {
-                ChatChannel chatChannelObj = ChatChannel.getChannel(args[0]);
+            if (configService.isChannel(args[0])) {
+                ChatChannel chatChannelObj = configService.getChannel(args[0]);
                 if (chatChannelObj.getBungee()) {
                     StringUtil.copyPartialMatches(args[1], playerApiService.getNetworkPlayerNames(), completions);
                     Collections.sort(completions);

@@ -1,4 +1,4 @@
-package mineverse.Aust1n46.chat.proxy;
+package venture.Aust1n46.chat.proxy;
 
 import java.util.List;
 

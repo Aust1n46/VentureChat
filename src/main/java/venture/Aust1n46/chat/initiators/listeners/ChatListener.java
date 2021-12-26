@@ -22,18 +22,19 @@ import com.palmergames.bukkit.towny.TownyUniverse;
 import com.palmergames.bukkit.towny.object.Resident;
 
 import me.clip.placeholderapi.PlaceholderAPI;
-import mineverse.Aust1n46.chat.api.events.VentureChatEvent;
-import mineverse.Aust1n46.chat.localization.LocalizedMessage;
-import mineverse.Aust1n46.chat.utilities.FormatUtils;
 import net.essentialsx.api.v2.services.discord.DiscordService;
-import venture.Aust1n46.chat.VentureChat;
+import venture.Aust1n46.chat.api.events.VentureChatEvent;
 import venture.Aust1n46.chat.controllers.PluginMessageController;
 import venture.Aust1n46.chat.controllers.commands.MuteContainer;
+import venture.Aust1n46.chat.initiators.application.VentureChat;
+import venture.Aust1n46.chat.localization.LocalizedMessage;
 import venture.Aust1n46.chat.model.ChatChannel;
 import venture.Aust1n46.chat.model.VentureChatPlayer;
+import venture.Aust1n46.chat.service.ConfigService;
 import venture.Aust1n46.chat.service.VentureChatDatabaseService;
 import venture.Aust1n46.chat.service.VentureChatFormatService;
 import venture.Aust1n46.chat.service.VentureChatPlayerApiService;
+import venture.Aust1n46.chat.utilities.FormatUtils;
 
 //This class listens to chat through the chat event and handles the bulk of the chat channels and formatting.
 @Singleton
@@ -49,6 +50,8 @@ public class ChatListener implements Listener {
 	private PluginMessageController pluginMessageController;
 	@Inject
 	private VentureChatPlayerApiService playerApiService;
+	@Inject
+	private ConfigService configService;
 
 	// this event isn't always asynchronous even though the event's name starts with "Async"
     // blame md_5 for that one
@@ -151,7 +154,7 @@ public class ChatListener implements Listener {
 				}
 				tp.getPlayer().sendMessage(send);
 				mcp.getPlayer().sendMessage(echo);
-				if(tp.hasNotifications()) {
+				if(tp.isNotifications()) {
 					formatService.playMessageSound(tp);
 				}
 				mcp.setReplyPlayer(tp.getUuid());
@@ -256,7 +259,7 @@ public class ChatListener implements Listener {
 			mcp.getPlayer().sendMessage(LocalizedMessage.CHANNEL_NO_PERMISSION.toString());
 			mcp.setQuickChat(false);
 			mcp.removeListening(eventChannel.getName());
-			mcp.setCurrentChannel(ChatChannel.getDefaultChannel());
+			mcp.setCurrentChannel(configService.getDefaultChannel());
 			return;
 		}
 		if(eventChannel.hasSpeakPermission() && !mcp.getPlayer().hasPermission(eventChannel.getSpeakPermission())) {
@@ -364,7 +367,7 @@ public class ChatListener implements Listener {
 		PluginManager pluginManager = plugin.getServer().getPluginManager();
 		for(VentureChatPlayer p : playerApiService.getOnlineMineverseChatPlayers()) {
 			if(p.getPlayer() != mcp.getPlayer()) {
-				if(!p.isListening(eventChannel.getName())) {
+				if(!configService.isListening(p, eventChannel.getName())) {
 					recipients.remove(p.getPlayer());
 					recipientCount--;
 					continue;
@@ -560,9 +563,10 @@ public class ChatListener implements Listener {
 				if(plugin.getConfig().getString("loglevel", "info").equals("debug")) {
 					System.out.println(out.size() + " bytes size with json");
 				}
-				out.writeUTF(plugin.getVaultPermission().getPrimaryGroup(mcp.getPlayer()));
-				// look into not sending this
-				out.writeUTF(mcp.getPlayer().getDisplayName());
+				out.writeUTF(plugin.getVaultPermission().getPrimaryGroup(mcp.getPlayer())); // look into not sending this
+				@SuppressWarnings("deprecation") // Paper Deprecated
+				final String displayName = mcp.getPlayer().getDisplayName();
+				out.writeUTF(displayName);
 				pluginMessageController.sendPluginMessage(byteOutStream);
 				out.close();
 			}

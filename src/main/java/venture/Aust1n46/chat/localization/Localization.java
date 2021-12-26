@@ -1,4 +1,4 @@
-package mineverse.Aust1n46.chat.localization;
+package venture.Aust1n46.chat.localization;
 
 import java.io.File;
 
@@ -6,8 +6,8 @@ import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 
-import mineverse.Aust1n46.chat.utilities.FormatUtils;
-import venture.Aust1n46.chat.VentureChat;
+import venture.Aust1n46.chat.initiators.application.VentureChat;
+import venture.Aust1n46.chat.utilities.FormatUtils;
 
 //This class is used to create objects of localization for different languages.
 public class Localization {

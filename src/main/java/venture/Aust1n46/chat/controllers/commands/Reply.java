@@ -9,13 +9,13 @@ import org.bukkit.entity.Player;
 import com.google.inject.Inject;
 
 import me.clip.placeholderapi.PlaceholderAPI;
-import mineverse.Aust1n46.chat.localization.LocalizedMessage;
-import mineverse.Aust1n46.chat.utilities.FormatUtils;
-import venture.Aust1n46.chat.VentureChat;
 import venture.Aust1n46.chat.controllers.PluginMessageController;
+import venture.Aust1n46.chat.initiators.application.VentureChat;
+import venture.Aust1n46.chat.localization.LocalizedMessage;
 import venture.Aust1n46.chat.model.VentureChatPlayer;
 import venture.Aust1n46.chat.model.VentureCommand;
 import venture.Aust1n46.chat.service.VentureChatPlayerApiService;
+import venture.Aust1n46.chat.utilities.FormatUtils;
 import venture.Aust1n46.chat.service.VentureChatFormatService;
 
 public class Reply implements VentureCommand {
@@ -101,7 +101,7 @@ public class Reply implements VentureCommand {
                     }
                     player.getPlayer().sendMessage(send);
                     mcp.getPlayer().sendMessage(echo);
-                    if (player.hasNotifications()) {
+                    if (player.isNotifications()) {
                         formatService.playMessageSound(player);
                     }
                     player.setReplyPlayer(mcp.getUuid());

@@ -8,8 +8,8 @@ import java.util.UUID;
 
 import org.bukkit.entity.Player;
 
-import venture.Aust1n46.chat.model.VentureChatPlayer;
 import venture.Aust1n46.chat.model.SynchronizedVentureChatPlayer;
+import venture.Aust1n46.chat.model.VentureChatPlayer;
 
 /**
  * API class for looking up wrapped {@link VentureChatPlayer} objects from
@@ -17,7 +17,7 @@ import venture.Aust1n46.chat.model.SynchronizedVentureChatPlayer;
  *
  * @author Aust1n46
  */
-public final class VentureChatPlayerApiService {
+public class VentureChatPlayerApiService {
 	private static HashMap<UUID, VentureChatPlayer> playerMap = new HashMap<UUID, VentureChatPlayer>();
 	private static HashMap<String, UUID> namesMap = new HashMap<String, UUID>();
 	private static HashMap<UUID, VentureChatPlayer> onlinePlayerMap = new HashMap<UUID, VentureChatPlayer>();
@@ -102,7 +102,7 @@ public final class VentureChatPlayerApiService {
      * @param player {@link Player} object.
      * @return {@link VentureChatPlayer}
      */
-    public VentureChatPlayer getOnlineMineverseChatPlayer(Player player) {
+    public VentureChatPlayer getOnlineMineverseChatPlayer(final Player player) {
         return getOnlineMineverseChatPlayer(player.getUniqueId());
     }
 
@@ -131,7 +131,6 @@ public final class VentureChatPlayerApiService {
     
     
     
-    
 
     public List<String> getNetworkPlayerNames() {
         return networkPlayerNames;
@@ -148,11 +147,6 @@ public final class VentureChatPlayerApiService {
     public void addSynchronizedMineverseChatPlayerToMap(SynchronizedVentureChatPlayer smcp) {
         proxyPlayerMap.put(smcp.getUUID(), smcp);
     }
-
-//    @Deprecated
-//    public static void clearBungeePlayerMap() {
-//        clearProxyPlayerMap();
-//    }
     
     public void clearProxyPlayerMap() {
         proxyPlayerMap.clear();

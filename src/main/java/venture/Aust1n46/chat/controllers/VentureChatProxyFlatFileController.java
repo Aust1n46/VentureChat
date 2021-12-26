@@ -13,12 +13,12 @@ import java.util.UUID;
 
 import com.google.inject.Inject;
 
-import mineverse.Aust1n46.chat.proxy.VentureChatProxySource;
 import net.md_5.bungee.config.Configuration;
 import net.md_5.bungee.config.ConfigurationProvider;
 import net.md_5.bungee.config.YamlConfiguration;
 import venture.Aust1n46.chat.controllers.commands.MuteContainer;
 import venture.Aust1n46.chat.model.SynchronizedVentureChatPlayer;
+import venture.Aust1n46.chat.proxy.VentureChatProxySource;
 import venture.Aust1n46.chat.service.UUIDService;
 import venture.Aust1n46.chat.service.VentureChatPlayerApiService;
 

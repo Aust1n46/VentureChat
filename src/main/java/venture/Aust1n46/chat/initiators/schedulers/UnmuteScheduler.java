@@ -7,14 +7,15 @@ import org.bukkit.scheduler.BukkitScheduler;
 
 import com.google.inject.Inject;
 
-import mineverse.Aust1n46.chat.localization.LocalizedMessage;
-import mineverse.Aust1n46.chat.utilities.FormatUtils;
-import venture.Aust1n46.chat.VentureChat;
 import venture.Aust1n46.chat.controllers.PluginMessageController;
 import venture.Aust1n46.chat.controllers.commands.MuteContainer;
+import venture.Aust1n46.chat.initiators.application.VentureChat;
+import venture.Aust1n46.chat.localization.LocalizedMessage;
 import venture.Aust1n46.chat.model.ChatChannel;
 import venture.Aust1n46.chat.model.VentureChatPlayer;
+import venture.Aust1n46.chat.service.ConfigService;
 import venture.Aust1n46.chat.service.VentureChatPlayerApiService;
+import venture.Aust1n46.chat.utilities.FormatUtils;
 
 public class UnmuteScheduler {
 	@Inject
@@ -23,6 +24,8 @@ public class UnmuteScheduler {
 	private PluginMessageController pluginMessageController;
 	@Inject
 	private VentureChatPlayerApiService playerApiService;
+	@Inject
+	private ConfigService configService;
 	
 	@Inject
 	public void postConstruct() {
@@ -35,8 +38,8 @@ public class UnmuteScheduler {
 					Iterator<MuteContainer> iterator = p.getMutes().iterator();
 					while (iterator.hasNext()) {
 						MuteContainer mute = iterator.next();
-						if(ChatChannel.isChannel(mute.getChannel())) {
-							ChatChannel channel = ChatChannel.getChannel(mute.getChannel());
+						if(configService.isChannel(mute.getChannel())) {
+							ChatChannel channel = configService.getChannel(mute.getChannel());
 							long timemark = mute.getDuration();
 							if (timemark == 0) {
 								continue;

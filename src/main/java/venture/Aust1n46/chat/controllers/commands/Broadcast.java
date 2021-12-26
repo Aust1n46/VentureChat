@@ -6,11 +6,11 @@ import org.bukkit.configuration.ConfigurationSection;
 
 import com.google.inject.Inject;
 
-import mineverse.Aust1n46.chat.localization.LocalizedMessage;
-import mineverse.Aust1n46.chat.utilities.FormatUtils;
-import venture.Aust1n46.chat.VentureChat;
+import venture.Aust1n46.chat.initiators.application.VentureChat;
+import venture.Aust1n46.chat.localization.LocalizedMessage;
 import venture.Aust1n46.chat.model.VentureCommand;
 import venture.Aust1n46.chat.service.VentureChatFormatService;
+import venture.Aust1n46.chat.utilities.FormatUtils;
 
 public class Broadcast implements VentureCommand {
 	@Inject

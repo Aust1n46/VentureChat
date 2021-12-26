@@ -8,13 +8,15 @@ import org.bukkit.entity.Player;
 
 import com.google.inject.Inject;
 
-import mineverse.Aust1n46.chat.localization.LocalizedMessage;
-import mineverse.Aust1n46.chat.utilities.FormatUtils;
-import venture.Aust1n46.chat.VentureChat;
 import venture.Aust1n46.chat.controllers.VentureChatSpigotFlatFileController;
+import venture.Aust1n46.chat.initiators.application.VentureChat;
+import venture.Aust1n46.chat.localization.LocalizedMessage;
+import venture.Aust1n46.chat.model.JsonFormat;
 import venture.Aust1n46.chat.model.VentureChatPlayer;
 import venture.Aust1n46.chat.model.VentureCommand;
+import venture.Aust1n46.chat.service.ConfigService;
 import venture.Aust1n46.chat.service.VentureChatPlayerApiService;
+import venture.Aust1n46.chat.utilities.FormatUtils;
 
 public class Chatreload implements VentureCommand {
 	@Inject
@@ -23,6 +25,8 @@ public class Chatreload implements VentureCommand {
 	private VentureChatSpigotFlatFileController spigotFlatFileController;
 	@Inject
 	private VentureChatPlayerApiService playerApiService;
+	@Inject
+	private ConfigService configService;
 
 	@Override
 	public void execute(CommandSender sender, String command, String[] args) {
@@ -33,7 +37,7 @@ public class Chatreload implements VentureCommand {
 			playerApiService.clearOnlineMineverseChatPlayerMap();
 			
 			plugin.reloadConfig();
-			plugin.initializeConfigReaders();
+			configService.postConstruct();
 			
 			spigotFlatFileController.loadLegacyPlayerData();
 			spigotFlatFileController.loadPlayerData();
@@ -44,11 +48,20 @@ public class Chatreload implements VentureCommand {
 					Bukkit.getConsoleSender().sendMessage(FormatUtils.FormatStringAll("&8[&eVentureChat&8]&c - There could be an issue with your player data saving."));
 					String name = p.getName();
 					UUID uuid = p.getUniqueId();
-					mcp = new VentureChatPlayer(uuid, name);
+					mcp = new VentureChatPlayer(uuid, name, configService.getDefaultChannel());
 				}
 				mcp.setOnline(true);
+				mcp.setPlayer(plugin.getServer().getPlayer(mcp.getUuid()));
 				mcp.setHasPlayed(false);
-				mcp.setJsonFormat();
+				String jsonFormat = mcp.getJsonFormat();
+				for(JsonFormat j : configService.getJsonFormats()) {
+					if(mcp.getPlayer().hasPermission("venturechat.json." + j.getName())) {
+						if(configService.getJsonFormat(mcp.getJsonFormat()).getPriority() > j.getPriority()) {
+							jsonFormat = j.getName();
+						}
+					}
+				}
+				mcp.setJsonFormat(jsonFormat);
 				playerApiService.addMineverseChatOnlinePlayerToMap(mcp);
 				playerApiService.addNameToMap(mcp);
 			}

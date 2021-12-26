@@ -1,4 +1,4 @@
-package mineverse.Aust1n46.chat.proxy;
+package venture.Aust1n46.chat.proxy;
 
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
@@ -9,7 +9,6 @@ import java.util.stream.Collectors;
 
 import com.google.inject.Inject;
 
-import mineverse.Aust1n46.chat.utilities.FormatUtils;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.config.ServerInfo;
@@ -27,6 +26,7 @@ import net.md_5.bungee.config.YamlConfiguration;
 import net.md_5.bungee.event.EventHandler;
 import venture.Aust1n46.chat.controllers.VentureChatProxyFlatFileController;
 import venture.Aust1n46.chat.service.UUIDService;
+import venture.Aust1n46.chat.utilities.FormatUtils;
 
 /**
  * VentureChat Minecraft plugin for BungeeCord.

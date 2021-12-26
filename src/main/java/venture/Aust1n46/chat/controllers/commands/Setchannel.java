@@ -4,11 +4,12 @@ import org.bukkit.command.CommandSender;
 
 import com.google.inject.Inject;
 
-import mineverse.Aust1n46.chat.localization.LocalizedMessage;
 import venture.Aust1n46.chat.controllers.PluginMessageController;
+import venture.Aust1n46.chat.localization.LocalizedMessage;
 import venture.Aust1n46.chat.model.ChatChannel;
 import venture.Aust1n46.chat.model.VentureChatPlayer;
 import venture.Aust1n46.chat.model.VentureCommand;
+import venture.Aust1n46.chat.service.ConfigService;
 import venture.Aust1n46.chat.service.VentureChatPlayerApiService;
 
 public class Setchannel implements VentureCommand {
@@ -16,6 +17,8 @@ public class Setchannel implements VentureCommand {
 	private PluginMessageController pluginMessageController;
 	@Inject
 	private VentureChatPlayerApiService playerApiService;
+	@Inject
+	private ConfigService configService;
 
     @Override
     public void execute(CommandSender sender, String command, String[] args) {
@@ -32,7 +35,7 @@ public class Setchannel implements VentureCommand {
                         .replace("{args}", args[0]));
                 return;
             }
-            ChatChannel channel = ChatChannel.getChannel(args[1]);
+            ChatChannel channel = configService.getChannel(args[1]);
             if (channel == null) {
                 sender.sendMessage(LocalizedMessage.INVALID_CHANNEL.toString()
                         .replace("{args}", args[1]));

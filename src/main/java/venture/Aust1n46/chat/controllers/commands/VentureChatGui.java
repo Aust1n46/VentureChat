@@ -16,21 +16,24 @@ import org.bukkit.inventory.meta.SkullMeta;
 import com.google.inject.Inject;
 
 import me.clip.placeholderapi.PlaceholderAPI;
-import mineverse.Aust1n46.chat.localization.LocalizedMessage;
-import mineverse.Aust1n46.chat.utilities.FormatUtils;
-import mineverse.Aust1n46.chat.versions.VersionHandler;
-import venture.Aust1n46.chat.VentureChat;
+import venture.Aust1n46.chat.initiators.application.VentureChat;
+import venture.Aust1n46.chat.localization.LocalizedMessage;
 import venture.Aust1n46.chat.model.ChatChannel;
 import venture.Aust1n46.chat.model.GuiSlot;
 import venture.Aust1n46.chat.model.VentureChatPlayer;
 import venture.Aust1n46.chat.model.VentureCommand;
+import venture.Aust1n46.chat.service.ConfigService;
 import venture.Aust1n46.chat.service.VentureChatPlayerApiService;
+import venture.Aust1n46.chat.utilities.FormatUtils;
+import venture.Aust1n46.chat.utilities.VersionHandler;
 
 public class VentureChatGui implements VentureCommand {
 	@Inject
     private VentureChat plugin;
 	@Inject
 	private VentureChatPlayerApiService playerApiService;
+	@Inject
+	private ConfigService configService;
 
     @Override
     public void execute(CommandSender sender, String command, String[] args) {
@@ -52,8 +55,8 @@ public class VentureChatGui implements VentureCommand {
                         .replace("{args}", args[0]));
                 return;
             }
-            if (ChatChannel.isChannel(args[1])) {
-                ChatChannel channel = ChatChannel.getChannel(args[1]);
+            if (configService.isChannel(args[1])) {
+                ChatChannel channel = configService.getChannel(args[1]);
                 final int hash;
                 try {
                     hash = Integer.parseInt(args[2]);
@@ -108,7 +111,7 @@ public class VentureChatGui implements VentureCommand {
         skull.setDurability((short) 3);
         inv.setItem(0, skull);
 
-        for (GuiSlot g : GuiSlot.getGuiSlots()) {
+        for (GuiSlot g : configService.getGuiSlots()) {
             if (!g.hasPermission() || mcp.getPlayer().hasPermission(g.getPermission())) {
                 if (this.checkSlot(g.getSlot())) {
                     plugin.getServer().getConsoleSender().sendMessage(FormatUtils.FormatStringAll("&cGUI: " + g.getName() + " has invalid slot: " + g.getSlot() + "!"));
@@ -165,7 +168,7 @@ public class VentureChatGui implements VentureCommand {
         skull.setDurability((short) 3);
         inv.setItem(0, skull);
 
-        for (GuiSlot g : GuiSlot.getGuiSlots()) {
+        for (GuiSlot g : configService.getGuiSlots()) {
             if (!g.hasPermission() || mcp.getPlayer().hasPermission(g.getPermission())) {
                 if (this.checkSlot(g.getSlot())) {
                     plugin.getServer().getConsoleSender().sendMessage(FormatUtils.FormatStringAll("&cGUI: " + g.getName() + " has invalid slot: " + g.getSlot() + "!"));

@@ -12,7 +12,6 @@ import org.bukkit.command.TabExecutor;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
-import venture.Aust1n46.chat.VentureChat;
 import venture.Aust1n46.chat.controllers.commands.Broadcast;
 import venture.Aust1n46.chat.controllers.commands.BungeeToggle;
 import venture.Aust1n46.chat.controllers.commands.Channel;
@@ -50,6 +49,7 @@ import venture.Aust1n46.chat.controllers.commands.Unmute;
 import venture.Aust1n46.chat.controllers.commands.Unmuteall;
 import venture.Aust1n46.chat.controllers.commands.VentureChatGui;
 import venture.Aust1n46.chat.controllers.commands.Venturechat;
+import venture.Aust1n46.chat.initiators.application.VentureChat;
 import venture.Aust1n46.chat.model.VentureCommand;
 
 /**
@@ -58,21 +58,21 @@ import venture.Aust1n46.chat.model.VentureCommand;
 @Singleton
 public class VentureCommandExecutor implements TabExecutor {
 	private Map<String, VentureCommand> commands = new HashMap<String, VentureCommand>();
-	
+
 	@Inject
 	private VentureChat plugin;
 	@Inject
 	private MessageCommandExecutor messageCommandExecutor;
 	@Inject
 	private IgnoreCommandExecutor ignoreCommandExecutor;
-	
+
 	@Inject
 	private Broadcast broadcast;
 	@Inject
 	private Channel channel;
 	@Inject
 	private Channelinfo channelinfo;
-	@Inject 
+	@Inject
 	private Chatinfo chatinfo;
 	@Inject
 	private Chatreload chatreload;
@@ -147,7 +147,7 @@ public class VentureCommandExecutor implements TabExecutor {
 	public List<String> onTabComplete(CommandSender sender, Command command, String label, String[] args) {
 		return commands.get(command.getName()).onTabComplete(sender, command, label, args);
 	}
-	
+
 	@Inject
 	public void postConstruct() {
 		commands.put("broadcast", broadcast);
@@ -181,36 +181,38 @@ public class VentureCommandExecutor implements TabExecutor {
 		commands.put("venturechatgui", ventureChatGui);
 		commands.put("messagetoggle", messageToggle);
 		commands.put("bungeetoggle", bungeeToggle);
-		for(String command : commands.keySet()) {
+		for (String command : commands.keySet()) {
 			registerCommand(command, this);
 		}
-		
+
 		plugin.getServer().getScheduler().runTaskLater(plugin, () -> {
-			commands.put("reply", reply);
-			commands.put("r", reply);
-			registerCommand("reply", this);
-			registerCommand("r", this);
-			
-			commands.put("mute", mute);
-			commands.put("muteall", muteall);
-			commands.put("unmute", unmute);
-			commands.put("unmuteall", unmuteall);
-			registerCommand("mute", this);
-			registerCommand("muteall", this);
-			registerCommand("unmute", this);
-			registerCommand("unmuteall", this);
-			
-			registerCommand("message", messageCommandExecutor);
-			registerCommand("msg", messageCommandExecutor);
-			registerCommand("tell", messageCommandExecutor);
-			registerCommand("whisper", messageCommandExecutor);
-			
-			registerCommand("ignore", ignoreCommandExecutor);
+			if (plugin.isEnabled()) {
+				commands.put("reply", reply);
+				commands.put("r", reply);
+				registerCommand("reply", this);
+				registerCommand("r", this);
+
+				commands.put("mute", mute);
+				commands.put("muteall", muteall);
+				commands.put("unmute", unmute);
+				commands.put("unmuteall", unmuteall);
+				registerCommand("mute", this);
+				registerCommand("muteall", this);
+				registerCommand("unmute", this);
+				registerCommand("unmuteall", this);
+
+				registerCommand("message", messageCommandExecutor);
+				registerCommand("msg", messageCommandExecutor);
+				registerCommand("tell", messageCommandExecutor);
+				registerCommand("whisper", messageCommandExecutor);
+
+				registerCommand("ignore", ignoreCommandExecutor);
+			}
 		}, 0);
 	}
-	
+
 	private void registerCommand(String command, CommandExecutor commandExecutor) {
-		if(plugin.getCommand(command) != null) {
+		if (plugin.getCommand(command) != null) {
 			plugin.getCommand(command).setExecutor(commandExecutor);
 		}
 	}
