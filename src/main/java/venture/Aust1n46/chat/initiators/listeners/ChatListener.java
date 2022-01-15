@@ -37,6 +37,7 @@ import venture.Aust1n46.chat.service.VentureChatPlayerApiService;
 import venture.Aust1n46.chat.utilities.FormatUtils;
 
 //This class listens to chat through the chat event and handles the bulk of the chat channels and formatting.
+@SuppressWarnings("deprecation")
 @Singleton
 public class ChatListener implements Listener {
 	private final boolean essentialsDiscordHook = Bukkit.getPluginManager().isPluginEnabled("EssentialsDiscord");
@@ -54,8 +55,7 @@ public class ChatListener implements Listener {
 	private ConfigService configService;
 
 	// this event isn't always asynchronous even though the event's name starts with "Async"
-    // blame md_5 for that one
-	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
 	public void onAsyncPlayerChatEvent(AsyncPlayerChatEvent event) {
 		event.setCancelled(true);
 		Bukkit.getScheduler().runTaskAsynchronously(plugin, new Runnable() {
@@ -564,7 +564,6 @@ public class ChatListener implements Listener {
 					System.out.println(out.size() + " bytes size with json");
 				}
 				out.writeUTF(plugin.getVaultPermission().getPrimaryGroup(mcp.getPlayer())); // look into not sending this
-				@SuppressWarnings("deprecation") // Paper Deprecated
 				final String displayName = mcp.getPlayer().getDisplayName();
 				out.writeUTF(displayName);
 				pluginMessageController.sendPluginMessage(byteOutStream);

@@ -17,7 +17,8 @@ public class Me implements VentureCommand {
 	@Inject
 	private VentureChatPlayerApiService playerApiService;
 
-    @Override
+    @SuppressWarnings("deprecation")
+	@Override
     public void execute(CommandSender sender, String command, String[] args) {
         if (sender.hasPermission("venturechat.me")) {
             if (args.length > 0) {

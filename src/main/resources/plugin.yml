@@ -1,7 +1,7 @@
 name: VentureChat
 version: ${project.version}
 api-version: 1.13
-main: venture.Aust1n46.chat.VentureChat
+main: venture.Aust1n46.chat.initiators.application.VentureChat
 depend: [Vault, ProtocolLib, PlaceholderAPI]
 softdepend: [Towny, Factions, EssentialsDiscord]
 author: Aust1n46

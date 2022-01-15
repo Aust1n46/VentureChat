@@ -19,8 +19,8 @@ import net.md_5.bungee.config.YamlConfiguration;
 import venture.Aust1n46.chat.controllers.commands.MuteContainer;
 import venture.Aust1n46.chat.model.SynchronizedVentureChatPlayer;
 import venture.Aust1n46.chat.proxy.VentureChatProxySource;
-import venture.Aust1n46.chat.service.UUIDService;
-import venture.Aust1n46.chat.service.VentureChatPlayerApiService;
+import venture.Aust1n46.chat.service.proxy.ProxyUuidService;
+import venture.Aust1n46.chat.service.proxy.VentureChatProxyPlayerApiService;
 
 /**
  * Class for reading and writing proxy player data.
@@ -29,9 +29,9 @@ import venture.Aust1n46.chat.service.VentureChatPlayerApiService;
  */
 public class VentureChatProxyFlatFileController {
 	@Inject
-    private UUIDService uuidService;
+    private ProxyUuidService uuidService;
 	@Inject
-	private VentureChatPlayerApiService playerApiService;
+	private VentureChatProxyPlayerApiService playerApiService;
 	
     public void loadLegacyBungeePlayerData(File dataFolder, VentureChatProxySource source) {
         File sync = new File(dataFolder, "BungeePlayers.yml");

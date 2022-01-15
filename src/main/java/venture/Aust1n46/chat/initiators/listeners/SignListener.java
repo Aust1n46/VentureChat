@@ -18,6 +18,7 @@ public class SignListener implements Listener {
 	@Inject
 	private VentureChatPlayerApiService playerApiService;
 	
+	@SuppressWarnings("deprecation")
 	@EventHandler(priority = EventPriority.HIGH)
 	public void onSignChange(SignChangeEvent event) {
 		VentureChatPlayer mcp = playerApiService.getOnlineMineverseChatPlayer(event.getPlayer());

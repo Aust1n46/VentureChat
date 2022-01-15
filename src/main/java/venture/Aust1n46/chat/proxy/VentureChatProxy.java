@@ -12,7 +12,7 @@ import com.google.inject.Inject;
 import venture.Aust1n46.chat.controllers.commands.MuteContainer;
 import venture.Aust1n46.chat.model.SynchronizedVentureChatPlayer;
 import venture.Aust1n46.chat.model.TemporaryDataInstance;
-import venture.Aust1n46.chat.service.VentureChatPlayerApiService;
+import venture.Aust1n46.chat.service.proxy.VentureChatProxyPlayerApiService;
 
 public class VentureChatProxy {
 	public static String PLUGIN_MESSAGING_CHANNEL_NAMESPACE = "venturechat";
@@ -20,7 +20,7 @@ public class VentureChatProxy {
 	public static String PLUGIN_MESSAGING_CHANNEL_STRING = "venturechat:data";
 	
 	@Inject
-	private VentureChatPlayerApiService playerApiService;
+	private VentureChatProxyPlayerApiService playerApiService;
 	
 	public void onPluginMessage(byte[] data, String serverName, VentureChatProxySource source) {
 		ByteArrayInputStream instream = new ByteArrayInputStream(data);

@@ -246,11 +246,14 @@ public class CommandListener implements CommandExecutor, Listener {
 	@SuppressWarnings("deprecation")
 	@EventHandler(priority = EventPriority.LOW)
 	public void InventoryClick(InventoryClickEvent e) {
-		ItemStack item = e.getCurrentItem();
-		if(item == null || !e.getView().getTitle().contains("VentureChat")) {
+		if(!e.getView().getTitle().contains("VentureChat")) {
 			return;
 		}
 		e.setCancelled(true);
+		ItemStack item = e.getCurrentItem();
+		if (item == null) {
+			return;
+		}
 		VentureChatPlayer mcp = playerApiService.getOnlineMineverseChatPlayer((Player) e.getWhoClicked());
 		String playerName = e.getView().getTitle().replace(" GUI", "").replace("VentureChat: ", "");
 		VentureChatPlayer target = playerApiService.getMineverseChatPlayer(playerName);

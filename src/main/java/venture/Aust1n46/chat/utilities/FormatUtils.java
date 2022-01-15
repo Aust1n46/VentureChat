@@ -1,5 +1,6 @@
 package venture.Aust1n46.chat.utilities;
 
+import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -299,5 +300,16 @@ public class FormatUtils {
 	
 	public static String stripColor(String message) {
 		return message.replaceAll("(\u00A7([a-z0-9]))", "");
+	}
+	
+	/**
+	 * Returns whether the passed UUID is a v3 UUID. Offline UUIDs are v3, online
+	 * are v4.
+	 *
+	 * @param uuid the UUID to check
+	 * @return whether the UUID is a v3 UUID & thus is offline
+	 */
+	public static boolean uuidIsOffline(UUID uuid) {
+		return uuid.version() == 3;
 	}
 }
