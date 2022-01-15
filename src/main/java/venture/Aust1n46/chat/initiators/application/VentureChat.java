@@ -22,11 +22,11 @@ import venture.Aust1n46.chat.VentureChatPluginModule;
 import venture.Aust1n46.chat.controllers.PluginMessageController;
 import venture.Aust1n46.chat.controllers.VentureChatSpigotFlatFileController;
 import venture.Aust1n46.chat.initiators.listeners.ChatListener;
-import venture.Aust1n46.chat.initiators.listeners.CommandListener;
+import venture.Aust1n46.chat.initiators.listeners.PreProcessCommandListener;
 import venture.Aust1n46.chat.initiators.listeners.LoginListener;
 import venture.Aust1n46.chat.initiators.listeners.PacketListener;
 import venture.Aust1n46.chat.initiators.listeners.SignListener;
-import venture.Aust1n46.chat.initiators.listeners.VentureCommandExecutor;
+import venture.Aust1n46.chat.initiators.listeners.CommandListener;
 import venture.Aust1n46.chat.initiators.schedulers.UnmuteScheduler;
 import venture.Aust1n46.chat.localization.Localization;
 import venture.Aust1n46.chat.service.VentureChatPlayerApiService;
@@ -46,7 +46,7 @@ public class VentureChat extends JavaPlugin implements PluginMessageListener {
 	@Inject
 	private SignListener signListener;
 	@Inject
-	private CommandListener commandListener;
+	private PreProcessCommandListener commandListener;
 	@Inject
 	private PacketListener packetListener;
 	@Inject
@@ -65,7 +65,7 @@ public class VentureChat extends JavaPlugin implements PluginMessageListener {
 		final VentureChatPluginModule pluginModule = new VentureChatPluginModule(this);
 		final Injector injector = Guice.createInjector(pluginModule);
 		injector.injectMembers(this);
-		injector.injectMembers(new VentureCommandExecutor());
+		injector.injectMembers(new CommandListener());
 		injector.injectMembers(new UnmuteScheduler());
 
 		try {
