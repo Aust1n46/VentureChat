@@ -1,4 +1,4 @@
-package venture.Aust1n46.chat.controllers;
+package venture.Aust1n46.chat.controllers.proxy;
 
 import java.io.File;
 import java.io.IOException;
@@ -18,7 +18,7 @@ import net.md_5.bungee.config.ConfigurationProvider;
 import net.md_5.bungee.config.YamlConfiguration;
 import venture.Aust1n46.chat.controllers.commands.MuteContainer;
 import venture.Aust1n46.chat.model.SynchronizedVentureChatPlayer;
-import venture.Aust1n46.chat.proxy.VentureChatProxySource;
+import venture.Aust1n46.chat.model.VentureChatProxySource;
 import venture.Aust1n46.chat.service.proxy.ProxyUuidService;
 import venture.Aust1n46.chat.service.proxy.VentureChatProxyPlayerApiService;
 

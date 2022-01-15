@@ -32,10 +32,10 @@ import com.velocitypowered.api.proxy.server.RegisteredServer;
 import net.md_5.bungee.config.Configuration;
 import net.md_5.bungee.config.ConfigurationProvider;
 import net.md_5.bungee.config.YamlConfiguration;
-import venture.Aust1n46.chat.controllers.VentureChatProxyFlatFileController;
-import venture.Aust1n46.chat.proxy.VentureChatProxy;
-import venture.Aust1n46.chat.proxy.VentureChatProxyServer;
-import venture.Aust1n46.chat.proxy.VentureChatProxySource;
+import venture.Aust1n46.chat.controllers.proxy.VentureChatProxyController;
+import venture.Aust1n46.chat.controllers.proxy.VentureChatProxyFlatFileController;
+import venture.Aust1n46.chat.model.VentureChatProxyServer;
+import venture.Aust1n46.chat.model.VentureChatProxySource;
 import venture.Aust1n46.chat.utilities.FormatUtils;
 
 /**
@@ -45,14 +45,14 @@ import venture.Aust1n46.chat.utilities.FormatUtils;
  */
 public class VentureChatVelocity implements VentureChatProxySource {
 	private final ProxyServer proxyServer;
-	private final ChannelIdentifier channelIdentifier = MinecraftChannelIdentifier.create(VentureChatProxy.PLUGIN_MESSAGING_CHANNEL_NAMESPACE,
-			VentureChatProxy.PLUGIN_MESSAGING_CHANNEL_NAME);
+	private final ChannelIdentifier channelIdentifier = MinecraftChannelIdentifier.create(VentureChatProxyController.PLUGIN_MESSAGING_CHANNEL_NAMESPACE,
+			VentureChatProxyController.PLUGIN_MESSAGING_CHANNEL_NAME);
 	private final Logger logger;
 
 	@Inject
 	private VentureChatProxyFlatFileController proxyFlatFileController;
 	@Inject
-	private VentureChatProxy proxy;
+	private VentureChatProxyController proxy;
 
 	@Inject
 	@DataDirectory
@@ -136,7 +136,7 @@ public class VentureChatVelocity implements VentureChatProxySource {
 	@Subscribe
 	public void onPluginMessage(PluginMessageEvent event) {
 		String channelIdentifierId = event.getIdentifier().getId();
-		if (!channelIdentifierId.equals(VentureChatProxy.PLUGIN_MESSAGING_CHANNEL_STRING) && !channelIdentifierId.contains("viaversion:")) {
+		if (!channelIdentifierId.equals(VentureChatProxyController.PLUGIN_MESSAGING_CHANNEL_STRING) && !channelIdentifierId.contains("viaversion:")) {
 			return;
 		}
 		if (!(event.getSource() instanceof ServerConnection)) {

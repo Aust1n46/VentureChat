@@ -1,4 +1,4 @@
-package venture.Aust1n46.chat.proxy;
+package venture.Aust1n46.chat.controllers.proxy;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -12,9 +12,11 @@ import com.google.inject.Inject;
 import venture.Aust1n46.chat.controllers.commands.MuteContainer;
 import venture.Aust1n46.chat.model.SynchronizedVentureChatPlayer;
 import venture.Aust1n46.chat.model.TemporaryDataInstance;
+import venture.Aust1n46.chat.model.VentureChatProxyServer;
+import venture.Aust1n46.chat.model.VentureChatProxySource;
 import venture.Aust1n46.chat.service.proxy.VentureChatProxyPlayerApiService;
 
-public class VentureChatProxy {
+public class VentureChatProxyController {
 	public static String PLUGIN_MESSAGING_CHANNEL_NAMESPACE = "venturechat";
 	public static String PLUGIN_MESSAGING_CHANNEL_NAME = "data";
 	public static String PLUGIN_MESSAGING_CHANNEL_STRING = "venturechat:data";

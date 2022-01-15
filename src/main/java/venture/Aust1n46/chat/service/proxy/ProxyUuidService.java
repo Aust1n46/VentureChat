@@ -4,7 +4,7 @@ import java.util.UUID;
 
 import com.google.inject.Singleton;
 
-import venture.Aust1n46.chat.proxy.VentureChatProxySource;
+import venture.Aust1n46.chat.model.VentureChatProxySource;
 import venture.Aust1n46.chat.utilities.FormatUtils;
 
 @Singleton
