@@ -1,4 +1,4 @@
-package venture.Aust1n46.chat;
+package venture.Aust1n46.chat.guice;
 
 import com.google.inject.AbstractModule;
 

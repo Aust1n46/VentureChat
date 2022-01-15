@@ -17,9 +17,9 @@ import com.google.inject.Singleton;
 
 import net.milkbowl.vault.permission.Permission;
 import venture.Aust1n46.chat.VentureChatPlaceholders;
-import venture.Aust1n46.chat.VentureChatPluginModule;
 import venture.Aust1n46.chat.controllers.PluginMessageController;
 import venture.Aust1n46.chat.controllers.VentureChatSpigotFlatFileController;
+import venture.Aust1n46.chat.guice.VentureChatPluginModule;
 import venture.Aust1n46.chat.initiators.listeners.ChatListener;
 import venture.Aust1n46.chat.initiators.listeners.CommandListener;
 import venture.Aust1n46.chat.initiators.listeners.LoginListener;
