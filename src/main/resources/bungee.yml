@@ -1,4 +1,4 @@
 name: VentureChat
-main: venture.Aust1n46.chat.proxy.VentureChatBungee
+main: venture.Aust1n46.chat.initiators.application.VentureChatBungee
 version: ${project.version}
 author: Aust1n46

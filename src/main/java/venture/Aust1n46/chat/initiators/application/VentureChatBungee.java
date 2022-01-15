@@ -1,4 +1,4 @@
-package venture.Aust1n46.chat.proxy;
+package venture.Aust1n46.chat.initiators.application;
 
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
@@ -28,6 +28,9 @@ import net.md_5.bungee.config.YamlConfiguration;
 import net.md_5.bungee.event.EventHandler;
 import venture.Aust1n46.chat.VentureChatBungeePluginModule;
 import venture.Aust1n46.chat.controllers.VentureChatProxyFlatFileController;
+import venture.Aust1n46.chat.proxy.VentureChatProxy;
+import venture.Aust1n46.chat.proxy.VentureChatProxyServer;
+import venture.Aust1n46.chat.proxy.VentureChatProxySource;
 import venture.Aust1n46.chat.service.proxy.ProxyUuidService;
 import venture.Aust1n46.chat.utilities.FormatUtils;
 

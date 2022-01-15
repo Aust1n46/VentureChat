@@ -2,7 +2,7 @@ package venture.Aust1n46.chat;
 
 import com.google.inject.AbstractModule;
 
-import venture.Aust1n46.chat.proxy.VentureChatBungee;
+import venture.Aust1n46.chat.initiators.application.VentureChatBungee;
 
 public class VentureChatBungeePluginModule extends AbstractModule {
 	private final VentureChatBungee plugin;

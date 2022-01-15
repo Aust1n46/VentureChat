@@ -1,4 +1,4 @@
-package venture.Aust1n46.chat.proxy;
+package venture.Aust1n46.chat.initiators.application;
 
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
@@ -33,6 +33,9 @@ import net.md_5.bungee.config.Configuration;
 import net.md_5.bungee.config.ConfigurationProvider;
 import net.md_5.bungee.config.YamlConfiguration;
 import venture.Aust1n46.chat.controllers.VentureChatProxyFlatFileController;
+import venture.Aust1n46.chat.proxy.VentureChatProxy;
+import venture.Aust1n46.chat.proxy.VentureChatProxyServer;
+import venture.Aust1n46.chat.proxy.VentureChatProxySource;
 import venture.Aust1n46.chat.utilities.FormatUtils;
 
 /**
@@ -42,104 +45,101 @@ import venture.Aust1n46.chat.utilities.FormatUtils;
  */
 public class VentureChatVelocity implements VentureChatProxySource {
 	private final ProxyServer proxyServer;
-	private final ChannelIdentifier channelIdentifier = MinecraftChannelIdentifier.create(VentureChatProxy.PLUGIN_MESSAGING_CHANNEL_NAMESPACE, VentureChatProxy.PLUGIN_MESSAGING_CHANNEL_NAME);
+	private final ChannelIdentifier channelIdentifier = MinecraftChannelIdentifier.create(VentureChatProxy.PLUGIN_MESSAGING_CHANNEL_NAMESPACE,
+			VentureChatProxy.PLUGIN_MESSAGING_CHANNEL_NAME);
 	private final Logger logger;
-	
-	@Inject 
+
+	@Inject
 	private VentureChatProxyFlatFileController proxyFlatFileController;
 	@Inject
 	private VentureChatProxy proxy;
-	
+
 	@Inject
 	@DataDirectory
 	private Path dataPath;
 	private File velocityPlayerDataDirectory;
-	
+
 	private static Configuration velocityConfig;
-	
+
 	@Inject
 	public VentureChatVelocity(ProxyServer server, Logger logger) {
 		this.proxyServer = server;
 		this.logger = logger;
 	}
-	
+
 	public static Configuration getVelocityConfig() {
 		return velocityConfig;
 	}
-	
+
 	@Subscribe
 	public void onInitialize(ProxyInitializeEvent event) {
 		proxyServer.getChannelRegistrar().register(channelIdentifier);
-		
+
 		File dataFolder = dataPath.toFile();
-		if(!dataFolder.exists()) {
+		if (!dataFolder.exists()) {
 			dataFolder.mkdir();
 		}
 		File config = new File(dataFolder, "velocityconfig.yml");
 		try {
-			if(!config.exists()) {
+			if (!config.exists()) {
 				Files.copy(getClass().getClassLoader().getResourceAsStream("velocityconfig.yml"), config.toPath());
 			}
 			velocityConfig = ConfigurationProvider.getProvider(YamlConfiguration.class).load(new File(dataFolder, "velocityconfig.yml"));
-		}
-		catch(Exception e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		
+
 		velocityPlayerDataDirectory = new File(dataPath.toAbsolutePath().toString() + "/PlayerData");
 		proxyFlatFileController.loadProxyPlayerData(velocityPlayerDataDirectory, this);
 	}
-	
+
 	@Subscribe
 	public void onShutdown(ProxyShutdownEvent event) {
 		proxyFlatFileController.saveProxyPlayerData(velocityPlayerDataDirectory, this);
 	}
-	
+
 	@Subscribe
 	public void onPlayerJoin(ServerPostConnectEvent event) {
 		updatePlayerNames();
 	}
-	
+
 	@Subscribe
 	public void onPlayerQuit(DisconnectEvent event) {
-		// Delay sending plugin message to make sure disconnecting player is truly disconnected.
+		// Delay sending plugin message to make sure disconnecting player is truly
+		// disconnected.
 		proxyServer.getScheduler().buildTask(this, () -> {
 			updatePlayerNames();
-		})
-		.delay(1, TimeUnit.SECONDS)
-		.schedule();
+		}).delay(1, TimeUnit.SECONDS).schedule();
 	}
-	
+
 	private void updatePlayerNames() {
 		try {
 			ByteArrayOutputStream outstream = new ByteArrayOutputStream();
 			DataOutputStream out = new DataOutputStream(outstream);
 			out.writeUTF("PlayerNames");
 			out.writeInt(proxyServer.getPlayerCount());
-			for(Player player : proxyServer.getAllPlayers()) {
+			for (Player player : proxyServer.getAllPlayers()) {
 				out.writeUTF(player.getUsername());
 			}
 			getServers().forEach(send -> {
-				if(!send.isEmpty()) {
+				if (!send.isEmpty()) {
 					sendPluginMessage(send.getName(), outstream.toByteArray());
 				}
-			});	
-		}
-		catch(IllegalStateException e) {
+			});
+		} catch (IllegalStateException e) {
 			sendConsoleMessage("Velocity being finicky with DisconnectEvent.");
-		} 
-		catch (IOException e) {
+		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}
-	
+
 	@Subscribe
 	public void onPluginMessage(PluginMessageEvent event) {
 		String channelIdentifierId = event.getIdentifier().getId();
-		if(!channelIdentifierId.equals(VentureChatProxy.PLUGIN_MESSAGING_CHANNEL_STRING) && !channelIdentifierId.contains("viaversion:")) {
+		if (!channelIdentifierId.equals(VentureChatProxy.PLUGIN_MESSAGING_CHANNEL_STRING) && !channelIdentifierId.contains("viaversion:")) {
 			return;
 		}
-		if(!(event.getSource() instanceof ServerConnection)) {
+		if (!(event.getSource() instanceof ServerConnection)) {
 			return;
 		}
 		String serverName = ((ServerConnection) event.getSource()).getServerInfo().getName();
@@ -150,14 +150,16 @@ public class VentureChatVelocity implements VentureChatProxySource {
 	@Override
 	public void sendPluginMessage(String serverName, byte[] data) {
 		Optional<RegisteredServer> server = proxyServer.getServer(serverName);
-		if(server.isPresent()) {
+		if (server.isPresent()) {
 			server.get().sendPluginMessage(channelIdentifier, data);
 		}
 	}
 
 	@Override
 	public List<VentureChatProxyServer> getServers() {
-		return proxyServer.getAllServers().stream().map(velocityServer -> new VentureChatProxyServer(velocityServer.getServerInfo().getName(), velocityServer.getPlayersConnected().isEmpty())).collect(Collectors.toList());
+		return proxyServer.getAllServers().stream()
+				.map(velocityServer -> new VentureChatProxyServer(velocityServer.getServerInfo().getName(), velocityServer.getPlayersConnected().isEmpty()))
+				.collect(Collectors.toList());
 	}
 
 	@Override
