@@ -2,7 +2,6 @@ package venture.Aust1n46.chat.initiators.application;
 
 import java.io.File;
 
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.RegisteredServiceProvider;
@@ -22,11 +21,11 @@ import venture.Aust1n46.chat.VentureChatPluginModule;
 import venture.Aust1n46.chat.controllers.PluginMessageController;
 import venture.Aust1n46.chat.controllers.VentureChatSpigotFlatFileController;
 import venture.Aust1n46.chat.initiators.listeners.ChatListener;
-import venture.Aust1n46.chat.initiators.listeners.PreProcessCommandListener;
+import venture.Aust1n46.chat.initiators.listeners.CommandListener;
 import venture.Aust1n46.chat.initiators.listeners.LoginListener;
 import venture.Aust1n46.chat.initiators.listeners.PacketListener;
+import venture.Aust1n46.chat.initiators.listeners.PreProcessCommandListener;
 import venture.Aust1n46.chat.initiators.listeners.SignListener;
-import venture.Aust1n46.chat.initiators.listeners.CommandListener;
 import venture.Aust1n46.chat.initiators.schedulers.UnmuteScheduler;
 import venture.Aust1n46.chat.localization.Localization;
 import venture.Aust1n46.chat.service.VentureChatPlayerApiService;
@@ -69,63 +68,63 @@ public class VentureChat extends JavaPlugin implements PluginMessageListener {
 		injector.injectMembers(new UnmuteScheduler());
 
 		try {
-			Bukkit.getConsoleSender().sendMessage(FormatUtils.FormatStringAll("&8[&eVentureChat&8]&e - Initializing..."));
+			getServer().getConsoleSender().sendMessage(FormatUtils.FormatStringAll("&8[&eVentureChat&8]&e - Initializing..."));
 			if (!getDataFolder().exists()) {
 				getDataFolder().mkdirs();
 			}
 			File file = new File(getDataFolder(), "config.yml");
 			if (!file.exists()) {
-				Bukkit.getConsoleSender().sendMessage(FormatUtils.FormatStringAll("&8[&eVentureChat&8]&e - Config not found! Generating file."));
+				getServer().getConsoleSender().sendMessage(FormatUtils.FormatStringAll("&8[&eVentureChat&8]&e - Config not found! Generating file."));
 				saveDefaultConfig();
 			} else {
-				Bukkit.getConsoleSender().sendMessage(FormatUtils.FormatStringAll("&8[&eVentureChat&8]&e - Config found! Loading file."));
+				getServer().getConsoleSender().sendMessage(FormatUtils.FormatStringAll("&8[&eVentureChat&8]&e - Config found! Loading file."));
 			}
 
 			saveResource("example_config_always_up_to_date!.yml", true);
 		} catch (Exception ex) {
-			Bukkit.getConsoleSender().sendMessage(FormatUtils.FormatStringAll("&8[&eVentureChat&8]&e - &cCould not load configuration! Something unexpected went wrong!"));
+			getServer().getConsoleSender().sendMessage(FormatUtils.FormatStringAll("&8[&eVentureChat&8]&e - &cCould not load configuration! Something unexpected went wrong!"));
 		}
 
-		Bukkit.getConsoleSender().sendMessage(FormatUtils.FormatStringAll("&8[&eVentureChat&8]&e - Checking for Vault..."));
+		getServer().getConsoleSender().sendMessage(FormatUtils.FormatStringAll("&8[&eVentureChat&8]&e - Checking for Vault..."));
 
 		if (!setupPermissions()) {
-			Bukkit.getConsoleSender().sendMessage(FormatUtils.FormatStringAll("&8[&eVentureChat&8]&e - &cCould not find Vault and/or a Vault compatible permissions plugin!"));
-			Bukkit.getPluginManager().disablePlugin(this);
+			getServer().getConsoleSender().sendMessage(FormatUtils.FormatStringAll("&8[&eVentureChat&8]&e - &cCould not find Vault and/or a Vault compatible permissions plugin!"));
+			getServer().getPluginManager().disablePlugin(this);
 		}
 
 		Localization.initialize(this);
 
-		Bukkit.getConsoleSender().sendMessage(FormatUtils.FormatStringAll("&8[&eVentureChat&8]&e - Loading player data"));
+		getServer().getConsoleSender().sendMessage(FormatUtils.FormatStringAll("&8[&eVentureChat&8]&e - Loading player data"));
 		spigotFlatFileService.loadLegacyPlayerData();
 		spigotFlatFileService.loadPlayerData();
 
 		registerListeners();
-		Bukkit.getConsoleSender().sendMessage(FormatUtils.FormatStringAll("&8[&eVentureChat&8]&e - Registering Listeners"));
+		getServer().getConsoleSender().sendMessage(FormatUtils.FormatStringAll("&8[&eVentureChat&8]&e - Registering Listeners"));
 
-		Bukkit.getConsoleSender().sendMessage(FormatUtils.FormatStringAll("&8[&eVentureChat&8]&e - Registering BungeeCord channels"));
-		Bukkit.getMessenger().registerOutgoingPluginChannel(this, PluginMessageController.PLUGIN_MESSAGING_CHANNEL);
-		Bukkit.getMessenger().registerIncomingPluginChannel(this, PluginMessageController.PLUGIN_MESSAGING_CHANNEL, this);
+		getServer().getConsoleSender().sendMessage(FormatUtils.FormatStringAll("&8[&eVentureChat&8]&e - Registering BungeeCord channels"));
+		getServer().getMessenger().registerOutgoingPluginChannel(this, PluginMessageController.PLUGIN_MESSAGING_CHANNEL);
+		getServer().getMessenger().registerIncomingPluginChannel(this, PluginMessageController.PLUGIN_MESSAGING_CHANNEL, this);
 
 		PluginManager pluginManager = getServer().getPluginManager();
 		if (pluginManager.isPluginEnabled("Towny")) {
-			Bukkit.getConsoleSender().sendMessage(FormatUtils.FormatStringAll("&8[&eVentureChat&8]&e - Enabling Towny Formatting"));
+			getServer().getConsoleSender().sendMessage(FormatUtils.FormatStringAll("&8[&eVentureChat&8]&e - Enabling Towny Formatting"));
 		}
 		if (pluginManager.isPluginEnabled("Jobs")) {
-			Bukkit.getConsoleSender().sendMessage(FormatUtils.FormatStringAll("&8[&eVentureChat&8]&e - Enabling Jobs Formatting"));
+			getServer().getConsoleSender().sendMessage(FormatUtils.FormatStringAll("&8[&eVentureChat&8]&e - Enabling Jobs Formatting"));
 		}
 		if (pluginManager.isPluginEnabled("Factions")) {
 			final String version = pluginManager.getPlugin("Factions").getDescription().getVersion();
-			Bukkit.getConsoleSender().sendMessage(FormatUtils.FormatStringAll("&8[&eVentureChat&8]&e - Enabling Factions Formatting version " + version));
+			getServer().getConsoleSender().sendMessage(FormatUtils.FormatStringAll("&8[&eVentureChat&8]&e - Enabling Factions Formatting version " + version));
 		}
 		if (pluginManager.isPluginEnabled("PlaceholderAPI")) {
-			Bukkit.getConsoleSender().sendMessage(FormatUtils.FormatStringAll("&8[&eVentureChat&8]&e - Enabling PlaceholderAPI Hook"));
+			getServer().getConsoleSender().sendMessage(FormatUtils.FormatStringAll("&8[&eVentureChat&8]&e - Enabling PlaceholderAPI Hook"));
 		}
 
 		ventureChatPlaceholders.register();
 
 		startRepeatingTasks();
 
-		Bukkit.getConsoleSender().sendMessage(FormatUtils.FormatStringAll("&8[&eVentureChat&8]&e - Enabled Successfully"));
+		getServer().getConsoleSender().sendMessage(FormatUtils.FormatStringAll("&8[&eVentureChat&8]&e - Enabled Successfully"));
 	}
 
 	@Override
@@ -134,18 +133,18 @@ public class VentureChat extends JavaPlugin implements PluginMessageListener {
 		playerApiService.clearMineverseChatPlayerMap();
 		playerApiService.clearNameMap();
 		playerApiService.clearOnlineMineverseChatPlayerMap();
-		Bukkit.getConsoleSender().sendMessage(FormatUtils.FormatStringAll("&8[&eVentureChat&8]&e - Disabling..."));
-		Bukkit.getConsoleSender().sendMessage(FormatUtils.FormatStringAll("&8[&eVentureChat&8]&e - Disabled Successfully"));
+		getServer().getConsoleSender().sendMessage(FormatUtils.FormatStringAll("&8[&eVentureChat&8]&e - Disabling..."));
+		getServer().getConsoleSender().sendMessage(FormatUtils.FormatStringAll("&8[&eVentureChat&8]&e - Disabled Successfully"));
 	}
 
 	private void startRepeatingTasks() {
-		BukkitScheduler scheduler = Bukkit.getServer().getScheduler();
+		BukkitScheduler scheduler = getServer().getScheduler();
 		scheduler.runTaskTimerAsynchronously(this, new Runnable() {
 			@Override
 			public void run() {
 				spigotFlatFileService.savePlayerData();
 				if (getConfig().getString("loglevel", "info").equals("debug")) {
-					Bukkit.getConsoleSender().sendMessage(FormatUtils.FormatStringAll("&8[&eVentureChat&8]&e - Saving Player Data"));
+					getServer().getConsoleSender().sendMessage(FormatUtils.FormatStringAll("&8[&eVentureChat&8]&e - Saving Player Data"));
 				}
 			}
 		}, 0L, getConfig().getInt("saveinterval") * 1200); // one minute * save interval
