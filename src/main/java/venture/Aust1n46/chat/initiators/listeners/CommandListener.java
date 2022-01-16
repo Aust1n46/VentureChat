@@ -1,13 +1,18 @@
 package venture.Aust1n46.chat.initiators.listeners;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
+import org.bukkit.command.CommandMap;
 import org.bukkit.command.CommandSender;
+import org.bukkit.command.PluginCommand;
 import org.bukkit.command.TabExecutor;
+import org.bukkit.plugin.Plugin;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
@@ -137,6 +142,9 @@ public class CommandListener implements TabExecutor {
 	@Inject
 	private Unmuteall unmuteall;
 
+	private CommandMap commandMap;
+	private Constructor<PluginCommand> pluginCommandConstructor;
+
 	@Override
 	public boolean onCommand(CommandSender sender, Command command, String label, String[] parameters) {
 		commands.get(command.getName()).execute(sender, command.getName(), parameters);
@@ -150,6 +158,14 @@ public class CommandListener implements TabExecutor {
 
 	@Inject
 	public void postConstruct() {
+		commandMap = plugin.getServer().getCommandMap();
+		try {
+			pluginCommandConstructor = PluginCommand.class.getDeclaredConstructor(String.class, Plugin.class);
+			pluginCommandConstructor.setAccessible(true);
+		} catch (NoSuchMethodException | SecurityException e) {
+			e.printStackTrace();
+		}
+
 		commands.put("broadcast", broadcast);
 		commands.put("channel", channel);
 		commands.put("join", channel);
@@ -211,9 +227,13 @@ public class CommandListener implements TabExecutor {
 		}, 0);
 	}
 
-	private void registerCommand(String command, CommandExecutor commandExecutor) {
-		if (plugin.getCommand(command) != null) {
-			plugin.getCommand(command).setExecutor(commandExecutor);
+	private void registerCommand(final String command, final CommandExecutor commandExecutor) {
+		try {
+			final PluginCommand pluginCommand = pluginCommandConstructor.newInstance(command, plugin);
+			pluginCommand.setExecutor(commandExecutor);
+			commandMap.getKnownCommands().put(command, pluginCommand);
+		} catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+			e.printStackTrace();
 		}
 	}
 }
