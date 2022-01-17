@@ -10,28 +10,28 @@ import java.util.UUID;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
-import org.bukkit.command.TabExecutor;
 import org.bukkit.entity.Player;
 import org.bukkit.util.StringUtil;
 
 import mineverse.Aust1n46.chat.MineverseChat;
 import mineverse.Aust1n46.chat.api.MineverseChatAPI;
 import mineverse.Aust1n46.chat.api.MineverseChatPlayer;
+import mineverse.Aust1n46.chat.command.VentureCommand;
 import mineverse.Aust1n46.chat.localization.LocalizedMessage;
 
-public class IgnoreCommandExecutor implements TabExecutor {
+public class Ignore implements VentureCommand {
     private MineverseChat plugin = MineverseChat.getInstance();
 
     @Override
-    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+    public void execute(CommandSender sender, String command, String[] args) {
         if (!(sender instanceof Player)) {
             plugin.getServer().getConsoleSender().sendMessage(LocalizedMessage.COMMAND_MUST_BE_RUN_BY_PLAYER.toString());
-            return true;
+            return;
         }
         MineverseChatPlayer mcp = MineverseChatAPI.getOnlineMineverseChatPlayer((Player) sender);
         if (args.length == 0) {
             mcp.getPlayer().sendMessage(LocalizedMessage.COMMAND_INVALID_ARGUMENTS_IGNORE.toString());
-            return true;
+            return;
         }
         if (args[0].equalsIgnoreCase("list")) {
             String ignoreList = "";
@@ -47,11 +47,11 @@ public class IgnoreCommandExecutor implements TabExecutor {
             if (ignoreList.length() > 0) {
                 mcp.getPlayer().sendMessage(ignoreList.substring(0, ignoreList.length() - 2));
             }
-            return true;
+            return;
         }
         if (mcp.getName().equalsIgnoreCase(args[0])) {
             mcp.getPlayer().sendMessage(LocalizedMessage.IGNORE_YOURSELF.toString());
-            return true;
+            return;
         }
         if (plugin.getConfig().getBoolean("bungeecordmessaging", true)) {
             ByteArrayOutputStream byteOutStream = new ByteArrayOutputStream();
@@ -66,32 +66,32 @@ public class IgnoreCommandExecutor implements TabExecutor {
             } catch (Exception e) {
                 e.printStackTrace();
             }
-            return true;
+            return;
         }
 
         MineverseChatPlayer player = MineverseChatAPI.getOnlineMineverseChatPlayer(args[0]);
         if (player == null) {
             mcp.getPlayer().sendMessage(LocalizedMessage.PLAYER_OFFLINE.toString()
                     .replace("{args}", args[0]));
-            return true;
+            return;
         }
         if (mcp.getIgnores().contains(player.getUUID())) {
             mcp.getPlayer().sendMessage(LocalizedMessage.IGNORE_PLAYER_OFF.toString()
                     .replace("{player}", player.getName()));
             mcp.removeIgnore(player.getUUID());
             MineverseChat.synchronize(mcp, true);
-            return true;
+            return;
         }
         if (player.getPlayer().hasPermission("venturechat.ignore.bypass")) {
             mcp.getPlayer().sendMessage(LocalizedMessage.IGNORE_PLAYER_CANT.toString()
                     .replace("{player}", player.getName()));
-            return true;
+            return;
         }
         mcp.getPlayer().sendMessage(LocalizedMessage.IGNORE_PLAYER_ON.toString()
                 .replace("{player}", player.getName()));
         mcp.addIgnore(player.getUUID());
         MineverseChat.synchronize(mcp, true);
-        return true;
+        return;
     }
 
     @Override

@@ -8,7 +8,6 @@ import java.util.List;
 
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
-import org.bukkit.command.TabExecutor;
 import org.bukkit.entity.Player;
 import org.bukkit.util.StringUtil;
 
@@ -16,52 +15,53 @@ import me.clip.placeholderapi.PlaceholderAPI;
 import mineverse.Aust1n46.chat.MineverseChat;
 import mineverse.Aust1n46.chat.api.MineverseChatAPI;
 import mineverse.Aust1n46.chat.api.MineverseChatPlayer;
+import mineverse.Aust1n46.chat.command.VentureCommand;
 import mineverse.Aust1n46.chat.localization.LocalizedMessage;
 import mineverse.Aust1n46.chat.utilities.Format;
 
-public class MessageCommandExecutor implements TabExecutor {
+public class Message implements VentureCommand {
     private MineverseChat plugin = MineverseChat.getInstance();
 
     @Override
-    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+    public void execute(CommandSender sender, String command, String[] args) {
         if (!(sender instanceof Player)) {
             plugin.getServer().getConsoleSender().sendMessage(LocalizedMessage.COMMAND_MUST_BE_RUN_BY_PLAYER.toString());
-            return true;
+            return;
         }
 
         MineverseChatPlayer mcp = MineverseChatAPI.getOnlineMineverseChatPlayer((Player) sender);
         if (args.length == 0) {
             mcp.getPlayer().sendMessage(LocalizedMessage.COMMAND_INVALID_ARGUMENTS.toString()
-                    .replace("{command}", "/" + command.getName())
+                    .replace("{command}", "/" + command)
                     .replace("{args}", "[player] [message]"));
-            return true;
+            return;
         }
 
         if (plugin.getConfig().getBoolean("bungeecordmessaging", true)) {
-            sendBungeeCordMessage(mcp, command.getName(), args);
-            return true;
+            sendBungeeCordMessage(mcp, command, args);
+            return;
         }
 
         MineverseChatPlayer player = MineverseChatAPI.getOnlineMineverseChatPlayer(args[0]);
         if (player == null) {
             mcp.getPlayer().sendMessage(LocalizedMessage.PLAYER_OFFLINE.toString()
                     .replace("{args}", args[0]));
-            return true;
+            return;
         }
         if (!mcp.getPlayer().canSee(player.getPlayer())) {
             mcp.getPlayer().sendMessage(LocalizedMessage.PLAYER_OFFLINE.toString()
                     .replace("{args}", args[0]));
-            return true;
+            return;
         }
         if (player.getIgnores().contains(mcp.getUUID())) {
             mcp.getPlayer().sendMessage(LocalizedMessage.IGNORING_MESSAGE.toString()
                     .replace("{player}", player.getName()));
-            return true;
+            return;
         }
         if (!player.getMessageToggle()) {
             mcp.getPlayer().sendMessage(LocalizedMessage.BLOCKING_MESSAGE.toString()
                     .replace("{player}", player.getName()));
-            return true;
+            return;
         }
 
         if (args.length >= 2) {
@@ -150,7 +150,7 @@ public class MessageCommandExecutor implements TabExecutor {
                 }
             }
         }
-        return true;
+        return;
     }
 
     @Override
