@@ -1,7 +1,12 @@
 package mineverse.Aust1n46.chat.command.chat;
 
+import org.bukkit.command.Command;
+//import org.bukkit.ChatColor;
+import org.bukkit.command.CommandSender;
+//import org.bukkit.craftbukkit.v1_15_R1.entity.CraftPlayer;
+//import org.bukkit.entity.Player;
+
 import mineverse.Aust1n46.chat.MineverseChat;
-import mineverse.Aust1n46.chat.command.VentureCommand;
 import mineverse.Aust1n46.chat.localization.InternalMessage;
 //import net.md_5.bungee.api.chat.ClickEvent;
 //import net.md_5.bungee.api.chat.ComponentBuilder;
@@ -10,19 +15,19 @@ import mineverse.Aust1n46.chat.localization.InternalMessage;
 //import net.minecraft.server.v1_15_R1.IChatBaseComponent;
 //import net.minecraft.server.v1_15_R1.PacketPlayOutChat;
 
-//import org.bukkit.ChatColor;
-import org.bukkit.command.CommandSender;
-//import org.bukkit.craftbukkit.v1_15_R1.entity.CraftPlayer;
-//import org.bukkit.entity.Player;
-
-public class Venturechat implements VentureCommand {
+public class Venturechat extends Command {
 	private MineverseChat plugin = MineverseChat.getInstance();
-
+	
+	public Venturechat() {
+		super("venturechat");
+	}
+	
 	@Override
-	public void execute(CommandSender sender, String command, String[] args) {
+	public boolean execute(CommandSender sender, String command, String[] args) {
 		sender.sendMessage(InternalMessage.VENTURECHAT_VERSION.toString()
 				.replace("{version}", plugin.getDescription().getVersion()));
 		sender.sendMessage(InternalMessage.VENTURECHAT_AUTHOR.toString());
+		return true;
 //		if (sender instanceof Player && plugin.getConfig().getString("loglevel", "info").equals("debug")) {
 //			Player player = (Player) sender;
 //			String title = ChatColor.GOLD + " | " + ChatColor.BLUE.toString() + ChatColor.BOLD + "SpigotAPI chat message" + ChatColor.RESET + ChatColor.GOLD + " | ";

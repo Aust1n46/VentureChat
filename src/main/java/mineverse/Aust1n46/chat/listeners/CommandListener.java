@@ -2,23 +2,9 @@ package mineverse.Aust1n46.chat.listeners;
 
 import java.io.FileNotFoundException;
 
-import mineverse.Aust1n46.chat.MineverseChat;
-import mineverse.Aust1n46.chat.alias.Alias;
-import mineverse.Aust1n46.chat.api.MineverseChatAPI;
-import mineverse.Aust1n46.chat.api.MineverseChatPlayer;
-import mineverse.Aust1n46.chat.channel.ChatChannel;
-import mineverse.Aust1n46.chat.database.Database;
-import mineverse.Aust1n46.chat.gui.GuiSlot;
-import mineverse.Aust1n46.chat.localization.LocalizedMessage;
-import mineverse.Aust1n46.chat.utilities.Format;
-import mineverse.Aust1n46.chat.versions.VersionHandler;
-
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
-import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -31,33 +17,39 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.SkullMeta;
 
 import me.clip.placeholderapi.PlaceholderAPI;
+import mineverse.Aust1n46.chat.MineverseChat;
+import mineverse.Aust1n46.chat.alias.Alias;
+import mineverse.Aust1n46.chat.api.MineverseChatAPI;
+import mineverse.Aust1n46.chat.api.MineverseChatPlayer;
+import mineverse.Aust1n46.chat.channel.ChatChannel;
+import mineverse.Aust1n46.chat.database.Database;
+import mineverse.Aust1n46.chat.gui.GuiSlot;
+import mineverse.Aust1n46.chat.localization.LocalizedMessage;
+import mineverse.Aust1n46.chat.utilities.Format;
+import mineverse.Aust1n46.chat.versions.VersionHandler;
 
-//This class listens for commands (Any chat that begins with a /) to use in the command spy and
-//in the custom commands such as aliases.
-public class CommandListener implements CommandExecutor, Listener {
+public class CommandListener implements Listener {
 	private MineverseChat plugin = MineverseChat.getInstance();
 
 	@EventHandler
 	public void onPlayerCommandPreprocess(PlayerCommandPreprocessEvent event) throws FileNotFoundException {
-		if(event.getPlayer() == null) {
-			Bukkit.getConsoleSender().sendMessage(Format.FormatStringAll("&8[&eVentureChat&8]&c - Event.getPlayer() returned null in PlayerCommandPreprocessEvent"));	
+		if (event.getPlayer() == null) {
+			Bukkit.getConsoleSender().sendMessage(Format.FormatStringAll("&8[&eVentureChat&8]&c - Event.getPlayer() returned null in PlayerCommandPreprocessEvent"));
 			return;
 		}
 		ConfigurationSection cs = plugin.getConfig().getConfigurationSection("commandspy");
 		Boolean wec = cs.getBoolean("worldeditcommands", true);
 		MineverseChatPlayer mcp = MineverseChatAPI.getOnlineMineverseChatPlayer(event.getPlayer());
-		if(!mcp.getPlayer().hasPermission("venturechat.commandspy.override")) {
-			for(MineverseChatPlayer p : MineverseChatAPI.getOnlineMineverseChatPlayers()) {
-				if(p.hasCommandSpy()) {
-					if(wec) {
+		if (!mcp.getPlayer().hasPermission("venturechat.commandspy.override")) {
+			for (MineverseChatPlayer p : MineverseChatAPI.getOnlineMineverseChatPlayers()) {
+				if (p.hasCommandSpy()) {
+					if (wec) {
 						p.getPlayer().sendMessage(Format.FormatStringAll(cs.getString("format").replace("{player}", mcp.getName()).replace("{command}", event.getMessage())));
-					}
-					else {
-						if(!(event.getMessage().toLowerCase().startsWith("//"))) {
+					} else {
+						if (!(event.getMessage().toLowerCase().startsWith("//"))) {
 							p.getPlayer().sendMessage(Format.FormatStringAll(cs.getString("format").replace("{player}", mcp.getName()).replace("{command}", event.getMessage())));
-						}
-						else {
-							if(!(event.getMessage().toLowerCase().startsWith("//"))) {
+						} else {
+							if (!(event.getMessage().toLowerCase().startsWith("//"))) {
 								p.getPlayer().sendMessage(ChatColor.GOLD + mcp.getName() + ": " + event.getMessage());
 							}
 						}
@@ -67,170 +59,87 @@ public class CommandListener implements CommandExecutor, Listener {
 		}
 
 		String[] blocked = event.getMessage().split(" ");
-		if(mcp.getBlockedCommands().contains(blocked[0])) {
-			mcp.getPlayer().sendMessage(LocalizedMessage.BLOCKED_COMMAND.toString()
-					.replace("{command}", event.getMessage()));
+		if (mcp.getBlockedCommands().contains(blocked[0])) {
+			mcp.getPlayer().sendMessage(LocalizedMessage.BLOCKED_COMMAND.toString().replace("{command}", event.getMessage()));
 			event.setCancelled(true);
 			return;
 		}
 
 		String message = event.getMessage();
 
-		if(Database.isEnabled()) {
+		if (Database.isEnabled()) {
 			Database.writeVentureChat(mcp.getUUID().toString(), mcp.getName(), "Local", "Command_Component", event.getMessage().replace("'", "''"), "Command");
 		}
 
-		for(Alias a : Alias.getAliases()) {
-			if(message.toLowerCase().substring(1).split(" ")[0].equals(a.getName().toLowerCase())) {
-				for(String s : a.getComponents()) {
-					if(!mcp.getPlayer().hasPermission(a.getPermission()) && a.hasPermission()) {
+		for (Alias a : Alias.getAliases()) {
+			if (message.toLowerCase().substring(1).split(" ")[0].equals(a.getName().toLowerCase())) {
+				for (String s : a.getComponents()) {
+					if (!mcp.getPlayer().hasPermission(a.getPermission()) && a.hasPermission()) {
 						mcp.getPlayer().sendMessage(ChatColor.RED + "You do not have permission for this alias.");
 						event.setCancelled(true);
 						return;
 					}
 					int num = 1;
-					if(message.length() < a.getName().length() + 2 || a.getArguments() == 0) num = 0;
+					if (message.length() < a.getName().length() + 2 || a.getArguments() == 0)
+						num = 0;
 					int arg = 0;
-					if(message.substring(a.getName().length() + 1 + num).length() == 0) arg = 1;
+					if (message.substring(a.getName().length() + 1 + num).length() == 0)
+						arg = 1;
 					String[] args = message.substring(a.getName().length() + 1 + num).split(" ");
 					String send = "";
-					if(args.length - arg < a.getArguments()) {
+					if (args.length - arg < a.getArguments()) {
 						String keyword = "arguments.";
-						if(a.getArguments() == 1) keyword = "argument.";
+						if (a.getArguments() == 1)
+							keyword = "argument.";
 						mcp.getPlayer().sendMessage(ChatColor.RED + "Invalid arguments for this alias, enter at least " + a.getArguments() + " " + keyword);
 						event.setCancelled(true);
 						return;
 					}
-					for(int b = 0; b < args.length; b++) {
+					for (int b = 0; b < args.length; b++) {
 						send += " " + args[b];
 					}
-					if(send.length() > 0) send = send.substring(1);
+					if (send.length() > 0)
+						send = send.substring(1);
 					s = Format.FormatStringAll(s);
-					if(mcp.getPlayer().hasPermission("venturechat.color.legacy")) {
+					if (mcp.getPlayer().hasPermission("venturechat.color.legacy")) {
 						send = Format.FormatStringLegacyColor(send);
 					}
-					if(mcp.getPlayer().hasPermission("venturechat.color")) {
+					if (mcp.getPlayer().hasPermission("venturechat.color")) {
 						send = Format.FormatStringColor(send);
 					}
-					if(mcp.getPlayer().hasPermission("venturechat.format")) {
+					if (mcp.getPlayer().hasPermission("venturechat.format")) {
 						send = Format.FormatString(send);
 					}
-					if(s.startsWith("Command:")) {
+					if (s.startsWith("Command:")) {
 						mcp.getPlayer().chat(s.substring(9).replace("$", send));
 						event.setCancelled(true);
 					}
-					if(s.startsWith("Message:")) {
+					if (s.startsWith("Message:")) {
 						mcp.getPlayer().sendMessage(s.substring(9).replace("$", send));
 						event.setCancelled(true);
 					}
-					if(s.startsWith("Broadcast:")) {
+					if (s.startsWith("Broadcast:")) {
 						Format.broadcastToServer(s.substring(11).replace("$", send));
 						event.setCancelled(true);
 					}
 				}
 			}
 		}
-
-		if(!ChatChannel.areAliasesRegisteredAsCommands()) {
-			for(ChatChannel channel : ChatChannel.getChatChannels()) {
-				if(!channel.hasPermission() || mcp.getPlayer().hasPermission(channel.getPermission())) {
-					if(message.equals("/" + channel.getAlias())) {
-						mcp.getPlayer().sendMessage(LocalizedMessage.SET_CHANNEL.toString()
-								.replace("{channel_color}", channel.getColor() + "")
-								.replace("{channel_name}", channel.getName()));
-						if(mcp.hasConversation()) {
-							for(MineverseChatPlayer p : MineverseChatAPI.getOnlineMineverseChatPlayers()) {
-								if(p.isSpy()) {
-									p.getPlayer().sendMessage(LocalizedMessage.EXIT_PRIVATE_CONVERSATION_SPY.toString()
-											.replace("{player_sender}", mcp.getName())
-											.replace("{player_receiver}", MineverseChatAPI.getMineverseChatPlayer(mcp.getConversation()).getName()));
-								}
-							}
-							mcp.getPlayer().sendMessage(LocalizedMessage.EXIT_PRIVATE_CONVERSATION.toString()
-									.replace("{player_receiver}", MineverseChatAPI.getMineverseChatPlayer(mcp.getConversation()).getName()));
-							mcp.setConversation(null);
-						}
-						mcp.addListening(channel.getName());
-						mcp.setCurrentChannel(channel);
-						if(channel.getBungee()) {
-							MineverseChat.synchronize(mcp, true);
-						}
-						event.setCancelled(true);
-						return;
-					}
-					if(message.toLowerCase().startsWith("/" + channel.getAlias() + " ")) {
-						message = message.substring(channel.getAlias().length() + 1);
-						mcp.addListening(channel.getName());
-						if(channel.getBungee()) {
-							MineverseChat.synchronize(mcp, true);
-						}
-						mcp.setQuickChannel(channel);
-						/*String format = "";
-						if(plugin.getConfig().getConfigurationSection("channels." + channel.getName()).getString("format").equalsIgnoreCase("Default")) {
-							format = FormatTags.ChatFormat(ChatColor.valueOf(channel.getColor().toUpperCase()) + "[" + channel.getName() + "] {prefix}{name}" + ChatColor.valueOf(channel.getColor().toUpperCase()) + ":" + ChatColor.valueOf(channel.getChatColor().toUpperCase()), mcp.getPlayer(), plugin, cc, channel, plugin.getConfig().getBoolean("jsonFormat"));
-						}
-						else {
-							format = FormatTags.ChatFormat(plugin.getConfig().getConfigurationSection("channels." + channel.getName()).getString("format"), mcp.getPlayer(), plugin, cc, channel, plugin.getConfig().getBoolean("jsonFormat"));
-							if(plugin.getConfig().getBoolean("formatcleaner", false)) {
-								format = format.replace("[]", " ");
-								format = format.replace("    ", " ").replace("   ", " ").replace("  ", " ");
-							}
-						}*/
-						mcp.setQuickChat(true);
-						mcp.getPlayer().chat(message);
-						event.setCancelled(true);
-					}
-				}
-			}
-		}
 	}
 
-	//old 1.8 command map
+	// old 1.8 command map
 	@EventHandler
 	public void onServerCommand(ServerCommandEvent event) {
 		if (Database.isEnabled()) {
-			Database.writeVentureChat("N/A", "Console", "Local", "Command_Component", event.getCommand().replace("'", "''") , "Command");
+			Database.writeVentureChat("N/A", "Console", "Local", "Command_Component", event.getCommand().replace("'", "''"), "Command");
 		}
-	}
-
-	/**
-     * Unused
-     */
-	@Override
-	public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-		if(!(sender instanceof Player)) {
-			plugin.getServer().getConsoleSender().sendMessage(ChatColor.RED + "This command must be run by a player.");
-			return true;
-		}
-		MineverseChatPlayer mcp = MineverseChatAPI.getOnlineMineverseChatPlayer((Player) sender);
-		for(ChatChannel channel : ChatChannel.getChatChannels()) {
-			if(command.getName().toLowerCase().equals(channel.getAlias())) {
-				if(args.length == 0) {
-					mcp.getPlayer().sendMessage(ChatColor.RED + "Invalid command: /" + channel.getAlias() + " message");
-					return true;
-				}
-				mcp.setQuickChat(true);
-				mcp.setQuickChannel(channel);
-				mcp.addListening(channel.getName());
-				if(channel.getBungee()) {
-					MineverseChat.synchronize(mcp, true);
-				}
-				String msg = "";
-				for(int x = 0; x < args.length; x++) {
-					if(args[x].length() > 0) msg += " " + args[x];
-				}
-				mcp.getPlayer().chat(msg);
-				return true;
-			}
-		}
-		return false;
 	}
 
 	@SuppressWarnings("deprecation")
 	@EventHandler(priority = EventPriority.LOW)
 	public void InventoryClick(InventoryClickEvent e) {
 		ItemStack item = e.getCurrentItem();
-		if(item == null || !e.getView().getTitle().contains("VentureChat")) {
+		if (item == null || !e.getView().getTitle().contains("VentureChat")) {
 			return;
 		}
 		e.setCancelled(true);
@@ -241,26 +150,24 @@ public class CommandListener implements CommandExecutor, Listener {
 		SkullMeta skullMeta = (SkullMeta) skull.getItemMeta();
 		ChatChannel channel = ChatChannel.getChannel(ChatColor.stripColor(skullMeta.getLore().get(0)).replace("Channel: ", ""));
 		int hash = Integer.parseInt(ChatColor.stripColor(skullMeta.getLore().get(1).replace("Hash: ", "")));
-		if(VersionHandler.is1_7()) {
-			if(item.getType() == Material.BEDROCK) {
+		if (VersionHandler.is1_7()) {
+			if (item.getType() == Material.BEDROCK) {
+				mcp.getPlayer().closeInventory();
+			}
+		} else {
+			if (item.getType() == Material.BARRIER) {
 				mcp.getPlayer().closeInventory();
 			}
 		}
-		else {
-			if(item.getType() == Material.BARRIER) {
-				mcp.getPlayer().closeInventory();
-			}
-		}
-		for(GuiSlot g : GuiSlot.getGuiSlots()) {
-			if(g.getIcon() == item.getType() && g.getDurability() == item.getDurability() && g.getSlot() == e.getSlot()) {
+		for (GuiSlot g : GuiSlot.getGuiSlots()) {
+			if (g.getIcon() == item.getType() && g.getDurability() == item.getDurability() && g.getSlot() == e.getSlot()) {
 				String command = g.getCommand().replace("{channel}", channel.getName()).replace("{hash}", hash + "");
-				if(target != null) {
+				if (target != null) {
 					command = command.replace("{player_name}", target.getName());
-					if(target.isOnline()) {
+					if (target.isOnline()) {
 						command = Format.FormatStringAll(PlaceholderAPI.setBracketPlaceholders(target.getPlayer(), command));
 					}
-				}
-				else {
+				} else {
 					command = command.replace("{player_name}", "Discord_Message");
 				}
 				mcp.getPlayer().chat(command);

@@ -95,7 +95,6 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 			else {
 				Bukkit.getConsoleSender().sendMessage(Format.FormatStringAll("&8[&eVentureChat&8]&e - Config found! Loading file."));
 			}
-
 			saveResource("example_config_always_up_to_date!.yml", true);
 		}
 		catch(Exception ex) {
@@ -107,6 +106,7 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 		if(!setupPermissions() || !setupChat()) {
 			Bukkit.getConsoleSender().sendMessage(Format.FormatStringAll("&8[&eVentureChat&8]&e - &cCould not find Vault and/or a Vault compatible permissions plugin!"));
 			Bukkit.getPluginManager().disablePlugin(this);
+			return;
 		}
 
 		initializeConfigReaders();
@@ -245,7 +245,7 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 		Alias.initialize();
 		JsonFormat.initialize();
 		GuiSlot.initialize();
-		ChatChannel.initialize(false);
+		ChatChannel.initialize();
 	}
 	
 	public static Chat getVaultChat() {

@@ -22,8 +22,6 @@ import mineverse.Aust1n46.chat.utilities.Format;
 public class ChatChannel {
 	private static final String PERMISSION_PREFIX = "venturechat.";
 	private static final String NO_PERMISSIONS = "venturechat.none";
-	
-	private static boolean aliasesRegisteredAsCommands;
 
 	private static MineverseChat plugin = MineverseChat.getInstance();
 	private static ChatChannel defaultChatChannel;
@@ -52,9 +50,8 @@ public class ChatChannel {
 	/**
 	 * Read chat channels from config file and initialize channel array.
 	 */
-	public static void initialize(boolean aliasesRegisteredAsCommands) {
+	public static void initialize() {
 		chatChannels = new HashMap<String, ChatChannel>();
-		ChatChannel.aliasesRegisteredAsCommands = aliasesRegisteredAsCommands;
 		ConfigurationSection cs = plugin.getConfig().getConfigurationSection("channels");
 		int len = (cs.getKeys(false)).size();
 		channels = new ChatChannel[len];
@@ -94,10 +91,6 @@ public class ChatChannel {
 			chatChannels.put("missingdefault", defaultChatChannel);
 			chatChannels.put("md", defaultChatChannel);
 		}
-	}
-	
-	public static boolean areAliasesRegisteredAsCommands() {
-		return aliasesRegisteredAsCommands;
 	}
 
 	/**
