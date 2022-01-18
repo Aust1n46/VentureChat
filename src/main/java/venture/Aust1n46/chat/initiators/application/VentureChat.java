@@ -90,6 +90,7 @@ public class VentureChat extends JavaPlugin implements PluginMessageListener {
 		if (!setupPermissions()) {
 			getServer().getConsoleSender().sendMessage(FormatUtils.FormatStringAll("&8[&eVentureChat&8]&e - &cCould not find Vault and/or a Vault compatible permissions plugin!"));
 			getServer().getPluginManager().disablePlugin(this);
+			return;
 		}
 
 		Localization.initialize(this);
