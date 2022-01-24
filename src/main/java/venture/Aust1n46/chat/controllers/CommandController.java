@@ -1,17 +1,22 @@
-package venture.Aust1n46.chat.initiators.listeners;
+package venture.Aust1n46.chat.controllers;
 
+import java.io.File;
 import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.bukkit.Server;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
-import org.bukkit.command.CommandMap;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.PluginCommand;
+import org.bukkit.command.SimpleCommandMap;
 import org.bukkit.command.TabExecutor;
+import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.Plugin;
 
 import com.google.inject.Inject;
@@ -56,13 +61,16 @@ import venture.Aust1n46.chat.controllers.commands.VentureChatGui;
 import venture.Aust1n46.chat.controllers.commands.Venturechat;
 import venture.Aust1n46.chat.initiators.application.VentureChat;
 import venture.Aust1n46.chat.model.VentureCommand;
+import venture.Aust1n46.chat.utilities.FormatUtils;
 
 /**
  * Class that initializes and executes the plugin's commands.
  */
 @Singleton
-public class CommandListener implements TabExecutor {
-	private Map<String, VentureCommand> commands = new HashMap<String, VentureCommand>();
+public class CommandController implements TabExecutor {
+	private static final String COMMAND_CONFIG_VERSION = "3.3.0";
+
+	private Map<String, VentureCommand> commandsOld = new HashMap<>();
 
 	@Inject
 	private VentureChat plugin;
@@ -142,23 +150,58 @@ public class CommandListener implements TabExecutor {
 	@Inject
 	private Unmuteall unmuteall;
 
-	private CommandMap commandMap;
 	private Constructor<PluginCommand> pluginCommandConstructor;
+
+	private final Map<String, Command> commands = new HashMap<>();
+	private Map<String, Command> knownCommands;
 
 	@Override
 	public boolean onCommand(CommandSender sender, Command command, String label, String[] parameters) {
-		commands.get(command.getName()).execute(sender, command.getName(), parameters);
+		commandsOld.get(command.getName()).execute(sender, command.getName(), parameters);
 		return true;
 	}
 
 	@Override
 	public List<String> onTabComplete(CommandSender sender, Command command, String label, String[] args) {
-		return commands.get(command.getName()).onTabComplete(sender, command, label, args);
+		return commandsOld.get(command.getName()).onTabComplete(sender, command, label, args);
 	}
 
+	@SuppressWarnings("unchecked")
 	@Inject
 	public void postConstruct() {
-		commandMap = plugin.getServer().getCommandMap();
+		final Server server = plugin.getServer();
+		final File commandsFile = new File(plugin.getDataFolder().getAbsolutePath(), "commands.yml");
+		if (!commandsFile.isFile()) {
+			plugin.saveResource("commands.yml", true);
+		}
+		FileConfiguration commandsFileConfiguration = YamlConfiguration.loadConfiguration(commandsFile);
+		final String fileVersion = commandsFileConfiguration.getString("Version", "null");
+		if (!fileVersion.equals(COMMAND_CONFIG_VERSION)) {
+			server.getConsoleSender()
+					.sendMessage(FormatUtils.FormatStringAll("&8[&eVentureChat&8]&e - Version Change Detected!  Saving Old commands.yml and Generating Latest File"));
+			commandsFile.renameTo(new File(plugin.getDataFolder().getAbsolutePath(), "commands_old_" + fileVersion + ".yml"));
+			plugin.saveResource("commands.yml", true);
+			commandsFileConfiguration = YamlConfiguration.loadConfiguration(commandsFile);
+		}
+
+		try {
+			knownCommands = server.getCommandMap().getKnownCommands(); // Paper :)
+		}
+		// Spigot :(
+		catch (final NoSuchMethodError error) {
+			try {
+				final Field commandMapField = server.getClass().getDeclaredField("commandMap");
+				commandMapField.setAccessible(true);
+				final SimpleCommandMap simpleCommandMap = (SimpleCommandMap) commandMapField.get(server);
+				final Field knownCommandsField = SimpleCommandMap.class.getDeclaredField("knownCommands");
+				knownCommandsField.setAccessible(true);
+				knownCommands = (Map<String, Command>) knownCommandsField.get(simpleCommandMap);
+			} catch (NoSuchFieldException | SecurityException | IllegalArgumentException | IllegalAccessException e) {
+				server.getConsoleSender()
+						.sendMessage(FormatUtils.FormatStringAll("&8[&eVentureChat&8]&c - Unable to access CommandMap on Spigot. If this issue persists, try using Paper."));
+				e.printStackTrace();
+			}
+		}
 		try {
 			pluginCommandConstructor = PluginCommand.class.getDeclaredConstructor(String.class, Plugin.class);
 			pluginCommandConstructor.setAccessible(true);
@@ -166,52 +209,52 @@ public class CommandListener implements TabExecutor {
 			e.printStackTrace();
 		}
 
-		commands.put("broadcast", broadcast);
-		commands.put("channel", channel);
-		commands.put("join", channel);
-		commands.put("channelinfo", channelinfo);
-		commands.put("chatinfo", chatinfo);
-		commands.put("chatreload", chatreload);
-		commands.put("chlist", chlist);
-		commands.put("chwho", chwho);
-		commands.put("clearchat", clearchat);
-		commands.put("commandblock", commandblock);
-		commands.put("commandspy", commandspy);
-		commands.put("edit", edit);
-		commands.put("filter", filter);
-		commands.put("force", force);
-		commands.put("forceall", forceall);
-		commands.put("kickchannel", kickchannel);
-		commands.put("kickchannelall", kickchannelall);
-		commands.put("leave", leave);
-		commands.put("listen", listen);
-		commands.put("me", me);
-		commands.put("venturechat", venturechat);
-		commands.put("notifications", notifications);
-		commands.put("party", party);
-		commands.put("rangedspy", rangedSpy);
-		commands.put("removemessage", removemessage);
-		commands.put("setchannel", setchannel);
-		commands.put("setchannelall", setchannelall);
-		commands.put("spy", spy);
-		commands.put("venturechatgui", ventureChatGui);
-		commands.put("messagetoggle", messageToggle);
-		commands.put("bungeetoggle", bungeeToggle);
-		for (String command : commands.keySet()) {
+		commandsOld.put("broadcast", broadcast);
+//		commandsOld.put("channel", channel);
+//		commandsOld.put("join", channel);
+		commandsOld.put("channelinfo", channelinfo);
+		commandsOld.put("chatinfo", chatinfo);
+		commandsOld.put("chatreload", chatreload);
+		commandsOld.put("chlist", chlist);
+		commandsOld.put("chwho", chwho);
+		commandsOld.put("clearchat", clearchat);
+		commandsOld.put("commandblock", commandblock);
+		commandsOld.put("commandspy", commandspy);
+		commandsOld.put("edit", edit);
+		commandsOld.put("filter", filter);
+		commandsOld.put("force", force);
+		commandsOld.put("forceall", forceall);
+		commandsOld.put("kickchannel", kickchannel);
+		commandsOld.put("kickchannelall", kickchannelall);
+		commandsOld.put("leave", leave);
+		commandsOld.put("listen", listen);
+		commandsOld.put("me", me);
+		commandsOld.put("venturechat", venturechat);
+		commandsOld.put("notifications", notifications);
+		commandsOld.put("party", party);
+		commandsOld.put("rangedspy", rangedSpy);
+		commandsOld.put("removemessage", removemessage);
+		commandsOld.put("setchannel", setchannel);
+		commandsOld.put("setchannelall", setchannelall);
+		commandsOld.put("spy", spy);
+		commandsOld.put("venturechatgui", ventureChatGui);
+		commandsOld.put("messagetoggle", messageToggle);
+		commandsOld.put("bungeetoggle", bungeeToggle);
+		for (String command : commandsOld.keySet()) {
 			registerCommand(command, this);
 		}
 
 		plugin.getServer().getScheduler().runTaskLater(plugin, () -> {
 			if (plugin.isEnabled()) {
-				commands.put("reply", reply);
-				commands.put("r", reply);
+				commandsOld.put("reply", reply);
+				commandsOld.put("r", reply);
 				registerCommand("reply", this);
 				registerCommand("r", this);
 
-				commands.put("mute", mute);
-				commands.put("muteall", muteall);
-				commands.put("unmute", unmute);
-				commands.put("unmuteall", unmuteall);
+				commandsOld.put("mute", mute);
+				commandsOld.put("muteall", muteall);
+				commandsOld.put("unmute", unmute);
+				commandsOld.put("unmuteall", unmuteall);
 				registerCommand("mute", this);
 				registerCommand("muteall", this);
 				registerCommand("unmute", this);
@@ -225,15 +268,21 @@ public class CommandListener implements TabExecutor {
 				registerCommand("ignore", ignoreCommandExecutor);
 			}
 		}, 0);
+		
+		registerCommand("channel", channel);
 	}
 
 	private void registerCommand(final String command, final CommandExecutor commandExecutor) {
 		try {
 			final PluginCommand pluginCommand = pluginCommandConstructor.newInstance(command, plugin);
 			pluginCommand.setExecutor(commandExecutor);
-			commandMap.getKnownCommands().put(command, pluginCommand);
+			knownCommands.put(command, pluginCommand);
 		} catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
 			e.printStackTrace();
 		}
+	}
+
+	private void registerCommand(final String commandLabel, final Command command) {
+		knownCommands.put(commandLabel, command);
 	}
 }

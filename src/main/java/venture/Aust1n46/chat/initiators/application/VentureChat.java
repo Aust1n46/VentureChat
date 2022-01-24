@@ -17,11 +17,11 @@ import com.google.inject.Singleton;
 
 import net.milkbowl.vault.permission.Permission;
 import venture.Aust1n46.chat.VentureChatPlaceholders;
+import venture.Aust1n46.chat.controllers.CommandController;
 import venture.Aust1n46.chat.controllers.PluginMessageController;
 import venture.Aust1n46.chat.controllers.VentureChatSpigotFlatFileController;
 import venture.Aust1n46.chat.guice.VentureChatPluginModule;
 import venture.Aust1n46.chat.initiators.listeners.ChatListener;
-import venture.Aust1n46.chat.initiators.listeners.CommandListener;
 import venture.Aust1n46.chat.initiators.listeners.LoginListener;
 import venture.Aust1n46.chat.initiators.listeners.PacketListener;
 import venture.Aust1n46.chat.initiators.listeners.PreProcessCommandListener;
@@ -64,7 +64,7 @@ public class VentureChat extends JavaPlugin implements PluginMessageListener {
 		final VentureChatPluginModule pluginModule = new VentureChatPluginModule(this);
 		final Injector injector = Guice.createInjector(pluginModule);
 		injector.injectMembers(this);
-		injector.injectMembers(new CommandListener());
+		injector.injectMembers(new CommandController());
 		injector.injectMembers(new UnmuteScheduler());
 
 		try {
