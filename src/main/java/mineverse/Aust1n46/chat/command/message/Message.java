@@ -154,7 +154,7 @@ public class Message extends Command {
 			Collections.sort(completions);
 			return completions;
 		}
-		return null;
+		return super.tabComplete(sender, label, args);
 	}
 
 	private void sendBungeeCordMessage(MineverseChatPlayer mcp, String command, String[] args) {

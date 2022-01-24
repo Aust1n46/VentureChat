@@ -101,6 +101,6 @@ public class Ignore extends Command {
 			Collections.sort(completions);
 			return completions;
 		}
-		return null;
+		return super.tabComplete(sender, label, args);
 	}
 }
