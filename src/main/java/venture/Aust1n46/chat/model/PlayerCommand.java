@@ -5,20 +5,21 @@ import org.bukkit.entity.Player;
 
 import venture.Aust1n46.chat.localization.LocalizedMessage;
 
-public abstract class PlayerCommand extends UniversalCommand {
+public abstract class PlayerCommand extends PluginCommand {
 	protected PlayerCommand(final String name) {
 		super(name);
 	}
 
 	@Override
-	public void executeVoid(final CommandSender sender, final String commandLabel, final String[] args) {
+	public final boolean execute(final CommandSender sender, final String commandLabel, final String[] args) {
 		if (sender instanceof Player) {
 			final Player player = (Player) sender;
-			execute(player, commandLabel, args);
+			executeCommand(player, commandLabel, args);
 		} else {
 			plugin.getServer().getConsoleSender().sendMessage(LocalizedMessage.COMMAND_MUST_BE_RUN_BY_PLAYER.toString());
 		}
+		return true;
 	}
 
-	public abstract void execute(final Player player, final String commandLabel, final String[] args);
+	protected abstract void executeCommand(final Player player, final String commandLabel, final String[] args);
 }

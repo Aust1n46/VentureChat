@@ -269,6 +269,7 @@ public class CommandController implements TabExecutor {
 			}
 		}, 0);
 		
+		
 		registerCommand("channel", channel);
 	}
 

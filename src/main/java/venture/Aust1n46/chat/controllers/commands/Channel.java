@@ -30,7 +30,7 @@ public class Channel extends PlayerCommand {
 	}
 
 	@Override
-	public void execute(final Player player, final String commandLabel, final String[] args) {
+	protected void executeCommand(final Player player, final String commandLabel, final String[] args) {
 		final VentureChatPlayer mcp = playerApiService.getOnlineMineverseChatPlayer(player);
 		if (args.length > 0) {
 			if (!configService.isChannel(args[0])) {
