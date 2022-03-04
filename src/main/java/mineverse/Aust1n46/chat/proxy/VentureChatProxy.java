@@ -391,7 +391,7 @@ public class VentureChatProxy {
 					out.writeUTF(spy);
 					out.writeUTF(msg);
 					source.getServers().forEach(serv -> {
-						if(!send.isEmpty()) {
+						if(!serv.isEmpty()) {
 							source.sendPluginMessage(serv.getName(), outstream.toByteArray());
 						}
 					});
