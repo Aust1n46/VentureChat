@@ -21,11 +21,11 @@ import venture.Aust1n46.chat.initiators.application.VentureChat;
 import venture.Aust1n46.chat.localization.LocalizedMessage;
 import venture.Aust1n46.chat.model.ChatChannel;
 import venture.Aust1n46.chat.model.VentureChatPlayer;
-import venture.Aust1n46.chat.model.VentureCommand;
+import venture.Aust1n46.chat.model.UniversalCommand;
 import venture.Aust1n46.chat.service.ConfigService;
 import venture.Aust1n46.chat.service.VentureChatPlayerApiService;
 
-public class Chwho implements VentureCommand {
+public class Chwho extends UniversalCommand {
 	@Inject
     private VentureChat plugin;
 	@Inject
@@ -34,9 +34,14 @@ public class Chwho implements VentureCommand {
 	private VentureChatPlayerApiService playerApiService;
 	@Inject
 	private ConfigService configService;
+	
+	@Inject
+	public Chwho(String name) {
+		super(name);
+	}
 
     @Override
-    public void execute(CommandSender sender, String command, String[] args) {
+    public void executeCommand(CommandSender sender, String command, String[] args) {
         String playerlist = "";
         if (sender.hasPermission("venturechat.chwho")) {
             if (args.length > 0) {

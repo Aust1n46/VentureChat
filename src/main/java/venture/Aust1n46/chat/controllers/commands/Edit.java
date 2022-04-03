@@ -17,12 +17,12 @@ import venture.Aust1n46.chat.initiators.application.VentureChat;
 import venture.Aust1n46.chat.localization.LocalizedMessage;
 import venture.Aust1n46.chat.model.ChatMessage;
 import venture.Aust1n46.chat.model.VentureChatPlayer;
-import venture.Aust1n46.chat.model.VentureCommand;
+import venture.Aust1n46.chat.model.UniversalCommand;
 import venture.Aust1n46.chat.service.VentureChatPlayerApiService;
 import venture.Aust1n46.chat.utilities.FormatUtils;
 import venture.Aust1n46.chat.service.VentureChatFormatService;
 
-public class Edit implements VentureCommand {
+public class Edit extends UniversalCommand {
     @Inject
     private VentureChat plugin;
     @Inject
@@ -32,6 +32,11 @@ public class Edit implements VentureCommand {
     
     private PacketContainer emptyLinePacketContainer;
     private WrappedChatComponent messageDeletedComponentPlayer;
+    
+    @Inject
+	public Edit(String name) {
+		super(name);
+	}
 
     @Inject
     public void postConstruct() {
@@ -41,7 +46,7 @@ public class Edit implements VentureCommand {
     
     @Override
     @SuppressWarnings({"unchecked", "rawtypes"})
-    public void execute(CommandSender sender, String command, String[] args) {
+    public void executeCommand(CommandSender sender, String command, String[] args) {
         if (args.length == 0) {
             sender.sendMessage(LocalizedMessage.COMMAND_INVALID_ARGUMENTS.toString()
                     .replace("{command}", "/edit")

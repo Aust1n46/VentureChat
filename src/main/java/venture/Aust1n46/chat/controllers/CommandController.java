@@ -1,23 +1,18 @@
 package venture.Aust1n46.chat.controllers;
 
 import java.io.File;
-import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.bukkit.Server;
 import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
-import org.bukkit.command.CommandSender;
-import org.bukkit.command.PluginCommand;
 import org.bukkit.command.SimpleCommandMap;
-import org.bukkit.command.TabExecutor;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.plugin.Plugin;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
@@ -25,6 +20,7 @@ import com.google.inject.Singleton;
 import venture.Aust1n46.chat.controllers.commands.Broadcast;
 import venture.Aust1n46.chat.controllers.commands.BungeeToggle;
 import venture.Aust1n46.chat.controllers.commands.Channel;
+import venture.Aust1n46.chat.controllers.commands.ChannelAlias;
 import venture.Aust1n46.chat.controllers.commands.Channelinfo;
 import venture.Aust1n46.chat.controllers.commands.Chatinfo;
 import venture.Aust1n46.chat.controllers.commands.Chatreload;
@@ -37,13 +33,13 @@ import venture.Aust1n46.chat.controllers.commands.Edit;
 import venture.Aust1n46.chat.controllers.commands.Filter;
 import venture.Aust1n46.chat.controllers.commands.Force;
 import venture.Aust1n46.chat.controllers.commands.Forceall;
-import venture.Aust1n46.chat.controllers.commands.IgnoreCommandExecutor;
+import venture.Aust1n46.chat.controllers.commands.Ignore;
 import venture.Aust1n46.chat.controllers.commands.Kickchannel;
 import venture.Aust1n46.chat.controllers.commands.Kickchannelall;
 import venture.Aust1n46.chat.controllers.commands.Leave;
 import venture.Aust1n46.chat.controllers.commands.Listen;
 import venture.Aust1n46.chat.controllers.commands.Me;
-import venture.Aust1n46.chat.controllers.commands.MessageCommandExecutor;
+import venture.Aust1n46.chat.controllers.commands.Message;
 import venture.Aust1n46.chat.controllers.commands.MessageToggle;
 import venture.Aust1n46.chat.controllers.commands.Mute;
 import venture.Aust1n46.chat.controllers.commands.Muteall;
@@ -60,24 +56,18 @@ import venture.Aust1n46.chat.controllers.commands.Unmuteall;
 import venture.Aust1n46.chat.controllers.commands.VentureChatGui;
 import venture.Aust1n46.chat.controllers.commands.Venturechat;
 import venture.Aust1n46.chat.initiators.application.VentureChat;
-import venture.Aust1n46.chat.model.VentureCommand;
+import venture.Aust1n46.chat.model.ChatChannel;
+import venture.Aust1n46.chat.service.ConfigService;
 import venture.Aust1n46.chat.utilities.FormatUtils;
 
-/**
- * Class that initializes and executes the plugin's commands.
- */
 @Singleton
-public class CommandController implements TabExecutor {
+public class CommandController {
 	private static final String COMMAND_CONFIG_VERSION = "3.3.0";
-
-	private Map<String, VentureCommand> commandsOld = new HashMap<>();
 
 	@Inject
 	private VentureChat plugin;
 	@Inject
-	private MessageCommandExecutor messageCommandExecutor;
-	@Inject
-	private IgnoreCommandExecutor ignoreCommandExecutor;
+	private ConfigService configService;
 
 	@Inject
 	private Broadcast broadcast;
@@ -149,22 +139,15 @@ public class CommandController implements TabExecutor {
 	private Unmute unmute;
 	@Inject
 	private Unmuteall unmuteall;
-
-	private Constructor<PluginCommand> pluginCommandConstructor;
+	@Inject
+	private Message message;
+	@Inject
+	private Ignore ignore;
+	@Inject
+	private ChannelAlias channelAlias;
 
 	private final Map<String, Command> commands = new HashMap<>();
 	private Map<String, Command> knownCommands;
-
-	@Override
-	public boolean onCommand(CommandSender sender, Command command, String label, String[] parameters) {
-		commandsOld.get(command.getName()).execute(sender, command.getName(), parameters);
-		return true;
-	}
-
-	@Override
-	public List<String> onTabComplete(CommandSender sender, Command command, String label, String[] args) {
-		return commandsOld.get(command.getName()).onTabComplete(sender, command, label, args);
-	}
 
 	@SuppressWarnings("unchecked")
 	@Inject
@@ -183,7 +166,6 @@ public class CommandController implements TabExecutor {
 			plugin.saveResource("commands.yml", true);
 			commandsFileConfiguration = YamlConfiguration.loadConfiguration(commandsFile);
 		}
-
 		try {
 			knownCommands = server.getCommandMap().getKnownCommands(); // Paper :)
 		}
@@ -202,85 +184,77 @@ public class CommandController implements TabExecutor {
 				e.printStackTrace();
 			}
 		}
-		try {
-			pluginCommandConstructor = PluginCommand.class.getDeclaredConstructor(String.class, Plugin.class);
-			pluginCommandConstructor.setAccessible(true);
-		} catch (NoSuchMethodException | SecurityException e) {
-			e.printStackTrace();
+		commands.put("broadcast", broadcast);
+		commands.put("channel", channel);
+		commands.put("join", channel);
+		commands.put("channelinfo", channelinfo);
+		commands.put("chatinfo", chatinfo);
+		commands.put("chatreload", chatreload);
+		commands.put("chlist", chlist);
+		commands.put("chwho", chwho);
+		commands.put("clearchat", clearchat);
+		commands.put("commandblock", commandblock);
+		commands.put("commandspy", commandspy);
+		commands.put("edit", edit);
+		commands.put("filter", filter);
+		commands.put("force", force);
+		commands.put("forceall", forceall);
+		commands.put("kickchannel", kickchannel);
+		commands.put("kickchannelall", kickchannelall);
+		commands.put("leave", leave);
+		commands.put("listen", listen);
+		commands.put("me", me);
+		commands.put("venturechat", venturechat);
+		commands.put("notifications", notifications);
+		commands.put("party", party);
+		commands.put("rangedspy", rangedSpy);
+		commands.put("removemessage", removemessage);
+		commands.put("setchannel", setchannel);
+		commands.put("setchannelall", setchannelall);
+		commands.put("spy", spy);
+		commands.put("venturechatgui", ventureChatGui);
+		commands.put("messagetoggle", messageToggle);
+		commands.put("bungeetoggle", bungeeToggle);
+		commands.put("reply", reply);
+		commands.put("mute", mute);
+		commands.put("muteall", muteall);
+		commands.put("unmute", unmute);
+		commands.put("unmuteall", unmuteall);
+		commands.put("message", message);
+		commands.put("ignore", ignore);
+		for (final ChatChannel chatChannel : configService.getChatChannels()) {
+			final String alias = chatChannel.getAlias();
+			commands.put(alias, channelAlias);
 		}
-
-		commandsOld.put("broadcast", broadcast);
-//		commandsOld.put("channel", channel);
-//		commandsOld.put("join", channel);
-		commandsOld.put("channelinfo", channelinfo);
-		commandsOld.put("chatinfo", chatinfo);
-		commandsOld.put("chatreload", chatreload);
-		commandsOld.put("chlist", chlist);
-		commandsOld.put("chwho", chwho);
-		commandsOld.put("clearchat", clearchat);
-		commandsOld.put("commandblock", commandblock);
-		commandsOld.put("commandspy", commandspy);
-		commandsOld.put("edit", edit);
-		commandsOld.put("filter", filter);
-		commandsOld.put("force", force);
-		commandsOld.put("forceall", forceall);
-		commandsOld.put("kickchannel", kickchannel);
-		commandsOld.put("kickchannelall", kickchannelall);
-		commandsOld.put("leave", leave);
-		commandsOld.put("listen", listen);
-		commandsOld.put("me", me);
-		commandsOld.put("venturechat", venturechat);
-		commandsOld.put("notifications", notifications);
-		commandsOld.put("party", party);
-		commandsOld.put("rangedspy", rangedSpy);
-		commandsOld.put("removemessage", removemessage);
-		commandsOld.put("setchannel", setchannel);
-		commandsOld.put("setchannelall", setchannelall);
-		commandsOld.put("spy", spy);
-		commandsOld.put("venturechatgui", ventureChatGui);
-		commandsOld.put("messagetoggle", messageToggle);
-		commandsOld.put("bungeetoggle", bungeeToggle);
-		for (String command : commandsOld.keySet()) {
-			registerCommand(command, this);
-		}
-
-		plugin.getServer().getScheduler().runTaskLater(plugin, () -> {
-			if (plugin.isEnabled()) {
-				commandsOld.put("reply", reply);
-				commandsOld.put("r", reply);
-				registerCommand("reply", this);
-				registerCommand("r", this);
-
-				commandsOld.put("mute", mute);
-				commandsOld.put("muteall", muteall);
-				commandsOld.put("unmute", unmute);
-				commandsOld.put("unmuteall", unmuteall);
-				registerCommand("mute", this);
-				registerCommand("muteall", this);
-				registerCommand("unmute", this);
-				registerCommand("unmuteall", this);
-
-				registerCommand("message", messageCommandExecutor);
-				registerCommand("msg", messageCommandExecutor);
-				registerCommand("tell", messageCommandExecutor);
-				registerCommand("whisper", messageCommandExecutor);
-
-				registerCommand("ignore", ignoreCommandExecutor);
+		final ConfigurationSection commandsSection = commandsFileConfiguration.getConfigurationSection("commands");
+		for (final String commandName : commandsSection.getKeys(false)) {
+			final ConfigurationSection commandSection = commandsSection.getConfigurationSection(commandName);
+			final boolean isEnabled = commandSection.getBoolean("enabled", true);
+			if (!isEnabled) {
+				commands.remove(commandName);
+			} else {
+				final Command command = commands.get(commandName);
+				if (command != null) {
+					final List<String> aliases = commandSection.getStringList("aliases");
+					for (final String alias : aliases) {
+						commands.put(alias, command);
+					}
+					commands.put("venturechat:" + commandName, command);
+				}
 			}
-		}, 0);
-		
-		
-		registerCommand("channel", channel);
-	}
-
-	private void registerCommand(final String command, final CommandExecutor commandExecutor) {
-		try {
-			final PluginCommand pluginCommand = pluginCommandConstructor.newInstance(command, plugin);
-			pluginCommand.setExecutor(commandExecutor);
-			knownCommands.put(command, pluginCommand);
-		} catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
-			e.printStackTrace();
 		}
+		// Initial registration is required to ensure commands are recognized by the
+		// server after enabling every plugin
+		for (final Entry<String, Command> commandEntry : commands.entrySet()) {
+			registerCommand(commandEntry.getKey(), commandEntry.getValue());
+		}
+		// Forcibly re-register enabled VentureChat commands on a delay to ensure they
+		// have priority
+		server.getScheduler().runTaskLater(plugin, () -> {
+			for (final Entry<String, Command> commandEntry : commands.entrySet()) {
+				registerCommand(commandEntry.getKey(), commandEntry.getValue());
+			}
+		}, 10);
 	}
 
 	private void registerCommand(final String commandLabel, final Command command) {

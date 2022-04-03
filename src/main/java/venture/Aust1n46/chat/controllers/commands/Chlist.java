@@ -6,15 +6,20 @@ import com.google.inject.Inject;
 
 import venture.Aust1n46.chat.localization.LocalizedMessage;
 import venture.Aust1n46.chat.model.ChatChannel;
-import venture.Aust1n46.chat.model.VentureCommand;
+import venture.Aust1n46.chat.model.UniversalCommand;
 import venture.Aust1n46.chat.service.ConfigService;
 
-public class Chlist implements VentureCommand {
+public class Chlist extends UniversalCommand {
 	@Inject
 	private ConfigService configService;
+	
+	@Inject
+	public Chlist(String name) {
+		super(name);
+	}
 
     @Override
-    public void execute(CommandSender sender, String command, String[] args) {
+    public void executeCommand(CommandSender sender, String command, String[] args) {
         sender.sendMessage(LocalizedMessage.CHANNEL_LIST_HEADER.toString());
         for (ChatChannel chname : configService.getChatChannels()) {
             if (chname.hasPermission()) {

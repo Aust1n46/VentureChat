@@ -1,35 +1,33 @@
 package venture.Aust1n46.chat.controllers.commands;
 
-import org.bukkit.Bukkit;
-import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import com.google.inject.Inject;
 
 import venture.Aust1n46.chat.localization.LocalizedMessage;
+import venture.Aust1n46.chat.model.PlayerCommand;
 import venture.Aust1n46.chat.model.VentureChatPlayer;
-import venture.Aust1n46.chat.model.VentureCommand;
 import venture.Aust1n46.chat.service.VentureChatPlayerApiService;
 
-public class Notifications implements VentureCommand {
+public class Notifications extends PlayerCommand {
 	@Inject
 	private VentureChatPlayerApiService playerApiService;
 
-    @Override
-    public void execute(CommandSender sender, String command, String[] args) {
-        if (!(sender instanceof Player)) {
-            Bukkit.getServer().getConsoleSender().sendMessage(LocalizedMessage.COMMAND_MUST_BE_RUN_BY_PLAYER.toString());
-            return;
-        }
+	@Inject
+	public Notifications(String name) {
+		super(name);
+	}
 
-        VentureChatPlayer mcp = playerApiService.getOnlineMineverseChatPlayer((Player) sender);
-        if (!mcp.isNotifications()) {
-            mcp.setNotifications(true);
-            mcp.getPlayer().sendMessage(LocalizedMessage.NOTIFICATIONS_ON.toString());
-            return;
-        }
-        mcp.setNotifications(false);
-        mcp.getPlayer().sendMessage(LocalizedMessage.NOTIFICATIONS_OFF.toString());
-        return;
-    }
+	@Override
+	public void executeCommand(Player player, String command, String[] args) {
+		VentureChatPlayer mcp = playerApiService.getOnlineMineverseChatPlayer(player);
+		if (!mcp.isNotifications()) {
+			mcp.setNotifications(true);
+			mcp.getPlayer().sendMessage(LocalizedMessage.NOTIFICATIONS_ON.toString());
+			return;
+		}
+		mcp.setNotifications(false);
+		mcp.getPlayer().sendMessage(LocalizedMessage.NOTIFICATIONS_OFF.toString());
+		return;
+	}
 }

@@ -9,17 +9,22 @@ import com.google.inject.Inject;
 import venture.Aust1n46.chat.initiators.application.VentureChat;
 import venture.Aust1n46.chat.localization.LocalizedMessage;
 import venture.Aust1n46.chat.model.VentureChatPlayer;
-import venture.Aust1n46.chat.model.VentureCommand;
+import venture.Aust1n46.chat.model.UniversalCommand;
 import venture.Aust1n46.chat.service.VentureChatPlayerApiService;
 
-public class Commandblock implements VentureCommand {
+public class Commandblock extends UniversalCommand {
 	@Inject
     private VentureChat plugin;
 	@Inject
 	private VentureChatPlayerApiService playerApiService;
+	
+	@Inject
+	public Commandblock(String name) {
+		super(name);
+	}
 
     @Override
-    public void execute(CommandSender sender, String command, String[] args) {
+    public void executeCommand(CommandSender sender, String command, String[] args) {
         if (sender.hasPermission("venturechat.commandblock")) {
             if (args.length > 1) {
                 VentureChatPlayer player = playerApiService.getOnlineMineverseChatPlayer(args[0]);
