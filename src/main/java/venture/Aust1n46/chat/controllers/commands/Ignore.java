@@ -109,6 +109,6 @@ public class Ignore extends PlayerCommand {
 			Collections.sort(completions);
 			return completions;
 		}
-		return null;
+		return super.tabComplete(sender, alias, args);
 	}
 }

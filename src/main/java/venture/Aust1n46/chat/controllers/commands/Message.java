@@ -166,7 +166,7 @@ public class Message extends PlayerCommand {
 			Collections.sort(completions);
 			return completions;
 		}
-		return null;
+		return super.tabComplete(sender, alias, args);
 	}
 
 	private void sendBungeeCordMessage(VentureChatPlayer mcp, String command, String[] args) {

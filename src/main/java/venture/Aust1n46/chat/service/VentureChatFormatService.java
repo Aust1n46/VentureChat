@@ -159,7 +159,7 @@ public class VentureChatFormatService {
 		do {
 			Pattern pattern = Pattern.compile(
 					"([a-zA-Z0-9" + BUKKIT_COLOR_CODE_PREFIX + "\\-:/]+\\.[a-zA-Z/0-9" + BUKKIT_COLOR_CODE_PREFIX
-							+ "\\-:_#]+(\\.[a-zA-Z/0-9." + BUKKIT_COLOR_CODE_PREFIX + "\\-:#\\?\\+=_]+)?)");
+							+ "\\-:_#]+(\\.[a-zA-Z/0-9." + BUKKIT_COLOR_CODE_PREFIX + "\\-:;,#\\?\\+=_]+)?)");
 			Matcher matcher = pattern.matcher(remaining);
 			if (matcher.find()) {
 				indexLink = matcher.start();
