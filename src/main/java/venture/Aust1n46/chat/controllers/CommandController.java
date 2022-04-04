@@ -146,7 +146,6 @@ public class CommandController {
 	@Inject
 	private ChannelAlias channelAlias;
 
-	private final Map<String, Command> commands = new HashMap<>();
 	private Map<String, Command> knownCommands;
 
 	@SuppressWarnings("unchecked")
@@ -184,6 +183,7 @@ public class CommandController {
 				e.printStackTrace();
 			}
 		}
+		final Map<String, Command> commands = new HashMap<>();
 		commands.put("broadcast", broadcast);
 		commands.put("channel", channel);
 		commands.put("join", channel);
