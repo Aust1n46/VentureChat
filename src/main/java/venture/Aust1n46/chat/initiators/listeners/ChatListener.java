@@ -511,7 +511,7 @@ public class ChatListener implements Listener {
 	}
 	
 	public void handleVentureChatEvent(VentureChatEvent event) {
-		VentureChatPlayer mcp = event.getMineverseChatPlayer();
+		VentureChatPlayer ventureChatPlayer = event.getVentureChatPlayer();
 		ChatChannel channel = event.getChannel();
 		Set<Player> recipients = event.getRecipients();
 		int recipientCount = event.getRecipientCount();
@@ -523,21 +523,21 @@ public class ChatListener implements Listener {
 		boolean bungee = event.isBungee();
 
 		if (essentialsDiscordHook && channel.isDefaultchannel()) {
-			Bukkit.getServicesManager().load(DiscordService.class).sendChatMessage(mcp.getPlayer(), chat);
+			Bukkit.getServicesManager().load(DiscordService.class).sendChatMessage(ventureChatPlayer.getPlayer(), chat);
 		}
 		
 		if(!bungee) {
 			if(databaseService.isEnabled()) {
-				databaseService.writeVentureChat(mcp.getUuid().toString(), mcp.getName(), "Local", channel.getName(), chat.replace("'", "''"), "Chat");
+				databaseService.writeVentureChat(ventureChatPlayer.getUuid().toString(), ventureChatPlayer.getName(), "Local", channel.getName(), chat.replace("'", "''"), "Chat");
 			}
 			
 			if(recipientCount == 1) {
 				if(!plugin.getConfig().getString("emptychannelalert", "&6No one is listening to you.").equals("")) {
-					mcp.getPlayer().sendMessage(FormatUtils.FormatStringAll(plugin.getConfig().getString("emptychannelalert", "&6No one is listening to you.")));	
+					ventureChatPlayer.getPlayer().sendMessage(FormatUtils.FormatStringAll(plugin.getConfig().getString("emptychannelalert", "&6No one is listening to you.")));	
 				}
 			}
 			for(Player p : recipients) {
-				String json = formatService.formatModerationGUI(globalJSON, p, mcp.getName(), channel.getName(), hash);
+				String json = formatService.formatModerationGUI(globalJSON, p, ventureChatPlayer.getName(), channel.getName(), hash);
 				PacketContainer packet = formatService.createPacketPlayOutChat(json);
 				formatService.sendPacketPlayOutChat(p, packet);
 			}
@@ -550,9 +550,9 @@ public class ChatListener implements Listener {
 			try {
 				out.writeUTF("Chat");
 				out.writeUTF(channel.getName());
-				out.writeUTF(mcp.getName());
-				out.writeUTF(mcp.getUuid().toString());
-				out.writeBoolean(mcp.isBungeeToggle());
+				out.writeUTF(ventureChatPlayer.getName());
+				out.writeUTF(ventureChatPlayer.getUuid().toString());
+				out.writeBoolean(ventureChatPlayer.isBungeeToggle());
 				out.writeInt(hash);
 				out.writeUTF(format);
 				out.writeUTF(chat);
@@ -563,8 +563,8 @@ public class ChatListener implements Listener {
 				if(plugin.getConfig().getString("loglevel", "info").equals("debug")) {
 					System.out.println(out.size() + " bytes size with json");
 				}
-				out.writeUTF(plugin.getVaultPermission().getPrimaryGroup(mcp.getPlayer())); // look into not sending this
-				final String displayName = mcp.getPlayer().getDisplayName();
+				out.writeUTF(plugin.getVaultPermission().getPrimaryGroup(ventureChatPlayer.getPlayer())); // look into not sending this
+				final String displayName = ventureChatPlayer.getPlayer().getDisplayName();
 				out.writeUTF(displayName);
 				pluginMessageController.sendPluginMessage(byteOutStream);
 				out.close();
