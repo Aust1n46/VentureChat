@@ -21,7 +21,7 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
-import venture.Aust1n46.chat.controllers.commands.MuteContainer;
+import venture.Aust1n46.chat.initators.commands.MuteContainer;
 import venture.Aust1n46.chat.initiators.application.VentureChat;
 import venture.Aust1n46.chat.model.ChatChannel;
 import venture.Aust1n46.chat.model.VentureChatPlayer;

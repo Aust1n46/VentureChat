@@ -21,7 +21,7 @@ import com.google.inject.Singleton;
 
 import me.clip.placeholderapi.PlaceholderAPI;
 import venture.Aust1n46.chat.api.events.VentureChatEvent;
-import venture.Aust1n46.chat.controllers.commands.MuteContainer;
+import venture.Aust1n46.chat.initators.commands.MuteContainer;
 import venture.Aust1n46.chat.initiators.application.VentureChat;
 import venture.Aust1n46.chat.localization.LocalizedMessage;
 import venture.Aust1n46.chat.model.ChatChannel;

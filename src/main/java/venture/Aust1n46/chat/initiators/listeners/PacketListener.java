@@ -12,9 +12,9 @@ import com.google.inject.Singleton;
 import venture.Aust1n46.chat.initiators.application.VentureChat;
 import venture.Aust1n46.chat.model.ChatMessage;
 import venture.Aust1n46.chat.model.VentureChatPlayer;
-import venture.Aust1n46.chat.service.VentureChatPlayerApiService;
-import venture.Aust1n46.chat.utilities.VersionHandler;
 import venture.Aust1n46.chat.service.VentureChatFormatService;
+import venture.Aust1n46.chat.service.VentureChatPlayerApiService;
+import venture.Aust1n46.chat.xcut.VersionService;
 
 //This class listens for chat packets and intercepts them before they are sent to the Player.
 //The packets are modified to include advanced json formating and the message remover button if the 
@@ -25,6 +25,9 @@ public class PacketListener extends PacketAdapter {
 	private VentureChatFormatService formatter;
 	@Inject
 	private VentureChatPlayerApiService playerApiService;
+	@Inject
+	private VersionService versionService;
+	
 	
 	@Inject
 	public PacketListener(final VentureChat plugin) {
@@ -49,13 +52,13 @@ public class PacketListener extends PacketAdapter {
 		}
 		
 		try {
-			if(VersionHandler.is1_7()) {
+			if(versionService.is1_7()) {
 				packet.getBooleans().getField(0).setAccessible(true);
 				if(!((boolean) packet.getBooleans().getField(0).get(packet.getHandle()))) {
 					return;
 				}
 			}
-			else if(VersionHandler.is1_8() || VersionHandler.is1_9() || VersionHandler.is1_10() || VersionHandler.is1_11()) {
+			else if(versionService.is1_8() || versionService.is1_9() || versionService.is1_10() || versionService.is1_11()) {
 				packet.getBytes().getField(0).setAccessible(true);
 				if(((Byte) packet.getBytes().getField(0).get(packet.getHandle())).intValue() > 1) {
 					return;

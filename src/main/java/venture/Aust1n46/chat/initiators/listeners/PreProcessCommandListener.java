@@ -30,12 +30,12 @@ import venture.Aust1n46.chat.model.Alias;
 import venture.Aust1n46.chat.model.ChatChannel;
 import venture.Aust1n46.chat.model.GuiSlot;
 import venture.Aust1n46.chat.model.VentureChatPlayer;
-import venture.Aust1n46.chat.service.VentureChatPlayerApiService;
-import venture.Aust1n46.chat.utilities.FormatUtils;
-import venture.Aust1n46.chat.utilities.VersionHandler;
 import venture.Aust1n46.chat.service.ConfigService;
 import venture.Aust1n46.chat.service.VentureChatDatabaseService;
 import venture.Aust1n46.chat.service.VentureChatFormatService;
+import venture.Aust1n46.chat.service.VentureChatPlayerApiService;
+import venture.Aust1n46.chat.utilities.FormatUtils;
+import venture.Aust1n46.chat.xcut.VersionService;
 
 //This class listens for commands (Any chat that begins with a /) to use in the command spy and
 //in the custom commands such as aliases.
@@ -53,6 +53,8 @@ public class PreProcessCommandListener implements CommandExecutor, Listener {
 	private VentureChatPlayerApiService playerApiService;
 	@Inject
 	private ConfigService configService;
+	@Inject
+	private VersionService versionService;
 
 	@EventHandler
 	public void onPlayerCommandPreprocess(PlayerCommandPreprocessEvent event) throws FileNotFoundException {
@@ -261,7 +263,7 @@ public class PreProcessCommandListener implements CommandExecutor, Listener {
 		SkullMeta skullMeta = (SkullMeta) skull.getItemMeta();
 		ChatChannel channel = configService.getChannel(ChatColor.stripColor(skullMeta.getLore().get(0)).replace("Channel: ", ""));
 		int hash = Integer.parseInt(ChatColor.stripColor(skullMeta.getLore().get(1).replace("Hash: ", "")));
-		if(VersionHandler.is1_7()) {
+		if(versionService.is1_7()) {
 			if(item.getType() == Material.BEDROCK) {
 				mcp.getPlayer().closeInventory();
 			}

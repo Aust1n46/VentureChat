@@ -9,7 +9,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import com.google.inject.Inject;
 
-import venture.Aust1n46.chat.controllers.commands.MuteContainer;
+import venture.Aust1n46.chat.initators.commands.MuteContainer;
 import venture.Aust1n46.chat.model.SynchronizedVentureChatPlayer;
 import venture.Aust1n46.chat.model.TemporaryDataInstance;
 import venture.Aust1n46.chat.model.VentureChatProxyServer;

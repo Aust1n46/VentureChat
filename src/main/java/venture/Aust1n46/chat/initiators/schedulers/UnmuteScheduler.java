@@ -2,13 +2,13 @@ package venture.Aust1n46.chat.initiators.schedulers;
 
 import java.util.Iterator;
 
-import org.bukkit.Bukkit;
+import org.bukkit.Server;
 import org.bukkit.scheduler.BukkitScheduler;
 
 import com.google.inject.Inject;
 
 import venture.Aust1n46.chat.controllers.PluginMessageController;
-import venture.Aust1n46.chat.controllers.commands.MuteContainer;
+import venture.Aust1n46.chat.initators.commands.MuteContainer;
 import venture.Aust1n46.chat.initiators.application.VentureChat;
 import venture.Aust1n46.chat.localization.LocalizedMessage;
 import venture.Aust1n46.chat.model.ChatChannel;
@@ -26,10 +26,11 @@ public class UnmuteScheduler {
 	private VentureChatPlayerApiService playerApiService;
 	@Inject
 	private ConfigService configService;
-	
+
 	@Inject
 	public void postConstruct() {
-		BukkitScheduler scheduler = Bukkit.getServer().getScheduler();
+		final Server server = plugin.getServer();
+		BukkitScheduler scheduler = server.getScheduler();
 		scheduler.runTaskTimerAsynchronously(plugin, new Runnable() {
 			@Override
 			public void run() {
@@ -38,7 +39,7 @@ public class UnmuteScheduler {
 					Iterator<MuteContainer> iterator = p.getMutes().iterator();
 					while (iterator.hasNext()) {
 						MuteContainer mute = iterator.next();
-						if(configService.isChannel(mute.getChannel())) {
+						if (configService.isChannel(mute.getChannel())) {
 							ChatChannel channel = configService.getChannel(mute.getChannel());
 							long timemark = mute.getDuration();
 							if (timemark == 0) {
@@ -49,10 +50,9 @@ public class UnmuteScheduler {
 							}
 							if (currentTimeMillis >= timemark) {
 								iterator.remove();
-								p.getPlayer().sendMessage(LocalizedMessage.UNMUTE_PLAYER_PLAYER.toString()
-										.replace("{player}", p.getName()).replace("{channel_color}", channel.getColor())
-										.replace("{channel_name}", mute.getChannel()));
-								if(channel.getBungee()) {
+								p.getPlayer().sendMessage(LocalizedMessage.UNMUTE_PLAYER_PLAYER.toString().replace("{player}", p.getName())
+										.replace("{channel_color}", channel.getColor()).replace("{channel_name}", mute.getChannel()));
+								if (channel.getBungee()) {
 									pluginMessageController.synchronize(p, true);
 								}
 							}
@@ -60,8 +60,7 @@ public class UnmuteScheduler {
 					}
 				}
 				if (plugin.getConfig().getString("loglevel", "info").equals("trace")) {
-					Bukkit.getConsoleSender()
-							.sendMessage(FormatUtils.FormatStringAll("&8[&eVentureChat&8]&e - Updating Player Mutes"));
+					server.getConsoleSender().sendMessage(FormatUtils.FormatStringAll("&8[&eVentureChat&8]&e - Updating Player Mutes"));
 				}
 			}
 		}, 0L, 60L); // three second interval

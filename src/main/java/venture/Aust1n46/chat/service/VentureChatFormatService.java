@@ -33,7 +33,7 @@ import venture.Aust1n46.chat.model.JsonAttribute;
 import venture.Aust1n46.chat.model.JsonFormat;
 import venture.Aust1n46.chat.model.VentureChatPlayer;
 import venture.Aust1n46.chat.utilities.FormatUtils;
-import venture.Aust1n46.chat.utilities.VersionHandler;
+import venture.Aust1n46.chat.xcut.VersionService;
 
 /**
  * Class containing chat formatting methods.
@@ -52,6 +52,8 @@ public class VentureChatFormatService {
 	private VentureChatPlayerApiService playerApiService;
 	@Inject
 	private ConfigService configService;
+	@Inject
+	private VersionService versionService;
 
 	/**
 	 * Converts a message to Minecraft JSON formatting while applying the
@@ -451,7 +453,7 @@ public class VentureChatFormatService {
 
 	@SuppressWarnings("unchecked")
 	public String toColoredText(Object o, Class<?> c) {
-		if (VersionHandler.is1_7()) {
+		if (versionService.is1_7()) {
 			return "\"extra\":[{\"text\":\"Hover to see original message is not currently supported in 1.7\",\"color\":\"red\"}]";
 		}
 		List<Object> finalList = new ArrayList<>();
@@ -461,10 +463,10 @@ public class VentureChatFormatService {
 			splitComponents(finalList, o, c);
 			for (Object component : finalList) {
 				try {
-					if (VersionHandler.is1_8() || VersionHandler.is1_9() || VersionHandler.is1_10()
-							|| VersionHandler.is1_11() || VersionHandler.is1_12() || VersionHandler.is1_13()
-							|| VersionHandler.is1_14() || VersionHandler.is1_15() || VersionHandler.is1_16()
-							|| VersionHandler.is1_17()) {
+					if (versionService.is1_8() || versionService.is1_9() || versionService.is1_10()
+							|| versionService.is1_11() || versionService.is1_12() || versionService.is1_13()
+							|| versionService.is1_14() || versionService.is1_15() || versionService.is1_16()
+							|| versionService.is1_17()) {
 						String text = (String) component.getClass().getMethod("getText").invoke(component);
 						Object chatModifier = component.getClass().getMethod("getChatModifier").invoke(component);
 						Object color = chatModifier.getClass().getMethod("getColor").invoke(chatModifier);
@@ -533,12 +535,12 @@ public class VentureChatFormatService {
 		try {
 			splitComponents(finalList, o, c);
 			for (Object component : finalList) {
-				if (VersionHandler.is1_7()) {
+				if (versionService.is1_7()) {
 					stringbuilder.append((String) component.getClass().getMethod("e").invoke(component));
-				} else if (VersionHandler.is1_8() || VersionHandler.is1_9() || VersionHandler.is1_10()
-						|| VersionHandler.is1_11() || VersionHandler.is1_12() || VersionHandler.is1_13()
-						|| VersionHandler.is1_14() || VersionHandler.is1_15() || VersionHandler.is1_16()
-						|| VersionHandler.is1_17()) {
+				} else if (versionService.is1_8() || versionService.is1_9() || versionService.is1_10()
+						|| versionService.is1_11() || versionService.is1_12() || versionService.is1_13()
+						|| versionService.is1_14() || versionService.is1_15() || versionService.is1_16()
+						|| versionService.is1_17()) {
 					stringbuilder.append((String) component.getClass().getMethod("getText").invoke(component));
 				} else {
 					stringbuilder.append((String) component.getClass().getMethod("getString").invoke(component));
@@ -551,9 +553,9 @@ public class VentureChatFormatService {
 	}
 
 	private void splitComponents(List<Object> finalList, Object o, Class<?> c) throws Exception {
-		if (VersionHandler.is1_7() || VersionHandler.is1_8() || VersionHandler.is1_9() || VersionHandler.is1_10()
-				|| VersionHandler.is1_11() || VersionHandler.is1_12() || VersionHandler.is1_13()
-				|| (VersionHandler.is1_14() && !VersionHandler.is1_14_4())) {
+		if (versionService.is1_7() || versionService.is1_8() || versionService.is1_9() || versionService.is1_10()
+				|| versionService.is1_11() || versionService.is1_12() || versionService.is1_13()
+				|| (versionService.is1_14() && !versionService.is1_14_4())) {
 			ArrayList<?> list = (ArrayList<?>) c.getMethod("a").invoke(o, new Object[0]);
 			for (Object component : list) {
 				ArrayList<?> innerList = (ArrayList<?>) c.getMethod("a").invoke(component, new Object[0]);
@@ -563,8 +565,8 @@ public class VentureChatFormatService {
 					finalList.add(component);
 				}
 			}
-		} else if (VersionHandler.is1_14_4() || VersionHandler.is1_15() || VersionHandler.is1_16()
-				|| VersionHandler.is1_17()) {
+		} else if (versionService.is1_14_4() || versionService.is1_15() || versionService.is1_16()
+				|| versionService.is1_17()) {
 			ArrayList<?> list = (ArrayList<?>) c.getMethod("getSiblings").invoke(o, new Object[0]);
 			for (Object component : list) {
 				ArrayList<?> innerList = (ArrayList<?>) c.getMethod("getSiblings").invoke(component, new Object[0]);
@@ -637,7 +639,7 @@ public class VentureChatFormatService {
 	}
 
 	private Sound getDefaultMessageSound() {
-		if (VersionHandler.is1_7() || VersionHandler.is1_8()) {
+		if (versionService.is1_7() || versionService.is1_8()) {
 			return Sound.valueOf(DEFAULT_LEGACY_MESSAGE_SOUND);
 		} else {
 			return Sound.valueOf(DEFAULT_MESSAGE_SOUND);
