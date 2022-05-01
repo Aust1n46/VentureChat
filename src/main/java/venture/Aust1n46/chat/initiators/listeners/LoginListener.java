@@ -12,7 +12,6 @@ import org.bukkit.event.player.PlayerQuitEvent;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
-import venture.Aust1n46.chat.Logger;
 import venture.Aust1n46.chat.controllers.PluginMessageController;
 import venture.Aust1n46.chat.controllers.VentureChatSpigotFlatFileController;
 import venture.Aust1n46.chat.initiators.application.VentureChat;
@@ -23,6 +22,7 @@ import venture.Aust1n46.chat.service.ConfigService;
 import venture.Aust1n46.chat.service.UUIDService;
 import venture.Aust1n46.chat.service.VentureChatPlayerApiService;
 import venture.Aust1n46.chat.utilities.FormatUtils;
+import venture.Aust1n46.chat.xcut.Logger;
 
 /**
  * Manages player login and logout events.

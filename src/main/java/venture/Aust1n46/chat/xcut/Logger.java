@@ -1,4 +1,4 @@
-package venture.Aust1n46.chat;
+package venture.Aust1n46.chat.xcut;
 
 import org.slf4j.LoggerFactory;
 
