@@ -58,25 +58,24 @@ public class PreProcessCommandListener implements CommandExecutor, Listener {
 
 	@EventHandler
 	public void onPlayerCommandPreprocess(PlayerCommandPreprocessEvent event) throws FileNotFoundException {
-		if(event.getPlayer() == null) {
-			Bukkit.getConsoleSender().sendMessage(FormatUtils.FormatStringAll("&8[&eVentureChat&8]&c - Event.getPlayer() returned null in PlayerCommandPreprocessEvent"));	
+		if (event.getPlayer() == null) {
+			Bukkit.getConsoleSender().sendMessage(FormatUtils.FormatStringAll("&8[&eVentureChat&8]&c - Event.getPlayer() returned null in PlayerCommandPreprocessEvent"));
 			return;
 		}
 		ConfigurationSection cs = plugin.getConfig().getConfigurationSection("commandspy");
 		Boolean wec = cs.getBoolean("worldeditcommands", true);
 		VentureChatPlayer mcp = playerApiService.getOnlineMineverseChatPlayer(event.getPlayer());
-		if(!mcp.getPlayer().hasPermission("venturechat.commandspy.override")) {
-			for(VentureChatPlayer p : playerApiService.getOnlineMineverseChatPlayers()) {
-				if(p.hasCommandSpy()) {
-					if(wec) {
+		if (!mcp.getPlayer().hasPermission("venturechat.commandspy.override")) {
+			for (VentureChatPlayer p : playerApiService.getOnlineMineverseChatPlayers()) {
+				if (p.hasCommandSpy()) {
+					if (wec) {
 						p.getPlayer().sendMessage(FormatUtils.FormatStringAll(cs.getString("format").replace("{player}", mcp.getName()).replace("{command}", event.getMessage())));
-					}
-					else {
-						if(!(event.getMessage().toLowerCase().startsWith("//"))) {
-							p.getPlayer().sendMessage(FormatUtils.FormatStringAll(cs.getString("format").replace("{player}", mcp.getName()).replace("{command}", event.getMessage())));
-						}
-						else {
-							if(!(event.getMessage().toLowerCase().startsWith("//"))) {
+					} else {
+						if (!(event.getMessage().toLowerCase().startsWith("//"))) {
+							p.getPlayer()
+									.sendMessage(FormatUtils.FormatStringAll(cs.getString("format").replace("{player}", mcp.getName()).replace("{command}", event.getMessage())));
+						} else {
+							if (!(event.getMessage().toLowerCase().startsWith("//"))) {
 								p.getPlayer().sendMessage(ChatColor.GOLD + mcp.getName() + ": " + event.getMessage());
 							}
 						}
@@ -86,63 +85,66 @@ public class PreProcessCommandListener implements CommandExecutor, Listener {
 		}
 
 		String[] blocked = event.getMessage().split(" ");
-		if(mcp.getBlockedCommands().contains(blocked[0])) {
-			mcp.getPlayer().sendMessage(LocalizedMessage.BLOCKED_COMMAND.toString()
-					.replace("{command}", event.getMessage()));
+		if (mcp.getBlockedCommands().contains(blocked[0])) {
+			mcp.getPlayer().sendMessage(LocalizedMessage.BLOCKED_COMMAND.toString().replace("{command}", event.getMessage()));
 			event.setCancelled(true);
 			return;
 		}
 
 		String message = event.getMessage();
 
-		if(databaseService.isEnabled()) {
+		if (databaseService.isEnabled()) {
 			databaseService.writeVentureChat(mcp.getUuid().toString(), mcp.getName(), "Local", "Command_Component", event.getMessage().replace("'", "''"), "Command");
 		}
 
-		for(Alias a : configService.getAliases()) {
-			if(message.toLowerCase().substring(1).split(" ")[0].equals(a.getName().toLowerCase())) {
-				for(String s : a.getComponents()) {
-					if(!mcp.getPlayer().hasPermission(a.getPermission()) && a.hasPermission()) {
+		for (Alias a : configService.getAliases()) {
+			if (message.toLowerCase().substring(1).split(" ")[0].equals(a.getName().toLowerCase())) {
+				for (String s : a.getComponents()) {
+					if (!mcp.getPlayer().hasPermission(a.getPermission()) && a.hasPermission()) {
 						mcp.getPlayer().sendMessage(ChatColor.RED + "You do not have permission for this alias.");
 						event.setCancelled(true);
 						return;
 					}
 					int num = 1;
-					if(message.length() < a.getName().length() + 2 || a.getArguments() == 0) num = 0;
+					if (message.length() < a.getName().length() + 2 || a.getArguments() == 0)
+						num = 0;
 					int arg = 0;
-					if(message.substring(a.getName().length() + 1 + num).length() == 0) arg = 1;
+					if (message.substring(a.getName().length() + 1 + num).length() == 0)
+						arg = 1;
 					String[] args = message.substring(a.getName().length() + 1 + num).split(" ");
 					String send = "";
-					if(args.length - arg < a.getArguments()) {
+					if (args.length - arg < a.getArguments()) {
 						String keyword = "arguments.";
-						if(a.getArguments() == 1) keyword = "argument.";
+						if (a.getArguments() == 1)
+							keyword = "argument.";
 						mcp.getPlayer().sendMessage(ChatColor.RED + "Invalid arguments for this alias, enter at least " + a.getArguments() + " " + keyword);
 						event.setCancelled(true);
 						return;
 					}
-					for(int b = 0; b < args.length; b++) {
+					for (int b = 0; b < args.length; b++) {
 						send += " " + args[b];
 					}
-					if(send.length() > 0) send = send.substring(1);
+					if (send.length() > 0)
+						send = send.substring(1);
 					s = FormatUtils.FormatStringAll(s);
-					if(mcp.getPlayer().hasPermission("venturechat.color.legacy")) {
+					if (mcp.getPlayer().hasPermission("venturechat.color.legacy")) {
 						send = FormatUtils.FormatStringLegacyColor(send);
 					}
-					if(mcp.getPlayer().hasPermission("venturechat.color")) {
+					if (mcp.getPlayer().hasPermission("venturechat.color")) {
 						send = FormatUtils.FormatStringColor(send);
 					}
-					if(mcp.getPlayer().hasPermission("venturechat.format")) {
+					if (mcp.getPlayer().hasPermission("venturechat.format")) {
 						send = FormatUtils.FormatString(send);
 					}
-					if(s.startsWith("Command:")) {
+					if (s.startsWith("Command:")) {
 						mcp.getPlayer().chat(s.substring(9).replace("$", send));
 						event.setCancelled(true);
 					}
-					if(s.startsWith("Message:")) {
+					if (s.startsWith("Message:")) {
 						mcp.getPlayer().sendMessage(s.substring(9).replace("$", send));
 						event.setCancelled(true);
 					}
-					if(s.startsWith("Broadcast:")) {
+					if (s.startsWith("Broadcast:")) {
 						formatService.broadcastToServer(s.substring(11).replace("$", send));
 						event.setCancelled(true);
 					}
@@ -150,51 +152,55 @@ public class PreProcessCommandListener implements CommandExecutor, Listener {
 			}
 		}
 
-		if(!configService.areAliasesRegisteredAsCommands()) {
-			for(ChatChannel channel : configService.getChatChannels()) {
-				if(!channel.hasPermission() || mcp.getPlayer().hasPermission(channel.getPermission())) {
-					if(message.equals("/" + channel.getAlias())) {
-						mcp.getPlayer().sendMessage(LocalizedMessage.SET_CHANNEL.toString()
-								.replace("{channel_color}", channel.getColor() + "")
-								.replace("{channel_name}", channel.getName()));
-						if(mcp.hasConversation()) {
-							for(VentureChatPlayer p : playerApiService.getOnlineMineverseChatPlayers()) {
-								if(p.isSpy()) {
-									p.getPlayer().sendMessage(LocalizedMessage.EXIT_PRIVATE_CONVERSATION_SPY.toString()
-											.replace("{player_sender}", mcp.getName())
+		if (!configService.areAliasesRegisteredAsCommands()) {
+			for (ChatChannel channel : configService.getChatChannels()) {
+				if (!channel.hasPermission() || mcp.getPlayer().hasPermission(channel.getPermission())) {
+					if (message.equals("/" + channel.getAlias())) {
+						mcp.getPlayer().sendMessage(
+								LocalizedMessage.SET_CHANNEL.toString().replace("{channel_color}", channel.getColor() + "").replace("{channel_name}", channel.getName()));
+						if (mcp.hasConversation()) {
+							for (VentureChatPlayer p : playerApiService.getOnlineMineverseChatPlayers()) {
+								if (p.isSpy()) {
+									p.getPlayer().sendMessage(LocalizedMessage.EXIT_PRIVATE_CONVERSATION_SPY.toString().replace("{player_sender}", mcp.getName())
 											.replace("{player_receiver}", playerApiService.getMineverseChatPlayer(mcp.getConversation()).getName()));
 								}
 							}
-							mcp.getPlayer().sendMessage(LocalizedMessage.EXIT_PRIVATE_CONVERSATION.toString()
-									.replace("{player_receiver}", playerApiService.getMineverseChatPlayer(mcp.getConversation()).getName()));
+							mcp.getPlayer().sendMessage(LocalizedMessage.EXIT_PRIVATE_CONVERSATION.toString().replace("{player_receiver}",
+									playerApiService.getMineverseChatPlayer(mcp.getConversation()).getName()));
 							mcp.setConversation(null);
 						}
 						mcp.addListening(channel.getName());
 						mcp.setCurrentChannel(channel);
-						if(channel.getBungee()) {
+						if (channel.getBungee()) {
 							pluginMessageController.synchronize(mcp, true);
 						}
 						event.setCancelled(true);
 						return;
 					}
-					if(message.toLowerCase().startsWith("/" + channel.getAlias() + " ")) {
+					if (message.toLowerCase().startsWith("/" + channel.getAlias() + " ")) {
 						message = message.substring(channel.getAlias().length() + 1);
 						mcp.addListening(channel.getName());
-						if(channel.getBungee()) {
+						if (channel.getBungee()) {
 							pluginMessageController.synchronize(mcp, true);
 						}
 						mcp.setQuickChannel(channel);
-						/*String format = "";
-						if(plugin.getConfig().getConfigurationSection("channels." + channel.getName()).getString("format").equalsIgnoreCase("Default")) {
-							format = FormatTags.ChatFormat(ChatColor.valueOf(channel.getColor().toUpperCase()) + "[" + channel.getName() + "] {prefix}{name}" + ChatColor.valueOf(channel.getColor().toUpperCase()) + ":" + ChatColor.valueOf(channel.getChatColor().toUpperCase()), mcp.getPlayer(), plugin, cc, channel, plugin.getConfig().getBoolean("jsonFormat"));
-						}
-						else {
-							format = FormatTags.ChatFormat(plugin.getConfig().getConfigurationSection("channels." + channel.getName()).getString("format"), mcp.getPlayer(), plugin, cc, channel, plugin.getConfig().getBoolean("jsonFormat"));
-							if(plugin.getConfig().getBoolean("formatcleaner", false)) {
-								format = format.replace("[]", " ");
-								format = format.replace("    ", " ").replace("   ", " ").replace("  ", " ");
-							}
-						}*/
+						/*
+						 * String format = ""; if(plugin.getConfig().getConfigurationSection("channels."
+						 * + channel.getName()).getString("format").equalsIgnoreCase("Default")) {
+						 * format =
+						 * FormatTags.ChatFormat(ChatColor.valueOf(channel.getColor().toUpperCase()) +
+						 * "[" + channel.getName() + "] {prefix}{name}" +
+						 * ChatColor.valueOf(channel.getColor().toUpperCase()) + ":" +
+						 * ChatColor.valueOf(channel.getChatColor().toUpperCase()), mcp.getPlayer(),
+						 * plugin, cc, channel, plugin.getConfig().getBoolean("jsonFormat")); } else {
+						 * format =
+						 * FormatTags.ChatFormat(plugin.getConfig().getConfigurationSection("channels."
+						 * + channel.getName()).getString("format"), mcp.getPlayer(), plugin, cc,
+						 * channel, plugin.getConfig().getBoolean("jsonFormat"));
+						 * if(plugin.getConfig().getBoolean("formatcleaner", false)) { format =
+						 * format.replace("[]", " "); format = format.replace("    ",
+						 * " ").replace("   ", " ").replace("  ", " "); } }
+						 */
 						mcp.setQuickChat(true);
 						mcp.getPlayer().chat(message);
 						event.setCancelled(true);
@@ -204,39 +210,40 @@ public class PreProcessCommandListener implements CommandExecutor, Listener {
 		}
 	}
 
-	//old 1.8 command map
+	// old 1.8 command map
 	@EventHandler
 	public void onServerCommand(ServerCommandEvent event) {
 		if (databaseService.isEnabled()) {
-			databaseService.writeVentureChat("N/A", "Console", "Local", "Command_Component", event.getCommand().replace("'", "''") , "Command");
+			databaseService.writeVentureChat("N/A", "Console", "Local", "Command_Component", event.getCommand().replace("'", "''"), "Command");
 		}
 	}
 
 	/**
-     * Unused
-     */
+	 * Unused
+	 */
 	@Override
 	public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-		if(!(sender instanceof Player)) {
+		if (!(sender instanceof Player)) {
 			plugin.getServer().getConsoleSender().sendMessage(ChatColor.RED + "This command must be run by a player.");
 			return true;
 		}
 		VentureChatPlayer mcp = playerApiService.getOnlineMineverseChatPlayer((Player) sender);
-		for(ChatChannel channel : configService.getChatChannels()) {
-			if(command.getName().toLowerCase().equals(channel.getAlias())) {
-				if(args.length == 0) {
+		for (ChatChannel channel : configService.getChatChannels()) {
+			if (command.getName().toLowerCase().equals(channel.getAlias())) {
+				if (args.length == 0) {
 					mcp.getPlayer().sendMessage(ChatColor.RED + "Invalid command: /" + channel.getAlias() + " message");
 					return true;
 				}
 				mcp.setQuickChat(true);
 				mcp.setQuickChannel(channel);
 				mcp.addListening(channel.getName());
-				if(channel.getBungee()) {
+				if (channel.getBungee()) {
 					pluginMessageController.synchronize(mcp, true);
 				}
 				String msg = "";
-				for(int x = 0; x < args.length; x++) {
-					if(args[x].length() > 0) msg += " " + args[x];
+				for (int x = 0; x < args.length; x++) {
+					if (args[x].length() > 0)
+						msg += " " + args[x];
 				}
 				mcp.getPlayer().chat(msg);
 				return true;
@@ -248,7 +255,7 @@ public class PreProcessCommandListener implements CommandExecutor, Listener {
 	@SuppressWarnings("deprecation")
 	@EventHandler(priority = EventPriority.LOW)
 	public void InventoryClick(InventoryClickEvent e) {
-		if(!e.getView().getTitle().contains("VentureChat")) {
+		if (!e.getView().getTitle().contains("VentureChat")) {
 			return;
 		}
 		e.setCancelled(true);
@@ -263,26 +270,24 @@ public class PreProcessCommandListener implements CommandExecutor, Listener {
 		SkullMeta skullMeta = (SkullMeta) skull.getItemMeta();
 		ChatChannel channel = configService.getChannel(ChatColor.stripColor(skullMeta.getLore().get(0)).replace("Channel: ", ""));
 		int hash = Integer.parseInt(ChatColor.stripColor(skullMeta.getLore().get(1).replace("Hash: ", "")));
-		if(versionService.is1_7()) {
-			if(item.getType() == Material.BEDROCK) {
+		if (versionService.is1_7()) {
+			if (item.getType() == Material.BEDROCK) {
+				mcp.getPlayer().closeInventory();
+			}
+		} else {
+			if (item.getType() == Material.BARRIER) {
 				mcp.getPlayer().closeInventory();
 			}
 		}
-		else {
-			if(item.getType() == Material.BARRIER) {
-				mcp.getPlayer().closeInventory();
-			}
-		}
-		for(GuiSlot g : configService.getGuiSlots()) {
-			if(g.getIcon() == item.getType() && g.getDurability() == item.getDurability() && g.getSlot() == e.getSlot()) {
+		for (GuiSlot g : configService.getGuiSlots()) {
+			if (g.getIcon() == item.getType() && g.getDurability() == item.getDurability() && g.getSlot() == e.getSlot()) {
 				String command = g.getCommand().replace("{channel}", channel.getName()).replace("{hash}", hash + "");
-				if(target != null) {
+				if (target != null) {
 					command = command.replace("{player_name}", target.getName());
-					if(target.isOnline()) {
+					if (target.isOnline()) {
 						command = FormatUtils.FormatStringAll(PlaceholderAPI.setBracketPlaceholders(target.getPlayer(), command));
 					}
-				}
-				else {
+				} else {
 					command = command.replace("{player_name}", "Discord_Message");
 				}
 				mcp.getPlayer().chat(command);
