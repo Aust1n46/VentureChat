@@ -4,6 +4,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.util.Set;
 
+import mineverse.Aust1n46.chat.api.events.PrivateMessageEvent;
 import net.essentialsx.api.v2.services.discord.DiscordService;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -130,6 +131,12 @@ public class ChatListener implements Listener {
 				send = Format.FormatStringAll(PlaceholderAPI.setBracketPlaceholders(tp.getPlayer(), send.replaceAll("receiver_", ""))) + filtered;
 				echo = Format.FormatStringAll(PlaceholderAPI.setBracketPlaceholders(tp.getPlayer(), echo.replaceAll("receiver_", ""))) + filtered;
 				spy = Format.FormatStringAll(PlaceholderAPI.setBracketPlaceholders(tp.getPlayer(), spy.replaceAll("receiver_", ""))) + filtered;
+
+				PrivateMessageEvent privateMessageEvent = new PrivateMessageEvent(mcp, tp, filtered, echo, send, spy, false);
+				Bukkit.getPluginManager().callEvent(privateMessageEvent);
+				send = privateMessageEvent.getSend();
+				echo = privateMessageEvent.getEcho();
+				spy = privateMessageEvent.getSpy();
 				
 				if(!mcp.getPlayer().hasPermission("venturechat.spy.override")) {
 					for(MineverseChatPlayer p : MineverseChatAPI.getOnlineMineverseChatPlayers()) {

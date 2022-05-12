@@ -3,6 +3,8 @@ package mineverse.Aust1n46.chat.command.message;
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 
+import mineverse.Aust1n46.chat.api.events.PrivateMessageEvent;
+import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -80,6 +82,12 @@ public class Reply extends Command {
 					send = Format.FormatStringAll(PlaceholderAPI.setBracketPlaceholders(player.getPlayer(), send.replaceAll("receiver_", ""))) + msg;
 					echo = Format.FormatStringAll(PlaceholderAPI.setBracketPlaceholders(player.getPlayer(), echo.replaceAll("receiver_", ""))) + msg;
 					spy = Format.FormatStringAll(PlaceholderAPI.setBracketPlaceholders(player.getPlayer(), spy.replaceAll("receiver_", ""))) + msg;
+
+					PrivateMessageEvent privateMessageEvent = new PrivateMessageEvent(mcp, player, msg, echo, send, spy, false);
+					Bukkit.getPluginManager().callEvent(privateMessageEvent);
+					send = privateMessageEvent.getSend();
+					echo = privateMessageEvent.getEcho();
+					spy = privateMessageEvent.getSpy();
 
 					if (!mcp.getPlayer().hasPermission("venturechat.spy.override")) {
 						for (MineverseChatPlayer p : MineverseChatAPI.getOnlineMineverseChatPlayers()) {

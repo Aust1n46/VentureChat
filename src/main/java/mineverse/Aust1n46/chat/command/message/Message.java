@@ -6,6 +6,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import mineverse.Aust1n46.chat.api.events.PrivateMessageEvent;
+import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -90,6 +92,12 @@ public class Message extends Command {
 				send = Format.FormatStringAll(PlaceholderAPI.setBracketPlaceholders(player.getPlayer(), send.replaceAll("receiver_", ""))) + msg;
 				echo = Format.FormatStringAll(PlaceholderAPI.setBracketPlaceholders(player.getPlayer(), echo.replaceAll("receiver_", ""))) + msg;
 				spy = Format.FormatStringAll(PlaceholderAPI.setBracketPlaceholders(player.getPlayer(), spy.replaceAll("receiver_", ""))) + msg;
+
+				PrivateMessageEvent privateMessageEvent = new PrivateMessageEvent(mcp, player, msg, echo, send, spy, false);
+				Bukkit.getPluginManager().callEvent(privateMessageEvent);
+				send = privateMessageEvent.getSend();
+				echo = privateMessageEvent.getEcho();
+				spy = privateMessageEvent.getSpy();
 
 				player.setReplyPlayer(mcp.getUUID());
 				mcp.setReplyPlayer(player.getUUID());

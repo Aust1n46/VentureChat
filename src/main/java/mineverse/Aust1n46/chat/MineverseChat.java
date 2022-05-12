@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
+import mineverse.Aust1n46.chat.api.events.PrivateMessageEvent;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -968,6 +969,7 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 					String echo = msgin.readUTF();
 					String spy = msgin.readUTF();
 					String msg = msgin.readUTF();
+
 					if(!getConfig().getBoolean("bungeecordmessaging", true) || p == null) {
 						out.writeUTF("Message");
 						out.writeUTF("Offline");
@@ -995,7 +997,18 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 						sendPluginMessage(stream);
 						return;
 					}
-					p.getPlayer().sendMessage(Format.FormatStringAll(PlaceholderAPI.setBracketPlaceholders(p.getPlayer(), send.replaceAll("receiver_", ""))) + msg);
+
+					send = Format.FormatStringAll(PlaceholderAPI.setBracketPlaceholders(p.getPlayer(), send.replaceAll("receiver_", ""))) + msg;
+					echo = Format.FormatStringAll(PlaceholderAPI.setBracketPlaceholders(p.getPlayer(), echo.replaceAll("receiver_", ""))) + msg;
+					spy = Format.FormatStringAll(PlaceholderAPI.setBracketPlaceholders(p.getPlayer(), spy.replaceAll("receiver_", ""))) + msg;
+
+					PrivateMessageEvent privateMessageEvent = new PrivateMessageEvent(MineverseChatAPI.getOnlineMineverseChatPlayer(sender), p, msg, echo, send, spy, true);
+					Bukkit.getPluginManager().callEvent(privateMessageEvent);
+					send = privateMessageEvent.getSend();
+					echo = privateMessageEvent.getEcho();
+					spy = privateMessageEvent.getSpy();
+
+					p.getPlayer().sendMessage(send);
 					if(p.hasNotifications()) {
 						Format.playMessageSound(p);
 					}
@@ -1012,8 +1025,8 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 					out.writeUTF(p.getUUID().toString());
 					out.writeUTF(sender.toString());
 					out.writeUTF(sName);
-					out.writeUTF(Format.FormatStringAll(PlaceholderAPI.setBracketPlaceholders(p.getPlayer(), echo.replaceAll("receiver_", ""))) + msg);
-					out.writeUTF(Format.FormatStringAll(PlaceholderAPI.setBracketPlaceholders(p.getPlayer(), spy.replaceAll("receiver_", ""))) + msg);
+					out.writeUTF(echo);
+					out.writeUTF(spy);
 					sendPluginMessage(stream);
 					return;
 				}
