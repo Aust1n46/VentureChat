@@ -3,11 +3,13 @@ package venture.Aust1n46.chat.initators.commands;
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 import com.google.inject.Inject;
 
 import me.clip.placeholderapi.PlaceholderAPI;
+import venture.Aust1n46.chat.api.events.PrivateMessageEvent;
 import venture.Aust1n46.chat.controllers.PluginMessageController;
 import venture.Aust1n46.chat.initiators.application.VentureChat;
 import venture.Aust1n46.chat.localization.LocalizedMessage;
@@ -93,6 +95,12 @@ public class Reply extends PlayerCommand {
 					send = FormatUtils.FormatStringAll(PlaceholderAPI.setBracketPlaceholders(player.getPlayer(), send.replaceAll("receiver_", ""))) + msg;
 					echo = FormatUtils.FormatStringAll(PlaceholderAPI.setBracketPlaceholders(player.getPlayer(), echo.replaceAll("receiver_", ""))) + msg;
 					spy = FormatUtils.FormatStringAll(PlaceholderAPI.setBracketPlaceholders(player.getPlayer(), spy.replaceAll("receiver_", ""))) + msg;
+
+					PrivateMessageEvent privateMessageEvent = new PrivateMessageEvent(mcp, player, msg, echo, send, spy, false);
+					Bukkit.getPluginManager().callEvent(privateMessageEvent);
+					send = privateMessageEvent.getSend();
+					echo = privateMessageEvent.getEcho();
+					spy = privateMessageEvent.getSpy();
 
 					if (!mcp.getPlayer().hasPermission("venturechat.spy.override")) {
 						for (VentureChatPlayer p : playerApiService.getOnlineMineverseChatPlayers()) {
