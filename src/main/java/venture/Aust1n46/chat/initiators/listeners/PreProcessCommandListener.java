@@ -2,7 +2,6 @@ package venture.Aust1n46.chat.initiators.listeners;
 
 import java.io.FileNotFoundException;
 
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.command.Command;
@@ -59,7 +58,8 @@ public class PreProcessCommandListener implements CommandExecutor, Listener {
 	@EventHandler
 	public void onPlayerCommandPreprocess(PlayerCommandPreprocessEvent event) throws FileNotFoundException {
 		if (event.getPlayer() == null) {
-			Bukkit.getConsoleSender().sendMessage(FormatUtils.FormatStringAll("&8[&eVentureChat&8]&c - Event.getPlayer() returned null in PlayerCommandPreprocessEvent"));
+			plugin.getServer().getConsoleSender()
+					.sendMessage(FormatUtils.FormatStringAll("&8[&eVentureChat&8]&c - Event.getPlayer() returned null in PlayerCommandPreprocessEvent"));
 			return;
 		}
 		ConfigurationSection cs = plugin.getConfig().getConfigurationSection("commandspy");

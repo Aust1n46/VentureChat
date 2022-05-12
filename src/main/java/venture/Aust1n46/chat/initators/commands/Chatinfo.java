@@ -1,6 +1,5 @@
 package venture.Aust1n46.chat.initators.commands;
 
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -29,7 +28,7 @@ public class Chatinfo extends UniversalCommand {
 		if (sender.hasPermission("venturechat.chatinfo")) {
 			if (args.length == 0) {
 				if (!(sender instanceof Player)) {
-					Bukkit.getServer().getConsoleSender().sendMessage(ChatColor.RED + "This command must be run by a player; use /ci [name]");
+					plugin.getServer().getConsoleSender().sendMessage(ChatColor.RED + "This command must be run by a player; use /ci [name]");
 					return;
 				}
 				VentureChatPlayer mcp = playerApiService.getOnlineMineverseChatPlayer((Player) sender);

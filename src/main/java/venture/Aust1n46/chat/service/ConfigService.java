@@ -6,7 +6,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 
-import org.bukkit.Bukkit;
 import org.bukkit.configuration.ConfigurationSection;
 
 import com.google.inject.Inject;
@@ -65,7 +64,7 @@ public class ConfigService {
 		}
 		// Error handling for missing default channel in the config.
 		if (defaultChatChannel == null) {
-			Bukkit.getConsoleSender().sendMessage(FormatUtils.FormatStringAll("&8[&eVentureChat&8]&e - &cNo default channel found!"));
+			plugin.getServer().getConsoleSender().sendMessage(FormatUtils.FormatStringAll("&8[&eVentureChat&8]&e - &cNo default channel found!"));
 			defaultChatChannel = new ChatChannel("MissingDefault", "red", "red", "None", "None", false, true, true, "md", 0, true, false, 0, "&f[&cMissingDefault&f]",
 					"{venturechat_channel_prefix} {vault_prefix}{player_displayname}&c:");
 			defaultColor = defaultChatChannel.getColor();

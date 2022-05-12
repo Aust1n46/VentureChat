@@ -1,6 +1,5 @@
 package venture.Aust1n46.chat.initators.commands;
 
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 import com.google.inject.Inject;
@@ -40,7 +39,7 @@ public class Channel extends PlayerCommand {
 			ChatChannel channel = configService.getChannel(args[0]);
 			ChannelJoinEvent channelJoinEvent = new ChannelJoinEvent(mcp.getPlayer(), channel,
 					LocalizedMessage.SET_CHANNEL.toString().replace("{channel_color}", channel.getColor() + "").replace("{channel_name}", channel.getName()));
-			Bukkit.getServer().getPluginManager().callEvent(channelJoinEvent);
+			plugin.getServer().getPluginManager().callEvent(channelJoinEvent);
 			handleChannelJoinEvent(channelJoinEvent);
 			return;
 		}

@@ -3,7 +3,6 @@ package venture.Aust1n46.chat.initators.commands;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -79,7 +78,7 @@ public class VentureChatGui extends PlayerCommand {
 
 	@SuppressWarnings("deprecation")
 	private void openInventory(VentureChatPlayer mcp, VentureChatPlayer target, ChatChannel channel, int hash) {
-		Inventory inv = Bukkit.createInventory(null, this.getSlots(), "VentureChat: " + target.getName() + " GUI");
+		Inventory inv = plugin.getServer().createInventory(null, this.getSlots(), "VentureChat: " + target.getName() + " GUI");
 		ItemStack close = null;
 		ItemStack skull = null;
 		if (versionService.is1_7()) {
@@ -136,7 +135,7 @@ public class VentureChatGui extends PlayerCommand {
 
 	@SuppressWarnings("deprecation")
 	private void openInventoryDiscord(VentureChatPlayer mcp, ChatChannel channel, int hash) {
-		Inventory inv = Bukkit.createInventory(null, this.getSlots(), "VentureChat: Discord_Message GUI");
+		Inventory inv = plugin.getServer().createInventory(null, this.getSlots(), "VentureChat: Discord_Message GUI");
 		ItemStack close = null;
 		ItemStack skull = null;
 		if (versionService.is1_7()) {

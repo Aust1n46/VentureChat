@@ -14,7 +14,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
@@ -109,8 +108,7 @@ public class VentureChatFormatService {
 				indexStart = matcher.start();
 				indexEnd = matcher.end();
 				placeholder = remaining.substring(indexStart, indexEnd);
-				formattedPlaceholder = FormatUtils
-						.FormatStringAll(PlaceholderAPI.setBracketPlaceholders(icp.getPlayer(), placeholder));
+				formattedPlaceholder = FormatUtils.FormatStringAll(PlaceholderAPI.setBracketPlaceholders(icp.getPlayer(), placeholder));
 				temp += convertToJsonColors(lastCode + remaining.substring(0, indexStart)) + ",";
 				lastCode = getLastCode(lastCode + remaining.substring(0, indexStart));
 				String action = "";
@@ -119,22 +117,17 @@ public class VentureChatFormatService {
 				for (JsonAttribute jsonAttribute : format.getJsonAttributes()) {
 					if (placeholder.contains(jsonAttribute.getName().replace("{", "").replace("}", ""))) {
 						action = jsonAttribute.getClickAction();
-						text = FormatUtils.FormatStringAll(
-								PlaceholderAPI.setBracketPlaceholders(icp.getPlayer(), jsonAttribute.getClickText()));
+						text = FormatUtils.FormatStringAll(PlaceholderAPI.setBracketPlaceholders(icp.getPlayer(), jsonAttribute.getClickText()));
 						for (String st : jsonAttribute.getHoverText()) {
 							hover += FormatUtils.FormatStringAll(st) + "\n";
 						}
 					}
 				}
 				if (!hover.isEmpty()) {
-					hover = FormatUtils.FormatStringAll(PlaceholderAPI.setBracketPlaceholders(icp.getPlayer(),
-							hover.substring(0, hover.length() - 1)));
+					hover = FormatUtils.FormatStringAll(PlaceholderAPI.setBracketPlaceholders(icp.getPlayer(), hover.substring(0, hover.length() - 1)));
 				}
-				temp += convertToJsonColors(lastCode + formattedPlaceholder,
-						",\"clickEvent\":{\"action\":\"" + action + "\",\"value\":\"" + text
-								+ "\"},\"hoverEvent\":{\"action\":\"show_text\",\"value\":{\"text\":\"\",\"extra\":["
-								+ convertToJsonColors(hover) + "]}}")
-						+ ",";
+				temp += convertToJsonColors(lastCode + formattedPlaceholder, ",\"clickEvent\":{\"action\":\"" + action + "\",\"value\":\"" + text
+						+ "\"},\"hoverEvent\":{\"action\":\"show_text\",\"value\":{\"text\":\"\",\"extra\":[" + convertToJsonColors(hover) + "]}}") + ",";
 				lastCode = getLastCode(lastCode + formattedPlaceholder);
 				remaining = remaining.substring(indexEnd);
 			} else {
@@ -159,9 +152,8 @@ public class VentureChatFormatService {
 		String link = "";
 		String lastCode = DEFAULT_COLOR_CODE;
 		do {
-			Pattern pattern = Pattern.compile(
-					"([a-zA-Z0-9" + BUKKIT_COLOR_CODE_PREFIX + "\\-:/]+\\.[a-zA-Z/0-9" + BUKKIT_COLOR_CODE_PREFIX
-							+ "\\-:_#]+(\\.[a-zA-Z/0-9." + BUKKIT_COLOR_CODE_PREFIX + "\\-:;,#\\?\\+=_]+)?)");
+			Pattern pattern = Pattern.compile("([a-zA-Z0-9" + BUKKIT_COLOR_CODE_PREFIX + "\\-:/]+\\.[a-zA-Z/0-9" + BUKKIT_COLOR_CODE_PREFIX + "\\-:_#]+(\\.[a-zA-Z/0-9."
+					+ BUKKIT_COLOR_CODE_PREFIX + "\\-:;,#\\?\\+=_]+)?)");
 			Matcher matcher = pattern.matcher(remaining);
 			if (matcher.find()) {
 				indexLink = matcher.start();
@@ -173,11 +165,9 @@ public class VentureChatFormatService {
 				if (ChatColor.stripColor(link).contains("https://"))
 					https = "s";
 				temp += convertToJsonColors(lastCode + link,
-						",\"underlined\":\"" + underlineURLs()
-								+ "\",\"clickEvent\":{\"action\":\"open_url\",\"value\":\"http" + https + "://"
+						",\"underlined\":\"" + underlineURLs() + "\",\"clickEvent\":{\"action\":\"open_url\",\"value\":\"http" + https + "://"
 								+ ChatColor.stripColor(link.replace("http://", "").replace("https://", ""))
-								+ "\"},\"hoverEvent\":{\"action\":\"show_text\",\"value\":{\"text\":\"\",\"extra\":["
-								+ convertToJsonColors(lastCode + link) + "]}}")
+								+ "\"},\"hoverEvent\":{\"action\":\"show_text\",\"value\":{\"text\":\"\",\"extra\":[" + convertToJsonColors(lastCode + link) + "]}}")
 						+ ",";
 				lastCode = getLastCode(lastCode + link);
 				remaining = remaining.substring(indexLinkEnd);
@@ -196,25 +186,18 @@ public class VentureChatFormatService {
 			if (String.valueOf(ch[a + 1]).matches("[lkomnLKOMN]") && ch[a] == BUKKIT_COLOR_CODE_PREFIX_CHAR) {
 				ts += String.valueOf(ch[a]) + ch[a + 1];
 				a++;
-			} else if (String.valueOf(ch[a + 1]).matches("[0123456789abcdefrABCDEFR]")
-					&& ch[a] == BUKKIT_COLOR_CODE_PREFIX_CHAR) {
+			} else if (String.valueOf(ch[a + 1]).matches("[0123456789abcdefrABCDEFR]") && ch[a] == BUKKIT_COLOR_CODE_PREFIX_CHAR) {
 				ts = String.valueOf(ch[a]) + ch[a + 1];
 				a++;
 			} else if (ch[a + 1] == 'x' && ch[a] == BUKKIT_COLOR_CODE_PREFIX_CHAR) {
 				if (ch.length > a + 13) {
-					if (String.valueOf(ch[a + 3]).matches("[0123456789abcdefABCDEF]")
-							&& String.valueOf(ch[a + 5]).matches("[0123456789abcdefABCDEF]")
-							&& String.valueOf(ch[a + 7]).matches("[0123456789abcdefABCDEF]")
-							&& String.valueOf(ch[a + 9]).matches("[0123456789abcdefABCDEF]")
-							&& String.valueOf(ch[a + 11]).matches("[0123456789abcdefABCDEF]")
-							&& String.valueOf(ch[a + 13]).matches("[0123456789abcdefABCDEF]")
-							&& ch[a + 2] == BUKKIT_COLOR_CODE_PREFIX_CHAR && ch[a + 4] == BUKKIT_COLOR_CODE_PREFIX_CHAR
-							&& ch[a + 6] == BUKKIT_COLOR_CODE_PREFIX_CHAR && ch[a + 8] == BUKKIT_COLOR_CODE_PREFIX_CHAR
-							&& ch[a + 10] == BUKKIT_COLOR_CODE_PREFIX_CHAR
-							&& ch[a + 12] == BUKKIT_COLOR_CODE_PREFIX_CHAR) {
-						ts = String.valueOf(ch[a]) + ch[a + 1] + ch[a + 2] + ch[a + 3] + ch[a + 4] + ch[a + 5]
-								+ ch[a + 6] + ch[a + 7] + ch[a + 8] + ch[a + 9] + ch[a + 10] + ch[a + 11] + ch[a + 12]
-								+ ch[a + 13];
+					if (String.valueOf(ch[a + 3]).matches("[0123456789abcdefABCDEF]") && String.valueOf(ch[a + 5]).matches("[0123456789abcdefABCDEF]")
+							&& String.valueOf(ch[a + 7]).matches("[0123456789abcdefABCDEF]") && String.valueOf(ch[a + 9]).matches("[0123456789abcdefABCDEF]")
+							&& String.valueOf(ch[a + 11]).matches("[0123456789abcdefABCDEF]") && String.valueOf(ch[a + 13]).matches("[0123456789abcdefABCDEF]")
+							&& ch[a + 2] == BUKKIT_COLOR_CODE_PREFIX_CHAR && ch[a + 4] == BUKKIT_COLOR_CODE_PREFIX_CHAR && ch[a + 6] == BUKKIT_COLOR_CODE_PREFIX_CHAR
+							&& ch[a + 8] == BUKKIT_COLOR_CODE_PREFIX_CHAR && ch[a + 10] == BUKKIT_COLOR_CODE_PREFIX_CHAR && ch[a + 12] == BUKKIT_COLOR_CODE_PREFIX_CHAR) {
+						ts = String.valueOf(ch[a]) + ch[a + 1] + ch[a + 2] + ch[a + 3] + ch[a + 4] + ch[a + 5] + ch[a + 6] + ch[a + 7] + ch[a + 8] + ch[a + 9] + ch[a + 10]
+								+ ch[a + 11] + ch[a + 12] + ch[a + 13];
 						a += 13;
 					}
 				}
@@ -266,9 +249,7 @@ public class VentureChatFormatService {
 			color = remaining.substring(1, indexColor + LEGACY_COLOR_CODE_LENGTH);
 			if (color.equals(BUKKIT_HEX_COLOR_CODE_PREFIX)) {
 				if (remaining.length() >= HEX_COLOR_CODE_LENGTH) {
-					color = HEX_COLOR_CODE_PREFIX
-							+ remaining.substring(LEGACY_COLOR_CODE_LENGTH, indexColor + HEX_COLOR_CODE_LENGTH)
-									.replace(BUKKIT_COLOR_CODE_PREFIX, "");
+					color = HEX_COLOR_CODE_PREFIX + remaining.substring(LEGACY_COLOR_CODE_LENGTH, indexColor + HEX_COLOR_CODE_LENGTH).replace(BUKKIT_COLOR_CODE_PREFIX, "");
 					colorLength = HEX_COLOR_CODE_LENGTH;
 					bold = false;
 					obfuscated = false;
@@ -341,8 +322,7 @@ public class VentureChatFormatService {
 			if (indexNextColor == -1) {
 				indexNextColor = remaining.length();
 			}
-			temp += "{\"text\":\"" + remaining.substring(0, indexNextColor) + "\",\"color\":\""
-					+ hexidecimalToJsonColorRGB(color) + "\"" + modifier + extensions + "},";
+			temp += "{\"text\":\"" + remaining.substring(0, indexNextColor) + "\",\"color\":\"" + hexidecimalToJsonColorRGB(color) + "\"" + modifier + extensions + "},";
 			remaining = remaining.substring(indexNextColor);
 		} while (remaining.length() > 1 && indexColor != -1);
 		if (temp.length() > 1)
@@ -418,11 +398,9 @@ public class VentureChatFormatService {
 		if (player.hasPermission("venturechat.gui")) {
 			json = json.substring(0, json.length() - 1);
 			json += "," + convertToJsonColors(FormatUtils.FormatStringAll(plugin.getConfig().getString("guiicon")),
-					",\"clickEvent\":{\"action\":\"run_command\",\"value\":\"/vchatgui " + sender + " " + channelName
-							+ " " + hash
+					",\"clickEvent\":{\"action\":\"run_command\",\"value\":\"/vchatgui " + sender + " " + channelName + " " + hash
 							+ "\"},\"hoverEvent\":{\"action\":\"show_text\",\"value\":{\"text\":\"\",\"extra\":["
-							+ convertToJsonColors(FormatUtils.FormatStringAll(plugin.getConfig().getString("guitext")))
-							+ "]}}")
+							+ convertToJsonColors(FormatUtils.FormatStringAll(plugin.getConfig().getString("guitext"))) + "]}}")
 					+ "]";
 		}
 		return json;
@@ -463,10 +441,8 @@ public class VentureChatFormatService {
 			splitComponents(finalList, o, c);
 			for (Object component : finalList) {
 				try {
-					if (versionService.is1_8() || versionService.is1_9() || versionService.is1_10()
-							|| versionService.is1_11() || versionService.is1_12() || versionService.is1_13()
-							|| versionService.is1_14() || versionService.is1_15() || versionService.is1_16()
-							|| versionService.is1_17()) {
+					if (versionService.is1_8() || versionService.is1_9() || versionService.is1_10() || versionService.is1_11() || versionService.is1_12() || versionService.is1_13()
+							|| versionService.is1_14() || versionService.is1_15() || versionService.is1_16() || versionService.is1_17()) {
 						String text = (String) component.getClass().getMethod("getText").invoke(component);
 						Object chatModifier = component.getClass().getMethod("getChatModifier").invoke(component);
 						Object color = chatModifier.getClass().getMethod("getColor").invoke(chatModifier);
@@ -475,13 +451,10 @@ public class VentureChatFormatService {
 							colorString = color.getClass().getMethod("b").invoke(color).toString();
 						}
 						boolean bold = (boolean) chatModifier.getClass().getMethod("isBold").invoke(chatModifier);
-						boolean strikethrough = (boolean) chatModifier.getClass().getMethod("isStrikethrough")
-								.invoke(chatModifier);
+						boolean strikethrough = (boolean) chatModifier.getClass().getMethod("isStrikethrough").invoke(chatModifier);
 						boolean italic = (boolean) chatModifier.getClass().getMethod("isItalic").invoke(chatModifier);
-						boolean underlined = (boolean) chatModifier.getClass().getMethod("isUnderlined")
-								.invoke(chatModifier);
-						boolean obfuscated = (boolean) chatModifier.getClass().getMethod("isRandom")
-								.invoke(chatModifier);
+						boolean underlined = (boolean) chatModifier.getClass().getMethod("isUnderlined").invoke(chatModifier);
+						boolean obfuscated = (boolean) chatModifier.getClass().getMethod("isRandom").invoke(chatModifier);
 						JSONObject jsonObject = new JSONObject();
 						jsonObject.put("text", text);
 						jsonObject.put("color", colorString);
@@ -537,10 +510,8 @@ public class VentureChatFormatService {
 			for (Object component : finalList) {
 				if (versionService.is1_7()) {
 					stringbuilder.append((String) component.getClass().getMethod("e").invoke(component));
-				} else if (versionService.is1_8() || versionService.is1_9() || versionService.is1_10()
-						|| versionService.is1_11() || versionService.is1_12() || versionService.is1_13()
-						|| versionService.is1_14() || versionService.is1_15() || versionService.is1_16()
-						|| versionService.is1_17()) {
+				} else if (versionService.is1_8() || versionService.is1_9() || versionService.is1_10() || versionService.is1_11() || versionService.is1_12()
+						|| versionService.is1_13() || versionService.is1_14() || versionService.is1_15() || versionService.is1_16() || versionService.is1_17()) {
 					stringbuilder.append((String) component.getClass().getMethod("getText").invoke(component));
 				} else {
 					stringbuilder.append((String) component.getClass().getMethod("getString").invoke(component));
@@ -553,9 +524,8 @@ public class VentureChatFormatService {
 	}
 
 	private void splitComponents(List<Object> finalList, Object o, Class<?> c) throws Exception {
-		if (versionService.is1_7() || versionService.is1_8() || versionService.is1_9() || versionService.is1_10()
-				|| versionService.is1_11() || versionService.is1_12() || versionService.is1_13()
-				|| (versionService.is1_14() && !versionService.is1_14_4())) {
+		if (versionService.is1_7() || versionService.is1_8() || versionService.is1_9() || versionService.is1_10() || versionService.is1_11() || versionService.is1_12()
+				|| versionService.is1_13() || (versionService.is1_14() && !versionService.is1_14_4())) {
 			ArrayList<?> list = (ArrayList<?>) c.getMethod("a").invoke(o, new Object[0]);
 			for (Object component : list) {
 				ArrayList<?> innerList = (ArrayList<?>) c.getMethod("a").invoke(component, new Object[0]);
@@ -565,8 +535,7 @@ public class VentureChatFormatService {
 					finalList.add(component);
 				}
 			}
-		} else if (versionService.is1_14_4() || versionService.is1_15() || versionService.is1_16()
-				|| versionService.is1_17()) {
+		} else if (versionService.is1_14_4() || versionService.is1_15() || versionService.is1_16() || versionService.is1_17()) {
 			ArrayList<?> list = (ArrayList<?>) c.getMethod("getSiblings").invoke(o, new Object[0]);
 			for (Object component : list) {
 				ArrayList<?> innerList = (ArrayList<?>) c.getMethod("getSiblings").invoke(component, new Object[0]);
@@ -629,12 +598,10 @@ public class VentureChatFormatService {
 	}
 
 	private Sound getSound(String soundName) {
-		if (Arrays.asList(Sound.values()).stream().map(Sound::toString).collect(Collectors.toList())
-				.contains(soundName)) {
+		if (Arrays.asList(Sound.values()).stream().map(Sound::toString).collect(Collectors.toList()).contains(soundName)) {
 			return Sound.valueOf(soundName);
 		}
-		Bukkit.getConsoleSender()
-				.sendMessage(FormatUtils.FormatStringAll("&8[&eVentureChat&8]&c - Message sound invalid!"));
+		plugin.getServer().getConsoleSender().sendMessage(FormatUtils.FormatStringAll("&8[&eVentureChat&8]&c - Message sound invalid!"));
 		return getDefaultMessageSound();
 	}
 

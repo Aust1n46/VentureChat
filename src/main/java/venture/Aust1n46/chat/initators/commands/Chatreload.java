@@ -2,7 +2,6 @@ package venture.Aust1n46.chat.initators.commands;
 
 import java.util.UUID;
 
-import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -49,9 +48,9 @@ public class Chatreload extends UniversalCommand {
 			for (Player p : plugin.getServer().getOnlinePlayers()) {
 				VentureChatPlayer mcp = playerApiService.getMineverseChatPlayer(p);
 				if (mcp == null) {
-					Bukkit.getConsoleSender()
+					plugin.getServer().getConsoleSender()
 							.sendMessage(FormatUtils.FormatStringAll("&8[&eVentureChat&8]&c - Could not find player data post reload for currently online player: " + p.getName()));
-					Bukkit.getConsoleSender().sendMessage(FormatUtils.FormatStringAll("&8[&eVentureChat&8]&c - There could be an issue with your player data saving."));
+					plugin.getServer().getConsoleSender().sendMessage(FormatUtils.FormatStringAll("&8[&eVentureChat&8]&c - There could be an issue with your player data saving."));
 					String name = p.getName();
 					UUID uuid = p.getUniqueId();
 					mcp = new VentureChatPlayer(uuid, name, configService.getDefaultChannel());
@@ -72,7 +71,7 @@ public class Chatreload extends UniversalCommand {
 				playerApiService.addNameToMap(mcp);
 			}
 
-			Bukkit.getConsoleSender().sendMessage(FormatUtils.FormatStringAll("&8[&eVentureChat&8]&e - Config reloaded"));
+			plugin.getServer().getConsoleSender().sendMessage(FormatUtils.FormatStringAll("&8[&eVentureChat&8]&e - Config reloaded"));
 			for (VentureChatPlayer player : playerApiService.getOnlineMineverseChatPlayers()) {
 				if (player.getPlayer().hasPermission("venturechat.reload")) {
 					player.getPlayer().sendMessage(LocalizedMessage.CONFIG_RELOADED.toString());

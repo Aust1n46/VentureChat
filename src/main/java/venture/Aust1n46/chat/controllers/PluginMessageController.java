@@ -11,7 +11,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
@@ -90,7 +89,7 @@ public class PluginMessageController {
 				// System.out.println(mcp.getPlayer().getServer().getServerName());
 				// out.writeUTF(mcp.getPlayer().getServer().getServerName());
 				out.writeUTF(mcp.getUuid().toString());
-				Bukkit.getServer().getScheduler().runTaskLaterAsynchronously(plugin, new Runnable() {
+				plugin.getServer().getScheduler().runTaskLaterAsynchronously(plugin, new Runnable() {
 					@Override
 					public void run() {
 						if (!mcp.isOnline() || mcp.isHasPlayed()) {
@@ -195,18 +194,18 @@ public class PluginMessageController {
 					}
 				}
 
-				Bukkit.getServer().getScheduler().runTaskAsynchronously(plugin, new Runnable() {
+				plugin.getServer().getScheduler().runTaskAsynchronously(plugin, new Runnable() {
 					@Override
 					public void run() {
 						// Create VentureChatEvent
 						VentureChatEvent ventureChatEvent = new VentureChatEvent(null, senderName, primaryGroup, chatChannelObject, recipients, recipients.size(), format, chat,
 								globalJSON, hash, false);
 						// Fire event and wait for other plugin listeners to act on it
-						Bukkit.getServer().getPluginManager().callEvent(ventureChatEvent);
+						plugin.getServer().getPluginManager().callEvent(ventureChatEvent);
 					}
 				});
 
-				Bukkit.getConsoleSender().sendMessage(consoleChat);
+				plugin.getServer().getConsoleSender().sendMessage(consoleChat);
 
 				if (databaseService.isEnabled()) {
 					databaseService.writeVentureChat(senderUUID.toString(), senderName, server, chatchannel, chat.replace("'", "''"), "Chat");
@@ -314,7 +313,7 @@ public class PluginMessageController {
 			}
 			if (subchannel.equals("Sync")) {
 				if (plugin.getConfig().getString("loglevel", "info").equals("debug")) {
-					Bukkit.getConsoleSender().sendMessage(FormatUtils.FormatStringAll("&8[&eVentureChat&8]&e - Received update..."));
+					plugin.getServer().getConsoleSender().sendMessage(FormatUtils.FormatStringAll("&8[&eVentureChat&8]&e - Received update..."));
 				}
 				String uuid = msgin.readUTF();
 				VentureChatPlayer p = playerApiService.getOnlineMineverseChatPlayer(UUID.fromString(uuid));
@@ -515,7 +514,7 @@ public class PluginMessageController {
 						String timeString = FormatUtils.parseTimeStringFromMillis(time);
 						if (reason.isEmpty()) {
 							if (senderIdentifier.equals("VentureChat:Console")) {
-								Bukkit.getConsoleSender().sendMessage(LocalizedMessage.MUTE_PLAYER_SENDER_TIME.toString().replace("{player}", playerToMute)
+								plugin.getServer().getConsoleSender().sendMessage(LocalizedMessage.MUTE_PLAYER_SENDER_TIME.toString().replace("{player}", playerToMute)
 										.replace("{channel_color}", chatChannelObj.getColor()).replace("{channel_name}", chatChannelObj.getName()).replace("{time}", timeString));
 							} else {
 								UUID sender = UUID.fromString(senderIdentifier);
@@ -525,7 +524,7 @@ public class PluginMessageController {
 							}
 						} else {
 							if (senderIdentifier.equals("VentureChat:Console")) {
-								Bukkit.getConsoleSender()
+								plugin.getServer().getConsoleSender()
 										.sendMessage(LocalizedMessage.MUTE_PLAYER_SENDER_TIME_REASON.toString().replace("{player}", playerToMute)
 												.replace("{channel_color}", chatChannelObj.getColor()).replace("{channel_name}", chatChannelObj.getName())
 												.replace("{time}", timeString).replace("{reason}", reason));
@@ -541,7 +540,7 @@ public class PluginMessageController {
 					} else {
 						if (reason.isEmpty()) {
 							if (senderIdentifier.equals("VentureChat:Console")) {
-								Bukkit.getConsoleSender().sendMessage(LocalizedMessage.MUTE_PLAYER_SENDER.toString().replace("{player}", playerToMute)
+								plugin.getServer().getConsoleSender().sendMessage(LocalizedMessage.MUTE_PLAYER_SENDER.toString().replace("{player}", playerToMute)
 										.replace("{channel_color}", chatChannelObj.getColor()).replace("{channel_name}", chatChannelObj.getName()));
 							} else {
 								UUID sender = UUID.fromString(senderIdentifier);
@@ -551,7 +550,7 @@ public class PluginMessageController {
 							}
 						} else {
 							if (senderIdentifier.equals("VentureChat:Console")) {
-								Bukkit.getConsoleSender().sendMessage(LocalizedMessage.MUTE_PLAYER_SENDER_REASON.toString().replace("{player}", playerToMute)
+								plugin.getServer().getConsoleSender().sendMessage(LocalizedMessage.MUTE_PLAYER_SENDER_REASON.toString().replace("{player}", playerToMute)
 										.replace("{channel_color}", chatChannelObj.getColor()).replace("{channel_name}", chatChannelObj.getName()).replace("{reason}", reason));
 							} else {
 								UUID sender = UUID.fromString(senderIdentifier);
@@ -567,7 +566,7 @@ public class PluginMessageController {
 					String senderIdentifier = msgin.readUTF();
 					String playerToMute = msgin.readUTF();
 					if (senderIdentifier.equals("VentureChat:Console")) {
-						Bukkit.getConsoleSender().sendMessage(LocalizedMessage.PLAYER_OFFLINE.toString().replace("{args}", playerToMute));
+						plugin.getServer().getConsoleSender().sendMessage(LocalizedMessage.PLAYER_OFFLINE.toString().replace("{args}", playerToMute));
 						return;
 					}
 					UUID sender = UUID.fromString(senderIdentifier);
@@ -584,7 +583,7 @@ public class PluginMessageController {
 					}
 					ChatChannel chatChannelObj = configService.getChannel(channelName);
 					if (senderIdentifier.equals("VentureChat:Console")) {
-						Bukkit.getConsoleSender().sendMessage(LocalizedMessage.PLAYER_ALREADY_MUTED.toString().replace("{player}", playerToMute)
+						plugin.getServer().getConsoleSender().sendMessage(LocalizedMessage.PLAYER_ALREADY_MUTED.toString().replace("{player}", playerToMute)
 								.replace("{channel_color}", chatChannelObj.getColor()).replace("{channel_name}", chatChannelObj.getName()));
 						return;
 					}
@@ -650,7 +649,7 @@ public class PluginMessageController {
 					}
 					ChatChannel chatChannelObj = configService.getChannel(channelName);
 					if (senderIdentifier.equals("VentureChat:Console")) {
-						Bukkit.getConsoleSender().sendMessage(LocalizedMessage.UNMUTE_PLAYER_SENDER.toString().replace("{player}", playerToUnmute)
+						plugin.getServer().getConsoleSender().sendMessage(LocalizedMessage.UNMUTE_PLAYER_SENDER.toString().replace("{player}", playerToUnmute)
 								.replace("{channel_color}", chatChannelObj.getColor()).replace("{channel_name}", chatChannelObj.getName()));
 					} else {
 						UUID sender = UUID.fromString(senderIdentifier);
@@ -664,7 +663,7 @@ public class PluginMessageController {
 					String senderIdentifier = msgin.readUTF();
 					String playerToUnmute = msgin.readUTF();
 					if (senderIdentifier.equals("VentureChat:Console")) {
-						Bukkit.getConsoleSender().sendMessage(LocalizedMessage.PLAYER_OFFLINE.toString().replace("{args}", playerToUnmute));
+						plugin.getServer().getConsoleSender().sendMessage(LocalizedMessage.PLAYER_OFFLINE.toString().replace("{args}", playerToUnmute));
 						return;
 					}
 					UUID sender = UUID.fromString(senderIdentifier);
@@ -681,7 +680,7 @@ public class PluginMessageController {
 					}
 					ChatChannel chatChannelObj = configService.getChannel(channelName);
 					if (senderIdentifier.equals("VentureChat:Console")) {
-						Bukkit.getConsoleSender().sendMessage(LocalizedMessage.PLAYER_NOT_MUTED.toString().replace("{player}", playerToUnmute)
+						plugin.getServer().getConsoleSender().sendMessage(LocalizedMessage.PLAYER_NOT_MUTED.toString().replace("{player}", playerToUnmute)
 								.replace("{channel_color}", chatChannelObj.getColor()).replace("{channel_name}", chatChannelObj.getName()));
 						return;
 					}

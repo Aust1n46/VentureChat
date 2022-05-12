@@ -6,7 +6,6 @@ import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
-import org.bukkit.Bukkit;
 import org.bukkit.configuration.ConfigurationSection;
 
 import com.google.inject.Inject;
@@ -23,8 +22,8 @@ import venture.Aust1n46.chat.utilities.FormatUtils;
 @Singleton
 public class VentureChatDatabaseService {
 	@Inject
-    private VentureChat plugin;
-	
+	private VentureChat plugin;
+
 	private HikariDataSource dataSource;
 
 	@Inject
@@ -42,8 +41,7 @@ public class VentureChatDatabaseService {
 				// config.setDriverClassName(org.postgresql.Driver.class.getName());
 				// final String jdbcUrl = String.format("jdbc:postgresql://%s:%d/%s", hostname,
 				// port, database);
-				final String jdbcUrl = String.format("jdbc:mysql://%s:%d/%s?autoReconnect=true&useSSL=false", host,
-						port, database);
+				final String jdbcUrl = String.format("jdbc:mysql://%s:%d/%s?autoReconnect=true&useSSL=false", host, port, database);
 				config.setJdbcUrl(jdbcUrl);
 				config.setUsername(user);
 				config.setPassword(password);
@@ -51,16 +49,14 @@ public class VentureChatDatabaseService {
 				config.addDataSourceProperty("prepStmtCacheSize", "250");
 				config.addDataSourceProperty("prepStmtCacheSqlLimit", "2048");
 				dataSource = new HikariDataSource(config);
-				final String SQL_CREATE_TABLE = "CREATE TABLE IF NOT EXISTS VentureChat "
-						+ "(ID SERIAL PRIMARY KEY, ChatTime TEXT, UUID TEXT, Name TEXT, "
+				final String SQL_CREATE_TABLE = "CREATE TABLE IF NOT EXISTS VentureChat " + "(ID SERIAL PRIMARY KEY, ChatTime TEXT, UUID TEXT, Name TEXT, "
 						+ "Server TEXT, Channel TEXT, Text TEXT, Type TEXT)";
 				final Connection conn = dataSource.getConnection();
 				final PreparedStatement statement = conn.prepareStatement(SQL_CREATE_TABLE);
 				statement.executeUpdate();
 			}
 		} catch (Exception exception) {
-			Bukkit.getConsoleSender().sendMessage(
-					FormatUtils.FormatStringAll("&8[&eVentureChat&8]&c - Database could not be loaded. Is it running?"));
+			plugin.getServer().getConsoleSender().sendMessage(FormatUtils.FormatStringAll("&8[&eVentureChat&8]&c - Database could not be loaded. Is it running?"));
 		}
 	}
 
@@ -68,16 +64,14 @@ public class VentureChatDatabaseService {
 		return dataSource != null;
 	}
 
-	public void writeVentureChat(String uuid, String name, String server, String channel, String text,
-			String type) {
+	public void writeVentureChat(String uuid, String name, String server, String channel, String text, String type) {
 		Calendar currentDate = Calendar.getInstance();
 		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		String date = formatter.format(currentDate.getTime());
-		Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
+		plugin.getServer().getScheduler().runTaskAsynchronously(plugin, () -> {
 			try (final Connection conn = dataSource.getConnection();
-					final PreparedStatement statement = conn.prepareStatement(
-							"INSERT INTO VentureChat " + "(ChatTime, UUID, Name, Server, Channel, Text, Type) "
-									+ "VALUES (?, ?, ?, ?, ?, ?, ?)")) {
+					final PreparedStatement statement = conn
+							.prepareStatement("INSERT INTO VentureChat " + "(ChatTime, UUID, Name, Server, Channel, Text, Type) " + "VALUES (?, ?, ?, ?, ?, ?, ?)")) {
 				statement.setString(1, date);
 				statement.setString(2, uuid);
 				statement.setString(3, name);

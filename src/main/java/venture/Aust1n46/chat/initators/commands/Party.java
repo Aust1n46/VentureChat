@@ -72,11 +72,6 @@ public class Party extends PlayerCommand {
 					if (player != null) {
 						if (player.isHost()) {
 							if (!mcp.hasParty()) {
-								/*
-								 * if(plugin.getMetadata(player, "MineverseChat.party.ban." + tp.getName(),
-								 * plugin)) { player.sendMessage(ChatColor.RED + "You are banned from " +
-								 * tp.getName() + "'s party."); break; }
-								 */
 								mcp.getPlayer().sendMessage(ChatColor.GREEN + "Joined " + player.getName() + "'s party.");
 								mcp.setParty(player.getUuid());
 								player.getPlayer().sendMessage(ChatColor.GREEN + mcp.getName() + " joined your party.");
@@ -151,37 +146,6 @@ public class Party extends PlayerCommand {
 				mcp.getPlayer().sendMessage(ChatColor.RED + "You are not hosting a party.");
 				break;
 			}
-			/*
-			 * case "ban": { if(mcp.isHost()) { if(args.length > 1) { Player tp =
-			 * Bukkit.getPlayer(args[1]); if(tp != null) {
-			 * if(!tp.getName().equals(player.getName())) {
-			 * tp.setMetadata("MineverseChat.party.ban." + player.getUniqueId().toString(),
-			 * new FixedMetadataValue(plugin, true)); if(plugin.getMetadataString(tp,
-			 * "MineverseChat.party", plugin).equals(plugin.getMetadataString(player,
-			 * "MineverseChat.party", plugin))) { tp.setMetadata("MineverseChat.party", new
-			 * FixedMetadataValue(plugin, "")); } tp.sendMessage(ChatColor.RED +
-			 * "You have been banned from " + player.getName() + "'s party.");
-			 * player.sendMessage(ChatColor.RED + "You have banned " + tp.getName() +
-			 * " from your party."); break; } player.sendMessage(ChatColor.RED +
-			 * "You cannot ban yourself."); break; } player.sendMessage(ChatColor.RED +
-			 * "Player: " + ChatColor.GOLD + args[1] + ChatColor.RED + " is not online.");
-			 * break; } player.sendMessage(ChatColor.RED +
-			 * "Invalid command: /party ban [playername]"); break; }
-			 * player.sendMessage(ChatColor.RED + "You are not hosting a party."); break; }
-			 * case "unban": { if(plugin.getMetadata(player, "MineverseChat.party.host",
-			 * plugin)) { if(args.length > 1) { Player tp = Bukkit.getPlayer(args[1]); if(tp
-			 * != null) { if(!tp.getName().equals(player.getName())) {
-			 * tp.setMetadata("MineverseChat.party.ban." + player.getUniqueId(), new
-			 * FixedMetadataValue(plugin, false)); tp.sendMessage(ChatColor.RED +
-			 * "You have been unbanned from " + player.getName() + "'s party.");
-			 * player.sendMessage(ChatColor.RED + "You have unbanned " + tp.getName() +
-			 * " from your party."); break; } player.sendMessage(ChatColor.RED +
-			 * "You cannot unban yourself."); break; } player.sendMessage(ChatColor.RED +
-			 * "Player: " + ChatColor.GOLD + args[1] + ChatColor.RED + " is not online.");
-			 * break; } player.sendMessage(ChatColor.RED +
-			 * "Invalid command: /party unban [playername]"); break; }
-			 * player.sendMessage(ChatColor.RED + "You are not hosting a party."); break; }
-			 */
 			case "info": {
 				if (!mcp.getPlayer().hasPermission("venturechat.party.info")) {
 					mcp.getPlayer().sendMessage(ChatColor.RED + "You do not have permission for this command!");
