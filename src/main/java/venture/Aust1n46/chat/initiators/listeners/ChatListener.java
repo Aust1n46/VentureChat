@@ -467,20 +467,14 @@ public class ChatListener implements Listener {
 		String globalJSON = formatService.convertToJson(mcp, format, chat);
 		format = FormatUtils.FormatStringAll(PlaceholderAPI.setBracketPlaceholders(mcp.getPlayer(), FormatUtils.FormatStringAll(format)));
 		String message = FormatUtils.stripColor(format + chat); // UTF-8 encoding issues.
-		int hash = message.hashCode();
-
-		// Create VentureChatEvent
-		VentureChatEvent ventureChatEvent = new VentureChatEvent(mcp, mcp.getName(), plugin.getVaultPermission().getPrimaryGroup(mcp.getPlayer()), eventChannel, recipients,
-				recipientCount, format, chat, globalJSON, hash, eventChannel.getBungee());
-		// Fire event and wait for other plugin listeners to act on it
+		final VentureChatEvent ventureChatEvent = new VentureChatEvent(mcp, mcp.getName(), plugin.getVaultPermission().getPrimaryGroup(mcp.getPlayer()), eventChannel, recipients,
+				recipientCount, format, chat, globalJSON, message.hashCode(), eventChannel.getBungee());
 		plugin.getServer().getPluginManager().callEvent(ventureChatEvent);
-		// Call method to send the processed chat
 		handleVentureChatEvent(ventureChatEvent);
-		// Reset quick chat flag
 		mcp.setQuickChat(false);
 	}
 
-	public void handleVentureChatEvent(VentureChatEvent event) {
+	private void handleVentureChatEvent(VentureChatEvent event) {
 		VentureChatPlayer ventureChatPlayer = event.getVentureChatPlayer();
 		ChatChannel channel = event.getChannel();
 		Set<Player> recipients = event.getRecipients();
