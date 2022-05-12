@@ -35,7 +35,6 @@ import venture.Aust1n46.chat.service.VentureChatFormatService;
 import venture.Aust1n46.chat.service.VentureChatPlayerApiService;
 import venture.Aust1n46.chat.utilities.FormatUtils;
 
-//This class listens to chat through the chat event and handles the bulk of the chat channels and formatting.
 @SuppressWarnings("deprecation")
 @Singleton
 public class ChatListener implements Listener {

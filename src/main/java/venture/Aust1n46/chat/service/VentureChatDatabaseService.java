@@ -38,9 +38,6 @@ public class VentureChatDatabaseService {
 				String password = mysqlConfig.getString("password");
 
 				final HikariConfig config = new HikariConfig();
-				// config.setDriverClassName(org.postgresql.Driver.class.getName());
-				// final String jdbcUrl = String.format("jdbc:postgresql://%s:%d/%s", hostname,
-				// port, database);
 				final String jdbcUrl = String.format("jdbc:mysql://%s:%d/%s?autoReconnect=true&useSSL=false", host, port, database);
 				config.setJdbcUrl(jdbcUrl);
 				config.setUsername(user);

@@ -26,7 +26,7 @@ public class VentureChatEvent extends Event {
 	private final String playerPrimaryGroup;
 	private final ChatChannel channel;
 	private final Set<Player> recipients;
-	private final int recipientCount; // For not counting vanished players
+	private final int recipientCount;
 	private final String format;
 	private final String chat;
 	private final String globalJSON;

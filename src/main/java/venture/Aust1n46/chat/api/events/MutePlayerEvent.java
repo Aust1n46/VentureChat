@@ -7,28 +7,28 @@ import org.bukkit.event.HandlerList;
 
 import venture.Aust1n46.chat.model.ChatChannel;
 
-//This class is a custom event that is part of the plugins API.  It is called when a player executes the mute command.
-public class MutePlayerEvent extends Event implements Cancellable {	//unimplemented
+// TODO
+public class MutePlayerEvent extends Event implements Cancellable {
 	private static final HandlerList handlers = new HandlerList();
 	private boolean cancelled;
 	private Player player;
 	private ChatChannel channel;
 	private int time;
-	
+
 	public MutePlayerEvent(Player player, ChatChannel channel, int time) {
 		this.player = player;
 		this.channel = channel;
 		this.time = time;
 		this.cancelled = false;
 	}
-	
+
 	@Override
 	public HandlerList getHandlers() {
-	    return handlers;
+		return handlers;
 	}
-	 
+
 	public static HandlerList getHandlerList() {
-	    return handlers;
+		return handlers;
 	}
 
 	@Override
@@ -40,23 +40,23 @@ public class MutePlayerEvent extends Event implements Cancellable {	//unimplemen
 	public void setCancelled(boolean cancel) {
 		this.cancelled = cancel;
 	}
-	
+
 	public Player getPlayer() {
 		return this.player;
 	}
-	
+
 	public void setChannel(ChatChannel channel) {
 		this.channel = channel;
 	}
-	
+
 	public ChatChannel getChannel() {
 		return this.channel;
 	}
-	
+
 	public int getTime() {
 		return this.time;
 	}
-	
+
 	public void setTime(int time) {
 		this.time = time;
 	}

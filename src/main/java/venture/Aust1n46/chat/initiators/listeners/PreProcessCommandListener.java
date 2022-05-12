@@ -36,8 +36,6 @@ import venture.Aust1n46.chat.service.VentureChatPlayerApiService;
 import venture.Aust1n46.chat.utilities.FormatUtils;
 import venture.Aust1n46.chat.xcut.VersionService;
 
-//This class listens for commands (Any chat that begins with a /) to use in the command spy and
-//in the custom commands such as aliases.
 @Singleton
 public class PreProcessCommandListener implements CommandExecutor, Listener {
 	@Inject
@@ -184,23 +182,6 @@ public class PreProcessCommandListener implements CommandExecutor, Listener {
 							pluginMessageController.synchronize(mcp, true);
 						}
 						mcp.setQuickChannel(channel);
-						/*
-						 * String format = ""; if(plugin.getConfig().getConfigurationSection("channels."
-						 * + channel.getName()).getString("format").equalsIgnoreCase("Default")) {
-						 * format =
-						 * FormatTags.ChatFormat(ChatColor.valueOf(channel.getColor().toUpperCase()) +
-						 * "[" + channel.getName() + "] {prefix}{name}" +
-						 * ChatColor.valueOf(channel.getColor().toUpperCase()) + ":" +
-						 * ChatColor.valueOf(channel.getChatColor().toUpperCase()), mcp.getPlayer(),
-						 * plugin, cc, channel, plugin.getConfig().getBoolean("jsonFormat")); } else {
-						 * format =
-						 * FormatTags.ChatFormat(plugin.getConfig().getConfigurationSection("channels."
-						 * + channel.getName()).getString("format"), mcp.getPlayer(), plugin, cc,
-						 * channel, plugin.getConfig().getBoolean("jsonFormat"));
-						 * if(plugin.getConfig().getBoolean("formatcleaner", false)) { format =
-						 * format.replace("[]", " "); format = format.replace("    ",
-						 * " ").replace("   ", " ").replace("  ", " "); } }
-						 */
 						mcp.setQuickChat(true);
 						mcp.getPlayer().chat(message);
 						event.setCancelled(true);

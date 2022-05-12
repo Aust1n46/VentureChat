@@ -16,9 +16,6 @@ import venture.Aust1n46.chat.service.VentureChatFormatService;
 import venture.Aust1n46.chat.service.VentureChatPlayerApiService;
 import venture.Aust1n46.chat.xcut.VersionService;
 
-//This class listens for chat packets and intercepts them before they are sent to the Player.
-//The packets are modified to include advanced json formating and the message remover button if the 
-//player has permission to remove messages.
 @Singleton
 public class PacketListener extends PacketAdapter {
 	@Inject
@@ -27,8 +24,7 @@ public class PacketListener extends PacketAdapter {
 	private VentureChatPlayerApiService playerApiService;
 	@Inject
 	private VersionService versionService;
-	
-	
+
 	@Inject
 	public PacketListener(final VentureChat plugin) {
 		super(plugin, ListenerPriority.MONITOR, new PacketType[] { PacketType.Play.Server.CHAT });
@@ -36,48 +32,45 @@ public class PacketListener extends PacketAdapter {
 
 	@Override
 	public void onPacketSending(PacketEvent event) {
-		if(event.isCancelled() || event.getPacketType() != PacketType.Play.Server.CHAT) {
+		if (event.isCancelled() || event.getPacketType() != PacketType.Play.Server.CHAT) {
 			return;
 		}
-		
+
 		VentureChatPlayer mcp = playerApiService.getOnlineMineverseChatPlayer(event.getPlayer());
-		if(mcp == null) {
+		if (mcp == null) {
 			return;
 		}
-		
+
 		PacketContainer packet = event.getPacket();
 		WrappedChatComponent chat = packet.getChatComponents().read(0);
-		if(chat == null) {
+		if (chat == null) {
 			return;
 		}
-		
+
 		try {
-			if(versionService.is1_7()) {
+			if (versionService.is1_7()) {
 				packet.getBooleans().getField(0).setAccessible(true);
-				if(!((boolean) packet.getBooleans().getField(0).get(packet.getHandle()))) {
+				if (!((boolean) packet.getBooleans().getField(0).get(packet.getHandle()))) {
 					return;
 				}
-			}
-			else if(versionService.is1_8() || versionService.is1_9() || versionService.is1_10() || versionService.is1_11()) {
+			} else if (versionService.is1_8() || versionService.is1_9() || versionService.is1_10() || versionService.is1_11()) {
 				packet.getBytes().getField(0).setAccessible(true);
-				if(((Byte) packet.getBytes().getField(0).get(packet.getHandle())).intValue() > 1) {
+				if (((Byte) packet.getBytes().getField(0).get(packet.getHandle())).intValue() > 1) {
 					return;
 				}
-			}
-			else {
+			} else {
 				packet.getChatTypes().getField(0).setAccessible(true);
-				if(packet.getChatTypes().getField(0).get(packet.getHandle()) == packet.getChatTypes().getField(0).getType().getEnumConstants()[2]) {
+				if (packet.getChatTypes().getField(0).get(packet.getHandle()) == packet.getChatTypes().getField(0).getType().getEnumConstants()[2]) {
 					return;
 				}
 			}
-		}
-		catch(Exception e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		
+
 		String message = formatter.toPlainText(chat.getHandle(), chat.getHandleType());
 		String coloredMessage = formatter.toColoredText(chat.getHandle(), chat.getHandleType());
-		if(message == null) {
+		if (message == null) {
 			return;
 		}
 		int hash = message.hashCode();
