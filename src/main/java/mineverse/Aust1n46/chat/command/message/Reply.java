@@ -83,8 +83,11 @@ public class Reply extends Command {
 					echo = Format.FormatStringAll(PlaceholderAPI.setBracketPlaceholders(player.getPlayer(), echo.replaceAll("receiver_", ""))) + msg;
 					spy = Format.FormatStringAll(PlaceholderAPI.setBracketPlaceholders(player.getPlayer(), spy.replaceAll("receiver_", ""))) + msg;
 
+					//Create PrivateMessageEvent
 					PrivateMessageEvent privateMessageEvent = new PrivateMessageEvent(mcp, player, msg, echo, send, spy, false);
+					//Fire event and wait for other plugin listeners to act on it
 					Bukkit.getPluginManager().callEvent(privateMessageEvent);
+					//Apply changes made by other plugins
 					send = privateMessageEvent.getSend();
 					echo = privateMessageEvent.getEcho();
 					spy = privateMessageEvent.getSpy();

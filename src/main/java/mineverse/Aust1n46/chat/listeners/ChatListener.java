@@ -132,8 +132,11 @@ public class ChatListener implements Listener {
 				echo = Format.FormatStringAll(PlaceholderAPI.setBracketPlaceholders(tp.getPlayer(), echo.replaceAll("receiver_", ""))) + filtered;
 				spy = Format.FormatStringAll(PlaceholderAPI.setBracketPlaceholders(tp.getPlayer(), spy.replaceAll("receiver_", ""))) + filtered;
 
+				//Create PrivateMessageEvent
 				PrivateMessageEvent privateMessageEvent = new PrivateMessageEvent(mcp, tp, filtered, echo, send, spy, false);
+				//Fire event and wait for other plugin listeners to act on it
 				Bukkit.getPluginManager().callEvent(privateMessageEvent);
+				//Apply changes made by other plugins
 				send = privateMessageEvent.getSend();
 				echo = privateMessageEvent.getEcho();
 				spy = privateMessageEvent.getSpy();
