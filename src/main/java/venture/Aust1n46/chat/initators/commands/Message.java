@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.util.StringUtil;
@@ -13,6 +14,7 @@ import org.bukkit.util.StringUtil;
 import com.google.inject.Inject;
 
 import me.clip.placeholderapi.PlaceholderAPI;
+import venture.Aust1n46.chat.api.events.PrivateMessageEvent;
 import venture.Aust1n46.chat.controllers.PluginMessageController;
 import venture.Aust1n46.chat.initiators.application.VentureChat;
 import venture.Aust1n46.chat.localization.LocalizedMessage;
@@ -103,6 +105,12 @@ public class Message extends PlayerCommand {
 				send = FormatUtils.FormatStringAll(PlaceholderAPI.setBracketPlaceholders(player.getPlayer(), send.replaceAll("receiver_", ""))) + msg;
 				echo = FormatUtils.FormatStringAll(PlaceholderAPI.setBracketPlaceholders(player.getPlayer(), echo.replaceAll("receiver_", ""))) + msg;
 				spy = FormatUtils.FormatStringAll(PlaceholderAPI.setBracketPlaceholders(player.getPlayer(), spy.replaceAll("receiver_", ""))) + msg;
+
+				PrivateMessageEvent privateMessageEvent = new PrivateMessageEvent(mcp, player, msg, echo, send, spy, false);
+				Bukkit.getPluginManager().callEvent(privateMessageEvent);
+				send = privateMessageEvent.getSend();
+				echo = privateMessageEvent.getEcho();
+				spy = privateMessageEvent.getSpy();
 
 				player.setReplyPlayer(mcp.getUuid());
 				mcp.setReplyPlayer(player.getUuid());
