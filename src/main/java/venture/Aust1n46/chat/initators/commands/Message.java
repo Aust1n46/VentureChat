@@ -72,8 +72,8 @@ public class Message extends PlayerCommand {
 			mcp.getPlayer().sendMessage(LocalizedMessage.BLOCKING_MESSAGE.toString().replace("{player}", player.getName()));
 			return;
 		}
-		else if (sender.hasPermission("venturechat.messagetoggle.bypass") && !player.isMessageToggle()){
-			sendBungeeCordMessage(mcp, command, args);
+		if (!player.isMessageToggle() && !sender.hasPermission("venturechat.messagetoggle.bypass")) {
+			mcp.getPlayer().sendMessage(LocalizedMessage.BLOCKING_MESSAGE.toString().replace("{player}", player.getName()));
 			return;
 		}
 
