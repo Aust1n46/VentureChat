@@ -429,17 +429,31 @@ public class Format {
 	}
 
 	public static PacketContainer createPacketPlayOutChat(String json) {
-		WrappedChatComponent component = WrappedChatComponent.fromJson(json);
-		PacketContainer container = new PacketContainer(PacketType.Play.Server.CHAT);
-		container.getModifier().writeDefaults();
-		container.getChatComponents().write(0, component);
+		final PacketContainer container;
+		if (VersionHandler.isUnder_1_19()) {
+			WrappedChatComponent component = WrappedChatComponent.fromJson(json);
+			container = new PacketContainer(PacketType.Play.Server.CHAT);
+			container.getModifier().writeDefaults();
+			container.getChatComponents().write(0, component);
+		} else {
+			container = new PacketContainer(PacketType.Play.Server.SYSTEM_CHAT);
+			container.getStrings().write(0, json);
+			container.getIntegers().write(0, 1);
+		}
 		return container;
 	}
 
 	public static PacketContainer createPacketPlayOutChat(WrappedChatComponent component) {
-		PacketContainer container = new PacketContainer(PacketType.Play.Server.CHAT);
-		container.getModifier().writeDefaults();
-		container.getChatComponents().write(0, component);
+		final PacketContainer container;
+		if (VersionHandler.isUnder_1_19()) {
+			container = new PacketContainer(PacketType.Play.Server.CHAT);
+			container.getModifier().writeDefaults();
+			container.getChatComponents().write(0, component);
+		} else {
+			container = new PacketContainer(PacketType.Play.Server.SYSTEM_CHAT);
+			container.getStrings().write(0, component.getJson());
+			container.getIntegers().write(0, 1);
+		}
 		return container;
 	}
 

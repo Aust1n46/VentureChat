@@ -52,4 +52,16 @@ public class VersionHandler {
 	public static boolean is1_17() {
 		return Bukkit.getVersion().contains("1.17");
 	}
+	
+	public static boolean is1_18() {
+		return Bukkit.getVersion().contains("1.18");
+	}
+	
+	public static boolean is1_19() {
+		return Bukkit.getVersion().contains("1.19");
+	}
+	
+	public static boolean isUnder_1_19() {
+		return is1_7() || is1_8() || is1_9() || is1_10() || is1_11() || is1_12() || is1_13() || is1_14() || is1_15() || is1_16() || is1_17() || is1_18();
+	}
 }

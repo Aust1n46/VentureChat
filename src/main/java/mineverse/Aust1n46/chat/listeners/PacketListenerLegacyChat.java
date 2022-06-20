@@ -14,20 +14,16 @@ import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.events.PacketEvent;
 import com.comphenix.protocol.wrappers.WrappedChatComponent;
 
-//This class listens for chat packets and intercepts them before they are sent to the Player.
-//The packets are modified to include advanced json formating and the message remover button if the 
-//player has permission to remove messages.
-public class PacketListener extends PacketAdapter {
-	public PacketListener() {
+public class PacketListenerLegacyChat extends PacketAdapter {
+	public PacketListenerLegacyChat() {
 		super(MineverseChat.getInstance(), ListenerPriority.MONITOR, new PacketType[] { PacketType.Play.Server.CHAT });
 	}
 
 	@Override
 	public void onPacketSending(PacketEvent event) {
-		if(event.isCancelled() || event.getPacketType() != PacketType.Play.Server.CHAT) {
+		if(event.isCancelled()) {
 			return;
 		}
-		
 		MineverseChatPlayer mcp = MineverseChatAPI.getOnlineMineverseChatPlayer(event.getPlayer());
 		if(mcp == null) {
 			return;
@@ -38,7 +34,6 @@ public class PacketListener extends PacketAdapter {
 		if(chat == null) {
 			return;
 		}
-		
 		try {
 			if(VersionHandler.is1_7()) {
 				packet.getBooleans().getField(0).setAccessible(true);
@@ -57,12 +52,11 @@ public class PacketListener extends PacketAdapter {
 				if(packet.getChatTypes().getField(0).get(packet.getHandle()) == packet.getChatTypes().getField(0).getType().getEnumConstants()[2]) {
 					return;
 				}
-			}
+			} 
 		}
 		catch(Exception e) {
 			e.printStackTrace();
 		}
-		
 		String message = Format.toPlainText(chat.getHandle(), chat.getHandleType());
 		String coloredMessage = Format.toColoredText(chat.getHandle(), chat.getHandleType());
 		if(message == null) {
