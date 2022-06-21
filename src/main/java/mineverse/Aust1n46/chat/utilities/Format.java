@@ -130,8 +130,8 @@ public class Format {
 							PlaceholderAPI.setBracketPlaceholders(icp.getPlayer(), hover.substring(0, hover.length() - 1)));
 				}
 				temp += convertToJsonColors(lastCode + formattedPlaceholder,
-						",\"clickEvent\":{\"action\":\"" + action + "\",\"value\":\"" + text
-								+ "\"},\"hoverEvent\":{\"action\":\"show_text\",\"value\":{\"text\":\"\",\"extra\":["
+						(action.isEmpty() ? "" : ",\"clickEvent\":{\"action\":\"" + action + "\",\"value\":\"" + text + "\"}")
+								+ ",\"hoverEvent\":{\"action\":\"show_text\",\"value\":{\"text\":\"\",\"extra\":["
 								+ convertToJsonColors(hover) + "]}}")
 						+ ",";
 				lastCode = getLastCode(lastCode + formattedPlaceholder);
