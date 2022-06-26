@@ -10,6 +10,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Sound;
@@ -112,28 +113,35 @@ public class Format {
 				formattedPlaceholder = Format.FormatStringAll(PlaceholderAPI.setBracketPlaceholders(icp.getPlayer(), placeholder));
 				temp += convertToJsonColors(lastCode + remaining.substring(0, indexStart)) + ",";
 				lastCode = getLastCode(lastCode + remaining.substring(0, indexStart));
-				String action = "";
-				String text = "";
-				String hover = "";
+				boolean placeholderHasJsonAttribute = false;
 				for (JsonAttribute jsonAttribute : format.getJsonAttributes()) {
 					if (placeholder.contains(jsonAttribute.getName().replace("{", "").replace("}", ""))) {
-						action = jsonAttribute.getClickAction();
-						text = Format.FormatStringAll(
+						final String action = jsonAttribute.getClickAction().toString();
+						final String text = Format.FormatStringAll(
 								PlaceholderAPI.setBracketPlaceholders(icp.getPlayer(), jsonAttribute.getClickText()));
+						final StringBuilder hover = new StringBuilder();
 						for (String st : jsonAttribute.getHoverText()) {
-							hover += Format.FormatStringAll(st) + "\n";
+							hover.append(Format.FormatStringAll(st) + "\n");
 						}
+						final String hoverText;
+						if(!hover.isEmpty()) {
+							hoverText = Format.FormatStringAll(
+									PlaceholderAPI.setBracketPlaceholders(icp.getPlayer(), hover.substring(0, hover.length() - 1)));
+						} else {
+							hoverText = StringUtils.EMPTY;
+						}
+						temp += convertToJsonColors(lastCode + formattedPlaceholder,
+							",\"clickEvent\":{\"action\":\"" + action + "\",\"value\":\"" + text
+									+ "\"},\"hoverEvent\":{\"action\":\"show_text\",\"value\":{\"text\":\"\",\"extra\":["
+									+ convertToJsonColors(hoverText) + "]}}")
+							+ ",";
+						placeholderHasJsonAttribute = true;
+						break;
 					}
 				}
-				if(!hover.isEmpty()) {
-					hover = Format.FormatStringAll(
-							PlaceholderAPI.setBracketPlaceholders(icp.getPlayer(), hover.substring(0, hover.length() - 1)));
+				if (!placeholderHasJsonAttribute) {
+					temp += convertToJsonColors(lastCode + formattedPlaceholder) + ",";
 				}
-				temp += convertToJsonColors(lastCode + formattedPlaceholder,
-						",\"clickEvent\":{\"action\":\"" + action + "\",\"value\":\"" + text
-								+ "\"},\"hoverEvent\":{\"action\":\"show_text\",\"value\":{\"text\":\"\",\"extra\":["
-								+ convertToJsonColors(hover) + "]}}")
-						+ ",";
 				lastCode = getLastCode(lastCode + formattedPlaceholder);
 				remaining = remaining.substring(indexEnd);
 			} else {

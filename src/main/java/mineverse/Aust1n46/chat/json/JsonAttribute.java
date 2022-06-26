@@ -2,13 +2,15 @@ package mineverse.Aust1n46.chat.json;
 
 import java.util.List;
 
+import mineverse.Aust1n46.chat.ClickAction;
+
 public class JsonAttribute {
 	private String name;
 	private List<String> hoverText;
-	private String clickAction;
+	private ClickAction clickAction;
 	private String clickText;
 	
-	public JsonAttribute(String name, List<String> hoverText, String clickAction, String clickText) {
+	public JsonAttribute(String name, List<String> hoverText, ClickAction clickAction, String clickText) {
 		this.name = name;
 		this.hoverText = hoverText;
 		this.clickAction = clickAction;
@@ -23,7 +25,7 @@ public class JsonAttribute {
 		return hoverText;
 	}
 	
-	public String getClickAction() {
+	public ClickAction getClickAction() {
 		return clickAction;
 	}
 	
