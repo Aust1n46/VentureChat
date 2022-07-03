@@ -10,6 +10,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Sound;
@@ -22,6 +23,7 @@ import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.wrappers.WrappedChatComponent;
 
 import me.clip.placeholderapi.PlaceholderAPI;
+import mineverse.Aust1n46.chat.ClickAction;
 import mineverse.Aust1n46.chat.api.MineverseChatAPI;
 import mineverse.Aust1n46.chat.api.MineverseChatPlayer;
 import mineverse.Aust1n46.chat.json.JsonAttribute;
@@ -112,28 +114,45 @@ public class Format {
 				formattedPlaceholder = Format.FormatStringAll(PlaceholderAPI.setBracketPlaceholders(icp.getPlayer(), placeholder));
 				temp += convertToJsonColors(lastCode + remaining.substring(0, indexStart)) + ",";
 				lastCode = getLastCode(lastCode + remaining.substring(0, indexStart));
-				String action = "";
-				String text = "";
-				String hover = "";
+				boolean placeholderHasJsonAttribute = false;
 				for (JsonAttribute jsonAttribute : format.getJsonAttributes()) {
 					if (placeholder.contains(jsonAttribute.getName().replace("{", "").replace("}", ""))) {
-						action = jsonAttribute.getClickAction();
-						text = Format.FormatStringAll(
-								PlaceholderAPI.setBracketPlaceholders(icp.getPlayer(), jsonAttribute.getClickText()));
+						final StringBuilder hover = new StringBuilder();
 						for (String st : jsonAttribute.getHoverText()) {
-							hover += Format.FormatStringAll(st) + "\n";
+							hover.append(Format.FormatStringAll(st) + "\n");
 						}
+						final String hoverText;
+						if(!hover.isEmpty()) {
+							hoverText = Format.FormatStringAll(
+									PlaceholderAPI.setBracketPlaceholders(icp.getPlayer(), hover.substring(0, hover.length() - 1)));
+						} else {
+							hoverText = StringUtils.EMPTY;
+						}
+						final ClickAction clickAction = jsonAttribute.getClickAction();
+						final String actionJson;
+						if (clickAction == ClickAction.NONE) {
+							actionJson = StringUtils.EMPTY;
+						} else {
+							final String clickText = Format.FormatStringAll(
+									PlaceholderAPI.setBracketPlaceholders(icp.getPlayer(), jsonAttribute.getClickText()));
+							actionJson = ",\"clickEvent\":{\"action\":\"" + jsonAttribute.getClickAction().toString() + "\",\"value\":\"" + clickText
+							+ "\"}";
+						}
+						final String hoverJson;
+						if (hoverText.isEmpty()) {
+							hoverJson = StringUtils.EMPTY;
+						} else {
+							hoverJson = ",\"hoverEvent\":{\"action\":\"show_text\",\"value\":{\"text\":\"\",\"extra\":["
+									+ convertToJsonColors(hoverText) + "]}}";
+						}
+						temp += convertToJsonColors(lastCode + formattedPlaceholder, actionJson + hoverJson) + ",";
+						placeholderHasJsonAttribute = true;
+						break;
 					}
 				}
-				if(!hover.isEmpty()) {
-					hover = Format.FormatStringAll(
-							PlaceholderAPI.setBracketPlaceholders(icp.getPlayer(), hover.substring(0, hover.length() - 1)));
+				if (!placeholderHasJsonAttribute) {
+					temp += convertToJsonColors(lastCode + formattedPlaceholder) + ",";
 				}
-				temp += convertToJsonColors(lastCode + formattedPlaceholder,
-						",\"clickEvent\":{\"action\":\"" + action + "\",\"value\":\"" + text
-								+ "\"},\"hoverEvent\":{\"action\":\"show_text\",\"value\":{\"text\":\"\",\"extra\":["
-								+ convertToJsonColors(hover) + "]}}")
-						+ ",";
 				lastCode = getLastCode(lastCode + formattedPlaceholder);
 				remaining = remaining.substring(indexEnd);
 			} else {
