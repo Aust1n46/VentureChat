@@ -23,6 +23,7 @@ import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.wrappers.WrappedChatComponent;
 
 import me.clip.placeholderapi.PlaceholderAPI;
+import mineverse.Aust1n46.chat.ClickAction;
 import mineverse.Aust1n46.chat.api.MineverseChatAPI;
 import mineverse.Aust1n46.chat.api.MineverseChatPlayer;
 import mineverse.Aust1n46.chat.json.JsonAttribute;
@@ -116,9 +117,6 @@ public class Format {
 				boolean placeholderHasJsonAttribute = false;
 				for (JsonAttribute jsonAttribute : format.getJsonAttributes()) {
 					if (placeholder.contains(jsonAttribute.getName().replace("{", "").replace("}", ""))) {
-						final String action = jsonAttribute.getClickAction().toString();
-						final String text = Format.FormatStringAll(
-								PlaceholderAPI.setBracketPlaceholders(icp.getPlayer(), jsonAttribute.getClickText()));
 						final StringBuilder hover = new StringBuilder();
 						for (String st : jsonAttribute.getHoverText()) {
 							hover.append(Format.FormatStringAll(st) + "\n");
@@ -130,11 +128,24 @@ public class Format {
 						} else {
 							hoverText = StringUtils.EMPTY;
 						}
-						temp += convertToJsonColors(lastCode + formattedPlaceholder,
-							",\"clickEvent\":{\"action\":\"" + action + "\",\"value\":\"" + text
-									+ "\"},\"hoverEvent\":{\"action\":\"show_text\",\"value\":{\"text\":\"\",\"extra\":["
-									+ convertToJsonColors(hoverText) + "]}}")
-							+ ",";
+						final ClickAction clickAction = jsonAttribute.getClickAction();
+						final String actionJson;
+						if (clickAction == ClickAction.NONE) {
+							actionJson = StringUtils.EMPTY;
+						} else {
+							final String clickText = Format.FormatStringAll(
+									PlaceholderAPI.setBracketPlaceholders(icp.getPlayer(), jsonAttribute.getClickText()));
+							actionJson = ",\"clickEvent\":{\"action\":\"" + jsonAttribute.getClickAction().toString() + "\",\"value\":\"" + clickText
+							+ "\"}";
+						}
+						final String hoverJson;
+						if (hoverText.isEmpty()) {
+							hoverJson = StringUtils.EMPTY;
+						} else {
+							hoverJson = ",\"hoverEvent\":{\"action\":\"show_text\",\"value\":{\"text\":\"\",\"extra\":["
+									+ convertToJsonColors(hoverText) + "]}}";
+						}
+						temp += convertToJsonColors(lastCode + formattedPlaceholder, actionJson + hoverJson) + ",";
 						placeholderHasJsonAttribute = true;
 						break;
 					}

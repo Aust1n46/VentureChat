@@ -35,7 +35,7 @@ public class JsonFormat {
 			if (jsonAttributeSection != null) {
 				for (String attribute : jsonAttributeSection.getKeys(false)) {
 					List<String> hoverText = jsonAttributeSection.getStringList(attribute + ".hover_text");
-					String clickActionText = jsonAttributeSection.getString(attribute + ".click_action", "");
+					String clickActionText = jsonAttributeSection.getString(attribute + ".click_action", "none");
 					try {
 						ClickAction clickAction = ClickAction.valueOf(clickActionText.toUpperCase());
 						String clickText = jsonAttributeSection.getString(attribute + ".click_text", "");
