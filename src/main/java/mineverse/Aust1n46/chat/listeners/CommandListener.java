@@ -165,7 +165,7 @@ public class CommandListener implements Listener {
 				if (target != null) {
 					command = command.replace("{player_name}", target.getName());
 					if (target.isOnline()) {
-						command = Format.FormatStringAll(PlaceholderAPI.setBracketPlaceholders(target.getPlayer(), command));
+						command = Format.FormatStringAll(PlaceholderAPI.setPlaceholders(target.getPlayer(), command));
 					}
 				} else {
 					command = command.replace("{player_name}", "Discord_Message");

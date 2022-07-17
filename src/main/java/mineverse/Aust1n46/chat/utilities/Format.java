@@ -119,7 +119,7 @@ public class Format {
 					if (placeholder.contains(jsonAttribute.getName().replace("%", "").replace("%", ""))) {
 						action = jsonAttribute.getClickAction();
 						text = Format.FormatStringAll(
-								PlaceholderAPI.setBracketPlaceholders(icp.getPlayer(), jsonAttribute.getClickText()));
+								PlaceholderAPI.setPlaceholders(icp.getPlayer(), jsonAttribute.getClickText()));
 						for (String st : jsonAttribute.getHoverText()) {
 							hover += Format.FormatStringAll(st) + "\n";
 						}
@@ -127,7 +127,7 @@ public class Format {
 				}
 				if(!hover.isEmpty()) {
 					hover = Format.FormatStringAll(
-							PlaceholderAPI.setBracketPlaceholders(icp.getPlayer(), hover.substring(0, hover.length() - 1)));
+							PlaceholderAPI.setPlaceholders(icp.getPlayer(), hover.substring(0, hover.length() - 1)));
 				}
 				temp += convertToJsonColors(lastCode + formattedPlaceholder,
 						",\"clickEvent\":{\"action\":\"" + action + "\",\"value\":\"" + text

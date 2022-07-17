@@ -123,13 +123,13 @@ public class ChatListener implements Listener {
 				}
 				filtered = " " + filtered;
 				
-				send = Format.FormatStringAll(PlaceholderAPI.setBracketPlaceholders(mcp.getPlayer(), plugin.getConfig().getString("tellformatfrom").replaceAll("sender_", "")));
-				echo = Format.FormatStringAll(PlaceholderAPI.setBracketPlaceholders(mcp.getPlayer(), plugin.getConfig().getString("tellformatto").replaceAll("sender_", "")));
-				spy = Format.FormatStringAll(PlaceholderAPI.setBracketPlaceholders(mcp.getPlayer(), plugin.getConfig().getString("tellformatspy").replaceAll("sender_", "")));
+				send = Format.FormatStringAll(PlaceholderAPI.setPlaceholders(mcp.getPlayer(), plugin.getConfig().getString("tellformatfrom").replaceAll("sender_", "")));
+				echo = Format.FormatStringAll(PlaceholderAPI.setPlaceholders(mcp.getPlayer(), plugin.getConfig().getString("tellformatto").replaceAll("sender_", "")));
+				spy = Format.FormatStringAll(PlaceholderAPI.setPlaceholders(mcp.getPlayer(), plugin.getConfig().getString("tellformatspy").replaceAll("sender_", "")));
 				
-				send = Format.FormatStringAll(PlaceholderAPI.setBracketPlaceholders(tp.getPlayer(), send.replaceAll("receiver_", ""))) + filtered;
-				echo = Format.FormatStringAll(PlaceholderAPI.setBracketPlaceholders(tp.getPlayer(), echo.replaceAll("receiver_", ""))) + filtered;
-				spy = Format.FormatStringAll(PlaceholderAPI.setBracketPlaceholders(tp.getPlayer(), spy.replaceAll("receiver_", ""))) + filtered;
+				send = Format.FormatStringAll(PlaceholderAPI.setPlaceholders(tp.getPlayer(), send.replaceAll("receiver_", ""))) + filtered;
+				echo = Format.FormatStringAll(PlaceholderAPI.setPlaceholders(tp.getPlayer(), echo.replaceAll("receiver_", ""))) + filtered;
+				spy = Format.FormatStringAll(PlaceholderAPI.setPlaceholders(tp.getPlayer(), spy.replaceAll("receiver_", ""))) + filtered;
 				
 				if(!mcp.getPlayer().hasPermission("venturechat.spy.override")) {
 					for(MineverseChatPlayer p : MineverseChatAPI.getOnlineMineverseChatPlayers()) {
@@ -478,14 +478,14 @@ public class ChatListener implements Listener {
 		}
 		if(curColor.equalsIgnoreCase("None")) {
 			// Format the placeholders and their color codes to determine the last color code to use for the chat message color
-			chat = Format.getLastCode(Format.FormatStringAll(PlaceholderAPI.setBracketPlaceholders(mcp.getPlayer(), format))) + chat;
+			chat = Format.getLastCode(Format.FormatStringAll(PlaceholderAPI.setPlaceholders(mcp.getPlayer(), format))) + chat;
 		}
 		else {
 			chat = curColor + chat;
 		}
 		
 		String globalJSON = Format.convertToJson(mcp, format, chat); 
-		format = Format.FormatStringAll(PlaceholderAPI.setBracketPlaceholders(mcp.getPlayer(), Format.FormatStringAll(format)));
+		format = Format.FormatStringAll(PlaceholderAPI.setPlaceholders(mcp.getPlayer(), Format.FormatStringAll(format)));
 		String message = Format.stripColor(format + chat); // UTF-8 encoding issues.
 		int hash = message.hashCode();
 		
