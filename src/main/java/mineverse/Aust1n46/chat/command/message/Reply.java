@@ -73,13 +73,13 @@ public class Reply extends Command {
 					}
 
 					send = Format
-							.FormatStringAll(PlaceholderAPI.setBracketPlaceholders(mcp.getPlayer(), plugin.getConfig().getString("replyformatfrom").replaceAll("sender_", "")));
-					echo = Format.FormatStringAll(PlaceholderAPI.setBracketPlaceholders(mcp.getPlayer(), plugin.getConfig().getString("replyformatto").replaceAll("sender_", "")));
-					spy = Format.FormatStringAll(PlaceholderAPI.setBracketPlaceholders(mcp.getPlayer(), plugin.getConfig().getString("replyformatspy").replaceAll("sender_", "")));
+							.FormatStringAll(PlaceholderAPI.setPlaceholders(mcp.getPlayer(), plugin.getConfig().getString("replyformatfrom").replaceAll("sender_", "")));
+					echo = Format.FormatStringAll(PlaceholderAPI.setPlaceholders(mcp.getPlayer(), plugin.getConfig().getString("replyformatto").replaceAll("sender_", "")));
+					spy = Format.FormatStringAll(PlaceholderAPI.setPlaceholders(mcp.getPlayer(), plugin.getConfig().getString("replyformatspy").replaceAll("sender_", "")));
 
-					send = Format.FormatStringAll(PlaceholderAPI.setBracketPlaceholders(player.getPlayer(), send.replaceAll("receiver_", ""))) + msg;
-					echo = Format.FormatStringAll(PlaceholderAPI.setBracketPlaceholders(player.getPlayer(), echo.replaceAll("receiver_", ""))) + msg;
-					spy = Format.FormatStringAll(PlaceholderAPI.setBracketPlaceholders(player.getPlayer(), spy.replaceAll("receiver_", ""))) + msg;
+					send = Format.FormatStringAll(PlaceholderAPI.setPlaceholders(player.getPlayer(), send.replaceAll("receiver_", ""))) + msg;
+					echo = Format.FormatStringAll(PlaceholderAPI.setPlaceholders(player.getPlayer(), echo.replaceAll("receiver_", ""))) + msg;
+					spy = Format.FormatStringAll(PlaceholderAPI.setPlaceholders(player.getPlayer(), spy.replaceAll("receiver_", ""))) + msg;
 
 					if (!mcp.getPlayer().hasPermission("venturechat.spy.override")) {
 						for (MineverseChatPlayer p : MineverseChatAPI.getOnlineMineverseChatPlayers()) {
@@ -128,11 +128,11 @@ public class Reply extends Command {
 			msg = Format.FormatString(msg);
 		}
 
-		String send = Format.FormatStringAll(PlaceholderAPI.setBracketPlaceholders(mcp.getPlayer(), plugin.getConfig().getString("replyformatfrom").replaceAll("sender_", "")));
-		String echo = Format.FormatStringAll(PlaceholderAPI.setBracketPlaceholders(mcp.getPlayer(), plugin.getConfig().getString("replyformatto").replaceAll("sender_", "")));
+		String send = Format.FormatStringAll(PlaceholderAPI.setPlaceholders(mcp.getPlayer(), plugin.getConfig().getString("replyformatfrom").replaceAll("sender_", "")));
+		String echo = Format.FormatStringAll(PlaceholderAPI.setPlaceholders(mcp.getPlayer(), plugin.getConfig().getString("replyformatto").replaceAll("sender_", "")));
 		String spy = "VentureChat:NoSpy";
 		if (!mcp.getPlayer().hasPermission("venturechat.spy.override")) {
-			spy = Format.FormatStringAll(PlaceholderAPI.setBracketPlaceholders(mcp.getPlayer(), plugin.getConfig().getString("replyformatspy").replaceAll("sender_", "")));
+			spy = Format.FormatStringAll(PlaceholderAPI.setPlaceholders(mcp.getPlayer(), plugin.getConfig().getString("replyformatspy").replaceAll("sender_", "")));
 		}
 		try {
 			out.writeUTF("Message");
