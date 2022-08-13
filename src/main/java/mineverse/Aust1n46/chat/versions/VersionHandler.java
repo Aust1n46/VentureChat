@@ -67,10 +67,22 @@ public final class VersionHandler {
 	}
 
 	public static boolean isUnder_1_19() {
-		return !SERVER_VERSION.isAtLeast(MinecraftVersion.WILD_UPDATE);
+		if (SERVER_VERSION.getMajor() < 1) {
+			return true;
+		}
+		return SERVER_VERSION.getMajor() == 1 && SERVER_VERSION.getMinor() < 19;
 	}
 
 	public static boolean isAbove_1_19() {
-		return !is1_19() && SERVER_VERSION.isAtLeast(MinecraftVersion.WILD_UPDATE);
+		if (SERVER_VERSION.getMajor() < 1) {
+			return false;
+		}
+		if (SERVER_VERSION.getMajor() > 1) {
+			return true;
+		}
+		if (SERVER_VERSION.getMinor() > 19) {
+			return true;
+		}
+		return SERVER_VERSION.getMinor() == 19 && SERVER_VERSION.getBuild() > 0;
 	}
 }
