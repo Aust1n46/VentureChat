@@ -2,10 +2,11 @@ package mineverse.Aust1n46.chat.versions;
 
 import com.comphenix.protocol.utility.MinecraftVersion;
 
-//This class contains methods for determining what version of Minecraft the server is running.
 public final class VersionHandler {
 
 	public static final MinecraftVersion SERVER_VERSION = MinecraftVersion.getCurrentVersion();
+	private static final MinecraftVersion MC1_19 = new MinecraftVersion(1, 19, 0);
+	private static final MinecraftVersion MC1_19_1 = new MinecraftVersion(1, 19, 1);
 
 	private VersionHandler() {
 	}
@@ -67,10 +68,10 @@ public final class VersionHandler {
 	}
 
 	public static boolean isUnder_1_19() {
-		return !SERVER_VERSION.isAtLeast(MinecraftVersion.WILD_UPDATE);
+		return !SERVER_VERSION.isAtLeast(MC1_19);
 	}
 
 	public static boolean isAbove_1_19() {
-		return !is1_19() && SERVER_VERSION.isAtLeast(MinecraftVersion.WILD_UPDATE);
+		return SERVER_VERSION.isAtLeast(MC1_19_1);
 	}
 }
