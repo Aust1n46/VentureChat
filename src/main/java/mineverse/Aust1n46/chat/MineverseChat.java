@@ -998,7 +998,7 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 						sendPluginMessage(stream);
 						return;
 					}
-					p.getPlayer().sendMessage(Format.FormatStringAll(PlaceholderAPI.setBracketPlaceholders(p.getPlayer(), send.replaceAll("receiver_", ""))) + msg);
+					p.getPlayer().sendMessage(Format.FormatStringAll(PlaceholderAPI.setPlaceholders(p.getPlayer(), send.replaceAll("receiver_", ""))) + msg);
 					if(p.hasNotifications()) {
 						Format.playMessageSound(p);
 					}
@@ -1015,8 +1015,8 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 					out.writeUTF(p.getUUID().toString());
 					out.writeUTF(sender.toString());
 					out.writeUTF(sName);
-					out.writeUTF(Format.FormatStringAll(PlaceholderAPI.setBracketPlaceholders(p.getPlayer(), echo.replaceAll("receiver_", ""))) + msg);
-					out.writeUTF(Format.FormatStringAll(PlaceholderAPI.setBracketPlaceholders(p.getPlayer(), spy.replaceAll("receiver_", ""))) + msg);
+					out.writeUTF(Format.FormatStringAll(PlaceholderAPI.setPlaceholders(p.getPlayer(), echo.replaceAll("receiver_", ""))) + msg);
+					out.writeUTF(Format.FormatStringAll(PlaceholderAPI.setPlaceholders(p.getPlayer(), spy.replaceAll("receiver_", ""))) + msg);
 					sendPluginMessage(stream);
 					return;
 				}

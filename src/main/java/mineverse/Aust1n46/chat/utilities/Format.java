@@ -45,7 +45,7 @@ public class Format {
 	private static final Pattern LEGACY_CHAT_COLOR_PATTERN = Pattern.compile(
 			"(?<!(&x(&[a-fA-F0-9]){5}))(?<!(&x(&[a-fA-F0-9]){4}))(?<!(&x(&[a-fA-F0-9]){3}))(?<!(&x(&[a-fA-F0-9]){2}))(?<!(&x(&[a-fA-F0-9]){1}))(?<!(&x))(&)([0-9a-fA-F])");
 	
-	private static final Pattern PLACEHOLDERAPI_PLACEHOLDER_PATTERN = Pattern.compile("\\{([^\\{\\}]+)\\}");
+	private static final Pattern PLACEHOLDERAPI_PLACEHOLDER_PATTERN = Pattern.compile("\\%[^\\{\\}%]*\\{?[^\\{\\}%]+\\}?[^\\{\\}%]*\\%");
 	
 	public static final long MILLISECONDS_PER_DAY = 86400000;
 	public static final long MILLISECONDS_PER_HOUR = 3600000;
@@ -109,17 +109,17 @@ public class Format {
 				indexStart = matcher.start();
 				indexEnd = matcher.end();
 				placeholder = remaining.substring(indexStart, indexEnd);
-				formattedPlaceholder = Format.FormatStringAll(PlaceholderAPI.setBracketPlaceholders(icp.getPlayer(), placeholder));
+				formattedPlaceholder = Format.FormatStringAll(PlaceholderAPI.setPlaceholders(icp.getPlayer(), placeholder));
 				temp += convertToJsonColors(lastCode + remaining.substring(0, indexStart)) + ",";
 				lastCode = getLastCode(lastCode + remaining.substring(0, indexStart));
 				String action = "";
 				String text = "";
 				String hover = "";
 				for (JsonAttribute jsonAttribute : format.getJsonAttributes()) {
-					if (placeholder.contains(jsonAttribute.getName().replace("{", "").replace("}", ""))) {
+					if (placeholder.contains(jsonAttribute.getName().replace("%", "").replace("%", ""))) {
 						action = jsonAttribute.getClickAction();
 						text = Format.FormatStringAll(
-								PlaceholderAPI.setBracketPlaceholders(icp.getPlayer(), jsonAttribute.getClickText()));
+								PlaceholderAPI.setPlaceholders(icp.getPlayer(), jsonAttribute.getClickText()));
 						for (String st : jsonAttribute.getHoverText()) {
 							hover += Format.FormatStringAll(st) + "\n";
 						}
@@ -127,7 +127,7 @@ public class Format {
 				}
 				if(!hover.isEmpty()) {
 					hover = Format.FormatStringAll(
-							PlaceholderAPI.setBracketPlaceholders(icp.getPlayer(), hover.substring(0, hover.length() - 1)));
+							PlaceholderAPI.setPlaceholders(icp.getPlayer(), hover.substring(0, hover.length() - 1)));
 				}
 				temp += convertToJsonColors(lastCode + formattedPlaceholder,
 						",\"clickEvent\":{\"action\":\"" + action + "\",\"value\":\"" + text
