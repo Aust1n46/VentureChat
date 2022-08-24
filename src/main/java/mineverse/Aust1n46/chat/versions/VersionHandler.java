@@ -67,10 +67,7 @@ public final class VersionHandler {
 	}
 
 	public static boolean isUnder_1_19() {
-		if (SERVER_VERSION.getMajor() < 1) {
-			return true;
-		}
-		return SERVER_VERSION.getMajor() == 1 && SERVER_VERSION.getMinor() < 19;
+		return !SERVER_VERSION.isAtLeast(MC1_19);
 	}
 
 	public static boolean isAbove_1_19() {
