@@ -1,67 +1,77 @@
 package mineverse.Aust1n46.chat.versions;
 
-import org.bukkit.Bukkit;
+import com.comphenix.protocol.utility.MinecraftVersion;
 
-//This class contains methods for determining what version of Minecraft the server is running.
-public class VersionHandler {
+public final class VersionHandler {
+
+	public static final MinecraftVersion SERVER_VERSION = MinecraftVersion.getCurrentVersion();
+	private static final MinecraftVersion MC1_19 = new MinecraftVersion(1, 19, 0);
+	private static final MinecraftVersion MC1_19_1 = new MinecraftVersion(1, 19, 1);
+
+	private VersionHandler() {
+	}
 
 	public static boolean is1_7() {
-		return Bukkit.getVersion().contains("1.7");
+		return SERVER_VERSION.getMinor() == 7 && SERVER_VERSION.getMajor() == 1;
 	}
-	
+
 	public static boolean is1_8() {
-		return Bukkit.getVersion().contains("1.8");
+		return SERVER_VERSION.getMinor() == 8 && SERVER_VERSION.getMajor() == 1;
 	}
-	
+
 	public static boolean is1_9() {
-		return Bukkit.getVersion().contains("1.9");
+		return SERVER_VERSION.getMinor() == 9 && SERVER_VERSION.getMajor() == 1;
 	}
-	
+
 	public static boolean is1_10() {
-		return Bukkit.getVersion().contains("1.10");
+		return SERVER_VERSION.getMinor() == 10 && SERVER_VERSION.getMajor() == 1;
 	}
-	
+
 	public static boolean is1_11() {
-		return Bukkit.getVersion().contains("1.11");
+		return SERVER_VERSION.getMinor() == 11 && SERVER_VERSION.getMajor() == 1;
 	}
-	
+
 	public static boolean is1_12() {
-		return Bukkit.getVersion().contains("1.12");
+		return SERVER_VERSION.getMinor() == 12 && SERVER_VERSION.getMajor() == 1;
 	}
-	
+
 	public static boolean is1_13() {
-		return Bukkit.getVersion().contains("1.13");
+		return SERVER_VERSION.getMinor() == 13 && SERVER_VERSION.getMajor() == 1;
 	}
-	
+
 	public static boolean is1_14() {
-		return Bukkit.getVersion().contains("1.14");
+		return SERVER_VERSION.getBuild() != 4 && SERVER_VERSION.getMinor() == 14 && SERVER_VERSION.getMajor() == 1;
 	}
-	
+
 	public static boolean is1_14_4() {
-		return Bukkit.getVersion().contains("1.14.4");
+		return SERVER_VERSION.getBuild() == 4 && SERVER_VERSION.getMinor() == 14 && SERVER_VERSION.getMajor() == 1;
 	}
-	
+
 	public static boolean is1_15() {
-		return Bukkit.getVersion().contains("1.15");
+		return SERVER_VERSION.getMinor() == 15 && SERVER_VERSION.getMajor() == 1;
 	}
-	
+
 	public static boolean is1_16() {
-		return Bukkit.getVersion().contains("1.16");
+		return SERVER_VERSION.getMinor() == 16 && SERVER_VERSION.getMajor() == 1;
 	}
-	
+
 	public static boolean is1_17() {
-		return Bukkit.getVersion().contains("1.17");
+		return SERVER_VERSION.getMinor() == 17 && SERVER_VERSION.getMajor() == 1;
 	}
-	
+
 	public static boolean is1_18() {
-		return Bukkit.getVersion().contains("1.18");
+		return SERVER_VERSION.getMinor() == 18 && SERVER_VERSION.getMajor() == 1;
 	}
-	
+
 	public static boolean is1_19() {
-		return Bukkit.getVersion().contains("1.19");
+		return SERVER_VERSION.getBuild() == 0 && SERVER_VERSION.getMinor() == 19 && SERVER_VERSION.getMajor() == 1;
 	}
-	
+
 	public static boolean isUnder_1_19() {
-		return is1_7() || is1_8() || is1_9() || is1_10() || is1_11() || is1_12() || is1_13() || is1_14() || is1_15() || is1_16() || is1_17() || is1_18();
+		return !SERVER_VERSION.isAtLeast(MC1_19);
+	}
+
+	public static boolean isAbove_1_19() {
+		return SERVER_VERSION.isAtLeast(MC1_19_1);
 	}
 }

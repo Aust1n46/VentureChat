@@ -449,7 +449,11 @@ public class Format {
 
 	public static PacketContainer createPacketPlayOutChat(String json) {
 		final PacketContainer container;
-		if (VersionHandler.isUnder_1_19()) {
+		if (VersionHandler.isAbove_1_19()) {
+			container = new PacketContainer(PacketType.Play.Server.SYSTEM_CHAT);
+			container.getStrings().write(0, json);
+			container.getBooleans().write(0, false);
+		} else if (VersionHandler.isUnder_1_19()) {
 			WrappedChatComponent component = WrappedChatComponent.fromJson(json);
 			container = new PacketContainer(PacketType.Play.Server.CHAT);
 			container.getModifier().writeDefaults();
@@ -464,7 +468,11 @@ public class Format {
 
 	public static PacketContainer createPacketPlayOutChat(WrappedChatComponent component) {
 		final PacketContainer container;
-		if (VersionHandler.isUnder_1_19()) {
+		if (VersionHandler.isAbove_1_19()) {
+			container = new PacketContainer(PacketType.Play.Server.SYSTEM_CHAT);
+			container.getStrings().write(0, component.getJson());
+			container.getBooleans().write(0, false);
+		} else if (VersionHandler.isUnder_1_19()) {
 			container = new PacketContainer(PacketType.Play.Server.CHAT);
 			container.getModifier().writeDefaults();
 			container.getChatComponents().write(0, component);
