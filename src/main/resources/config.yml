@@ -136,7 +136,7 @@ messageremovertext: '&c&o<message removed>'
 # The name of the group is the permissions node for the format
 # Example: venturechat.json.Owner is the node for the group Owner
 # A lower priority overrides a higher priority if a player has more than 1 group
-# Possible options for click_name and click_prefix are suggest_command, run_command, and open_url
+# Possible options for click_action are suggest_command, run_command, open_url, and none
 jsonformatting:
   Default: # This default format is required!  Do not delete or rename it!
     priority: 2147483647 # Integer.MAX_VALUE
