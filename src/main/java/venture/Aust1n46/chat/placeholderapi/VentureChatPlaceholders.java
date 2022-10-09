@@ -1,5 +1,6 @@
 package venture.Aust1n46.chat.placeholderapi;
 
+import org.apache.commons.lang.StringUtils;
 import org.bukkit.entity.Player;
 
 import com.google.inject.Inject;
@@ -12,72 +13,79 @@ import venture.Aust1n46.chat.model.VentureChatPlayer;
 import venture.Aust1n46.chat.service.VentureChatPlayerApiService;
 
 public class VentureChatPlaceholders extends PlaceholderExpansion {
+	private static final String AUTHOR = "Aust1n46";
+	private static final String IDENTIFIER = "venturechat";
+
 	@Inject
 	private VentureChat plugin;
 	@Inject
 	private VentureChatPlayerApiService playerApiService;
-	
-    @Override
-    public String onPlaceholderRequest(Player p, String identifier) {
-        if (p == null) {
-            return null;
-        }
-        VentureChatPlayer mcp = playerApiService.getOnlineMineverseChatPlayer(p);
-        if (mcp == null) {
-            return "";
-        }
-        if (identifier.equalsIgnoreCase("something_else_you_think_of")) {
-            return "value for that identifier *";
-        }
-        if (identifier.startsWith("channel_")) {
-            ChatChannel currentChannel = mcp.isQuickChat() ? mcp.getQuickChannel() : mcp.getCurrentChannel();
-            if (currentChannel == null) {
-                return "";
-            }
-            switch (identifier) {
-                case "channel_name":
-                    return currentChannel.getName();
-                case "channel_alias":
-                    return currentChannel.getAlias();
-                case "channel_color":
-                    return currentChannel.getColor();
-                case "channel_chatcolor":
-                    return currentChannel.getChatColor();
-                case "channel_is_bungee":
-                    return currentChannel.getBungee() ? PlaceholderAPIPlugin.booleanTrue() : PlaceholderAPIPlugin.booleanFalse();
-                case "channel_cooldown":
-                    return currentChannel.getCooldown() + "";
-                case "channel_distance":
-                    return currentChannel.getDistance() + "";
-                case "channel_prefix":
-                	return currentChannel.getPrefix();
-            }
-        }
-        return null;
-    }
 
-    @Override
-    public boolean persist() {
-        return true;
-    }
+	private String version;
 
-    @Override
-    public boolean canRegister() {
-        return true;
-    }
+	@Inject
+	public void postConstruct() {
+		version = plugin.getDescription().getVersion();
+	}
 
-    @Override
-    public String getAuthor() {
-        return "Aust1n46";
-    }
+	@Override
+	public String onPlaceholderRequest(final Player p, final String identifier) {
+		if (p == null) {
+			return null;
+		}
+		final VentureChatPlayer mcp = playerApiService.getOnlineMineverseChatPlayer(p);
+		if (mcp == null) {
+			return StringUtils.EMPTY;
+		}
+		if (identifier.startsWith("channel_")) {
+			ChatChannel currentChannel = mcp.isQuickChat() ? mcp.getQuickChannel() : mcp.getCurrentChannel();
+			if (currentChannel == null) {
+				return StringUtils.EMPTY;
+			}
+			switch (identifier) {
+			case "channel_name":
+				return currentChannel.getName();
+			case "channel_alias":
+				return currentChannel.getAlias();
+			case "channel_color":
+				return currentChannel.getColor();
+			case "channel_chatcolor":
+				return currentChannel.getChatColor();
+			case "channel_is_bungee":
+				return currentChannel.getBungee() ? PlaceholderAPIPlugin.booleanTrue() : PlaceholderAPIPlugin.booleanFalse();
+			case "channel_cooldown":
+				return currentChannel.getCooldown() + "";
+			case "channel_distance":
+				return currentChannel.getDistance() + "";
+			case "channel_prefix":
+				return currentChannel.getPrefix();
+			}
+		}
+		return null;
+	}
 
-    @Override
-    public String getIdentifier() {
-        return "venturechat";
-    }
+	@Override
+	public boolean persist() {
+		return true;
+	}
 
-    @Override
-    public String getVersion() {
-        return plugin.getDescription().getVersion();
-    }
+	@Override
+	public boolean canRegister() {
+		return true;
+	}
+
+	@Override
+	public String getAuthor() {
+		return AUTHOR;
+	}
+
+	@Override
+	public String getIdentifier() {
+		return IDENTIFIER;
+	}
+
+	@Override
+	public String getVersion() {
+		return version;
+	}
 }
