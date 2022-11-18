@@ -1064,8 +1064,9 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 					String receiver = msgin.readUTF();
 					UUID sender = UUID.fromString(msgin.readUTF());
 					MineverseChatPlayer p = MineverseChatAPI.getOnlineMineverseChatPlayer(sender);
-					p.getPlayer().sendMessage(message.replace("{player}", receiver));
-					System.out.println(message);
+					if(message.length()>0) {
+						p.getPlayer().sendMessage(message.replace("{player}", receiver));
+					}
 				}
 				if(identifier.equals("Echo")) {
 					String receiverName = msgin.readUTF();
