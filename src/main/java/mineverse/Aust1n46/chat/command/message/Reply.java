@@ -73,13 +73,13 @@ public class Reply extends Command {
 						msg = Format.FormatString(msg);
 					}
 
-					PrivateMessageEvent e = new PrivateMessageEvent(mcp, player, msg);
-					plugin.getServer().getPluginManager().callEvent(e);
-					if (e.isCancelled()) {
-						if (e.getErrorMessage() != null) sender.sendMessage(e.getErrorMessage());
+					PrivateMessageEvent privateMessageEvent = new PrivateMessageEvent(mcp, player, msg, true);
+					plugin.getServer().getPluginManager().callEvent(privateMessageEvent);
+					if (privateMessageEvent.isCancelled()) {
+						if (privateMessageEvent.getErrorMessage() != null) sender.sendMessage(privateMessageEvent.getErrorMessage());
 						return true;
 					}
-					msg = e.getChat();
+					msg = privateMessageEvent.getChat();
 
 					send = Format
 							.FormatStringAll(PlaceholderAPI.setBracketPlaceholders(mcp.getPlayer(), plugin.getConfig().getString("replyformatfrom").replaceAll("sender_", "")));

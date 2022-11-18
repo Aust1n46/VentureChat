@@ -8,10 +8,9 @@ import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * Event called when a message has been sent to a channel.
- * This event can not be cancelled.
+ * Event called when a private message has been sent.
  *
- * @author Aust1n46
+ * @author Heliosares
  */
 public class PrivateMessageEvent extends Event implements Cancellable {
     private static final HandlerList handlers = new HandlerList();
@@ -19,25 +18,42 @@ public class PrivateMessageEvent extends Event implements Cancellable {
 
     private final MineverseChatPlayer from;
     private final MineverseChatPlayer to;
+    private final boolean isLocal;
     private String chat;
     private boolean cancelled;
     private String errorMessage;
 
-    public PrivateMessageEvent(MineverseChatPlayer from, MineverseChatPlayer to, String chat) {
-        super(MineverseChat.ASYNC);
+    public PrivateMessageEvent(MineverseChatPlayer from, MineverseChatPlayer to, String chat, boolean local) {
+        super(false);
         this.from = from;
         this.to = to;
         this.chat = chat;
+        this.isLocal = local;
     }
 
     public static HandlerList getHandlerList() {
         return handlers;
     }
 
+    /**
+     * @return true if the message was sent from this server, otherwise false
+     */
+    public boolean isLocal() {
+        return isLocal;
+    }
+
+    /**
+     *
+     * @return The error message set by a cancelling plugin, if any
+     */
     public String getErrorMessage() {
         return errorMessage;
     }
 
+    /**
+     * Sets a message to be shown to the sender if cancelled
+     * @param errorMessage The message to be sent
+     */
     public void setErrorMessage(String errorMessage) {
         this.errorMessage = errorMessage;
     }

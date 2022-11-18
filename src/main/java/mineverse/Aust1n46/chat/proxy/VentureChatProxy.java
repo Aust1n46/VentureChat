@@ -448,6 +448,20 @@ public class VentureChatProxy {
 						source.sendPluginMessage(server, outstream.toByteArray());
 					}
 				}
+				if(identifier.equals("CustomError")) {
+					String message = in.readUTF();
+					String server = in.readUTF();
+					String player = in.readUTF();
+					String sender = in.readUTF();
+					out.writeUTF("Message");
+					out.writeUTF("CustomError");
+					out.writeUTF(message);
+					out.writeUTF(player);
+					out.writeUTF(sender);
+					if(!source.getServer(server).isEmpty()) {
+						source.sendPluginMessage(server, outstream.toByteArray());
+					}
+				}
 				if(identifier.equals("Echo")) {
 					String server = in.readUTF();
 					String player = in.readUTF();

@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
+import mineverse.Aust1n46.chat.api.events.PrivateMessageEvent;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -998,6 +999,22 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 						sendPluginMessage(stream);
 						return;
 					}
+
+					PrivateMessageEvent privateMessageEvent = new PrivateMessageEvent(MineverseChatAPI.getMineverseChatPlayer(sender), p, msg, false);
+					getServer().getPluginManager().callEvent(privateMessageEvent);
+					if (privateMessageEvent.isCancelled()) {
+						out.writeUTF("Message");
+						out.writeUTF("CustomError");
+						System.out.println("Error: "+privateMessageEvent.getErrorMessage());
+						out.writeUTF(privateMessageEvent.getErrorMessage() == null ? "" : privateMessageEvent.getErrorMessage());
+						out.writeUTF(server);
+						out.writeUTF(receiver);
+						out.writeUTF(sender.toString());
+						sendPluginMessage(stream);
+						return;
+					}
+					msg = privateMessageEvent.getChat();
+
 					p.getPlayer().sendMessage(Format.FormatStringAll(PlaceholderAPI.setBracketPlaceholders(p.getPlayer(), send.replaceAll("receiver_", ""))) + msg);
 					if(p.hasNotifications()) {
 						Format.playMessageSound(p);
@@ -1041,6 +1058,14 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 					MineverseChatPlayer p = MineverseChatAPI.getOnlineMineverseChatPlayer(sender);
 					p.getPlayer().sendMessage(LocalizedMessage.BLOCKING_MESSAGE.toString()
 							.replace("{player}", receiver));
+				}
+				if(identifier.equals("CustomError")) {
+					String message = msgin.readUTF();
+					String receiver = msgin.readUTF();
+					UUID sender = UUID.fromString(msgin.readUTF());
+					MineverseChatPlayer p = MineverseChatAPI.getOnlineMineverseChatPlayer(sender);
+					p.getPlayer().sendMessage(message.replace("{player}", receiver));
+					System.out.println(message);
 				}
 				if(identifier.equals("Echo")) {
 					String receiverName = msgin.readUTF();

@@ -124,13 +124,13 @@ public class ChatListener implements Listener {
 				}
 				filtered = " " + filtered;
 
-				PrivateMessageEvent e = new PrivateMessageEvent(mcp, tp, filtered);
-				plugin.getServer().getPluginManager().callEvent(e);
-				if (e.isCancelled()) {
-					if (e.getErrorMessage() != null) mcp.getPlayer().sendMessage(e.getErrorMessage());
+				PrivateMessageEvent privateMessageEvent = new PrivateMessageEvent(mcp, tp, filtered, true);
+				plugin.getServer().getPluginManager().callEvent(privateMessageEvent);
+				if (privateMessageEvent.isCancelled()) {
+					if (privateMessageEvent.getErrorMessage() != null) mcp.getPlayer().sendMessage(privateMessageEvent.getErrorMessage());
 					return;
 				}
-				filtered = e.getChat();
+				filtered = privateMessageEvent.getChat();
 				
 				send = Format.FormatStringAll(PlaceholderAPI.setBracketPlaceholders(mcp.getPlayer(), plugin.getConfig().getString("tellformatfrom").replaceAll("sender_", "")));
 				echo = Format.FormatStringAll(PlaceholderAPI.setBracketPlaceholders(mcp.getPlayer(), plugin.getConfig().getString("tellformatto").replaceAll("sender_", "")));
