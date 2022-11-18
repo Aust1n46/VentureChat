@@ -1,6 +1,5 @@
 package mineverse.Aust1n46.chat.api.events;
 
-import mineverse.Aust1n46.chat.MineverseChat;
 import mineverse.Aust1n46.chat.api.MineverseChatPlayer;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
@@ -43,7 +42,6 @@ public class PrivateMessageEvent extends Event implements Cancellable {
     }
 
     /**
-     *
      * @return The error message set by a cancelling plugin, if any
      */
     public String getErrorMessage() {
@@ -52,6 +50,7 @@ public class PrivateMessageEvent extends Event implements Cancellable {
 
     /**
      * Sets a message to be shown to the sender if cancelled
+     *
      * @param errorMessage The message to be sent
      */
     public void setErrorMessage(String errorMessage) {
@@ -67,7 +66,7 @@ public class PrivateMessageEvent extends Event implements Cancellable {
     }
 
     public String getChat() {
-        return this.chat;
+        return " " + this.chat.trim();
     }
 
     public void setChat(String chat) {
