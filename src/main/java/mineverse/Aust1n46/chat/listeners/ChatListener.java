@@ -4,6 +4,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.util.Set;
 
+import mineverse.Aust1n46.chat.api.events.PrivateMessageEvent;
 import net.essentialsx.api.v2.services.discord.DiscordService;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -122,6 +123,14 @@ public class ChatListener implements Listener {
 					filtered = Format.FormatString(filtered);
 				}
 				filtered = " " + filtered;
+
+				PrivateMessageEvent e = new PrivateMessageEvent(mcp, tp, filtered);
+				plugin.getServer().getPluginManager().callEvent(e);
+				if (e.isCancelled()) {
+					if (e.getErrorMessage() != null) mcp.getPlayer().sendMessage(e.getErrorMessage());
+					return;
+				}
+				filtered = e.getChat();
 				
 				send = Format.FormatStringAll(PlaceholderAPI.setBracketPlaceholders(mcp.getPlayer(), plugin.getConfig().getString("tellformatfrom").replaceAll("sender_", "")));
 				echo = Format.FormatStringAll(PlaceholderAPI.setBracketPlaceholders(mcp.getPlayer(), plugin.getConfig().getString("tellformatto").replaceAll("sender_", "")));

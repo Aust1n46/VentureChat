@@ -3,6 +3,7 @@ package mineverse.Aust1n46.chat.command.message;
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 
+import mineverse.Aust1n46.chat.api.events.PrivateMessageEvent;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -71,6 +72,14 @@ public class Reply extends Command {
 					if (mcp.getPlayer().hasPermission("venturechat.format")) {
 						msg = Format.FormatString(msg);
 					}
+
+					PrivateMessageEvent e = new PrivateMessageEvent(mcp, player, msg);
+					plugin.getServer().getPluginManager().callEvent(e);
+					if (e.isCancelled()) {
+						if (e.getErrorMessage() != null) sender.sendMessage(e.getErrorMessage());
+						return true;
+					}
+					msg = e.getChat();
 
 					send = Format
 							.FormatStringAll(PlaceholderAPI.setBracketPlaceholders(mcp.getPlayer(), plugin.getConfig().getString("replyformatfrom").replaceAll("sender_", "")));
