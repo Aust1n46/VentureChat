@@ -28,9 +28,9 @@ public class Me extends Command {
 					msg = Format.FormatStringLegacyColor(msg);
 				}
 				if (sender.hasPermission("venturechat.color"))
-					msg = Format.FormatStringColor(msg);
+					msg = Format.FormatStringColor(msg, sender.hasPermission("venturechat.color.hex"));
 				if (sender.hasPermission("venturechat.format"))
-					msg = Format.FormatString(msg);
+					msg = Format.FormatString(msg, sender.hasPermission("venturechat.format.magic"));
 				if (sender instanceof Player) {
 					Player p = (Player) sender;
 					Format.broadcastToServer("* " + p.getDisplayName() + msg);

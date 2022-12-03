@@ -630,7 +630,7 @@ public class Format {
      * @param string to format.
      * @return {@link String}
      */
-	public static String FormatStringColor(String string) {
+	public static String FormatStringColor(String string, boolean hex) {
 		String allFormated = string;
 		allFormated = LEGACY_CHAT_COLOR_DIGITS_PATTERN.matcher(allFormated).replaceAll("\u00A7$1");
 
@@ -644,7 +644,7 @@ public class Format {
 
 		allFormated = allFormated.replaceAll("%", "\\%");
 
-		allFormated = convertHexColorCodeStringToBukkitColorCodeString(allFormated);
+		if(hex)	allFormated = convertHexColorCodeStringToBukkitColorCodeString(allFormated);
 		return allFormated;
 	}
 
@@ -676,9 +676,9 @@ public class Format {
      * @param string to format.
      * @return {@link String}
      */
-	public static String FormatString(String string) {
+	public static String FormatString(String string, boolean magic) {
 		String allFormated = string;
-		allFormated = allFormated.replaceAll("&[kK]", BUKKIT_COLOR_CODE_PREFIX + "k");
+		if(magic) allFormated = allFormated.replaceAll("&[kK]", BUKKIT_COLOR_CODE_PREFIX + "k");
 		allFormated = allFormated.replaceAll("&[lL]", BUKKIT_COLOR_CODE_PREFIX + "l");
 		allFormated = allFormated.replaceAll("&[mM]", BUKKIT_COLOR_CODE_PREFIX + "m");
 		allFormated = allFormated.replaceAll("&[nN]", BUKKIT_COLOR_CODE_PREFIX + "n");
@@ -697,8 +697,8 @@ public class Format {
      * @return {@link String}
      */
 	public static String FormatStringAll(String string) {
-		String allFormated = Format.FormatString(string);
-		allFormated = Format.FormatStringColor(allFormated);
+		String allFormated = Format.FormatString(string, true);
+		allFormated = Format.FormatStringColor(allFormated, true);
 		return allFormated;
 	}
 

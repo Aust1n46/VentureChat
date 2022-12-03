@@ -77,10 +77,10 @@ public class Message extends Command {
 					msg = Format.FormatStringLegacyColor(msg);
 				}
 				if (mcp.getPlayer().hasPermission("venturechat.color")) {
-					msg = Format.FormatStringColor(msg);
+					msg = Format.FormatStringColor(msg, mcp.getPlayer().hasPermission("venturechat.color.hex"));
 				}
 				if (mcp.getPlayer().hasPermission("venturechat.format")) {
-					msg = Format.FormatString(msg);
+					msg = Format.FormatString(msg, mcp.getPlayer().hasPermission("venturechat.format.magic"));
 				}
 
 				send = Format.FormatStringAll(PlaceholderAPI.setBracketPlaceholders(mcp.getPlayer(), plugin.getConfig().getString("tellformatfrom").replaceAll("sender_", "")));
@@ -176,10 +176,10 @@ public class Message extends Command {
 			msg = Format.FormatStringLegacyColor(msg);
 		}
 		if (mcp.getPlayer().hasPermission("venturechat.color")) {
-			msg = Format.FormatStringColor(msg);
+			msg = Format.FormatStringColor(msg, mcp.getPlayer().hasPermission("venturechat.color.hex"));
 		}
 		if (mcp.getPlayer().hasPermission("venturechat.format")) {
-			msg = Format.FormatString(msg);
+			msg = Format.FormatString(msg, mcp.getPlayer().hasPermission("venturechat.format.magic"));
 		}
 
 		String send = Format.FormatStringAll(PlaceholderAPI.setBracketPlaceholders(mcp.getPlayer(), plugin.getConfig().getString("tellformatfrom").replaceAll("sender_", "")));
