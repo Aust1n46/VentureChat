@@ -26,8 +26,8 @@ public class PrivateMessageEvent extends Event {
     private @Setter String spy;
     private final boolean bungee;
 
-    public PrivateMessageEvent(VentureChatPlayer sender, VentureChatPlayer receiver, String msg, String echo, String send, String spy, boolean bungee) {
-        super(!Bukkit.isPrimaryThread());
+    public PrivateMessageEvent(VentureChatPlayer sender, VentureChatPlayer receiver, String msg, String echo, String send, String spy, boolean bungee, boolean async) {
+        super(async);
         this.sender = sender;
         this.receiver = receiver;
         this.msg = msg;

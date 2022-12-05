@@ -737,7 +737,7 @@ public class PluginMessageController {
 					echo = FormatUtils.FormatStringAll(PlaceholderAPI.setBracketPlaceholders(p.getPlayer(), echo.replaceAll("receiver_", ""))) + msg;
 					spy = FormatUtils.FormatStringAll(PlaceholderAPI.setBracketPlaceholders(p.getPlayer(), spy.replaceAll("receiver_", ""))) + msg;
 
-					PrivateMessageEvent privateMessageEvent = new PrivateMessageEvent(playerApiService.getOnlineMineverseChatPlayer(sender), p, msg, echo, send, spy, true);
+					PrivateMessageEvent privateMessageEvent = new PrivateMessageEvent(playerApiService.getOnlineMineverseChatPlayer(sender), p, msg, echo, send, spy, true, !Bukkit.isPrimaryThread());
 					Bukkit.getPluginManager().callEvent(privateMessageEvent);
 					send = privateMessageEvent.getSend();
 					echo = privateMessageEvent.getEcho();
