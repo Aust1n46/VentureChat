@@ -126,8 +126,8 @@ public class ChatListener implements Listener {
 			echo = FormatUtils.FormatStringAll(PlaceholderAPI.setBracketPlaceholders(tp.getPlayer(), echo.replaceAll("receiver_", ""))) + filtered;
 			spy = FormatUtils.FormatStringAll(PlaceholderAPI.setBracketPlaceholders(tp.getPlayer(), spy.replaceAll("receiver_", ""))) + filtered;
 
-			PrivateMessageEvent privateMessageEvent = new PrivateMessageEvent(ventureChatPlayer, tp, filtered, echo, send, spy, false, !Bukkit.isPrimaryThread());
-			Bukkit.getPluginManager().callEvent(privateMessageEvent);
+			PrivateMessageEvent privateMessageEvent = new PrivateMessageEvent(ventureChatPlayer, tp, filtered, echo, send, spy, false, !plugin.getServer().isPrimaryThread());
+			plugin.getServer().getPluginManager().callEvent(privateMessageEvent);
 			send = privateMessageEvent.getSend();
 			echo = privateMessageEvent.getEcho();
 			spy = privateMessageEvent.getSpy();
