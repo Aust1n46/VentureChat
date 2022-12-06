@@ -128,6 +128,9 @@ public class ChatListener implements Listener {
 
 			PrivateMessageEvent privateMessageEvent = new PrivateMessageEvent(ventureChatPlayer, tp, filtered, echo, send, spy, false, !plugin.getServer().isPrimaryThread());
 			plugin.getServer().getPluginManager().callEvent(privateMessageEvent);
+			if (privateMessageEvent.isCancelled()) {
+				return;
+			}
 			send = privateMessageEvent.getSend();
 			echo = privateMessageEvent.getEcho();
 			spy = privateMessageEvent.getSpy();

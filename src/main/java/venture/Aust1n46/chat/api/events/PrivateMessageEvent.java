@@ -3,6 +3,7 @@ package venture.Aust1n46.chat.api.events;
 import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.Bukkit;
+import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 import venture.Aust1n46.chat.model.VentureChatPlayer;
@@ -14,13 +15,14 @@ import venture.Aust1n46.chat.model.VentureChatPlayer;
  * @author LOOHP
  */
 @Getter
-public class PrivateMessageEvent extends Event {
+public class PrivateMessageEvent extends Event implements Cancellable {
 
     private static final HandlerList handlers = new HandlerList();
 
     private final VentureChatPlayer sender;
     private final VentureChatPlayer receiver;
     private final String msg;
+    private @Getter @Setter boolean cancelled;
     private @Setter String echo;
     private @Setter String send;
     private @Setter String spy;
@@ -35,6 +37,7 @@ public class PrivateMessageEvent extends Event {
         this.send = send;
         this.spy = spy;
         this.bungee = bungee;
+        this.cancelled = false;
     }
 
     @Override
@@ -45,5 +48,4 @@ public class PrivateMessageEvent extends Event {
     public static HandlerList getHandlerList() {
         return handlers;
     }
-
 }

@@ -739,6 +739,9 @@ public class PluginMessageController {
 
 					PrivateMessageEvent privateMessageEvent = new PrivateMessageEvent(playerApiService.getOnlineMineverseChatPlayer(sender), p, msg, echo, send, spy, true, !plugin.getServer().isPrimaryThread());
 					plugin.getServer().getPluginManager().callEvent(privateMessageEvent);
+					if (privateMessageEvent.isCancelled()) {
+						return;
+					}
 					send = privateMessageEvent.getSend();
 					echo = privateMessageEvent.getEcho();
 					spy = privateMessageEvent.getSpy();
