@@ -19,6 +19,7 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
 import me.clip.placeholderapi.PlaceholderAPI;
+import venture.Aust1n46.chat.api.events.PrivateMessageEvent;
 import venture.Aust1n46.chat.api.events.VentureChatEvent;
 import venture.Aust1n46.chat.initators.commands.MuteContainer;
 import venture.Aust1n46.chat.initiators.application.VentureChat;
@@ -730,7 +731,22 @@ public class PluginMessageController {
 						sendPluginMessage(stream);
 						return;
 					}
-					p.getPlayer().sendMessage(FormatUtils.FormatStringAll(PlaceholderAPI.setBracketPlaceholders(p.getPlayer(), send.replaceAll("receiver_", ""))) + msg);
+
+					send = FormatUtils.FormatStringAll(PlaceholderAPI.setBracketPlaceholders(p.getPlayer(), send.replaceAll("receiver_", ""))) + msg;
+					echo = FormatUtils.FormatStringAll(PlaceholderAPI.setBracketPlaceholders(p.getPlayer(), echo.replaceAll("receiver_", ""))) + msg;
+					spy = FormatUtils.FormatStringAll(PlaceholderAPI.setBracketPlaceholders(p.getPlayer(), spy.replaceAll("receiver_", ""))) + msg;
+
+					PrivateMessageEvent privateMessageEvent = new PrivateMessageEvent(playerApiService.getOnlineMineverseChatPlayer(sender), p, msg, echo, send, spy, true, !plugin.getServer().isPrimaryThread());
+					plugin.getServer().getPluginManager().callEvent(privateMessageEvent);
+					if (privateMessageEvent.isCancelled()) {
+						return;
+					}
+					send = privateMessageEvent.getSend();
+					echo = privateMessageEvent.getEcho();
+					spy = privateMessageEvent.getSpy();
+
+					p.getPlayer().sendMessage(send);
+
 					if (p.isNotifications()) {
 						formatService.playMessageSound(p);
 					}
@@ -747,8 +763,8 @@ public class PluginMessageController {
 					out.writeUTF(p.getUuid().toString());
 					out.writeUTF(sender.toString());
 					out.writeUTF(sName);
-					out.writeUTF(FormatUtils.FormatStringAll(PlaceholderAPI.setBracketPlaceholders(p.getPlayer(), echo.replaceAll("receiver_", ""))) + msg);
-					out.writeUTF(FormatUtils.FormatStringAll(PlaceholderAPI.setBracketPlaceholders(p.getPlayer(), spy.replaceAll("receiver_", ""))) + msg);
+					out.writeUTF(echo);
+					out.writeUTF(spy);
 					sendPluginMessage(stream);
 					return;
 				}
