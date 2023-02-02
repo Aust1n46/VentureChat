@@ -2,6 +2,8 @@ package mineverse.Aust1n46.chat.utilities;
 
 import static mineverse.Aust1n46.chat.MineverseChat.getInstance;
 
+import java.lang.invoke.MethodHandle;
+import java.lang.invoke.MethodHandles;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -121,7 +123,7 @@ public class Format {
 							hover.append(Format.FormatStringAll(st) + "\n");
 						}
 						final String hoverText;
-						if(!hover.isEmpty()) {
+						if(hover.length() != 0) {
 							hoverText = escapeJsonChars(Format.FormatStringAll(
 									PlaceholderAPI.setBracketPlaceholders(icp.getPlayer(), hover.substring(0, hover.length() - 1))));
 						} else {
@@ -490,7 +492,23 @@ public class Format {
 			e.printStackTrace();
 		}
 	}
-	
+
+	// cache method handles can provide better performance.
+	// the best practice is to make those method handles be static final, in which case it will have the best performance.
+	// to achieve this, we should generate those methods handles in static initialize method, at which
+	// moment we have no idea about which class to reflect on, means we can't do it.
+	// (or we actually know the exact class name? in that case, we can do it best performance)
+	// NOTICE: it's ok without any synchronized block, method handles may be replaced by several times, but the methodHandle itself is immutable.
+	private static MethodHandle MH_GET_TEXT;
+	private static MethodHandle MH_GET_CHAT_MODIFIER;
+	private static MethodHandle MH_GET_COLOR;
+	private static MethodHandle MH_GET_COLOR_B;
+	private static MethodHandle MH_IS_BOLD;
+	private static MethodHandle MH_IS_STRIKETHROUGH;
+	private static MethodHandle MH_IS_ITALIC;
+	private static MethodHandle MH_IS_UNDERLINED;
+	private static MethodHandle MH_IS_RANDOM;
+
 	@SuppressWarnings("unchecked")
 	public static String toColoredText(Object o, Class<?> c) {
 		if (VersionHandler.is1_7()) {
@@ -501,55 +519,56 @@ public class Format {
 		stringbuilder.append("\"extra\":[");
 		try {
 			splitComponents(finalList, o, c);
-			for (Object component : finalList) {		
+			boolean isPre1_18 = VersionHandler.is1_8() || VersionHandler.is1_9() || VersionHandler.is1_10()
+					|| VersionHandler.is1_11() || VersionHandler.is1_12() || VersionHandler.is1_13()
+					|| VersionHandler.is1_14() || VersionHandler.is1_15() || VersionHandler.is1_16()
+					|| VersionHandler.is1_17();
+
+			for (Object component : finalList) {
 				try {
-					if (VersionHandler.is1_8() || VersionHandler.is1_9() || VersionHandler.is1_10() || VersionHandler.is1_11() || VersionHandler.is1_12() || VersionHandler.is1_13() || VersionHandler.is1_14() || VersionHandler.is1_15() || VersionHandler.is1_16() || VersionHandler.is1_17()) {
-						String text = (String) component.getClass().getMethod("getText").invoke(component);
-						Object chatModifier = component.getClass().getMethod("getChatModifier").invoke(component);
-						Object color = chatModifier.getClass().getMethod("getColor").invoke(chatModifier);
-						String colorString = "white";
-						if (color != null ) {
-							colorString = color.getClass().getMethod("b").invoke(color).toString();
-						}
-						boolean bold = (boolean) chatModifier.getClass().getMethod("isBold").invoke(chatModifier);
-						boolean strikethrough = (boolean) chatModifier.getClass().getMethod("isStrikethrough").invoke(chatModifier);
-						boolean italic = (boolean) chatModifier.getClass().getMethod("isItalic").invoke(chatModifier);
-						boolean underlined = (boolean) chatModifier.getClass().getMethod("isUnderlined").invoke(chatModifier);
-						boolean obfuscated = (boolean) chatModifier.getClass().getMethod("isRandom").invoke(chatModifier);
-						JSONObject jsonObject = new JSONObject();
-						jsonObject.put("text", text);
-						jsonObject.put("color", colorString);
-						jsonObject.put("bold", bold);
-						jsonObject.put("strikethrough", strikethrough);
-						jsonObject.put("italic", italic);
-						jsonObject.put("underlined", underlined);
-						jsonObject.put("obfuscated", obfuscated);
-						stringbuilder.append(jsonObject.toJSONString() + ",");
-					} else {
-						String text = (String) component.getClass().getMethod("getString").invoke(component);
-						Object chatModifier = component.getClass().getMethod("c").invoke(component);
-						Object color = chatModifier.getClass().getMethod("a").invoke(chatModifier);
-						String colorString = "white";
-						if (color != null ) {
-							colorString = color.getClass().getMethod("b").invoke(color).toString();
-						}
-						boolean bold = (boolean) chatModifier.getClass().getMethod("b").invoke(chatModifier);
-						boolean italic = (boolean) chatModifier.getClass().getMethod("c").invoke(chatModifier);
-						boolean strikethrough = (boolean) chatModifier.getClass().getMethod("d").invoke(chatModifier);
-						boolean underlined = (boolean) chatModifier.getClass().getMethod("e").invoke(chatModifier);
-						boolean obfuscated = (boolean) chatModifier.getClass().getMethod("f").invoke(chatModifier);
-						JSONObject jsonObject = new JSONObject();
-						jsonObject.put("text", text);
-						jsonObject.put("color", colorString);
-						jsonObject.put("bold", bold);
-						jsonObject.put("strikethrough", strikethrough);
-						jsonObject.put("italic", italic);
-						jsonObject.put("underlined", underlined);
-						jsonObject.put("obfuscated", obfuscated);
-						stringbuilder.append(jsonObject.toJSONString() + ",");
+					if (MH_GET_CHAT_MODIFIER == null) {
+						MethodHandles.Lookup lookup = MethodHandles.lookup();
+						MH_GET_TEXT = lookup.unreflect(component.getClass().getMethod(isPre1_18 ? "getText" : "getString"));
+						MH_GET_CHAT_MODIFIER = lookup.unreflect(component.getClass().getMethod(isPre1_18 ? "getChatModifier" : "c"));
 					}
+					String text = (String) MH_GET_TEXT.invoke(component);
+					Object chatModifier = MH_GET_CHAT_MODIFIER.invoke(component);
+					if (MH_GET_COLOR == null) {
+						MH_GET_COLOR = MethodHandles.lookup().unreflect(chatModifier.getClass().getMethod(isPre1_18 ? "getColor" : "a"));
+					}
+					Object color = MH_GET_COLOR.invoke(chatModifier);
+					String colorString = "white";
+					if (color != null ) {
+						if (MH_GET_COLOR_B == null) {
+							MH_GET_COLOR_B = MethodHandles.lookup().unreflect(color.getClass().getMethod("b"));
+						}
+						colorString = MH_GET_COLOR_B.invoke(color).toString();
+					}
+					if (MH_IS_RANDOM == null) {
+						Class<?> k = chatModifier.getClass();
+						MethodHandles.Lookup lookup = MethodHandles.lookup();
+						MH_IS_BOLD = lookup.unreflect(k.getMethod(isPre1_18 ? "isBold" : "b"));
+						MH_IS_STRIKETHROUGH = lookup.unreflect(k.getMethod(isPre1_18 ? "isStrikethrough" : "c"));
+						MH_IS_ITALIC = lookup.unreflect(k.getMethod(isPre1_18 ? "isItalic" : "d"));
+						MH_IS_UNDERLINED = lookup.unreflect(k.getMethod(isPre1_18 ? "isUnderlined" : "e"));
+						MH_IS_RANDOM = lookup.unreflect(k.getMethod(isPre1_18 ? "isRandom" : "f"));
+					}
+					boolean bold = (boolean) MH_IS_BOLD.invoke(chatModifier);
+					boolean strikethrough = (boolean) MH_IS_STRIKETHROUGH.invoke(chatModifier);
+					boolean italic = (boolean) MH_IS_ITALIC.invoke(chatModifier);
+					boolean underlined = (boolean) MH_IS_UNDERLINED.invoke(chatModifier);
+					boolean obfuscated = (boolean) MH_IS_RANDOM.invoke(chatModifier);
+					JSONObject jsonObject = new JSONObject();
+					jsonObject.put("text", text);
+					jsonObject.put("color", colorString);
+					jsonObject.put("bold", bold);
+					jsonObject.put("strikethrough", strikethrough);
+					jsonObject.put("italic", italic);
+					jsonObject.put("underlined", underlined);
+					jsonObject.put("obfuscated", obfuscated);
+					stringbuilder.append(jsonObject.toJSONString()).append(",");
 				}
-				catch(Exception e) {
+				catch(Throwable e) {
 					return "\"extra\":[{\"text\":\"Something went wrong. Could not access color.\",\"color\":\"red\"}]";
 				}
 			}
@@ -569,56 +588,59 @@ public class Format {
 		StringBuilder stringbuilder = new StringBuilder();
 		try {
 			splitComponents(finalList, o, c);
-			for (Object component : finalList) {
+			if (!finalList.isEmpty() && MH_GET_TEXT == null) {
+				MethodHandles.Lookup lookup = MethodHandles.lookup();
+				Class<?> k = finalList.get(0).getClass();
 				if (VersionHandler.is1_7()) {
-					stringbuilder.append((String) component.getClass().getMethod("e").invoke(component));
-				} else if(VersionHandler.is1_8() || VersionHandler.is1_9() || VersionHandler.is1_10() || VersionHandler.is1_11() || VersionHandler.is1_12() || VersionHandler.is1_13() || VersionHandler.is1_14() || VersionHandler.is1_15() || VersionHandler.is1_16() || VersionHandler.is1_17()){
-					stringbuilder.append((String) component.getClass().getMethod("getText").invoke(component));
-				}
-				else {
-					stringbuilder.append((String) component.getClass().getMethod("getString").invoke(component));
+					MH_GET_TEXT = lookup.unreflect(k.getMethod("e"));
+				} else if (VersionHandler.is1_8() || VersionHandler.is1_9() || VersionHandler.is1_10()
+						|| VersionHandler.is1_11() || VersionHandler.is1_12() || VersionHandler.is1_13()
+						|| VersionHandler.is1_14() || VersionHandler.is1_15() || VersionHandler.is1_16()
+						|| VersionHandler.is1_17()) {
+					MH_GET_TEXT = lookup.unreflect(k.getMethod("getText"));
+				} else {
+					MH_GET_TEXT = lookup.unreflect(k.getMethod("getString"));
 				}
 			}
-		} catch (Exception e) {
+			for (Object component : finalList) {
+				stringbuilder.append(MH_GET_TEXT.invoke(component).toString());
+			}
+		} catch (Throwable e) {
 			e.printStackTrace();
 		}
 		return stringbuilder.toString();
 	}
 
+	private static MethodHandle MH_GET_SIBLINGS;
+
 	private static void splitComponents(List<Object> finalList, Object o, Class<?> c) throws Exception {
-		if (VersionHandler.is1_7() || VersionHandler.is1_8() || VersionHandler.is1_9() || VersionHandler.is1_10()
-				|| VersionHandler.is1_11() || VersionHandler.is1_12() || VersionHandler.is1_13()
-				|| (VersionHandler.is1_14() && !VersionHandler.is1_14_4())) {
-			ArrayList<?> list = (ArrayList<?>) c.getMethod("a").invoke(o, new Object[0]);
-			for (Object component : list) {
-				ArrayList<?> innerList = (ArrayList<?>) c.getMethod("a").invoke(component, new Object[0]);
-				if (innerList.size() > 0) {
-					splitComponents(finalList, component, c);
-				} else {
-					finalList.add(component);
-				}
+
+		if (MH_GET_SIBLINGS == null) {
+			if (VersionHandler.is1_7() || VersionHandler.is1_8() || VersionHandler.is1_9() || VersionHandler.is1_10()
+					|| VersionHandler.is1_11() || VersionHandler.is1_12() || VersionHandler.is1_13()
+					|| (VersionHandler.is1_14() && !VersionHandler.is1_14_4())) {
+				MH_GET_SIBLINGS = MethodHandles.lookup().unreflect(c.getMethod("a"));
+			} else if(VersionHandler.is1_14_4() || VersionHandler.is1_15() || VersionHandler.is1_16() || VersionHandler.is1_17()) {
+				MH_GET_SIBLINGS = MethodHandles.lookup().unreflect(c.getMethod("getSiblings"));
 			}
-		} else if(VersionHandler.is1_14_4() || VersionHandler.is1_15() || VersionHandler.is1_16() || VersionHandler.is1_17()) {
-			ArrayList<?> list = (ArrayList<?>) c.getMethod("getSiblings").invoke(o, new Object[0]);
-			for (Object component : list) {
-				ArrayList<?> innerList = (ArrayList<?>) c.getMethod("getSiblings").invoke(component, new Object[0]);
-				if (innerList.size() > 0) {
-					splitComponents(finalList, component, c);
-				} else {
-					finalList.add(component);
-				}
+			else {
+				MH_GET_SIBLINGS = MethodHandles.lookup().unreflect(c.getMethod("b"));
 			}
 		}
-		else {
-			ArrayList<?> list = (ArrayList<?>) c.getMethod("b").invoke(o, new Object[0]);
+		try {
+			ArrayList<?> list = (ArrayList<?>) MH_GET_SIBLINGS.invoke(o, new Object[0]);
 			for (Object component : list) {
-				ArrayList<?> innerList = (ArrayList<?>) c.getMethod("b").invoke(component, new Object[0]);
+				ArrayList<?> innerList = (ArrayList<?>) MH_GET_SIBLINGS.invoke(component, new Object[0]);
 				if (innerList.size() > 0) {
 					splitComponents(finalList, component, c);
 				} else {
 					finalList.add(component);
 				}
 			}
+		} catch (Exception e) {
+			throw e;
+		} catch (Throwable tr) {
+			throw new Exception(tr);
 		}
 	}
 
