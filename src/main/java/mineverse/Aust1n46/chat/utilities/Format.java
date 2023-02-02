@@ -628,9 +628,9 @@ public class Format {
 			}
 		}
 		try {
-			ArrayList<?> list = (ArrayList<?>) MH_GET_SIBLINGS.invoke(o, new Object[0]);
+			ArrayList<?> list = (ArrayList<?>) MH_GET_SIBLINGS.invoke(o);
 			for (Object component : list) {
-				ArrayList<?> innerList = (ArrayList<?>) MH_GET_SIBLINGS.invoke(component, new Object[0]);
+				ArrayList<?> innerList = (ArrayList<?>) MH_GET_SIBLINGS.invoke(component);
 				if (innerList.size() > 0) {
 					splitComponents(finalList, component, c);
 				} else {
