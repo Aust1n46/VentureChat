@@ -540,7 +540,7 @@ public class Format {
 					String colorString = "white";
 					if (color != null ) {
 						if (MH_GET_COLOR_B == null) {
-							MH_GET_COLOR_B = MethodHandles.lookup().unreflect(color.getClass().getMethod("b"));
+							MH_GET_COLOR_B = MethodHandles.lookup().unreflect(color.getClass().getMethod(isPre1_18 ? "e" : "b"));
 						}
 						colorString = MH_GET_COLOR_B.invoke(color).toString();
 					}
