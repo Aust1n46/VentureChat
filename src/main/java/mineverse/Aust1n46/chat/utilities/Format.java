@@ -83,6 +83,9 @@ public class Format {
 				Class<?> k = MinecraftReflection.getIChatBaseComponentClass();
 				if (k != null) {
 					if (VersionHandler.is1_7()) {
+                        // on 1_7, only getText and getSiblings method will be invoked, so we will only
+                        // generate those two method handles.
+                        handles[0] = lookup.unreflect(k.getMethod("e"));
 						handles[9] = lookup.findVirtual(k, "a", MethodType.methodType(List.class));
 					} else if (VersionHandler.is1_8() || VersionHandler.is1_9() || VersionHandler.is1_10()
 							|| VersionHandler.is1_11() || VersionHandler.is1_12() || VersionHandler.is1_13()
