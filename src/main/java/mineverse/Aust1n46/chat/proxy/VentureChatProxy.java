@@ -205,6 +205,18 @@ public class VentureChatProxy {
 						source.sendPluginMessage(server, outstream.toByteArray());
 					}
 				}
+				if(identifier.equals("Bypass")) {
+					String server = in.readUTF();
+					String player = in.readUTF();
+					String sender = in.readUTF();
+					out.writeUTF("Ignore");
+					out.writeUTF("Bypass");
+					out.writeUTF(player);
+					out.writeUTF(sender);
+					if(!source.getServer(server).isEmpty()) {
+						source.sendPluginMessage(server, outstream.toByteArray());
+					}
+				}
 			}
 			if(subchannel.equals("Mute")) {
 				String identifier = in.readUTF();
