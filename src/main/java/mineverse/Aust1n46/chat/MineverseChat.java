@@ -605,6 +605,15 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 						sendPluginMessage(stream);
 						return;
 					}
+					if (p.getPlayer().hasPermission("venturechat.ignore.bypass")) {
+						out.writeUTF("Ignore");
+						out.writeUTF("Bypass");
+						out.writeUTF(server);
+						out.writeUTF(receiver);
+						out.writeUTF(sender.toString());
+						sendPluginMessage(stream);
+						return;
+					}
 					out.writeUTF("Ignore");
 					out.writeUTF("Echo");
 					out.writeUTF(server);
@@ -639,6 +648,12 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 					p.getPlayer().sendMessage(LocalizedMessage.IGNORE_PLAYER_ON.toString()
 							.replace("{player}", receiverName));
 					synchronize(p, true);
+				}
+				if(identifier.equals("Bypass")) {
+					String receiver = msgin.readUTF();
+					UUID sender = UUID.fromString(msgin.readUTF());
+					MineverseChatPlayer p = MineverseChatAPI.getOnlineMineverseChatPlayer(sender);
+					p.getPlayer().sendMessage(LocalizedMessage.IGNORE_PLAYER_CANT.toString().replace("{player}", receiver));
 				}
 			}
 			if(subchannel.equals("Mute")) {
