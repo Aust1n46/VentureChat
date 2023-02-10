@@ -74,7 +74,9 @@ public class LoginListener implements Listener {
 		}
 		
 		try {
-			if(plugin.getServer().spigot().getConfig().getBoolean("settings.bungeecord") || plugin.getServer().spigot().getPaperConfig().getBoolean("settings.velocity-support.enabled")) {
+			if(plugin.getServer().spigot().getConfig().getBoolean("settings.bungeecord") 
+					|| plugin.getServer().spigot().getPaperConfig().getBoolean("settings.velocity-support.enabled") 
+					|| plugin.getServer().spigot().getPaperConfig().getBoolean("proxies.velocity.enabled")) {
 				long delayInTicks = 20L;
 				final MineverseChatPlayer sync = mcp;
 				plugin.getServer().getScheduler().runTaskLaterAsynchronously(plugin, new Runnable() {
