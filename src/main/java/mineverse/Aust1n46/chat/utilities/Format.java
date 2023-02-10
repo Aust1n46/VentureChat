@@ -68,10 +68,9 @@ public class Format {
      */
 	public static String convertToJson(MineverseChatPlayer sender, String format, String chat) {
 		JsonFormat JSONformat = JsonFormat.getJsonFormat(sender.getJsonFormat());
-		String f = escapeJsonChars(format);
 		String c = escapeJsonChars(chat);
 		String json = "[\"\",{\"text\":\"\",\"extra\":[";
-		json += convertPlaceholders(f, JSONformat, sender);
+		json += convertPlaceholders(format, JSONformat, sender);
 		json += "]}";
 		json += "," + convertLinks(c);
 		json += "]";
@@ -111,8 +110,8 @@ public class Format {
 				indexStart = matcher.start();
 				indexEnd = matcher.end();
 				placeholder = remaining.substring(indexStart, indexEnd);
-				formattedPlaceholder = Format.FormatStringAll(PlaceholderAPI.setBracketPlaceholders(icp.getPlayer(), placeholder));
-				temp += convertToJsonColors(lastCode + remaining.substring(0, indexStart)) + ",";
+				formattedPlaceholder = escapeJsonChars(Format.FormatStringAll(PlaceholderAPI.setBracketPlaceholders(icp.getPlayer(), placeholder)));
+				temp += convertToJsonColors(escapeJsonChars(lastCode + remaining.substring(0, indexStart))) + ",";
 				lastCode = getLastCode(lastCode + remaining.substring(0, indexStart));
 				boolean placeholderHasJsonAttribute = false;
 				for (JsonAttribute jsonAttribute : format.getJsonAttributes()) {
@@ -123,8 +122,8 @@ public class Format {
 						}
 						final String hoverText;
 						if(!hover.isEmpty()) {
-							hoverText = Format.FormatStringAll(
-									PlaceholderAPI.setBracketPlaceholders(icp.getPlayer(), hover.substring(0, hover.length() - 1)));
+							hoverText = escapeJsonChars(Format.FormatStringAll(
+									PlaceholderAPI.setBracketPlaceholders(icp.getPlayer(), hover.substring(0, hover.length() - 1))));
 						} else {
 							hoverText = StringUtils.EMPTY;
 						}
@@ -133,8 +132,8 @@ public class Format {
 						if (clickAction == ClickAction.NONE) {
 							actionJson = StringUtils.EMPTY;
 						} else {
-							final String clickText = Format.FormatStringAll(
-									PlaceholderAPI.setBracketPlaceholders(icp.getPlayer(), jsonAttribute.getClickText()));
+							final String clickText = escapeJsonChars(Format.FormatStringAll(
+									PlaceholderAPI.setBracketPlaceholders(icp.getPlayer(), jsonAttribute.getClickText())));
 							actionJson = ",\"clickEvent\":{\"action\":\"" + jsonAttribute.getClickAction().toString() + "\",\"value\":\"" + clickText
 							+ "\"}";
 						}
