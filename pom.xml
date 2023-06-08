@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>mineverse.Aust1n46.chat</groupId>
     <artifactId>VentureChat</artifactId>
-    <version>3.5.0</version>
+    <version>3.6.0</version>
     <url>https://bitbucket.org/Aust1n46/venturechat/src/master</url>
     <scm>
         <url>https://bitbucket.org/Aust1n46/venturechat/src/master</url>
@@ -204,21 +204,21 @@
         <dependency>
             <groupId>net.md-5</groupId>
             <artifactId>bungeecord-api</artifactId>
-            <version>1.13-SNAPSHOT</version>
+            <version>1.20-R0.1-SNAPSHOT</version>
             <type>jar</type>
             <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>net.md-5</groupId>
             <artifactId>bungeecord-api</artifactId>
-            <version>1.13-SNAPSHOT</version>
+            <version>1.20-R0.1-SNAPSHOT</version>
             <type>javadoc</type>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.spigotmc</groupId>
             <artifactId>spigot-api</artifactId>
-            <version>1.19-R0.1-SNAPSHOT</version>
+            <version>1.20-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
