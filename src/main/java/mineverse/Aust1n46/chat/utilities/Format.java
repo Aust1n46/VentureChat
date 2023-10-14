@@ -2,6 +2,9 @@ package mineverse.Aust1n46.chat.utilities;
 
 import static mineverse.Aust1n46.chat.MineverseChat.getInstance;
 
+import com.linkedin.urls.Url;
+import com.linkedin.urls.detection.UrlDetector;
+import com.linkedin.urls.detection.UrlDetectorOptions;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -175,14 +178,15 @@ public class Format {
 		int indexLinkEnd = -1;
 		String link = "";
 		String lastCode = DEFAULT_COLOR_CODE;
+
+
 		do {
-			Pattern pattern = Pattern.compile(
-					"([a-zA-Z0-9" + BUKKIT_COLOR_CODE_PREFIX + "\\-:/]+\\.[a-zA-Z/0-9" + BUKKIT_COLOR_CODE_PREFIX
-							+ "\\-:_#]+(\\.[a-zA-Z/0-9." + BUKKIT_COLOR_CODE_PREFIX + "\\-:;,#\\?\\+=_]+)?)");
-			Matcher matcher = pattern.matcher(remaining);
-			if (matcher.find()) {
-				indexLink = matcher.start();
-				indexLinkEnd = matcher.end();
+			UrlDetector parser = new UrlDetector(remaining, UrlDetectorOptions.Default);
+			List<Url> links = parser.detect();
+			if (!links.isEmpty()) {
+				String l = links.get(0).getOriginalUrl();
+				indexLink = remaining.indexOf(l);
+				indexLinkEnd = indexLink + l.length();
 				link = remaining.substring(indexLink, indexLinkEnd);
 				temp += convertToJsonColors(lastCode + remaining.substring(0, indexLink)) + ",";
 				lastCode = getLastCode(lastCode + remaining.substring(0, indexLink));
