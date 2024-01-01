@@ -343,15 +343,15 @@ public class Format {
 				underlined = false;
 			}
 			if (bold)
-				modifier += ",\"bold\":\"true\"";
+				modifier += ",\"bold\":true";
 			if (obfuscated)
-				modifier += ",\"obfuscated\":\"true\"";
+				modifier += ",\"obfuscated\":true";
 			if (italic)
-				modifier += ",\"italic\":\"true\"";
+				modifier += ",\"italic\":true";
 			if (underlined)
-				modifier += ",\"underlined\":\"true\"";
+				modifier += ",\"underlined\":true";
 			if (strikethrough)
-				modifier += ",\"strikethrough\":\"true\"";
+				modifier += ",\"strikethrough\":true";
 			remaining = remaining.substring(colorLength);
 			colorLength = LEGACY_COLOR_CODE_LENGTH;
 			indexNextColor = remaining.indexOf(BUKKIT_COLOR_CODE_PREFIX);
@@ -448,7 +448,11 @@ public class Format {
 
 	public static PacketContainer createPacketPlayOutChat(String json) {
 		final PacketContainer container;
-		if (VersionHandler.isAbove_1_19()) {
+		if (VersionHandler.isAtLeast_1_20_4()) {
+			container = new PacketContainer(PacketType.Play.Server.SYSTEM_CHAT);
+			container.getChatComponents().write(0, WrappedChatComponent.fromJson(json));
+			container.getBooleans().write(0, false);
+		} else if (VersionHandler.isAbove_1_19()) {
 			container = new PacketContainer(PacketType.Play.Server.SYSTEM_CHAT);
 			container.getStrings().write(0, json);
 			container.getBooleans().write(0, false);
@@ -467,7 +471,11 @@ public class Format {
 
 	public static PacketContainer createPacketPlayOutChat(WrappedChatComponent component) {
 		final PacketContainer container;
-		if (VersionHandler.isAbove_1_19()) {
+		if (VersionHandler.isAtLeast_1_20_4()) {
+			container = new PacketContainer(PacketType.Play.Server.SYSTEM_CHAT);
+			container.getChatComponents().write(0, component);
+			container.getBooleans().write(0, false);
+		} else if (VersionHandler.isAbove_1_19()) {
 			container = new PacketContainer(PacketType.Play.Server.SYSTEM_CHAT);
 			container.getStrings().write(0, component.getJson());
 			container.getBooleans().write(0, false);
