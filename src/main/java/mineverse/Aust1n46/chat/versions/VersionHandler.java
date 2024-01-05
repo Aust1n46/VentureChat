@@ -7,6 +7,7 @@ public final class VersionHandler {
 	public static final MinecraftVersion SERVER_VERSION = MinecraftVersion.getCurrentVersion();
 	private static final MinecraftVersion MC1_19 = new MinecraftVersion(1, 19, 0);
 	private static final MinecraftVersion MC1_19_1 = new MinecraftVersion(1, 19, 1);
+	private static final MinecraftVersion MC1_20_4 = new MinecraftVersion(1, 20, 4);
 
 	private VersionHandler() {
 	}
@@ -73,5 +74,9 @@ public final class VersionHandler {
 
 	public static boolean isAbove_1_19() {
 		return SERVER_VERSION.isAtLeast(MC1_19_1);
+	}
+	
+	public static boolean isAtLeast_1_20_4() {
+		return SERVER_VERSION.isAtLeast(MC1_20_4);
 	}
 }
