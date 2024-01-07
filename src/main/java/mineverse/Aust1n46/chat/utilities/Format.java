@@ -190,8 +190,8 @@ public class Format {
 				if (ChatColor.stripColor(link).contains("https://"))
 					https = "s";
 				temp += convertToJsonColors(lastCode + link,
-						",\"underlined\":\"" + underlineURLs()
-								+ "\",\"clickEvent\":{\"action\":\"open_url\",\"value\":\"http" + https + "://"
+						",\"underlined\":" + underlineURLs()
+								+ ",\"clickEvent\":{\"action\":\"open_url\",\"value\":\"http" + https + "://"
 								+ ChatColor.stripColor(link.replace("http://", "").replace("https://", ""))
 								+ "\"},\"hoverEvent\":{\"action\":\"show_text\",\"value\":{\"text\":\"\",\"extra\":["
 								+ convertToJsonColors(lastCode + link) + "]}}")
@@ -811,8 +811,13 @@ public class Format {
 				.replace(")", "\\)").replace("|", "\\|").replace("+", "\\+").replace("*", "\\*");
 	}
 
-	public static boolean underlineURLs() {
-		return getInstance().getConfig().getBoolean("underlineurls", true);
+	public static String underlineURLs() {
+		final boolean configValue = getInstance().getConfig().getBoolean("underlineurls", true);
+		if (VersionHandler.isAtLeast_1_20_4()) {
+			return String.valueOf(configValue);
+		} else {
+			return "\"" + configValue + "\"";
+		}
 	}
 	
 	public static String parseTimeStringFromMillis(long millis) {
