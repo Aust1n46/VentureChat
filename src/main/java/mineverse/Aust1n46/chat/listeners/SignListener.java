@@ -23,10 +23,10 @@ public class SignListener implements Listener {
 				line = Format.FormatStringLegacyColor(line);
 			}
 			if(mcp.getPlayer().hasPermission("venturechat.color")) {
-				line = Format.FormatStringColor(line);
+				line = Format.FormatStringColor(line, mcp.getPlayer().hasPermission("venturechat.color.hex"));
 			}
 			if(mcp.getPlayer().hasPermission("venturechat.format")) {
-				line = Format.FormatString(line);
+				line = Format.FormatString(line, mcp.getPlayer().hasPermission("venturechat.format.magic"));
 			}
 			event.setLine(a, line);
 		}
