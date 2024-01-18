@@ -361,6 +361,24 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 		}
 	}
 
+	public static void sendPluginMessage(String pluginId, String chatChannel, String message) {
+		if(MineverseChatAPI.getOnlineMineverseChatPlayers().size() == 0) {
+			return;
+		}
+		ByteArrayOutputStream byteOutStream = new ByteArrayOutputStream();
+		DataOutputStream out = new DataOutputStream(byteOutStream);
+		try {
+			out.writeUTF(pluginId);
+			out.writeUTF(chatChannel);
+			out.writeUTF(message);
+			sendPluginMessage(byteOutStream);
+			out.close();
+		}
+		catch(Exception e) {
+			e.printStackTrace();
+		}
+	}
+
 	@Override
 	public void onPluginMessageReceived(String channel, Player player, byte[] inputStream) {
 		if(!channel.equals(PLUGIN_MESSAGING_CHANNEL)) {
