@@ -121,7 +121,7 @@ public class Format {
 							hover.append(Format.FormatStringAll(st) + "\n");
 						}
 						final String hoverText;
-						if(!hover.isEmpty()) {
+						if(hover.length()>0) {
 							hoverText = escapeJsonChars(Format.FormatStringAll(
 									PlaceholderAPI.setBracketPlaceholders(icp.getPlayer(), hover.substring(0, hover.length() - 1))));
 						} else {

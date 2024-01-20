@@ -26,8 +26,8 @@ public class VentureChatEvent extends Event {
 	private final Set<Player> recipients;
 	private final int recipientCount; //For not counting vanished players
 	private final String format;
-	private final String chat;
-	private final String globalJSON;
+	private String chat;
+	private String globalJSON;
 	private final int hash;
 	private final boolean bungee;
 	
@@ -84,12 +84,20 @@ public class VentureChatEvent extends Event {
 		return this.chat;
 	}
 	
+	public void setChat(String chat){
+		this.chat = chat;
+	}
+	
 	public String getConsoleChat() {
 		return this.format + this.chat;
 	}
 	
 	public String getGlobalJSON() {
 		return this.globalJSON;
+	}
+	
+	public void setGlobalJSON(String json) {
+		this.globalJSON = json;
 	}
 	
 	public int getHash() {
