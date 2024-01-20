@@ -190,8 +190,8 @@ public class Format {
 				if (ChatColor.stripColor(link).contains("https://"))
 					https = "s";
 				temp += convertToJsonColors(lastCode + link,
-						",\"underlined\":\"" + underlineURLs()
-								+ "\",\"clickEvent\":{\"action\":\"open_url\",\"value\":\"http" + https + "://"
+						",\"underlined\":" + underlineURLs()
+								+ ",\"clickEvent\":{\"action\":\"open_url\",\"value\":\"http" + https + "://"
 								+ ChatColor.stripColor(link.replace("http://", "").replace("https://", ""))
 								+ "\"},\"hoverEvent\":{\"action\":\"show_text\",\"value\":{\"text\":\"\",\"extra\":["
 								+ convertToJsonColors(lastCode + link) + "]}}")
@@ -343,15 +343,35 @@ public class Format {
 				underlined = false;
 			}
 			if (bold)
-				modifier += ",\"bold\":\"true\"";
+				if (VersionHandler.isAtLeast_1_20_4()) {
+					modifier += ",\"bold\":true";
+				} else {
+					modifier += ",\"bold\":\"true\"";
+				}
 			if (obfuscated)
-				modifier += ",\"obfuscated\":\"true\"";
+				if (VersionHandler.isAtLeast_1_20_4()) {
+					modifier += ",\"obfuscated\":true";
+				} else {
+					modifier += ",\"obfuscated\":\"true\"";
+				}
 			if (italic)
-				modifier += ",\"italic\":\"true\"";
+				if (VersionHandler.isAtLeast_1_20_4()) {
+					modifier += ",\"italic\":true";
+				} else {
+					modifier += ",\"italic\":\"true\"";
+				}
 			if (underlined)
-				modifier += ",\"underlined\":\"true\"";
+				if (VersionHandler.isAtLeast_1_20_4()) {
+					modifier += ",\"underlined\":true";
+				} else {
+					modifier += ",\"underlined\":\"true\"";
+				}
 			if (strikethrough)
-				modifier += ",\"strikethrough\":\"true\"";
+				if (VersionHandler.isAtLeast_1_20_4()) {
+					modifier += ",\"strikethrough\":true";
+				} else {
+					modifier += ",\"strikethrough\":\"true\"";
+				}
 			remaining = remaining.substring(colorLength);
 			colorLength = LEGACY_COLOR_CODE_LENGTH;
 			indexNextColor = remaining.indexOf(BUKKIT_COLOR_CODE_PREFIX);
@@ -448,16 +468,20 @@ public class Format {
 
 	public static PacketContainer createPacketPlayOutChat(String json) {
 		final PacketContainer container;
-		if (VersionHandler.isAbove_1_19()) {
+		if (VersionHandler.isAtLeast_1_20_4()) { // 1.20.4+
+			container = new PacketContainer(PacketType.Play.Server.SYSTEM_CHAT);
+			container.getChatComponents().write(0, WrappedChatComponent.fromJson(json));
+			container.getBooleans().write(0, false);
+		} else if (VersionHandler.isAbove_1_19()) { // 1.19.1 -> 1.20.3
 			container = new PacketContainer(PacketType.Play.Server.SYSTEM_CHAT);
 			container.getStrings().write(0, json);
 			container.getBooleans().write(0, false);
-		} else if (VersionHandler.isUnder_1_19()) {
+		} else if (VersionHandler.isUnder_1_19()) { // 1.7 -> 1.19
 			WrappedChatComponent component = WrappedChatComponent.fromJson(json);
 			container = new PacketContainer(PacketType.Play.Server.CHAT);
 			container.getModifier().writeDefaults();
 			container.getChatComponents().write(0, component);
-		} else {
+		} else { // 1.19
 			container = new PacketContainer(PacketType.Play.Server.SYSTEM_CHAT);
 			container.getStrings().write(0, json);
 			container.getIntegers().write(0, 1);
@@ -467,15 +491,19 @@ public class Format {
 
 	public static PacketContainer createPacketPlayOutChat(WrappedChatComponent component) {
 		final PacketContainer container;
-		if (VersionHandler.isAbove_1_19()) {
+		if (VersionHandler.isAtLeast_1_20_4()) { // 1.20.4+
+			container = new PacketContainer(PacketType.Play.Server.SYSTEM_CHAT);
+			container.getChatComponents().write(0, component);
+			container.getBooleans().write(0, false);
+		} else if (VersionHandler.isAbove_1_19()) { // 1.19.1 -> 1.20.3
 			container = new PacketContainer(PacketType.Play.Server.SYSTEM_CHAT);
 			container.getStrings().write(0, component.getJson());
 			container.getBooleans().write(0, false);
-		} else if (VersionHandler.isUnder_1_19()) {
+		} else if (VersionHandler.isUnder_1_19()) { // 1.7 -> 1.19
 			container = new PacketContainer(PacketType.Play.Server.CHAT);
 			container.getModifier().writeDefaults();
 			container.getChatComponents().write(0, component);
-		} else {
+		} else { // 1.19
 			container = new PacketContainer(PacketType.Play.Server.SYSTEM_CHAT);
 			container.getStrings().write(0, component.getJson());
 			container.getIntegers().write(0, 1);
@@ -783,8 +811,13 @@ public class Format {
 				.replace(")", "\\)").replace("|", "\\|").replace("+", "\\+").replace("*", "\\*");
 	}
 
-	public static boolean underlineURLs() {
-		return getInstance().getConfig().getBoolean("underlineurls", true);
+	public static String underlineURLs() {
+		final boolean configValue = getInstance().getConfig().getBoolean("underlineurls", true);
+		if (VersionHandler.isAtLeast_1_20_4()) {
+			return String.valueOf(configValue);
+		} else {
+			return "\"" + configValue + "\"";
+		}
 	}
 	
 	public static String parseTimeStringFromMillis(long millis) {
