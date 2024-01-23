@@ -108,6 +108,7 @@ public class VentureChatBungee extends Plugin implements Listener, VentureChatPr
 		if(!(event.getSender() instanceof Server)) {
 			return;
 		}
+		event.setCancelled(true); // to prevent message be sent to client
 		String serverName = ((Server) event.getSender()).getInfo().getName();
 		VentureChatProxy.onPluginMessage(event.getData(), serverName, this);
 	}

@@ -2,6 +2,9 @@ package mineverse.Aust1n46.chat.utilities;
 
 import static mineverse.Aust1n46.chat.MineverseChat.getInstance;
 
+import java.lang.invoke.MethodHandle;
+import java.lang.invoke.MethodHandles;
+import java.lang.invoke.MethodType;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -10,6 +13,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+import com.comphenix.protocol.utility.MinecraftReflection;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -56,6 +60,93 @@ public class Format {
 	
 	public static final String DEFAULT_MESSAGE_SOUND = "ENTITY_PLAYER_LEVELUP";
 	public static final String DEFAULT_LEGACY_MESSAGE_SOUND = "LEVEL_UP";
+
+	private static class Dynamic {
+		private static final MethodHandle MH_GET_TEXT;
+		private static final MethodHandle MH_GET_CHAT_MODIFIER;
+		private static final MethodHandle MH_GET_COLOR;
+		private static final MethodHandle MH_GET_COLOR_CODE;
+		private static final MethodHandle MH_IS_BOLD;
+		private static final MethodHandle MH_IS_STRIKETHROUGH;
+		private static final MethodHandle MH_IS_ITALIC;
+		private static final MethodHandle MH_IS_UNDERLINED;
+		private static final MethodHandle MH_IS_RANDOM;
+		private static final MethodHandle MH_GET_SIBLINGS;
+		private static final boolean MH_AVAILABLE;
+
+		static {
+			// best practice for best performance
+			MethodHandles.Lookup lookup = MethodHandles.lookup();
+			boolean available = false;
+			MethodHandle[] handles = new MethodHandle[10];
+			try {
+				Class<?> k = MinecraftReflection.getIChatBaseComponentClass();
+				if (k != null) {
+					if (VersionHandler.is1_7()) {
+                        // on 1_7, only getText and getSiblings method will be invoked, so we will only
+                        // generate those two method handles.
+                        handles[0] = lookup.unreflect(k.getMethod("e"));
+						handles[9] = lookup.findVirtual(k, "a", MethodType.methodType(List.class));
+					} else if (VersionHandler.is1_8() || VersionHandler.is1_9() || VersionHandler.is1_10()
+							|| VersionHandler.is1_11() || VersionHandler.is1_12() || VersionHandler.is1_13()
+							|| VersionHandler.is1_14() || VersionHandler.is1_15() || VersionHandler.is1_16()
+							|| VersionHandler.is1_17()) {
+						handles[0] = lookup.findVirtual(k, "getText", MethodType.methodType(String.class));
+						handles[1] = lookup.unreflect(k.getMethod("getChatModifier"));
+						if (VersionHandler.is1_14_4() || VersionHandler.is1_15() || VersionHandler.is1_16()
+								|| VersionHandler.is1_17()) {
+							handles[9] = lookup.findVirtual(k, "getSiblings", MethodType.methodType(List.class));
+						} else {
+							handles[9] = lookup.findVirtual(k, "a", MethodType.methodType(List.class));
+						}
+						k = handles[1].type().returnType();
+						handles[2] = lookup.unreflect(k.getMethod("getColor"));
+						handles[4] = lookup.findVirtual(k, "isBold", MethodType.methodType(Boolean.TYPE));
+						handles[5] = lookup.findVirtual(k, "isStrikethrough", MethodType.methodType(Boolean.TYPE));
+						handles[6] = lookup.findVirtual(k, "isItalic", MethodType.methodType(Boolean.TYPE));
+						handles[7] = lookup.findVirtual(k, "isUnderlined", MethodType.methodType(Boolean.TYPE));
+						handles[8] = lookup.findVirtual(k, "isRandom", MethodType.methodType(Boolean.TYPE));
+						k = handles[2].type().returnType();
+						if (VersionHandler.is1_14_4() || VersionHandler.is1_15() || VersionHandler.is1_16()
+								|| VersionHandler.is1_7()) {
+							handles[3] = lookup.findVirtual(k, "b", MethodType.methodType(String.class));
+						} else {
+							handles[3] = lookup.findVirtual(k, "e", MethodType.methodType(String.class));
+						}
+					} else if (VersionHandler.is1_18() || VersionHandler.is1_19()) {
+						handles[0] = lookup.findVirtual(k, "getString", MethodType.methodType(String.class));
+						handles[1] = lookup.unreflect(k.getMethod("c"));
+						handles[9] = lookup.findVirtual(k, "b", MethodType.methodType(List.class));
+						k = handles[1].type().returnType();
+						handles[2] = lookup.unreflect(k.getMethod("a"));
+						handles[4] = lookup.findVirtual(k, "b", MethodType.methodType(Boolean.TYPE));
+						handles[5] = lookup.findVirtual(k, "c", MethodType.methodType(Boolean.TYPE));
+						handles[6] = lookup.findVirtual(k, "d", MethodType.methodType(Boolean.TYPE));
+						handles[7] = lookup.findVirtual(k, "e", MethodType.methodType(Boolean.TYPE));
+						handles[8] = lookup.findVirtual(k, "f", MethodType.methodType(Boolean.TYPE));
+						k = handles[2].type().returnType();
+						handles[3] = lookup.findVirtual(k, "b", MethodType.methodType(String.class));
+					}
+					available = true;
+				}
+			} catch (IllegalAccessException | NoSuchMethodException e) {
+				e.printStackTrace(); // for debug info
+			} catch (Throwable e) {
+				e.printStackTrace(); // this should never happen, but who knows.
+			}
+			MH_GET_TEXT = handles[0];
+			MH_GET_CHAT_MODIFIER = handles[1];
+			MH_GET_COLOR = handles[2];
+			MH_GET_COLOR_CODE = handles[3];
+			MH_IS_BOLD = handles[4];
+			MH_IS_STRIKETHROUGH = handles[5];
+			MH_IS_ITALIC = handles[6];
+			MH_IS_UNDERLINED = handles[7];
+			MH_IS_RANDOM = handles[8];
+			MH_GET_SIBLINGS = handles[9];
+			MH_AVAILABLE = available;
+		}
+	}
 
 	/**
      * Converts a message to Minecraft JSON formatting while applying the
@@ -121,7 +212,7 @@ public class Format {
 							hover.append(Format.FormatStringAll(st) + "\n");
 						}
 						final String hoverText;
-						if(!hover.isEmpty()) {
+						if(hover.length() != 0) {
 							hoverText = escapeJsonChars(Format.FormatStringAll(
 									PlaceholderAPI.setBracketPlaceholders(icp.getPlayer(), hover.substring(0, hover.length() - 1))));
 						} else {
@@ -518,7 +609,7 @@ public class Format {
 			e.printStackTrace();
 		}
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	public static String toColoredText(Object o, Class<?> c) {
 		if (VersionHandler.is1_7()) {
@@ -527,23 +618,24 @@ public class Format {
 		List<Object> finalList = new ArrayList<>();
 		StringBuilder stringbuilder = new StringBuilder();
 		stringbuilder.append("\"extra\":[");
-		try {
-			splitComponents(finalList, o, c);
-			for (Object component : finalList) {		
-				try {
-					if (VersionHandler.is1_8() || VersionHandler.is1_9() || VersionHandler.is1_10() || VersionHandler.is1_11() || VersionHandler.is1_12() || VersionHandler.is1_13() || VersionHandler.is1_14() || VersionHandler.is1_15() || VersionHandler.is1_16() || VersionHandler.is1_17()) {
-						String text = (String) component.getClass().getMethod("getText").invoke(component);
-						Object chatModifier = component.getClass().getMethod("getChatModifier").invoke(component);
-						Object color = chatModifier.getClass().getMethod("getColor").invoke(chatModifier);
+		if (Dynamic.MH_AVAILABLE) { // only if mhs are all available
+			try {
+				splitComponents(finalList, o, c);
+
+				for (Object component : finalList) {
+					try {
+						String text = (String) Dynamic.MH_GET_TEXT.invoke(component);
+						Object chatModifier = Dynamic.MH_GET_CHAT_MODIFIER.invoke(component);
+						Object color = Dynamic.MH_GET_COLOR.invoke(chatModifier);
 						String colorString = "white";
 						if (color != null ) {
-							colorString = color.getClass().getMethod("b").invoke(color).toString();
+							colorString = Dynamic.MH_GET_COLOR_CODE.invoke(color).toString();
 						}
-						boolean bold = (boolean) chatModifier.getClass().getMethod("isBold").invoke(chatModifier);
-						boolean strikethrough = (boolean) chatModifier.getClass().getMethod("isStrikethrough").invoke(chatModifier);
-						boolean italic = (boolean) chatModifier.getClass().getMethod("isItalic").invoke(chatModifier);
-						boolean underlined = (boolean) chatModifier.getClass().getMethod("isUnderlined").invoke(chatModifier);
-						boolean obfuscated = (boolean) chatModifier.getClass().getMethod("isRandom").invoke(chatModifier);
+						boolean bold = (boolean) Dynamic.MH_IS_BOLD.invoke(chatModifier);
+						boolean strikethrough = (boolean) Dynamic.MH_IS_STRIKETHROUGH.invoke(chatModifier);
+						boolean italic = (boolean) Dynamic.MH_IS_ITALIC.invoke(chatModifier);
+						boolean underlined = (boolean) Dynamic.MH_IS_UNDERLINED.invoke(chatModifier);
+						boolean obfuscated = (boolean) Dynamic.MH_IS_RANDOM.invoke(chatModifier);
 						JSONObject jsonObject = new JSONObject();
 						jsonObject.put("text", text);
 						jsonObject.put("color", colorString);
@@ -552,37 +644,15 @@ public class Format {
 						jsonObject.put("italic", italic);
 						jsonObject.put("underlined", underlined);
 						jsonObject.put("obfuscated", obfuscated);
-						stringbuilder.append(jsonObject.toJSONString() + ",");
-					} else {
-						String text = (String) component.getClass().getMethod("getString").invoke(component);
-						Object chatModifier = component.getClass().getMethod("c").invoke(component);
-						Object color = chatModifier.getClass().getMethod("a").invoke(chatModifier);
-						String colorString = "white";
-						if (color != null ) {
-							colorString = color.getClass().getMethod("b").invoke(color).toString();
-						}
-						boolean bold = (boolean) chatModifier.getClass().getMethod("b").invoke(chatModifier);
-						boolean italic = (boolean) chatModifier.getClass().getMethod("c").invoke(chatModifier);
-						boolean strikethrough = (boolean) chatModifier.getClass().getMethod("d").invoke(chatModifier);
-						boolean underlined = (boolean) chatModifier.getClass().getMethod("e").invoke(chatModifier);
-						boolean obfuscated = (boolean) chatModifier.getClass().getMethod("f").invoke(chatModifier);
-						JSONObject jsonObject = new JSONObject();
-						jsonObject.put("text", text);
-						jsonObject.put("color", colorString);
-						jsonObject.put("bold", bold);
-						jsonObject.put("strikethrough", strikethrough);
-						jsonObject.put("italic", italic);
-						jsonObject.put("underlined", underlined);
-						jsonObject.put("obfuscated", obfuscated);
-						stringbuilder.append(jsonObject.toJSONString() + ",");
+						stringbuilder.append(jsonObject.toJSONString()).append(",");
+					}
+					catch(Throwable e) {
+						return "\"extra\":[{\"text\":\"Something went wrong. Could not access color.\",\"color\":\"red\"}]";
 					}
 				}
-				catch(Exception e) {
-					return "\"extra\":[{\"text\":\"Something went wrong. Could not access color.\",\"color\":\"red\"}]";
-				}
+			} catch (Exception e) {
+				e.printStackTrace();
 			}
-		} catch (Exception e) {
-			e.printStackTrace();
 		}
 		String coloredText = stringbuilder.toString();
 		if(coloredText.endsWith(",")) {
@@ -595,57 +665,35 @@ public class Format {
 	public static String toPlainText(Object o, Class<?> c) {
 		List<Object> finalList = new ArrayList<>();
 		StringBuilder stringbuilder = new StringBuilder();
-		try {
-			splitComponents(finalList, o, c);
-			for (Object component : finalList) {
-				if (VersionHandler.is1_7()) {
-					stringbuilder.append((String) component.getClass().getMethod("e").invoke(component));
-				} else if(VersionHandler.is1_8() || VersionHandler.is1_9() || VersionHandler.is1_10() || VersionHandler.is1_11() || VersionHandler.is1_12() || VersionHandler.is1_13() || VersionHandler.is1_14() || VersionHandler.is1_15() || VersionHandler.is1_16() || VersionHandler.is1_17()){
-					stringbuilder.append((String) component.getClass().getMethod("getText").invoke(component));
+		if (Dynamic.MH_AVAILABLE) {
+			try {
+				splitComponents(finalList, o, c);
+				for (Object component : finalList) {
+					stringbuilder.append(Dynamic.MH_GET_TEXT.invoke(component).toString());
 				}
-				else {
-					stringbuilder.append((String) component.getClass().getMethod("getString").invoke(component));
-				}
+			} catch (Throwable e) {
+				e.printStackTrace();
 			}
-		} catch (Exception e) {
-			e.printStackTrace();
 		}
 		return stringbuilder.toString();
 	}
 
 	private static void splitComponents(List<Object> finalList, Object o, Class<?> c) throws Exception {
-		if (VersionHandler.is1_7() || VersionHandler.is1_8() || VersionHandler.is1_9() || VersionHandler.is1_10()
-				|| VersionHandler.is1_11() || VersionHandler.is1_12() || VersionHandler.is1_13()
-				|| (VersionHandler.is1_14() && !VersionHandler.is1_14_4())) {
-			ArrayList<?> list = (ArrayList<?>) c.getMethod("a").invoke(o, new Object[0]);
-			for (Object component : list) {
-				ArrayList<?> innerList = (ArrayList<?>) c.getMethod("a").invoke(component, new Object[0]);
-				if (innerList.size() > 0) {
-					splitComponents(finalList, component, c);
-				} else {
-					finalList.add(component);
+		if (Dynamic.MH_AVAILABLE) {
+			try {
+				ArrayList<?> list = (ArrayList<?>) Dynamic.MH_GET_SIBLINGS.invoke(o);
+				for (Object component : list) {
+					ArrayList<?> innerList = (ArrayList<?>) Dynamic.MH_GET_SIBLINGS.invoke(component);
+					if (innerList.size() > 0) {
+						splitComponents(finalList, component, c);
+					} else {
+						finalList.add(component);
+					}
 				}
-			}
-		} else if(VersionHandler.is1_14_4() || VersionHandler.is1_15() || VersionHandler.is1_16() || VersionHandler.is1_17()) {
-			ArrayList<?> list = (ArrayList<?>) c.getMethod("getSiblings").invoke(o, new Object[0]);
-			for (Object component : list) {
-				ArrayList<?> innerList = (ArrayList<?>) c.getMethod("getSiblings").invoke(component, new Object[0]);
-				if (innerList.size() > 0) {
-					splitComponents(finalList, component, c);
-				} else {
-					finalList.add(component);
-				}
-			}
-		}
-		else {
-			ArrayList<?> list = (ArrayList<?>) c.getMethod("b").invoke(o, new Object[0]);
-			for (Object component : list) {
-				ArrayList<?> innerList = (ArrayList<?>) c.getMethod("b").invoke(component, new Object[0]);
-				if (innerList.size() > 0) {
-					splitComponents(finalList, component, c);
-				} else {
-					finalList.add(component);
-				}
+			} catch (Exception e) {
+				throw e;
+			} catch (Throwable tr) {
+				throw new Exception(tr);
 			}
 		}
 	}
