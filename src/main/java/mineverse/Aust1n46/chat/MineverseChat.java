@@ -23,6 +23,7 @@ import org.bukkit.plugin.messaging.PluginMessageListener;
 import org.bukkit.scheduler.BukkitScheduler;
 
 import com.comphenix.protocol.ProtocolLibrary;
+import com.comphenix.protocol.ProtocolManager;
 import com.comphenix.protocol.events.PacketContainer;
 
 import me.clip.placeholderapi.PlaceholderAPI;
@@ -43,6 +44,7 @@ import mineverse.Aust1n46.chat.listeners.ChatListener;
 import mineverse.Aust1n46.chat.listeners.CommandListener;
 import mineverse.Aust1n46.chat.listeners.LoginListener;
 import mineverse.Aust1n46.chat.listeners.PacketListenerLegacyChat;
+import mineverse.Aust1n46.chat.listeners.PacketListenerSystemChat;
 import mineverse.Aust1n46.chat.listeners.SignListener;
 import mineverse.Aust1n46.chat.localization.Localization;
 import mineverse.Aust1n46.chat.localization.LocalizedMessage;
@@ -212,14 +214,17 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 	}
 	
 	private void registerListeners() {
-		PluginManager pluginManager = getServer().getPluginManager();
+		final PluginManager pluginManager = getServer().getPluginManager();
 		pluginManager.registerEvents(new Channel(), this);
 		pluginManager.registerEvents(new ChatListener(), this);
 		pluginManager.registerEvents(new SignListener(), this);
 		pluginManager.registerEvents(new CommandListener(), this);
 		pluginManager.registerEvents(new LoginListener(), this);
+		final ProtocolManager protocolManager = ProtocolLibrary.getProtocolManager();
 		if (VersionHandler.isUnder_1_19()) {
-			ProtocolLibrary.getProtocolManager().addPacketListener(new PacketListenerLegacyChat());
+			protocolManager.addPacketListener(new PacketListenerLegacyChat());
+		} else {
+			protocolManager.addPacketListener(new PacketListenerSystemChat());
 		}
 	}
 	

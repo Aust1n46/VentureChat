@@ -10,11 +10,11 @@ public class ChatMessage {
 	private String coloredMessage;
 	private int hash;
 
-	public ChatMessage(WrappedChatComponent component, String message, String coloredMessage, int hash) {
+	public ChatMessage(WrappedChatComponent component, String message, String coloredMessage) {
 		this.component = component;
 		this.message = message;
 		this.coloredMessage = coloredMessage;
-		this.hash = hash;
+		this.hash = message.hashCode();
 	}
 
 	public WrappedChatComponent getComponent() {

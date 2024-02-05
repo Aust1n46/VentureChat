@@ -3,7 +3,6 @@ package mineverse.Aust1n46.chat.command.chat;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.command.Command;
@@ -20,6 +19,7 @@ import mineverse.Aust1n46.chat.api.MineverseChatAPI;
 import mineverse.Aust1n46.chat.api.MineverseChatPlayer;
 import mineverse.Aust1n46.chat.channel.ChatChannel;
 import mineverse.Aust1n46.chat.gui.GuiSlot;
+import mineverse.Aust1n46.chat.gui.ModerationGuiInventory;
 import mineverse.Aust1n46.chat.localization.LocalizedMessage;
 import mineverse.Aust1n46.chat.utilities.Format;
 import mineverse.Aust1n46.chat.versions.VersionHandler;
@@ -34,7 +34,7 @@ public class VentureChatGui extends Command {
 	@Override
 	public boolean execute(CommandSender sender, String command, String[] args) {
 		if (!(sender instanceof Player)) {
-			Bukkit.getServer().getConsoleSender().sendMessage(LocalizedMessage.COMMAND_MUST_BE_RUN_BY_PLAYER.toString());
+			plugin.getServer().getConsoleSender().sendMessage(LocalizedMessage.COMMAND_MUST_BE_RUN_BY_PLAYER.toString());
 			return true;
 		}
 		if (args.length < 3) {
@@ -73,40 +73,33 @@ public class VentureChatGui extends Command {
 
 	@SuppressWarnings("deprecation")
 	private void openInventory(MineverseChatPlayer mcp, MineverseChatPlayer target, ChatChannel channel, int hash) {
-		Inventory inv = Bukkit.createInventory(null, this.getSlots(), "VentureChat: " + target.getName() + " GUI");
-		ItemStack close = null;
-		ItemStack skull = null;
+		final Inventory inv = plugin.getServer().createInventory(new ModerationGuiInventory(mcp, channel, hash), this.getSlots(), "VentureChat: " + target.getName() + " GUI");
+		final ItemStack close;
 		if (VersionHandler.is1_7()) {
 			close = new ItemStack(Material.BEDROCK);
 		} else {
 			close = new ItemStack(Material.BARRIER);
 		}
+		ItemMeta closeMeta = close.getItemMeta();
+		closeMeta.setDisplayName(ChatColor.RED + "" + ChatColor.ITALIC + "Close GUI");
+		close.setItemMeta(closeMeta);
 
+		final ItemStack skull;
 		if (VersionHandler.is1_7() || VersionHandler.is1_8() || VersionHandler.is1_9() || VersionHandler.is1_10() || VersionHandler.is1_11() || VersionHandler.is1_12()) {
 			skull = new ItemStack(Material.getMaterial("SKULL_ITEM"));
 		} else {
 			skull = new ItemStack(Material.PLAYER_HEAD);
 		}
-
-		ItemMeta closeMeta = close.getItemMeta();
-		closeMeta.setDisplayName(ChatColor.RED + "" + ChatColor.ITALIC + "Close GUI");
-		close.setItemMeta(closeMeta);
-
 		SkullMeta skullMeta = (SkullMeta) skull.getItemMeta();
-		skullMeta.setOwner(target.getName());
+		skullMeta.setOwningPlayer(plugin.getServer().getOfflinePlayer(target.getUUID()));
 		skullMeta.setDisplayName(ChatColor.AQUA + target.getName());
-		List<String> skullLore = new ArrayList<String>();
-		skullLore.add(ChatColor.GRAY + "Channel: " + channel.getColor() + channel.getName());
-		skullLore.add(ChatColor.GRAY + "Hash: " + channel.getColor() + hash);
-		skullMeta.setLore(skullLore);
 		skull.setItemMeta(skullMeta);
 		skull.setDurability((short) 3);
-		inv.setItem(0, skull);
-
-		for (GuiSlot g : GuiSlot.getGuiSlots()) {
+		
+		for (final GuiSlot g : GuiSlot.getGuiSlots()) {
 			if (!g.hasPermission() || mcp.getPlayer().hasPermission(g.getPermission())) {
 				if (this.checkSlot(g.getSlot())) {
-					MineverseChat.getInstance().getServer().getConsoleSender()
+					plugin.getServer().getConsoleSender()
 							.sendMessage(Format.FormatStringAll("&cGUI: " + g.getName() + " has invalid slot: " + g.getSlot() + "!"));
 					continue;
 				}
@@ -125,13 +118,14 @@ public class VentureChatGui extends Command {
 			}
 		}
 
+		inv.setItem(0, skull);
 		inv.setItem(8, close);
 		mcp.getPlayer().openInventory(inv);
 	}
 
 	@SuppressWarnings("deprecation")
 	private void openInventoryDiscord(MineverseChatPlayer mcp, ChatChannel channel, int hash) {
-		Inventory inv = Bukkit.createInventory(null, this.getSlots(), "VentureChat: Discord_Message GUI");
+		Inventory inv = plugin.getServer().createInventory(null, this.getSlots(), "VentureChat: Discord_Message GUI");
 		ItemStack close = null;
 		ItemStack skull = null;
 		if (VersionHandler.is1_7()) {
@@ -164,7 +158,7 @@ public class VentureChatGui extends Command {
 		for (GuiSlot g : GuiSlot.getGuiSlots()) {
 			if (!g.hasPermission() || mcp.getPlayer().hasPermission(g.getPermission())) {
 				if (this.checkSlot(g.getSlot())) {
-					MineverseChat.getInstance().getServer().getConsoleSender()
+					plugin.getServer().getConsoleSender()
 							.sendMessage(Format.FormatStringAll("&cGUI: " + g.getName() + " has invalid slot: " + g.getSlot() + "!"));
 					continue;
 				}

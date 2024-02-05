@@ -523,6 +523,9 @@ public class Format {
 	public static String toColoredText(Object o, Class<?> c) {
 		if (VersionHandler.is1_7()) {
 			return "\"extra\":[{\"text\":\"Hover to see original message is not currently supported in 1.7\",\"color\":\"red\"}]";
+		}
+		if (VersionHandler.isAbove_1_19()) {
+			return "\"extra\":[{\"text\":\"Hover to see original message is not currently supported in 1.19+\",\"color\":\"red\"}]";
 		} 
 		List<Object> finalList = new ArrayList<>();
 		StringBuilder stringbuilder = new StringBuilder();
@@ -636,8 +639,7 @@ public class Format {
 					finalList.add(component);
 				}
 			}
-		}
-		else {
+		} else if (VersionHandler.is1_18() || VersionHandler.is1_19()){
 			ArrayList<?> list = (ArrayList<?>) c.getMethod("b").invoke(o, new Object[0]);
 			for (Object component : list) {
 				ArrayList<?> innerList = (ArrayList<?>) c.getMethod("b").invoke(component, new Object[0]);
@@ -647,6 +649,8 @@ public class Format {
 					finalList.add(component);
 				}
 			}
+		} else {
+			((List<?>) c.getMethod("h").invoke(o)).forEach(finalList::add);
 		}
 	}
 

@@ -62,7 +62,6 @@ public class PacketListenerLegacyChat extends PacketAdapter {
 		if(message == null) {
 			return;
 		}
-		int hash = message.hashCode();
-		mcp.addMessage(new ChatMessage(chat, message, coloredMessage, hash));
+		mcp.addMessage(new ChatMessage(chat, message, coloredMessage));
 	}
 }
