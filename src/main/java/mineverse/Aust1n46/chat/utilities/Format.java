@@ -523,10 +523,7 @@ public class Format {
 	public static String toColoredText(Object o, Class<?> c) {
 		if (VersionHandler.is1_7()) {
 			return "\"extra\":[{\"text\":\"Hover to see original message is not currently supported in 1.7\",\"color\":\"red\"}]";
-		}
-//		if (VersionHandler.isAbove_1_19()) {
-//			return "\"extra\":[{\"text\":\"Hover to see original message is not currently supported in 1.19+\",\"color\":\"red\"}]";
-//		} 
+		} 
 		List<Object> finalList = new ArrayList<>();
 		StringBuilder stringbuilder = new StringBuilder();
 		stringbuilder.append("\"extra\":[");
