@@ -524,9 +524,9 @@ public class Format {
 		if (VersionHandler.is1_7()) {
 			return "\"extra\":[{\"text\":\"Hover to see original message is not currently supported in 1.7\",\"color\":\"red\"}]";
 		}
-		if (VersionHandler.isAbove_1_19()) {
-			return "\"extra\":[{\"text\":\"Hover to see original message is not currently supported in 1.19+\",\"color\":\"red\"}]";
-		} 
+//		if (VersionHandler.isAbove_1_19()) {
+//			return "\"extra\":[{\"text\":\"Hover to see original message is not currently supported in 1.19+\",\"color\":\"red\"}]";
+//		} 
 		List<Object> finalList = new ArrayList<>();
 		StringBuilder stringbuilder = new StringBuilder();
 		stringbuilder.append("\"extra\":[");
@@ -556,9 +556,32 @@ public class Format {
 						jsonObject.put("underlined", underlined);
 						jsonObject.put("obfuscated", obfuscated);
 						stringbuilder.append(jsonObject.toJSONString() + ",");
-					} else {
+					} else if (VersionHandler.is1_18() || VersionHandler.is1_19()) {
 						String text = (String) component.getClass().getMethod("getString").invoke(component);
 						Object chatModifier = component.getClass().getMethod("c").invoke(component);
+						Object color = chatModifier.getClass().getMethod("a").invoke(chatModifier);
+						String colorString = "white";
+						if (color != null ) {
+							colorString = color.getClass().getMethod("b").invoke(color).toString();
+						}
+						boolean bold = (boolean) chatModifier.getClass().getMethod("b").invoke(chatModifier);
+						boolean italic = (boolean) chatModifier.getClass().getMethod("c").invoke(chatModifier);
+						boolean strikethrough = (boolean) chatModifier.getClass().getMethod("d").invoke(chatModifier);
+						boolean underlined = (boolean) chatModifier.getClass().getMethod("e").invoke(chatModifier);
+						boolean obfuscated = (boolean) chatModifier.getClass().getMethod("f").invoke(chatModifier);
+						JSONObject jsonObject = new JSONObject();
+						jsonObject.put("text", text);
+						jsonObject.put("color", colorString);
+						jsonObject.put("bold", bold);
+						jsonObject.put("strikethrough", strikethrough);
+						jsonObject.put("italic", italic);
+						jsonObject.put("underlined", underlined);
+						jsonObject.put("obfuscated", obfuscated);
+						stringbuilder.append(jsonObject.toJSONString() + ",");
+					} 
+					else {
+						String text = (String) component.getClass().getMethod("getString").invoke(component);
+						Object chatModifier = component.getClass().getMethod("a").invoke(component);
 						Object color = chatModifier.getClass().getMethod("a").invoke(chatModifier);
 						String colorString = "white";
 						if (color != null ) {
@@ -581,6 +604,7 @@ public class Format {
 					}
 				}
 				catch(Exception e) {
+					e.printStackTrace();
 					return "\"extra\":[{\"text\":\"Something went wrong. Could not access color.\",\"color\":\"red\"}]";
 				}
 			}
@@ -639,7 +663,7 @@ public class Format {
 					finalList.add(component);
 				}
 			}
-		} else if (VersionHandler.is1_18() || VersionHandler.is1_19()){
+		} else if (VersionHandler.is1_18() || VersionHandler.is1_19()) {
 			ArrayList<?> list = (ArrayList<?>) c.getMethod("b").invoke(o, new Object[0]);
 			for (Object component : list) {
 				ArrayList<?> innerList = (ArrayList<?>) c.getMethod("b").invoke(component, new Object[0]);
