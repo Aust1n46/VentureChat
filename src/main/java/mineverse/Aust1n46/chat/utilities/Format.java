@@ -24,6 +24,7 @@ import com.comphenix.protocol.wrappers.WrappedChatComponent;
 
 import me.clip.placeholderapi.PlaceholderAPI;
 import mineverse.Aust1n46.chat.ClickAction;
+import mineverse.Aust1n46.chat.MineverseChat;
 import mineverse.Aust1n46.chat.api.MineverseChatAPI;
 import mineverse.Aust1n46.chat.api.MineverseChatPlayer;
 import mineverse.Aust1n46.chat.json.JsonAttribute;
@@ -533,6 +534,9 @@ public class Format {
 				try {
 					if (VersionHandler.is1_8() || VersionHandler.is1_9() || VersionHandler.is1_10() || VersionHandler.is1_11() || VersionHandler.is1_12() || VersionHandler.is1_13() || VersionHandler.is1_14() || VersionHandler.is1_15() || VersionHandler.is1_16() || VersionHandler.is1_17()) {
 						String text = (String) component.getClass().getMethod("getText").invoke(component);
+						if (text.contains(ChatColor.stripColor(Format.FormatStringAll(MineverseChat.getInstance().getConfig().getString("guiicon"))))) {
+							continue; // skip adding moderation gui icon so it doesn't appear when viewing removed message
+						}
 						Object chatModifier = component.getClass().getMethod("getChatModifier").invoke(component);
 						Object color = chatModifier.getClass().getMethod("getColor").invoke(chatModifier);
 						String colorString = "white";
@@ -555,6 +559,9 @@ public class Format {
 						stringbuilder.append(jsonObject.toJSONString() + ",");
 					} else if (VersionHandler.is1_18() || VersionHandler.is1_19()) {
 						String text = (String) component.getClass().getMethod("getString").invoke(component);
+						if (text.contains(ChatColor.stripColor(Format.FormatStringAll(MineverseChat.getInstance().getConfig().getString("guiicon"))))) {
+							continue; // skip adding moderation gui icon so it doesn't appear when viewing removed message
+						}
 						Object chatModifier = component.getClass().getMethod("c").invoke(component);
 						Object color = chatModifier.getClass().getMethod("a").invoke(chatModifier);
 						String colorString = "white";
@@ -578,6 +585,9 @@ public class Format {
 					} 
 					else {
 						String text = (String) component.getClass().getMethod("getString").invoke(component);
+						if (text.contains(ChatColor.stripColor(Format.FormatStringAll(MineverseChat.getInstance().getConfig().getString("guiicon"))))) {
+							continue; // skip adding moderation gui icon so it doesn't appear when viewing removed message
+						}
 						Object chatModifier = component.getClass().getMethod("a").invoke(component);
 						Object color = chatModifier.getClass().getMethod("a").invoke(chatModifier);
 						String colorString = "white";
@@ -623,12 +633,22 @@ public class Format {
 			splitComponents(finalList, o, c);
 			for (Object component : finalList) {
 				if (VersionHandler.is1_7()) {
-					stringbuilder.append((String) component.getClass().getMethod("e").invoke(component));
+					final String text = (String) component.getClass().getMethod("e").invoke(component);
+					if (text.contains(ChatColor.stripColor(Format.FormatStringAll(MineverseChat.getInstance().getConfig().getString("guiicon"))))) {
+						continue; // skip adding moderation gui icon for message remover to properly compute hash
+					}
 				} else if(VersionHandler.is1_8() || VersionHandler.is1_9() || VersionHandler.is1_10() || VersionHandler.is1_11() || VersionHandler.is1_12() || VersionHandler.is1_13() || VersionHandler.is1_14() || VersionHandler.is1_15() || VersionHandler.is1_16() || VersionHandler.is1_17()){
-					stringbuilder.append((String) component.getClass().getMethod("getText").invoke(component));
+					final String text = (String) component.getClass().getMethod("getText").invoke(component);
+					if (text.contains(ChatColor.stripColor(Format.FormatStringAll(MineverseChat.getInstance().getConfig().getString("guiicon"))))) {
+						continue; // skip adding moderation gui icon for message remover to properly compute hash
+					}
 				}
 				else {
-					stringbuilder.append((String) component.getClass().getMethod("getString").invoke(component));
+					final String text = (String) component.getClass().getMethod("getString").invoke(component);
+					if (text.contains(ChatColor.stripColor(Format.FormatStringAll(MineverseChat.getInstance().getConfig().getString("guiicon"))))) {
+						continue; // skip adding moderation gui icon for message remover to properly compute hash
+					}
+					stringbuilder.append(text);
 				}
 			}
 		} catch (Exception e) {
