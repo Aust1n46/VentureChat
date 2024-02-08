@@ -140,7 +140,7 @@ public class CommandListener implements Listener {
 	@EventHandler(priority = EventPriority.LOW)
 	public void InventoryClick(final InventoryClickEvent event) {
 		final Inventory inventory = event.getInventory();
-		final InventoryHolder inventoryHolder = inventory.getHolder(false);
+		final InventoryHolder inventoryHolder = inventory.getHolder();
 	    if (!(inventoryHolder instanceof ModerationGuiInventory)) {
 	        return;
 	    }

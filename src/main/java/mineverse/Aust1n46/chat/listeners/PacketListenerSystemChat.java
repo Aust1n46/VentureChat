@@ -27,7 +27,7 @@ public class PacketListenerSystemChat extends PacketAdapter {
 			return;
 		}
 
-		final WrappedChatComponent chat = event.getPacket().getChatComponents().read(0);
+		final WrappedChatComponent chat = event.getPacket().getChatComponents().readSafely(0);
 		if (chat == null) {
 			return;
 		}
