@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
@@ -46,7 +47,7 @@ public class MineverseChatPlayer {
 	private boolean partyChat;
 	private HashMap<ChatChannel, List<Long>> spam;
 	private boolean modified;
-	private List<ChatMessage> messages;
+	private LinkedList<ChatMessage> messages;
 	private String jsonFormat;
 	private boolean editing;
 	private int editHash;
@@ -83,7 +84,7 @@ public class MineverseChatPlayer {
 		this.replyPlayer = null;
 		this.partyChat = false;
 		this.modified = false;
-		this.messages = new ArrayList<ChatMessage>();
+		this.messages = new LinkedList<ChatMessage>();
 		this.jsonFormat = jsonFormat;
 		this.cooldowns = new HashMap<ChatChannel, Long>();
 		this.spam = new HashMap<ChatChannel, List<Long>>();
@@ -116,7 +117,7 @@ public class MineverseChatPlayer {
 		this.replyPlayer = null;
 		this.partyChat = false;
 		this.modified = false;
-		this.messages = new ArrayList<ChatMessage>();
+		this.messages = new LinkedList<ChatMessage>();
 		this.jsonFormat = "Default";
 		this.cooldowns = new HashMap<ChatChannel, Long>();
 		this.spam = new HashMap<ChatChannel, List<Long>>();
@@ -522,9 +523,9 @@ public class MineverseChatPlayer {
 
 	public void addMessage(ChatMessage message) {
 		if(this.messages.size() >= 100) {
-			this.messages.remove(0);
+			this.messages.removeFirst();
 		}
-		this.messages.add(message);
+		this.messages.addLast(message);
 	}
 
 	public void clearMessages() {

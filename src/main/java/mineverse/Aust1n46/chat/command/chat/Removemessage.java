@@ -7,7 +7,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -83,20 +82,6 @@ public class Removemessage extends Command {
 								playerPackets.add(Format.createPacketPlayOutChat(removedComponent));
 								resend = true;
 								continue;
-							}
-							if (message.getMessage().contains(ChatColor.stripColor(Format.FormatStringAll(plugin.getConfig().getString("guiicon"))))) {
-								String submessage = message.getMessage().substring(0,
-										message.getMessage().length() - ChatColor.stripColor(Format.FormatStringAll(plugin.getConfig().getString("guiicon"))).length());
-								if (submessage.hashCode() == hash) {
-									WrappedChatComponent removedComponent = p.getPlayer().hasPermission("venturechat.message.bypass")
-											? Removemessage.this.getMessageDeletedChatComponentAdmin(message)
-											: Removemessage.this.getMessageDeletedChatComponentPlayer();
-									message.setComponent(removedComponent);
-									message.setHash(-1);
-									playerPackets.add(Format.createPacketPlayOutChat(removedComponent));
-									resend = true;
-									continue;
-								}
 							}
 							playerPackets.add(Format.createPacketPlayOutChat(message.getComponent()));
 

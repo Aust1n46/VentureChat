@@ -2,6 +2,7 @@ package mineverse.Aust1n46.chat.utilities;
 
 import static mineverse.Aust1n46.chat.MineverseChat.getInstance;
 
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -24,6 +25,7 @@ import com.comphenix.protocol.wrappers.WrappedChatComponent;
 
 import me.clip.placeholderapi.PlaceholderAPI;
 import mineverse.Aust1n46.chat.ClickAction;
+import mineverse.Aust1n46.chat.MineverseChat;
 import mineverse.Aust1n46.chat.api.MineverseChatAPI;
 import mineverse.Aust1n46.chat.api.MineverseChatPlayer;
 import mineverse.Aust1n46.chat.json.JsonAttribute;
@@ -533,6 +535,9 @@ public class Format {
 				try {
 					if (VersionHandler.is1_8() || VersionHandler.is1_9() || VersionHandler.is1_10() || VersionHandler.is1_11() || VersionHandler.is1_12() || VersionHandler.is1_13() || VersionHandler.is1_14() || VersionHandler.is1_15() || VersionHandler.is1_16() || VersionHandler.is1_17()) {
 						String text = (String) component.getClass().getMethod("getText").invoke(component);
+						if (text.contains(ChatColor.stripColor(Format.FormatStringAll(MineverseChat.getInstance().getConfig().getString("guiicon"))))) {
+							continue; // skip adding moderation gui icon so it doesn't appear when viewing removed message
+						}
 						Object chatModifier = component.getClass().getMethod("getChatModifier").invoke(component);
 						Object color = chatModifier.getClass().getMethod("getColor").invoke(chatModifier);
 						String colorString = "white";
@@ -553,9 +558,38 @@ public class Format {
 						jsonObject.put("underlined", underlined);
 						jsonObject.put("obfuscated", obfuscated);
 						stringbuilder.append(jsonObject.toJSONString() + ",");
-					} else {
+					} else if (VersionHandler.is1_18() || VersionHandler.is1_19()) {
 						String text = (String) component.getClass().getMethod("getString").invoke(component);
+						if (text.contains(ChatColor.stripColor(Format.FormatStringAll(MineverseChat.getInstance().getConfig().getString("guiicon"))))) {
+							continue; // skip adding moderation gui icon so it doesn't appear when viewing removed message
+						}
 						Object chatModifier = component.getClass().getMethod("c").invoke(component);
+						Object color = chatModifier.getClass().getMethod("a").invoke(chatModifier);
+						String colorString = "white";
+						if (color != null ) {
+							colorString = color.getClass().getMethod("b").invoke(color).toString();
+						}
+						boolean bold = (boolean) chatModifier.getClass().getMethod("b").invoke(chatModifier);
+						boolean italic = (boolean) chatModifier.getClass().getMethod("c").invoke(chatModifier);
+						boolean strikethrough = (boolean) chatModifier.getClass().getMethod("d").invoke(chatModifier);
+						boolean underlined = (boolean) chatModifier.getClass().getMethod("e").invoke(chatModifier);
+						boolean obfuscated = (boolean) chatModifier.getClass().getMethod("f").invoke(chatModifier);
+						JSONObject jsonObject = new JSONObject();
+						jsonObject.put("text", text);
+						jsonObject.put("color", colorString);
+						jsonObject.put("bold", bold);
+						jsonObject.put("strikethrough", strikethrough);
+						jsonObject.put("italic", italic);
+						jsonObject.put("underlined", underlined);
+						jsonObject.put("obfuscated", obfuscated);
+						stringbuilder.append(jsonObject.toJSONString() + ",");
+					} 
+					else {
+						String text = (String) component.getClass().getMethod("getString").invoke(component);
+						if (text.contains(ChatColor.stripColor(Format.FormatStringAll(MineverseChat.getInstance().getConfig().getString("guiicon"))))) {
+							continue; // skip adding moderation gui icon so it doesn't appear when viewing removed message
+						}
+						Object chatModifier = component.getClass().getMethod("a").invoke(component);
 						Object color = chatModifier.getClass().getMethod("a").invoke(chatModifier);
 						String colorString = "white";
 						if (color != null ) {
@@ -578,6 +612,7 @@ public class Format {
 					}
 				}
 				catch(Exception e) {
+					e.printStackTrace();
 					return "\"extra\":[{\"text\":\"Something went wrong. Could not access color.\",\"color\":\"red\"}]";
 				}
 			}
@@ -592,20 +627,27 @@ public class Format {
 		return coloredText;
 	}
 
-	public static String toPlainText(Object o, Class<?> c) {
-		List<Object> finalList = new ArrayList<>();
-		StringBuilder stringbuilder = new StringBuilder();
+	public static String toPlainText(final Object o, final Class<?> c) {
+		final List<Object> finalList = new ArrayList<>();
+		final StringBuilder stringbuilder = new StringBuilder();
 		try {
 			splitComponents(finalList, o, c);
 			for (Object component : finalList) {
+				final String methodName;
 				if (VersionHandler.is1_7()) {
-					stringbuilder.append((String) component.getClass().getMethod("e").invoke(component));
+					methodName = "e";
 				} else if(VersionHandler.is1_8() || VersionHandler.is1_9() || VersionHandler.is1_10() || VersionHandler.is1_11() || VersionHandler.is1_12() || VersionHandler.is1_13() || VersionHandler.is1_14() || VersionHandler.is1_15() || VersionHandler.is1_16() || VersionHandler.is1_17()){
-					stringbuilder.append((String) component.getClass().getMethod("getText").invoke(component));
+					methodName = "getText";
 				}
 				else {
-					stringbuilder.append((String) component.getClass().getMethod("getString").invoke(component));
+					methodName = "getString";
 				}
+				final String guiIcon = ChatColor.stripColor(Format.FormatStringAll(MineverseChat.getInstance().getConfig().getString("guiicon")));
+				final String text = (String) component.getClass().getMethod(methodName).invoke(component);
+				if (text.contains(guiIcon)) {
+					continue; // skip adding moderation gui icon for message remover to properly compute hash
+				}
+				stringbuilder.append(text);
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -636,8 +678,7 @@ public class Format {
 					finalList.add(component);
 				}
 			}
-		}
-		else {
+		} else if (VersionHandler.is1_18() || VersionHandler.is1_19()) {
 			ArrayList<?> list = (ArrayList<?>) c.getMethod("b").invoke(o, new Object[0]);
 			for (Object component : list) {
 				ArrayList<?> innerList = (ArrayList<?>) c.getMethod("b").invoke(component, new Object[0]);
@@ -647,6 +688,8 @@ public class Format {
 					finalList.add(component);
 				}
 			}
+		} else {
+			((List<?>) c.getMethod("h").invoke(o)).forEach(finalList::add);
 		}
 	}
 
