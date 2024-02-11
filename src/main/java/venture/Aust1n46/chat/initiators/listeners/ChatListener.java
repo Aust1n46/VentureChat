@@ -22,6 +22,7 @@ import com.palmergames.bukkit.towny.object.Resident;
 
 import me.clip.placeholderapi.PlaceholderAPI;
 import net.essentialsx.api.v2.services.discord.DiscordService;
+import venture.Aust1n46.chat.api.events.PrivateMessageEvent;
 import venture.Aust1n46.chat.api.events.VentureChatEvent;
 import venture.Aust1n46.chat.controllers.PluginMessageController;
 import venture.Aust1n46.chat.initators.commands.MuteContainer;
@@ -123,6 +124,15 @@ public class ChatListener implements Listener {
 			send = FormatUtils.FormatStringAll(PlaceholderAPI.setBracketPlaceholders(tp.getPlayer(), send.replaceAll("receiver_", ""))) + filtered;
 			echo = FormatUtils.FormatStringAll(PlaceholderAPI.setBracketPlaceholders(tp.getPlayer(), echo.replaceAll("receiver_", ""))) + filtered;
 			spy = FormatUtils.FormatStringAll(PlaceholderAPI.setBracketPlaceholders(tp.getPlayer(), spy.replaceAll("receiver_", ""))) + filtered;
+
+			PrivateMessageEvent privateMessageEvent = new PrivateMessageEvent(ventureChatPlayer, tp, filtered, echo, send, spy, false, !plugin.getServer().isPrimaryThread());
+			plugin.getServer().getPluginManager().callEvent(privateMessageEvent);
+			if (privateMessageEvent.isCancelled()) {
+				return;
+			}
+			send = privateMessageEvent.getSend();
+			echo = privateMessageEvent.getEcho();
+			spy = privateMessageEvent.getSpy();
 
 			if (!ventureChatPlayer.getPlayer().hasPermission("venturechat.spy.override")) {
 				for (VentureChatPlayer p : playerApiService.getOnlineMineverseChatPlayers()) {
