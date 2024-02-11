@@ -217,8 +217,6 @@ public class ConfigService {
 
 	public boolean isProxyEnabled() {
 		try {
-//			return plugin.getServer().spigot().getConfig().getBoolean("settings.bungeecord")
-//					|| plugin.getServer().spigot().getPaperConfig().getBoolean("settings.velocity-support.enabled");
 			return (plugin.getServer().spigot().getConfig().getBoolean("settings.bungeecord")
 					|| plugin.getServer().spigot().getPaperConfig().getBoolean("settings.velocity-support.enabled")
 					|| plugin.getServer().spigot().getPaperConfig().getBoolean("proxies.velocity.enabled"));

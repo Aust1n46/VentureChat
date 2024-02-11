@@ -67,7 +67,6 @@ public class VentureChatFormatService {
 	 */
 	public String convertToJson(VentureChatPlayer sender, String format, String chat) {
 		JsonFormat JSONformat = configService.getJsonFormat(sender.getJsonFormat());
-//		String f = escapeJsonChars(format);
 		String c = escapeJsonChars(chat);
 		String json = "[\"\",{\"text\":\"\",\"extra\":[";
 		json += convertPlaceholders(format, JSONformat, sender);
@@ -113,17 +112,11 @@ public class VentureChatFormatService {
 				formattedPlaceholder = escapeJsonChars(FormatUtils.FormatStringAll(PlaceholderAPI.setBracketPlaceholders(icp.getPlayer(), placeholder)));
 				temp += convertToJsonColors(escapeJsonChars(lastCode + remaining.substring(0, indexStart))) + ",";
 				lastCode = getLastCode(lastCode + remaining.substring(0, indexStart));
-//				String action = "";
-//				String text = "";
-//				String hover = "";
 				boolean placeholderHasJsonAttribute = false;
 				for (JsonAttribute jsonAttribute : format.getJsonAttributes()) {
 					if (placeholder.contains(jsonAttribute.getName().replace("{", "").replace("}", ""))) {
-//						action = jsonAttribute.getClickAction();
-//						text = FormatUtils.FormatStringAll(PlaceholderAPI.setBracketPlaceholders(icp.getPlayer(), jsonAttribute.getClickText()));
 						final StringBuilder hover = new StringBuilder();
 						for (String st : jsonAttribute.getHoverText()) {
-//							hover += FormatUtils.FormatStringAll(st) + "\n";
 							hover.append(FormatUtils.FormatStringAll(st) + "\n");
 						}
 						final String hoverText;
@@ -155,14 +148,9 @@ public class VentureChatFormatService {
 						break;
 					}
 				}
-//				if (!hover.isEmpty()) {
-//					hover = FormatUtils.FormatStringAll(PlaceholderAPI.setBracketPlaceholders(icp.getPlayer(), hover.substring(0, hover.length() - 1)));
-//				}
 				if (!placeholderHasJsonAttribute) {
 					temp += convertToJsonColors(lastCode + formattedPlaceholder) + ",";
 				}
-//				temp += convertToJsonColors(lastCode + formattedPlaceholder, ",\"clickEvent\":{\"action\":\"" + action + "\",\"value\":\"" + text
-//						+ "\"},\"hoverEvent\":{\"action\":\"show_text\",\"value\":{\"text\":\"\",\"extra\":[" + convertToJsonColors(hover) + "]}}") + ",";
 				lastCode = getLastCode(lastCode + formattedPlaceholder);
 				remaining = remaining.substring(indexEnd);
 			} else {
