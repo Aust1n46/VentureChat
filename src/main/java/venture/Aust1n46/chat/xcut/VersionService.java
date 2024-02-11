@@ -4,14 +4,11 @@ import com.comphenix.protocol.utility.MinecraftVersion;
 import com.google.inject.Singleton;
 
 @Singleton
-public final class VersionService {
+public class VersionService {
 	public static final MinecraftVersion SERVER_VERSION = MinecraftVersion.getCurrentVersion();
 	private static final MinecraftVersion MC1_19 = new MinecraftVersion(1, 19, 0);
 	private static final MinecraftVersion MC1_19_1 = new MinecraftVersion(1, 19, 1);
 	private static final MinecraftVersion MC1_20_4 = new MinecraftVersion(1, 20, 4);
-
-	private VersionService() {
-	}
 
 	public boolean is1_7() {
 		return SERVER_VERSION.getMinor() == 7 && SERVER_VERSION.getMajor() == 1;
@@ -76,7 +73,7 @@ public final class VersionService {
 	public boolean isAbove_1_19() {
 		return SERVER_VERSION.isAtLeast(MC1_19_1);
 	}
-	
+
 	public boolean isAtLeast_1_20_4() {
 		return SERVER_VERSION.isAtLeast(MC1_20_4);
 	}

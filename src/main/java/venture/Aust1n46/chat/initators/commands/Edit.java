@@ -16,11 +16,11 @@ import com.google.inject.Inject;
 import venture.Aust1n46.chat.initiators.application.VentureChat;
 import venture.Aust1n46.chat.localization.LocalizedMessage;
 import venture.Aust1n46.chat.model.ChatMessage;
-import venture.Aust1n46.chat.model.VentureChatPlayer;
 import venture.Aust1n46.chat.model.UniversalCommand;
+import venture.Aust1n46.chat.model.VentureChatPlayer;
+import venture.Aust1n46.chat.service.VentureChatFormatService;
 import venture.Aust1n46.chat.service.VentureChatPlayerApiService;
 import venture.Aust1n46.chat.utilities.FormatUtils;
-import venture.Aust1n46.chat.service.VentureChatFormatService;
 
 public class Edit extends UniversalCommand {
     @Inject
@@ -41,7 +41,6 @@ public class Edit extends UniversalCommand {
     @Inject
     public void postConstruct() {
     	emptyLinePacketContainer = formatService.createPacketPlayOutChat("{\"extra\":[\" \"],\"text\":\"\"}");
-    	messageDeletedComponentPlayer = WrappedChatComponent.fromJson("{\"text\":\"\",\"extra\":[{\"text\":\"<message removed>\",\"color\":\"red\",\"italic\":\"true\",\"hoverEvent\":{\"action\":\"show_text\",\"value\":{\"text\":\"\",\"extra\":[{\"text\":\"" + FormatUtils.FormatStringAll(plugin.getConfig().getString("messageremoverpermissions")) + "\"}]}}}]}");
     }
     
     @Override
@@ -111,6 +110,9 @@ public class Edit extends UniversalCommand {
     }
 
     public WrappedChatComponent getMessageDeletedChatComponentPlayer() {
+    	if (messageDeletedComponentPlayer == null) { // avoid errors on startup from this non functional command on different game versions
+    		messageDeletedComponentPlayer = WrappedChatComponent.fromJson("{\"text\":\"\",\"extra\":[{\"text\":\"<message removed>\",\"color\":\"red\",\"italic\":\"true\",\"hoverEvent\":{\"action\":\"show_text\",\"value\":{\"text\":\"\",\"extra\":[{\"text\":\"" + FormatUtils.FormatStringAll(plugin.getConfig().getString("messageremoverpermissions")) + "\"}]}}}]}");
+    	}
         return this.messageDeletedComponentPlayer;
     }
 
