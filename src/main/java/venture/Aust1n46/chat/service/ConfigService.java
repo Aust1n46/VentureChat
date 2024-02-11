@@ -14,6 +14,7 @@ import com.google.inject.Singleton;
 import venture.Aust1n46.chat.initiators.application.VentureChat;
 import venture.Aust1n46.chat.model.Alias;
 import venture.Aust1n46.chat.model.ChatChannel;
+import venture.Aust1n46.chat.model.ClickAction;
 import venture.Aust1n46.chat.model.GuiSlot;
 import venture.Aust1n46.chat.model.JsonAttribute;
 import venture.Aust1n46.chat.model.JsonFormat;
@@ -81,8 +82,9 @@ public class ConfigService {
 			if (jsonAttributeSection != null) {
 				for (String attribute : jsonAttributeSection.getKeys(false)) {
 					List<String> hoverText = jsonAttributeSection.getStringList(attribute + ".hover_text");
-					String clickAction = jsonAttributeSection.getString(attribute + ".click_action", "");
 					String clickText = jsonAttributeSection.getString(attribute + ".click_text", "");
+					String clickActionText = jsonAttributeSection.getString(attribute + ".click_action", "none");
+					ClickAction clickAction = ClickAction.valueOf(clickActionText.toUpperCase());
 					jsonAttributes.add(new JsonAttribute(attribute, hoverText, clickAction, clickText));
 				}
 			}
@@ -215,8 +217,11 @@ public class ConfigService {
 
 	public boolean isProxyEnabled() {
 		try {
-			return plugin.getServer().spigot().getConfig().getBoolean("settings.bungeecord")
-					|| plugin.getServer().spigot().getPaperConfig().getBoolean("settings.velocity-support.enabled");
+//			return plugin.getServer().spigot().getConfig().getBoolean("settings.bungeecord")
+//					|| plugin.getServer().spigot().getPaperConfig().getBoolean("settings.velocity-support.enabled");
+			return (plugin.getServer().spigot().getConfig().getBoolean("settings.bungeecord")
+					|| plugin.getServer().spigot().getPaperConfig().getBoolean("settings.velocity-support.enabled")
+					|| plugin.getServer().spigot().getPaperConfig().getBoolean("proxies.velocity.enabled"));
 		} catch (NoSuchMethodError exception) { // Thrown if server isn't Paper.
 			return false;
 		}

@@ -22,7 +22,7 @@ import venture.Aust1n46.chat.controllers.VentureChatSpigotFlatFileController;
 import venture.Aust1n46.chat.guice.VentureChatPluginModule;
 import venture.Aust1n46.chat.initiators.listeners.ChatListener;
 import venture.Aust1n46.chat.initiators.listeners.LoginListener;
-import venture.Aust1n46.chat.initiators.listeners.PacketListener;
+import venture.Aust1n46.chat.initiators.listeners.PacketListenerLegacyChat;
 import venture.Aust1n46.chat.initiators.listeners.PreProcessCommandListener;
 import venture.Aust1n46.chat.initiators.listeners.SignListener;
 import venture.Aust1n46.chat.initiators.schedulers.UnmuteScheduler;
@@ -30,6 +30,7 @@ import venture.Aust1n46.chat.localization.Localization;
 import venture.Aust1n46.chat.placeholderapi.VentureChatPlaceholders;
 import venture.Aust1n46.chat.service.VentureChatPlayerApiService;
 import venture.Aust1n46.chat.utilities.FormatUtils;
+import venture.Aust1n46.chat.xcut.VersionService;
 
 /**
  * VentureChat Minecraft plugin for servers running Spigot or Paper software.
@@ -47,7 +48,7 @@ public class VentureChat extends JavaPlugin implements PluginMessageListener {
 	@Inject
 	private PreProcessCommandListener commandListener;
 	@Inject
-	private PacketListener packetListener;
+	private PacketListenerLegacyChat packetListener;
 	@Inject
 	private VentureChatPlaceholders ventureChatPlaceholders;
 	@Inject
@@ -56,6 +57,8 @@ public class VentureChat extends JavaPlugin implements PluginMessageListener {
 	private VentureChatPlayerApiService playerApiService;
 	@Inject
 	private PluginMessageController pluginMessageController;
+	@Inject
+	private VersionService versionService;
 
 	private Permission permission = null;
 
@@ -157,7 +160,9 @@ public class VentureChat extends JavaPlugin implements PluginMessageListener {
 		pluginManager.registerEvents(signListener, this);
 		pluginManager.registerEvents(commandListener, this);
 		pluginManager.registerEvents(loginListener, this);
-		ProtocolLibrary.getProtocolManager().addPacketListener(packetListener);
+		if (versionService.isUnder_1_19()) {
+			ProtocolLibrary.getProtocolManager().addPacketListener(packetListener);
+		}
 	}
 
 	private boolean setupPermissions() {

@@ -17,7 +17,7 @@ import venture.Aust1n46.chat.service.VentureChatPlayerApiService;
 import venture.Aust1n46.chat.xcut.VersionService;
 
 @Singleton
-public class PacketListener extends PacketAdapter {
+public class PacketListenerLegacyChat extends PacketAdapter {
 	@Inject
 	private VentureChatFormatService formatter;
 	@Inject
@@ -26,13 +26,13 @@ public class PacketListener extends PacketAdapter {
 	private VersionService versionService;
 
 	@Inject
-	public PacketListener(final VentureChat plugin) {
+	public PacketListenerLegacyChat(final VentureChat plugin) {
 		super(plugin, ListenerPriority.MONITOR, new PacketType[] { PacketType.Play.Server.CHAT });
 	}
 
 	@Override
 	public void onPacketSending(PacketEvent event) {
-		if (event.isCancelled() || event.getPacketType() != PacketType.Play.Server.CHAT) {
+		if (event.isCancelled()) {
 			return;
 		}
 

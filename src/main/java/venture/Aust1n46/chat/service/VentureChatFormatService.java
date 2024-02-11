@@ -14,6 +14,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+import org.apache.commons.lang.StringUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
@@ -28,6 +29,7 @@ import com.google.inject.Singleton;
 
 import me.clip.placeholderapi.PlaceholderAPI;
 import venture.Aust1n46.chat.initiators.application.VentureChat;
+import venture.Aust1n46.chat.model.ClickAction;
 import venture.Aust1n46.chat.model.JsonAttribute;
 import venture.Aust1n46.chat.model.JsonFormat;
 import venture.Aust1n46.chat.model.VentureChatPlayer;
@@ -65,10 +67,10 @@ public class VentureChatFormatService {
 	 */
 	public String convertToJson(VentureChatPlayer sender, String format, String chat) {
 		JsonFormat JSONformat = configService.getJsonFormat(sender.getJsonFormat());
-		String f = escapeJsonChars(format);
+//		String f = escapeJsonChars(format);
 		String c = escapeJsonChars(chat);
 		String json = "[\"\",{\"text\":\"\",\"extra\":[";
-		json += convertPlaceholders(f, JSONformat, sender);
+		json += convertPlaceholders(format, JSONformat, sender);
 		json += "]}";
 		json += "," + convertLinks(c);
 		json += "]";
@@ -108,26 +110,59 @@ public class VentureChatFormatService {
 				indexStart = matcher.start();
 				indexEnd = matcher.end();
 				placeholder = remaining.substring(indexStart, indexEnd);
-				formattedPlaceholder = FormatUtils.FormatStringAll(PlaceholderAPI.setBracketPlaceholders(icp.getPlayer(), placeholder));
-				temp += convertToJsonColors(lastCode + remaining.substring(0, indexStart)) + ",";
+				formattedPlaceholder = escapeJsonChars(FormatUtils.FormatStringAll(PlaceholderAPI.setBracketPlaceholders(icp.getPlayer(), placeholder)));
+				temp += convertToJsonColors(escapeJsonChars(lastCode + remaining.substring(0, indexStart))) + ",";
 				lastCode = getLastCode(lastCode + remaining.substring(0, indexStart));
-				String action = "";
-				String text = "";
-				String hover = "";
+//				String action = "";
+//				String text = "";
+//				String hover = "";
+				boolean placeholderHasJsonAttribute = false;
 				for (JsonAttribute jsonAttribute : format.getJsonAttributes()) {
 					if (placeholder.contains(jsonAttribute.getName().replace("{", "").replace("}", ""))) {
-						action = jsonAttribute.getClickAction();
-						text = FormatUtils.FormatStringAll(PlaceholderAPI.setBracketPlaceholders(icp.getPlayer(), jsonAttribute.getClickText()));
+//						action = jsonAttribute.getClickAction();
+//						text = FormatUtils.FormatStringAll(PlaceholderAPI.setBracketPlaceholders(icp.getPlayer(), jsonAttribute.getClickText()));
+						final StringBuilder hover = new StringBuilder();
 						for (String st : jsonAttribute.getHoverText()) {
-							hover += FormatUtils.FormatStringAll(st) + "\n";
+//							hover += FormatUtils.FormatStringAll(st) + "\n";
+							hover.append(FormatUtils.FormatStringAll(st) + "\n");
 						}
+						final String hoverText;
+						if(!hover.isEmpty()) {
+							hoverText = escapeJsonChars(FormatUtils.FormatStringAll(
+									PlaceholderAPI.setBracketPlaceholders(icp.getPlayer(), hover.substring(0, hover.length() - 1))));
+						} else {
+							hoverText = StringUtils.EMPTY;
+						}
+						final ClickAction clickAction = jsonAttribute.getClickAction();
+						final String actionJson;
+						if (clickAction == ClickAction.NONE) {
+							actionJson = StringUtils.EMPTY;
+						} else {
+							final String clickText = escapeJsonChars(FormatUtils.FormatStringAll(
+									PlaceholderAPI.setBracketPlaceholders(icp.getPlayer(), jsonAttribute.getClickText())));
+							actionJson = ",\"clickEvent\":{\"action\":\"" + jsonAttribute.getClickAction().toString() + "\",\"value\":\"" + clickText
+							+ "\"}";
+						}
+						final String hoverJson;
+						if (hoverText.isEmpty()) {
+							hoverJson = StringUtils.EMPTY;
+						} else {
+							hoverJson = ",\"hoverEvent\":{\"action\":\"show_text\",\"value\":{\"text\":\"\",\"extra\":["
+									+ convertToJsonColors(hoverText) + "]}}";
+						}
+						temp += convertToJsonColors(lastCode + formattedPlaceholder, actionJson + hoverJson) + ",";
+						placeholderHasJsonAttribute = true;
+						break;
 					}
 				}
-				if (!hover.isEmpty()) {
-					hover = FormatUtils.FormatStringAll(PlaceholderAPI.setBracketPlaceholders(icp.getPlayer(), hover.substring(0, hover.length() - 1)));
+//				if (!hover.isEmpty()) {
+//					hover = FormatUtils.FormatStringAll(PlaceholderAPI.setBracketPlaceholders(icp.getPlayer(), hover.substring(0, hover.length() - 1)));
+//				}
+				if (!placeholderHasJsonAttribute) {
+					temp += convertToJsonColors(lastCode + formattedPlaceholder) + ",";
 				}
-				temp += convertToJsonColors(lastCode + formattedPlaceholder, ",\"clickEvent\":{\"action\":\"" + action + "\",\"value\":\"" + text
-						+ "\"},\"hoverEvent\":{\"action\":\"show_text\",\"value\":{\"text\":\"\",\"extra\":[" + convertToJsonColors(hover) + "]}}") + ",";
+//				temp += convertToJsonColors(lastCode + formattedPlaceholder, ",\"clickEvent\":{\"action\":\"" + action + "\",\"value\":\"" + text
+//						+ "\"},\"hoverEvent\":{\"action\":\"show_text\",\"value\":{\"text\":\"\",\"extra\":[" + convertToJsonColors(hover) + "]}}") + ",";
 				lastCode = getLastCode(lastCode + formattedPlaceholder);
 				remaining = remaining.substring(indexEnd);
 			} else {
@@ -165,7 +200,7 @@ public class VentureChatFormatService {
 				if (ChatColor.stripColor(link).contains("https://"))
 					https = "s";
 				temp += convertToJsonColors(lastCode + link,
-						",\"underlined\":\"" + underlineURLs() + "\",\"clickEvent\":{\"action\":\"open_url\",\"value\":\"http" + https + "://"
+						",\"underlined\":" + underlineURLs() + ",\"clickEvent\":{\"action\":\"open_url\",\"value\":\"http" + https + "://"
 								+ ChatColor.stripColor(link.replace("http://", "").replace("https://", ""))
 								+ "\"},\"hoverEvent\":{\"action\":\"show_text\",\"value\":{\"text\":\"\",\"extra\":[" + convertToJsonColors(lastCode + link) + "]}}")
 						+ ",";
@@ -307,15 +342,35 @@ public class VentureChatFormatService {
 				underlined = false;
 			}
 			if (bold)
-				modifier += ",\"bold\":\"true\"";
+				if (versionService.isAtLeast_1_20_4()) {
+					modifier += ",\"bold\":true";
+				} else {
+					modifier += ",\"bold\":\"true\"";
+				}
 			if (obfuscated)
-				modifier += ",\"obfuscated\":\"true\"";
+				if (versionService.isAtLeast_1_20_4()) {
+					modifier += ",\"obfuscated\":true";
+				} else {
+					modifier += ",\"obfuscated\":\"true\"";
+				}
 			if (italic)
-				modifier += ",\"italic\":\"true\"";
+				if (versionService.isAtLeast_1_20_4()) {
+					modifier += ",\"italic\":true";
+				} else {
+					modifier += ",\"italic\":\"true\"";
+				}
 			if (underlined)
-				modifier += ",\"underlined\":\"true\"";
+				if (versionService.isAtLeast_1_20_4()) {
+					modifier += ",\"underlined\":true";
+				} else {
+					modifier += ",\"underlined\":\"true\"";
+				}
 			if (strikethrough)
-				modifier += ",\"strikethrough\":\"true\"";
+				if (versionService.isAtLeast_1_20_4()) {
+					modifier += ",\"strikethrough\":true";
+				} else {
+					modifier += ",\"strikethrough\":\"true\"";
+				}
 			remaining = remaining.substring(colorLength);
 			colorLength = LEGACY_COLOR_CODE_LENGTH;
 			indexNextColor = remaining.indexOf(BUKKIT_COLOR_CODE_PREFIX);
@@ -407,17 +462,47 @@ public class VentureChatFormatService {
 	}
 
 	public PacketContainer createPacketPlayOutChat(String json) {
-		WrappedChatComponent component = WrappedChatComponent.fromJson(json);
-		PacketContainer container = new PacketContainer(PacketType.Play.Server.CHAT);
-		container.getModifier().writeDefaults();
-		container.getChatComponents().write(0, component);
+		final PacketContainer container;
+		if (versionService.isAtLeast_1_20_4()) { // 1.20.4+
+			container = new PacketContainer(PacketType.Play.Server.SYSTEM_CHAT);
+			container.getChatComponents().write(0, WrappedChatComponent.fromJson(json));
+			container.getBooleans().write(0, false);
+		} else if (versionService.isAbove_1_19()) { // 1.19.1 -> 1.20.3
+			container = new PacketContainer(PacketType.Play.Server.SYSTEM_CHAT);
+			container.getStrings().write(0, json);
+			container.getBooleans().write(0, false);
+		} else if (versionService.isUnder_1_19()) { // 1.7 -> 1.19
+			WrappedChatComponent component = WrappedChatComponent.fromJson(json);
+			container = new PacketContainer(PacketType.Play.Server.CHAT);
+			container.getModifier().writeDefaults();
+			container.getChatComponents().write(0, component);
+		} else { // 1.19
+			container = new PacketContainer(PacketType.Play.Server.SYSTEM_CHAT);
+			container.getStrings().write(0, json);
+			container.getIntegers().write(0, 1);
+		}
 		return container;
 	}
 
 	public PacketContainer createPacketPlayOutChat(WrappedChatComponent component) {
-		PacketContainer container = new PacketContainer(PacketType.Play.Server.CHAT);
-		container.getModifier().writeDefaults();
-		container.getChatComponents().write(0, component);
+		final PacketContainer container;
+		if (versionService.isAtLeast_1_20_4()) { // 1.20.4+
+			container = new PacketContainer(PacketType.Play.Server.SYSTEM_CHAT);
+			container.getChatComponents().write(0, component);
+			container.getBooleans().write(0, false);
+		} else if (versionService.isAbove_1_19()) { // 1.19.1 -> 1.20.3
+			container = new PacketContainer(PacketType.Play.Server.SYSTEM_CHAT);
+			container.getStrings().write(0, component.getJson());
+			container.getBooleans().write(0, false);
+		} else if (versionService.isUnder_1_19()) { // 1.7 -> 1.19
+			container = new PacketContainer(PacketType.Play.Server.CHAT);
+			container.getModifier().writeDefaults();
+			container.getChatComponents().write(0, component);
+		} else { // 1.19
+			container = new PacketContainer(PacketType.Play.Server.SYSTEM_CHAT);
+			container.getStrings().write(0, component.getJson());
+			container.getIntegers().write(0, 1);
+		}
 		return container;
 	}
 
@@ -578,8 +663,13 @@ public class VentureChatFormatService {
 		return msg;
 	}
 
-	public boolean underlineURLs() {
-		return plugin.getConfig().getBoolean("underlineurls", true);
+	public String underlineURLs() {
+		final boolean configValue = plugin.getConfig().getBoolean("underlineurls", true);
+		if (versionService.isAtLeast_1_20_4()) {
+			return String.valueOf(configValue);
+		} else {
+			return "\"" + configValue + "\"";
+		}
 	}
 
 	public void broadcastToServer(String message) {
