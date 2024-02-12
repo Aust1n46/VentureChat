@@ -13,14 +13,14 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
 import venture.Aust1n46.chat.controllers.PluginMessageController;
-import venture.Aust1n46.chat.controllers.VentureChatSpigotFlatFileController;
+import venture.Aust1n46.chat.controllers.SpigotFlatFileController;
 import venture.Aust1n46.chat.initiators.application.VentureChat;
 import venture.Aust1n46.chat.model.ChatChannel;
 import venture.Aust1n46.chat.model.JsonFormat;
 import venture.Aust1n46.chat.model.VentureChatPlayer;
 import venture.Aust1n46.chat.service.ConfigService;
-import venture.Aust1n46.chat.service.UUIDService;
-import venture.Aust1n46.chat.service.VentureChatPlayerApiService;
+import venture.Aust1n46.chat.service.UuidService;
+import venture.Aust1n46.chat.service.PlayerApiService;
 import venture.Aust1n46.chat.utilities.FormatUtils;
 import venture.Aust1n46.chat.xcut.Logger;
 
@@ -34,13 +34,13 @@ public class LoginListener implements Listener {
 	@Inject
 	private VentureChat plugin;
 	@Inject
-	private UUIDService uuidService;
+	private UuidService uuidService;
 	@Inject
-	private VentureChatSpigotFlatFileController spigotFlatFileController;
+	private SpigotFlatFileController spigotFlatFileController;
 	@Inject
 	private PluginMessageController pluginMessageController;
 	@Inject
-	private VentureChatPlayerApiService playerApiService;
+	private PlayerApiService playerApiService;
 	@Inject
 	private ConfigService configService;
 	@Inject

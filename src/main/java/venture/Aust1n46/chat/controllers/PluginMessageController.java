@@ -20,15 +20,15 @@ import com.google.inject.Singleton;
 
 import me.clip.placeholderapi.PlaceholderAPI;
 import venture.Aust1n46.chat.api.events.VentureChatEvent;
-import venture.Aust1n46.chat.initators.commands.MuteContainer;
 import venture.Aust1n46.chat.initiators.application.VentureChat;
 import venture.Aust1n46.chat.localization.LocalizedMessage;
 import venture.Aust1n46.chat.model.ChatChannel;
+import venture.Aust1n46.chat.model.MuteContainer;
 import venture.Aust1n46.chat.model.VentureChatPlayer;
 import venture.Aust1n46.chat.service.ConfigService;
 import venture.Aust1n46.chat.service.VentureChatDatabaseService;
-import venture.Aust1n46.chat.service.VentureChatFormatService;
-import venture.Aust1n46.chat.service.VentureChatPlayerApiService;
+import venture.Aust1n46.chat.service.FormatService;
+import venture.Aust1n46.chat.service.PlayerApiService;
 import venture.Aust1n46.chat.utilities.FormatUtils;
 
 @Singleton
@@ -40,9 +40,9 @@ public class PluginMessageController {
 	@Inject
 	private VentureChatDatabaseService databaseService;
 	@Inject
-	private VentureChatFormatService formatService;
+	private FormatService formatService;
 	@Inject
-	private VentureChatPlayerApiService playerApiService;
+	private PlayerApiService playerApiService;
 	@Inject
 	private ConfigService configService;
 
@@ -92,6 +92,7 @@ public class PluginMessageController {
 				plugin.getServer().getScheduler().runTaskLaterAsynchronously(plugin, new Runnable() {
 					@Override
 					public void run() {
+						System.out.println(mcp.isHasPlayed());
 						if (!mcp.isOnline() || mcp.isHasPlayed()) {
 							return;
 						}
@@ -320,6 +321,7 @@ public class PluginMessageController {
 				if (p == null || p.isHasPlayed()) {
 					return;
 				}
+				System.out.println(p.isHasPlayed());
 				for (Object ch : p.getListening().toArray()) {
 					String c = ch.toString();
 					ChatChannel cha = configService.getChannel(c);

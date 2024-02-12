@@ -8,8 +8,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
-import venture.Aust1n46.chat.initators.commands.MuteContainer;
-
 public class SynchronizedVentureChatPlayer {
     private UUID uuid;
     private Set<String> listening;

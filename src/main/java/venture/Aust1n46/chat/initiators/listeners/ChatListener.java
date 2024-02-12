@@ -24,15 +24,15 @@ import me.clip.placeholderapi.PlaceholderAPI;
 import net.essentialsx.api.v2.services.discord.DiscordService;
 import venture.Aust1n46.chat.api.events.VentureChatEvent;
 import venture.Aust1n46.chat.controllers.PluginMessageController;
-import venture.Aust1n46.chat.initators.commands.MuteContainer;
 import venture.Aust1n46.chat.initiators.application.VentureChat;
 import venture.Aust1n46.chat.localization.LocalizedMessage;
 import venture.Aust1n46.chat.model.ChatChannel;
+import venture.Aust1n46.chat.model.MuteContainer;
 import venture.Aust1n46.chat.model.VentureChatPlayer;
 import venture.Aust1n46.chat.service.ConfigService;
 import venture.Aust1n46.chat.service.VentureChatDatabaseService;
-import venture.Aust1n46.chat.service.VentureChatFormatService;
-import venture.Aust1n46.chat.service.VentureChatPlayerApiService;
+import venture.Aust1n46.chat.service.FormatService;
+import venture.Aust1n46.chat.service.PlayerApiService;
 import venture.Aust1n46.chat.utilities.FormatUtils;
 
 @SuppressWarnings("deprecation")
@@ -42,13 +42,13 @@ public class ChatListener implements Listener {
 	@Inject
 	private VentureChat plugin;
 	@Inject
-	private VentureChatFormatService formatService;
+	private FormatService formatService;
 	@Inject
 	private VentureChatDatabaseService databaseService;
 	@Inject
 	private PluginMessageController pluginMessageController;
 	@Inject
-	private VentureChatPlayerApiService playerApiService;
+	private PlayerApiService playerApiService;
 	@Inject
 	private ConfigService configService;
 

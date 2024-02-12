@@ -2,7 +2,7 @@ package venture.Aust1n46.chat.model;
 
 import org.bukkit.ChatColor;
 
-import venture.Aust1n46.chat.service.VentureChatFormatService;
+import venture.Aust1n46.chat.service.FormatService;
 import venture.Aust1n46.chat.utilities.FormatUtils;
 
 /**
@@ -184,7 +184,7 @@ public class ChatChannel {
 	/**
 	 * Get the formatted color of the chat channel.
 	 * 
-	 * @return {@link String}. Returns {@link VentureChatFormatService#DEFAULT_COLOR_CODE} if the
+	 * @return {@link String}. Returns {@link FormatService#DEFAULT_COLOR_CODE} if the
 	 *         color is invalid.
 	 */
 	public String getColor() {
@@ -209,7 +209,7 @@ public class ChatChannel {
 	/**
 	 * Get the formatted chat color of the chat channel.
 	 * 
-	 * @return {@link String}. Returns {@link VentureChatFormatService#DEFAULT_COLOR_CODE} if the chat
+	 * @return {@link String}. Returns {@link FormatService#DEFAULT_COLOR_CODE} if the chat
 	 *         color is invalid.
 	 */
 	public String getChatColor() {

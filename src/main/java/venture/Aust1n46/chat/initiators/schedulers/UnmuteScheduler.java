@@ -8,13 +8,13 @@ import org.bukkit.scheduler.BukkitScheduler;
 import com.google.inject.Inject;
 
 import venture.Aust1n46.chat.controllers.PluginMessageController;
-import venture.Aust1n46.chat.initators.commands.MuteContainer;
 import venture.Aust1n46.chat.initiators.application.VentureChat;
 import venture.Aust1n46.chat.localization.LocalizedMessage;
 import venture.Aust1n46.chat.model.ChatChannel;
+import venture.Aust1n46.chat.model.MuteContainer;
 import venture.Aust1n46.chat.model.VentureChatPlayer;
 import venture.Aust1n46.chat.service.ConfigService;
-import venture.Aust1n46.chat.service.VentureChatPlayerApiService;
+import venture.Aust1n46.chat.service.PlayerApiService;
 import venture.Aust1n46.chat.utilities.FormatUtils;
 
 public class UnmuteScheduler {
@@ -23,7 +23,7 @@ public class UnmuteScheduler {
 	@Inject
 	private PluginMessageController pluginMessageController;
 	@Inject
-	private VentureChatPlayerApiService playerApiService;
+	private PlayerApiService playerApiService;
 	@Inject
 	private ConfigService configService;
 

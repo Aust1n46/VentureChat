@@ -26,12 +26,12 @@ import net.md_5.bungee.config.Configuration;
 import net.md_5.bungee.config.ConfigurationProvider;
 import net.md_5.bungee.config.YamlConfiguration;
 import net.md_5.bungee.event.EventHandler;
-import venture.Aust1n46.chat.controllers.proxy.VentureChatProxyController;
-import venture.Aust1n46.chat.controllers.proxy.VentureChatProxyFlatFileController;
+import venture.Aust1n46.chat.controllers.ProxyController;
+import venture.Aust1n46.chat.controllers.ProxyFlatFileController;
 import venture.Aust1n46.chat.guice.VentureChatBungeePluginModule;
 import venture.Aust1n46.chat.model.VentureChatProxyServer;
 import venture.Aust1n46.chat.model.VentureChatProxySource;
-import venture.Aust1n46.chat.service.proxy.ProxyUuidService;
+import venture.Aust1n46.chat.service.ProxyUuidService;
 import venture.Aust1n46.chat.utilities.FormatUtils;
 
 /**
@@ -46,9 +46,9 @@ public class VentureChatBungee extends Plugin implements Listener, VentureChatPr
 	@Inject
 	private ProxyUuidService uuidService;
 	@Inject
-	private VentureChatProxyFlatFileController proxyFlatFileController;
+	private ProxyFlatFileController proxyFlatFileController;
 	@Inject
-	private VentureChatProxyController proxy;
+	private ProxyController proxy;
 
 	@Override
 	public void onEnable() {
@@ -73,7 +73,7 @@ public class VentureChatBungee extends Plugin implements Listener, VentureChatPr
 		proxyFlatFileController.loadLegacyBungeePlayerData(bungeePlayerDataDirectory, this);
 		proxyFlatFileController.loadProxyPlayerData(bungeePlayerDataDirectory, this);
 
-		this.getProxy().registerChannel(VentureChatProxyController.PLUGIN_MESSAGING_CHANNEL_STRING);
+		this.getProxy().registerChannel(ProxyController.PLUGIN_MESSAGING_CHANNEL_STRING);
 		this.getProxy().getPluginManager().registerListener(this, this);
 	}
 
@@ -109,7 +109,7 @@ public class VentureChatBungee extends Plugin implements Listener, VentureChatPr
 
 			for (String send : getProxy().getServers().keySet()) {
 				if (getProxy().getServers().get(send).getPlayers().size() > 0) {
-					getProxy().getServers().get(send).sendData(VentureChatProxyController.PLUGIN_MESSAGING_CHANNEL_STRING, outstream.toByteArray());
+					getProxy().getServers().get(send).sendData(ProxyController.PLUGIN_MESSAGING_CHANNEL_STRING, outstream.toByteArray());
 				}
 			}
 		} catch (Exception e) {
@@ -119,7 +119,7 @@ public class VentureChatBungee extends Plugin implements Listener, VentureChatPr
 
 	@EventHandler
 	public void onPluginMessage(PluginMessageEvent event) {
-		if (!event.getTag().equals(VentureChatProxyController.PLUGIN_MESSAGING_CHANNEL_STRING) && !event.getTag().contains("viaversion:")) {
+		if (!event.getTag().equals(ProxyController.PLUGIN_MESSAGING_CHANNEL_STRING) && !event.getTag().contains("viaversion:")) {
 			return;
 		}
 		if (!(event.getSender() instanceof Server)) {
@@ -131,7 +131,7 @@ public class VentureChatBungee extends Plugin implements Listener, VentureChatPr
 
 	@Override
 	public void sendPluginMessage(String serverName, byte[] data) {
-		getProxy().getServers().get(serverName).sendData(VentureChatProxyController.PLUGIN_MESSAGING_CHANNEL_STRING, data);
+		getProxy().getServers().get(serverName).sendData(ProxyController.PLUGIN_MESSAGING_CHANNEL_STRING, data);
 	}
 
 	@Override

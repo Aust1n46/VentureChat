@@ -10,7 +10,7 @@ import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 import venture.Aust1n46.chat.initiators.application.VentureChat;
 import venture.Aust1n46.chat.model.ChatChannel;
 import venture.Aust1n46.chat.model.VentureChatPlayer;
-import venture.Aust1n46.chat.service.VentureChatPlayerApiService;
+import venture.Aust1n46.chat.service.PlayerApiService;
 
 public class VentureChatPlaceholders extends PlaceholderExpansion {
 	private static final String AUTHOR = "Aust1n46";
@@ -19,7 +19,7 @@ public class VentureChatPlaceholders extends PlaceholderExpansion {
 	@Inject
 	private VentureChat plugin;
 	@Inject
-	private VentureChatPlayerApiService playerApiService;
+	private PlayerApiService playerApiService;
 
 	private String version;
 

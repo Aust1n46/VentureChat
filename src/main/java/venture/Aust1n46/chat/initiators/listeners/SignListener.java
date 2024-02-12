@@ -9,13 +9,13 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
 import venture.Aust1n46.chat.model.VentureChatPlayer;
-import venture.Aust1n46.chat.service.VentureChatPlayerApiService;
+import venture.Aust1n46.chat.service.PlayerApiService;
 import venture.Aust1n46.chat.utilities.FormatUtils;
 
 @Singleton
 public class SignListener implements Listener {
 	@Inject
-	private VentureChatPlayerApiService playerApiService;
+	private PlayerApiService playerApiService;
 
 	@SuppressWarnings("deprecation")
 	@EventHandler(priority = EventPriority.HIGH)

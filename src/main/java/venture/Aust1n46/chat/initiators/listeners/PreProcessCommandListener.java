@@ -31,8 +31,8 @@ import venture.Aust1n46.chat.model.GuiSlot;
 import venture.Aust1n46.chat.model.VentureChatPlayer;
 import venture.Aust1n46.chat.service.ConfigService;
 import venture.Aust1n46.chat.service.VentureChatDatabaseService;
-import venture.Aust1n46.chat.service.VentureChatFormatService;
-import venture.Aust1n46.chat.service.VentureChatPlayerApiService;
+import venture.Aust1n46.chat.service.FormatService;
+import venture.Aust1n46.chat.service.PlayerApiService;
 import venture.Aust1n46.chat.utilities.FormatUtils;
 import venture.Aust1n46.chat.xcut.VersionService;
 
@@ -41,13 +41,13 @@ public class PreProcessCommandListener implements CommandExecutor, Listener {
 	@Inject
 	private VentureChat plugin;
 	@Inject
-	private VentureChatFormatService formatService;
+	private FormatService formatService;
 	@Inject
 	private VentureChatDatabaseService databaseService;
 	@Inject
 	private PluginMessageController pluginMessageController;
 	@Inject
-	private VentureChatPlayerApiService playerApiService;
+	private PlayerApiService playerApiService;
 	@Inject
 	private ConfigService configService;
 	@Inject

@@ -32,8 +32,8 @@ import com.velocitypowered.api.proxy.server.RegisteredServer;
 import net.md_5.bungee.config.Configuration;
 import net.md_5.bungee.config.ConfigurationProvider;
 import net.md_5.bungee.config.YamlConfiguration;
-import venture.Aust1n46.chat.controllers.proxy.VentureChatProxyController;
-import venture.Aust1n46.chat.controllers.proxy.VentureChatProxyFlatFileController;
+import venture.Aust1n46.chat.controllers.ProxyController;
+import venture.Aust1n46.chat.controllers.ProxyFlatFileController;
 import venture.Aust1n46.chat.model.VentureChatProxyServer;
 import venture.Aust1n46.chat.model.VentureChatProxySource;
 import venture.Aust1n46.chat.utilities.FormatUtils;
@@ -45,14 +45,14 @@ import venture.Aust1n46.chat.utilities.FormatUtils;
  */
 public class VentureChatVelocity implements VentureChatProxySource {
 	private final ProxyServer proxyServer;
-	private final ChannelIdentifier channelIdentifier = MinecraftChannelIdentifier.create(VentureChatProxyController.PLUGIN_MESSAGING_CHANNEL_NAMESPACE,
-			VentureChatProxyController.PLUGIN_MESSAGING_CHANNEL_NAME);
+	private final ChannelIdentifier channelIdentifier = MinecraftChannelIdentifier.create(ProxyController.PLUGIN_MESSAGING_CHANNEL_NAMESPACE,
+			ProxyController.PLUGIN_MESSAGING_CHANNEL_NAME);
 	private final Logger logger;
 
 	@Inject
-	private VentureChatProxyFlatFileController proxyFlatFileController;
+	private ProxyFlatFileController proxyFlatFileController;
 	@Inject
-	private VentureChatProxyController proxy;
+	private ProxyController proxy;
 
 	@Inject
 	@DataDirectory
@@ -136,7 +136,7 @@ public class VentureChatVelocity implements VentureChatProxySource {
 	@Subscribe
 	public void onPluginMessage(PluginMessageEvent event) {
 		String channelIdentifierId = event.getIdentifier().getId();
-		if (!channelIdentifierId.equals(VentureChatProxyController.PLUGIN_MESSAGING_CHANNEL_STRING) && !channelIdentifierId.contains("viaversion:")) {
+		if (!channelIdentifierId.equals(ProxyController.PLUGIN_MESSAGING_CHANNEL_STRING) && !channelIdentifierId.contains("viaversion:")) {
 			return;
 		}
 		if (!(event.getSource() instanceof ServerConnection)) {

@@ -15,10 +15,11 @@ import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.google.inject.Singleton;
 
+import lombok.Getter;
 import net.milkbowl.vault.permission.Permission;
 import venture.Aust1n46.chat.controllers.CommandController;
 import venture.Aust1n46.chat.controllers.PluginMessageController;
-import venture.Aust1n46.chat.controllers.VentureChatSpigotFlatFileController;
+import venture.Aust1n46.chat.controllers.SpigotFlatFileController;
 import venture.Aust1n46.chat.guice.VentureChatPluginModule;
 import venture.Aust1n46.chat.initiators.listeners.ChatListener;
 import venture.Aust1n46.chat.initiators.listeners.LoginListener;
@@ -28,7 +29,7 @@ import venture.Aust1n46.chat.initiators.listeners.SignListener;
 import venture.Aust1n46.chat.initiators.schedulers.UnmuteScheduler;
 import venture.Aust1n46.chat.localization.Localization;
 import venture.Aust1n46.chat.placeholderapi.VentureChatPlaceholders;
-import venture.Aust1n46.chat.service.VentureChatPlayerApiService;
+import venture.Aust1n46.chat.service.PlayerApiService;
 import venture.Aust1n46.chat.utilities.FormatUtils;
 import venture.Aust1n46.chat.xcut.VersionService;
 
@@ -52,20 +53,26 @@ public class VentureChat extends JavaPlugin implements PluginMessageListener {
 	@Inject
 	private VentureChatPlaceholders ventureChatPlaceholders;
 	@Inject
-	private VentureChatSpigotFlatFileController spigotFlatFileService;
+	private SpigotFlatFileController spigotFlatFileService;
 	@Inject
-	private VentureChatPlayerApiService playerApiService;
+	private PlayerApiService playerApiService;
 	@Inject
 	private PluginMessageController pluginMessageController;
 	@Inject
 	private VersionService versionService;
 
-	private Permission permission = null;
+	@Getter
+	private Permission vaultPermission;
+	private Injector injector;
+	
+	public void injectDependencies(Object o) {
+		injector.injectMembers(o);
+	}
 
 	@Override
 	public void onEnable() {
 		final VentureChatPluginModule pluginModule = new VentureChatPluginModule(this);
-		final Injector injector = Guice.createInjector(pluginModule);
+		injector = Guice.createInjector(pluginModule);
 		injector.injectMembers(this);
 		injector.injectMembers(new CommandController());
 		injector.injectMembers(new UnmuteScheduler());
@@ -168,13 +175,9 @@ public class VentureChat extends JavaPlugin implements PluginMessageListener {
 	private boolean setupPermissions() {
 		RegisteredServiceProvider<Permission> permissionProvider = getServer().getServicesManager().getRegistration(net.milkbowl.vault.permission.Permission.class);
 		if (permissionProvider != null) {
-			permission = permissionProvider.getProvider();
+			vaultPermission = permissionProvider.getProvider();
 		}
-		return (permission != null);
-	}
-
-	public Permission getVaultPermission() {
-		return permission;
+		return (vaultPermission != null);
 	}
 
 	@Override

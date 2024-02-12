@@ -13,13 +13,13 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import venture.Aust1n46.chat.controllers.PluginMessageController;
-import venture.Aust1n46.chat.controllers.VentureChatSpigotFlatFileController;
+import venture.Aust1n46.chat.controllers.SpigotFlatFileController;
 import venture.Aust1n46.chat.initiators.application.VentureChat;
 import venture.Aust1n46.chat.model.ChatChannel;
 import venture.Aust1n46.chat.model.VentureChatPlayer;
 import venture.Aust1n46.chat.service.ConfigService;
-import venture.Aust1n46.chat.service.UUIDService;
-import venture.Aust1n46.chat.service.VentureChatPlayerApiService;
+import venture.Aust1n46.chat.service.UuidService;
+import venture.Aust1n46.chat.service.PlayerApiService;
 import venture.Aust1n46.chat.xcut.Logger;
 
 @ExtendWith(MockitoExtension.class)
@@ -27,13 +27,13 @@ public class LoginListenerTest {
 	@Mock
 	private VentureChat plugin;
 	@Mock
-	private UUIDService uuidService;
+	private UuidService uuidService;
 	@Mock
-	private VentureChatSpigotFlatFileController spigotFlatFileController;
+	private SpigotFlatFileController spigotFlatFileController;
 	@Mock
 	private PluginMessageController pluginMessageController;
 	@Mock
-	private VentureChatPlayerApiService playerApiService;
+	private PlayerApiService playerApiService;
 	@Mock
 	private ConfigService configService;
 	@Mock

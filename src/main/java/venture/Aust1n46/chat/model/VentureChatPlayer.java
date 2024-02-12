@@ -13,7 +13,6 @@ import org.bukkit.entity.Player;
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.Setter;
-import venture.Aust1n46.chat.initators.commands.MuteContainer;
 
 /**
  * Wrapper for {@link Player}
