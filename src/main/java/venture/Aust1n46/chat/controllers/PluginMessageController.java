@@ -92,7 +92,6 @@ public class PluginMessageController {
 				plugin.getServer().getScheduler().runTaskLaterAsynchronously(plugin, new Runnable() {
 					@Override
 					public void run() {
-						System.out.println(mcp.isHasPlayed());
 						if (!mcp.isOnline() || mcp.isHasPlayed()) {
 							return;
 						}
@@ -321,7 +320,6 @@ public class PluginMessageController {
 				if (p == null || p.isHasPlayed()) {
 					return;
 				}
-				System.out.println(p.isHasPlayed());
 				for (Object ch : p.getListening().toArray()) {
 					String c = ch.toString();
 					ChatChannel cha = configService.getChannel(c);
