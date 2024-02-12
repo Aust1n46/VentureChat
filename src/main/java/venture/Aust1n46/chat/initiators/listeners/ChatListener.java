@@ -190,7 +190,7 @@ public class ChatListener implements Listener {
 
 	private void processMute(final VentureChatPlayer ventureChatPlayer, final ChatChannel channel) {
 		MuteContainer muteContainer = ventureChatPlayer.getMute(channel.getName());
-		if (muteContainer.hasDuration()) {
+		if (muteContainer.getDuration() > 0) {
 			long dateTimeMillis = System.currentTimeMillis();
 			long muteTimeMillis = muteContainer.getDuration();
 			long remainingMuteTime = muteTimeMillis - dateTimeMillis;
@@ -198,7 +198,7 @@ public class ChatListener implements Listener {
 				remainingMuteTime = 1000;
 			}
 			String timeString = FormatUtils.parseTimeStringFromMillis(remainingMuteTime);
-			if (muteContainer.hasReason()) {
+			if (!muteContainer.getReason().isEmpty()) {
 				ventureChatPlayer.getPlayer().sendMessage(LocalizedMessage.CHANNEL_MUTED_TIMED_REASON.toString().replace("{channel_color}", channel.getColor())
 						.replace("{channel_name}", channel.getName()).replace("{time}", timeString).replace("{reason}", muteContainer.getReason()));
 			} else {
@@ -206,7 +206,7 @@ public class ChatListener implements Listener {
 						.replace("{channel_name}", channel.getName()).replace("{time}", timeString));
 			}
 		} else {
-			if (muteContainer.hasReason()) {
+			if (!muteContainer.getReason().isEmpty()) {
 				ventureChatPlayer.getPlayer().sendMessage(LocalizedMessage.CHANNEL_MUTED_REASON.toString().replace("{channel_color}", channel.getColor())
 						.replace("{channel_name}", channel.getName()).replace("{reason}", muteContainer.getReason()));
 			} else {

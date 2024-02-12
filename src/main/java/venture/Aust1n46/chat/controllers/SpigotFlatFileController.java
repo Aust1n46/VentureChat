@@ -94,7 +94,7 @@ public class SpigotFlatFileController {
 							continue;
 						}
 						String channelName = parts[0];
-						mutes.put(channelName, new MuteContainer(channelName, Long.parseLong(parts[1])));
+						mutes.put(channelName, new MuteContainer(channelName, Long.parseLong(parts[1]), ""));
 					}
 				}
 				Set<String> blockedCommands = new HashSet<String>();

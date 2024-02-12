@@ -2,17 +2,19 @@ package venture.Aust1n46.chat.model;
 
 import java.util.List;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 
 @Getter
+@Setter
+@ToString
+@NoArgsConstructor
+@AllArgsConstructor
 public class JsonFormat {
-	private List<JsonAttribute> jsonAttributes;
-	private int priority;
 	private String name;
-
-	public JsonFormat(String name, int priority, List<JsonAttribute> jsonAttributes) {
-		this.name = name;
-		this.priority = priority;
-		this.jsonAttributes = jsonAttributes;
-	}
+	private int priority;
+	private List<JsonAttribute> jsonAttributes;
 }

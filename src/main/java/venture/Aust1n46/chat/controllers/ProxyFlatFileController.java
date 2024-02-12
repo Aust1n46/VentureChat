@@ -59,7 +59,7 @@ public class ProxyFlatFileController {
                 while (m.hasMoreTokens()) {
                     String[] parts = m.nextToken().split(":");
                     String channelName = parts[0];
-                    mutes.put(channelName, new MuteContainer(channelName, Long.parseLong(parts[1])));
+                    mutes.put(channelName, new MuteContainer(channelName, Long.parseLong(parts[1]), ""));
                 }
                 HashSet<UUID> ignores = new HashSet<UUID>();
                 StringTokenizer n = new StringTokenizer(playerData.getString(uuidString + ".ignores"), ",");

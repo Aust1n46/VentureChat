@@ -11,15 +11,22 @@ import java.util.UUID;
 import org.bukkit.entity.Player;
 
 import lombok.AccessLevel;
-import lombok.Data;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 
 /**
  * Wrapper for {@link Player}
  * 
  * @author Aust1n46
  */
-@Data
+@Getter
+@Setter
+@ToString
+@NoArgsConstructor
+@AllArgsConstructor
 public class VentureChatPlayer {
 	@Setter(value = AccessLevel.NONE)
 	private UUID uuid;
@@ -53,8 +60,10 @@ public class VentureChatPlayer {
 	private boolean rangedSpy;
 	private boolean messageToggle;
 	private boolean bungeeToggle;
-	
-	public VentureChatPlayer(UUID uuid, String name, ChatChannel currentChannel, Set<UUID> ignores, Set<String> listening, HashMap<String, MuteContainer> mutes, Set<String> blockedCommands, boolean host, UUID party, boolean filter, boolean notifications, String jsonFormat, boolean spy, boolean commandSpy, boolean rangedSpy, boolean messageToggle, boolean bungeeToggle) {
+
+	public VentureChatPlayer(UUID uuid, String name, ChatChannel currentChannel, Set<UUID> ignores, Set<String> listening, HashMap<String, MuteContainer> mutes,
+			Set<String> blockedCommands, boolean host, UUID party, boolean filter, boolean notifications, String jsonFormat, boolean spy, boolean commandSpy, boolean rangedSpy,
+			boolean messageToggle, boolean bungeeToggle) {
 		this.uuid = uuid;
 		this.name = name;
 		this.currentChannel = currentChannel;
@@ -76,7 +85,7 @@ public class VentureChatPlayer {
 		this.messageToggle = messageToggle;
 		this.bungeeToggle = bungeeToggle;
 	}
-	
+
 	public VentureChatPlayer(UUID uuid, String name, ChatChannel currentChannel) {
 		this.uuid = uuid;
 		this.name = name;
@@ -95,10 +104,10 @@ public class VentureChatPlayer {
 		this.messageToggle = true;
 		this.bungeeToggle = true;
 	}
-	
+
 	public boolean getRangedSpy() {
-		if(isOnline()) {
-			if(!getPlayer().hasPermission("venturechat.rangedspy")) {
+		if (isOnline()) {
+			if (!getPlayer().hasPermission("venturechat.rangedspy")) {
 				setRangedSpy(false);
 				return false;
 			}
@@ -107,7 +116,7 @@ public class VentureChatPlayer {
 	}
 
 	public boolean setCurrentChannel(ChatChannel channel) {
-		if(channel != null) {
+		if (channel != null) {
 			this.currentChannel = channel;
 			return true;
 		}
@@ -121,13 +130,13 @@ public class VentureChatPlayer {
 	public void removeIgnore(UUID ignore) {
 		this.ignores.remove(ignore);
 	}
-	
+
 	public boolean isListening(String channel) {
 		return listening.contains(channel);
 	}
 
 	public boolean addListening(String channel) {
-		if(channel != null) {
+		if (channel != null) {
 			this.listening.add(channel);
 			return true;
 		}
@@ -135,7 +144,7 @@ public class VentureChatPlayer {
 	}
 
 	public boolean removeListening(String channel) {
-		if(channel != null) {
+		if (channel != null) {
 			this.listening.remove(channel);
 			return true;
 		}
@@ -149,7 +158,7 @@ public class VentureChatPlayer {
 	public Collection<MuteContainer> getMutes() {
 		return this.mutes.values();
 	}
-	
+
 	public MuteContainer getMute(String channel) {
 		return mutes.get(channel);
 	}
@@ -157,17 +166,17 @@ public class VentureChatPlayer {
 	public boolean addMute(String channel) {
 		return addMute(channel, 0, "");
 	}
-	
+
 	public boolean addMute(String channel, long time) {
 		return addMute(channel, time, "");
 	}
-	
+
 	public boolean addMute(String channel, String reason) {
 		return addMute(channel, 0, reason);
 	}
-	
+
 	public boolean addMute(String channel, long time, String reason) {
-		if(channel != null && time >= 0) {
+		if (channel != null && time >= 0) {
 			mutes.put(channel, new MuteContainer(channel, time, reason));
 			return true;
 		}
@@ -175,7 +184,7 @@ public class VentureChatPlayer {
 	}
 
 	public boolean removeMute(String channel) {
-		if(channel != null) {
+		if (channel != null) {
 			mutes.remove(channel);
 			return true;
 		}
@@ -211,8 +220,8 @@ public class VentureChatPlayer {
 	}
 
 	public boolean isSpy() {
-		if(this.isOnline()) {
-			if(!this.getPlayer().hasPermission("venturechat.spy")) {
+		if (this.isOnline()) {
+			if (!this.getPlayer().hasPermission("venturechat.spy")) {
 				this.setSpy(false);
 				return false;
 			}
@@ -221,8 +230,8 @@ public class VentureChatPlayer {
 	}
 
 	public boolean hasCommandSpy() {
-		if(this.isOnline()) {
-			if(!this.getPlayer().hasPermission("venturechat.commandspy")) {
+		if (this.isOnline()) {
+			if (!this.getPlayer().hasPermission("venturechat.commandspy")) {
 				this.setCommandSpy(false);
 				return false;
 			}
@@ -231,7 +240,7 @@ public class VentureChatPlayer {
 	}
 
 	public boolean setQuickChannel(ChatChannel channel) {
-		if(channel != null) {
+		if (channel != null) {
 			this.quickChannel = channel;
 			return true;
 		}
@@ -243,7 +252,7 @@ public class VentureChatPlayer {
 	}
 
 	public boolean addCooldown(ChatChannel channel, long time) {
-		if(channel != null && time > 0) {
+		if (channel != null && time > 0) {
 			cooldowns.put(channel, time);
 			return true;
 		}
@@ -251,7 +260,7 @@ public class VentureChatPlayer {
 	}
 
 	public boolean removeCooldown(ChatChannel channel) {
-		if(channel != null) {
+		if (channel != null) {
 			cooldowns.remove(channel);
 			return true;
 		}
@@ -261,13 +270,13 @@ public class VentureChatPlayer {
 	public boolean hasCooldown(ChatChannel channel) {
 		return channel != null && this.cooldowns != null ? this.cooldowns.containsKey(channel) : false;
 	}
-	
+
 	public boolean hasSpam(ChatChannel channel) {
 		return channel != null && this.spam != null ? this.spam.containsKey(channel) : false;
 	}
-	
+
 	public boolean addSpam(ChatChannel channel) {
-		if(channel != null) {
+		if (channel != null) {
 			spam.put(channel, new ArrayList<Long>());
 			return true;
 		}
@@ -275,7 +284,7 @@ public class VentureChatPlayer {
 	}
 
 	public void addMessage(ChatMessage message) {
-		if(this.messages.size() >= 100) {
+		if (this.messages.size() >= 100) {
 			this.messages.remove(0);
 		}
 		this.messages.add(message);
