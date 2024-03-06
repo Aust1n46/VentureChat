@@ -48,6 +48,12 @@ public class VentureChatPlaceholders extends PlaceholderExpansion {
                 	return currentChannel.getPrefix();
             }
         }
+        if (identifier.equalsIgnoreCase("notifications")) {
+            return mcp.hasNotifications() ? PlaceholderAPIPlugin.booleanTrue() : PlaceholderAPIPlugin.booleanFalse();
+        }
+        if (identifier.equalsIgnoreCase("message_toggle")){
+            return mcp.getMessageToggle() ? PlaceholderAPIPlugin.booleanTrue() : PlaceholderAPIPlugin.booleanFalse();
+        }
         return null;
     }
 
