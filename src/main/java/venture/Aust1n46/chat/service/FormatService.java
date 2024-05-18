@@ -9,7 +9,6 @@ import static venture.Aust1n46.chat.utilities.FormatUtils.HEX_COLOR_CODE_PREFIX;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.StringTokenizer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -30,6 +29,7 @@ import com.google.inject.Singleton;
 import me.clip.placeholderapi.PlaceholderAPI;
 import venture.Aust1n46.chat.initiators.application.VentureChat;
 import venture.Aust1n46.chat.model.ClickAction;
+import venture.Aust1n46.chat.model.Filter;
 import venture.Aust1n46.chat.model.JsonAttribute;
 import venture.Aust1n46.chat.model.JsonFormat;
 import venture.Aust1n46.chat.model.VentureChatPlayer;
@@ -631,24 +631,13 @@ public class FormatService {
 		}
 	}
 
-	public String FilterChat(String msg) {
-		int t = 0;
-		List<String> filters = plugin.getConfig().getStringList("filters");
-		for (String s : filters) {
-			t = 0;
-			String[] pparse = new String[2];
-			pparse[0] = " ";
-			pparse[1] = " ";
-			StringTokenizer st = new StringTokenizer(s, ",");
-			while (st.hasMoreTokens()) {
-				if (t < 2) {
-					pparse[t++] = st.nextToken();
-				}
-			}
-			// (?i) = case insensitive
-			msg = msg.replaceAll("(?i)" + pparse[0], pparse[1]);
+	public String filterChat(final String message) {
+		String filteredMessage = message;
+		final List<Filter> filters = configService.getFilters();
+		for (final Filter filter : filters) {
+			filteredMessage = filteredMessage.replaceAll("(?i)" + filter.getMatcher(), filter.getReplacer()); // (?i) = case insensitive
 		}
-		return msg;
+		return filteredMessage;
 	}
 
 	public String underlineURLs() {

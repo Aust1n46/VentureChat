@@ -11,10 +11,12 @@ import org.bukkit.configuration.ConfigurationSection;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
+import lombok.Getter;
 import venture.Aust1n46.chat.initiators.application.VentureChat;
 import venture.Aust1n46.chat.model.Alias;
 import venture.Aust1n46.chat.model.ChatChannel;
 import venture.Aust1n46.chat.model.ClickAction;
+import venture.Aust1n46.chat.model.Filter;
 import venture.Aust1n46.chat.model.GuiSlot;
 import venture.Aust1n46.chat.model.JsonAttribute;
 import venture.Aust1n46.chat.model.JsonFormat;
@@ -33,6 +35,9 @@ public class ConfigService {
 	private boolean aliasesRegisteredAsCommands;
 	private ChatChannel defaultChatChannel;
 	private String defaultColor;
+	
+	@Getter
+	private List<Filter> filters;
 
 	@Inject
 	public void postConstruct() {
@@ -113,6 +118,12 @@ public class ConfigService {
 			int slot = cs.getInt(key + ".slot");
 			guiSlots.add(new GuiSlot(name, icon, durability, text, permission, command, slot));
 		}
+		
+		filters = plugin.getConfig().getStringList("filters")
+				.stream()
+				.map(x -> x.split(","))
+				.map(x -> new Filter(x[0], x[1]))
+				.toList();
 	}
 
 	public boolean areAliasesRegisteredAsCommands() {

@@ -249,7 +249,7 @@ public class Party extends PlayerCommand {
 								msg += " " + args[x];
 						}
 						if (mcp.isFilter()) {
-							msg = formatService.FilterChat(msg);
+							msg = formatService.filterChat(msg);
 						}
 						if (mcp.getPlayer().hasPermission("venturechat.color.legacy")) {
 							msg = FormatUtils.FormatStringLegacyColor(msg);
