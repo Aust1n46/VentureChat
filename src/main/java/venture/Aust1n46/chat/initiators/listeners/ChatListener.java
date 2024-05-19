@@ -2,6 +2,7 @@ package venture.Aust1n46.chat.initiators.listeners;
 
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
+import java.util.ArrayList;
 import java.util.Set;
 
 import org.bukkit.ChatColor;
@@ -79,7 +80,7 @@ public class ChatListener implements Listener {
 					if (p.getName().equals(ventureChatPlayer.getName())) {
 						continue;
 					}
-					if (p.isSpy()) {
+					if (configService.isSpy(p)) {
 						p.getPlayer().sendMessage(LocalizedMessage.EXIT_PRIVATE_CONVERSATION_SPY.toString().replace("{player_sender}", ventureChatPlayer.getName())
 								.replace("{player_receiver}", tp.getName()));
 					}
@@ -129,7 +130,7 @@ public class ChatListener implements Listener {
 					if (p.getName().equals(ventureChatPlayer.getName()) || p.getName().equals(tp.getName())) {
 						continue;
 					}
-					if (p.isSpy()) {
+					if (configService.isSpy(p)) {
 						p.getPlayer().sendMessage(spy);
 					}
 				}
@@ -149,10 +150,10 @@ public class ChatListener implements Listener {
 	}
 
 	private void processPartyChat(final VentureChatPlayer ventureChatPlayer, final String chat) {
-		if (ventureChatPlayer.hasParty()) {
+		if (ventureChatPlayer.getParty() != null) {
 			String partyformat = "";
 			for (VentureChatPlayer p : playerApiService.getOnlineMineverseChatPlayers()) {
-				if ((p.hasParty() && p.getParty().toString().equals(ventureChatPlayer.getParty().toString()) || p.isSpy())) {
+				if ((p.getParty() != null && p.getParty().toString().equals(ventureChatPlayer.getParty().toString()) || configService.isSpy(p))) {
 					String filtered = chat;
 					if (ventureChatPlayer.isFilter()) {
 						filtered = formatService.filterChat(filtered);
@@ -189,7 +190,7 @@ public class ChatListener implements Listener {
 	}
 
 	private void processMute(final VentureChatPlayer ventureChatPlayer, final ChatChannel channel) {
-		MuteContainer muteContainer = ventureChatPlayer.getMute(channel.getName());
+		MuteContainer muteContainer = ventureChatPlayer.getMutes().get(channel.getName());
 		if (muteContainer.getDuration() > 0) {
 			long dateTimeMillis = System.currentTimeMillis();
 			long muteTimeMillis = muteContainer.getDuration();
@@ -230,7 +231,7 @@ public class ChatListener implements Listener {
 		if (mcp.isQuickChat()) {
 			eventChannel = mcp.getQuickChannel();
 		}
-		if (mcp.hasConversation() && !mcp.isQuickChat()) {
+		if (mcp.getConversation() != null && !mcp.isQuickChat()) {
 			processPrivateMessageConversation(mcp, chat);
 			return;
 		}
@@ -241,18 +242,18 @@ public class ChatListener implements Listener {
 		if (eventChannel.hasPermission() && !mcp.getPlayer().hasPermission(eventChannel.getPermission())) {
 			mcp.getPlayer().sendMessage(LocalizedMessage.CHANNEL_NO_PERMISSION.toString());
 			mcp.setQuickChat(false);
-			mcp.removeListening(eventChannel.getName());
+			mcp.getListening().remove(eventChannel.getName());
 			mcp.setCurrentChannel(configService.getDefaultChannel());
 			return;
 		} else {
-			mcp.addListening(eventChannel.getName());
+			mcp.getListening().add(eventChannel.getName());
 		}
 		if (eventChannel.hasSpeakPermission() && !mcp.getPlayer().hasPermission(eventChannel.getSpeakPermission())) {
 			mcp.getPlayer().sendMessage(LocalizedMessage.CHANNEL_NO_SPEAK_PERMISSIONS.toString());
 			mcp.setQuickChat(false);
 			return;
 		}
-		if (mcp.isMuted(eventChannel.getName())) {
+		if (mcp.getMutes().containsKey(eventChannel.getName())) {
 			processMute(mcp, eventChannel);
 			return;
 		}
@@ -263,7 +264,7 @@ public class ChatListener implements Listener {
 			chCooldown = eventChannel.getCooldown();
 		}
 		try {
-			if (mcp.hasCooldown(eventChannel)) {
+			if (mcp.getCooldowns().containsKey(eventChannel)) {
 				long cooldownTime = mcp.getCooldowns().get(eventChannel).longValue();
 				if (dateTimeSeconds < cooldownTime) {
 					long remainingCooldownTime = cooldownTime - dateTimeSeconds;
@@ -275,14 +276,15 @@ public class ChatListener implements Listener {
 			}
 			if (eventChannel.hasCooldown()) {
 				if (!mcp.getPlayer().hasPermission("venturechat.cooldown.bypass")) {
-					mcp.addCooldown(eventChannel, dateTimeSeconds + chCooldown);
+					mcp.getCooldowns().put(eventChannel, dateTimeSeconds + chCooldown);
 				}
 			}
 		} catch (NumberFormatException e) {
 			e.printStackTrace();
 		}
 
-		if (mcp.hasSpam(eventChannel) && plugin.getConfig().getConfigurationSection("antispam").getBoolean("enabled")
+		// TODO Refactor and clarify this. Refactor how this is initialized and stored as player data
+		if (mcp.getSpam().containsKey(eventChannel) && plugin.getConfig().getConfigurationSection("antispam").getBoolean("enabled")
 				&& !mcp.getPlayer().hasPermission("venturechat.spam.bypass")) {
 			long spamcount = mcp.getSpam().get(eventChannel).get(0);
 			long spamtime = mcp.getSpam().get(eventChannel).get(1);
@@ -293,14 +295,14 @@ public class ChatListener implements Listener {
 				if (spamcount + 1 >= spamtimeconfig) {
 					long time = FormatUtils.parseTimeStringToMillis(mutedForTime);
 					if (time > 0) {
-						mcp.addMute(eventChannel.getName(), dateTime + time, LocalizedMessage.SPAM_MUTE_REASON_TEXT.toString());
+						mcp.getMutes().put(eventChannel.getName(), new MuteContainer(eventChannel.getName(), dateTime + time, LocalizedMessage.SPAM_MUTE_REASON_TEXT.toString()));
 						String timeString = FormatUtils.parseTimeStringFromMillis(time);
 						mcp.getPlayer()
 								.sendMessage(LocalizedMessage.MUTE_PLAYER_PLAYER_TIME_REASON.toString().replace("{channel_color}", eventChannel.getColor())
 										.replace("{channel_name}", eventChannel.getName()).replace("{time}", timeString)
 										.replace("{reason}", LocalizedMessage.SPAM_MUTE_REASON_TEXT.toString()));
 					} else {
-						mcp.addMute(eventChannel.getName(), LocalizedMessage.SPAM_MUTE_REASON_TEXT.toString());
+						mcp.getMutes().put(eventChannel.getName(), new MuteContainer(eventChannel.getName(), 0, LocalizedMessage.SPAM_MUTE_REASON_TEXT.toString()));
 						mcp.getPlayer().sendMessage(LocalizedMessage.MUTE_PLAYER_PLAYER_REASON.toString().replace("{channel_color}", eventChannel.getColor())
 								.replace("{channel_name}", eventChannel.getName()).replace("{reason}", LocalizedMessage.SPAM_MUTE_REASON_TEXT.toString()));
 					}
@@ -324,7 +326,7 @@ public class ChatListener implements Listener {
 				mcp.getSpam().get(eventChannel).set(1, dateTimeSeconds);
 			}
 		} else {
-			mcp.addSpam(eventChannel);
+			mcp.getSpam().put(eventChannel, new ArrayList<>());
 			mcp.getSpam().get(eventChannel).add(0, 1L);
 			mcp.getSpam().get(eventChannel).add(1, dateTimeSeconds);
 		}
@@ -416,7 +418,7 @@ public class ChatListener implements Listener {
 				if (eventChannel.hasDistance()) {
 					chDistance = eventChannel.getDistance();
 				}
-				if (chDistance > (double) 0 && !eventChannel.getBungee() && !p.getRangedSpy()) {
+				if (chDistance > (double) 0 && !eventChannel.getBungee() && !configService.isRangedSpy(p)) {
 					final Location locreceip = p.getPlayer().getLocation();
 					if (locreceip.getWorld() == mcp.getPlayer().getWorld()) {
 						final Location locsender = mcp.getPlayer().getLocation();

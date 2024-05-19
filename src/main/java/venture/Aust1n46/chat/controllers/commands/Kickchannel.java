@@ -45,7 +45,7 @@ public class Kickchannel extends UniversalCommand {
 			}
 			sender.sendMessage(LocalizedMessage.KICK_CHANNEL.toString().replace("{player}", args[0]).replace("{channel_color}", channel.getColor() + "").replace("{channel_name}",
 					channel.getName()));
-			player.removeListening(channel.getName());
+			player.getListening().remove(channel.getName());
 			if (player.isOnline()) {
 				player.getPlayer()
 						.sendMessage(LocalizedMessage.LEAVE_CHANNEL.toString().replace("{channel_color}", channel.getColor() + "").replace("{channel_name}", channel.getName()));
@@ -54,7 +54,7 @@ public class Kickchannel extends UniversalCommand {
 			}
 			boolean isThereABungeeChannel = channel.getBungee();
 			if (player.getListening().size() == 0) {
-				player.addListening(configService.getDefaultChannel().getName());
+				player.getListening().add(configService.getDefaultChannel().getName());
 				player.setCurrentChannel(configService.getDefaultChannel());
 				if (configService.getDefaultChannel().getBungee()) {
 					isThereABungeeChannel = true;

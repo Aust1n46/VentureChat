@@ -36,7 +36,7 @@ public class UnmuteScheduler {
 			public void run() {
 				for (VentureChatPlayer p : playerApiService.getOnlineMineverseChatPlayers()) {
 					long currentTimeMillis = System.currentTimeMillis();
-					Iterator<MuteContainer> iterator = p.getMutes().iterator();
+					Iterator<MuteContainer> iterator = p.getMutes().values().iterator();
 					while (iterator.hasNext()) {
 						MuteContainer mute = iterator.next();
 						if (configService.isChannel(mute.getChannel())) {

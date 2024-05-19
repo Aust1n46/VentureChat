@@ -10,6 +10,7 @@ import com.google.inject.Inject;
 import venture.Aust1n46.chat.initiators.application.VentureChat;
 import venture.Aust1n46.chat.model.PlayerCommand;
 import venture.Aust1n46.chat.model.VentureChatPlayer;
+import venture.Aust1n46.chat.service.ConfigService;
 import venture.Aust1n46.chat.service.FormatService;
 import venture.Aust1n46.chat.service.PlayerApiService;
 import venture.Aust1n46.chat.utilities.FormatUtils;
@@ -21,6 +22,8 @@ public class Party extends PlayerCommand {
 	private FormatService formatService;
 	@Inject
 	private PlayerApiService playerApiService;
+	@Inject
+	private ConfigService configService;
 
 	@Inject
 	public Party(String name) {
@@ -45,7 +48,7 @@ public class Party extends PlayerCommand {
 					mcp.setHost(false);
 					mcp.getPlayer().sendMessage(ChatColor.GREEN + "You are no longer hosting a party.");
 					for (VentureChatPlayer player : playerApiService.getMineverseChatPlayers()) {
-						if (player.hasParty() && player.getParty().equals(mcp.getParty())) {
+						if (player.getParty() != null && player.getParty().equals(mcp.getParty())) {
 							player.setParty(null);
 							if (player.isOnline()) {
 								player.getPlayer().sendMessage(ChatColor.RED + mcp.getName() + " is no longer hosting a party.");
@@ -71,7 +74,7 @@ public class Party extends PlayerCommand {
 					VentureChatPlayer player = playerApiService.getMineverseChatPlayer(args[1]);
 					if (player != null) {
 						if (player.isHost()) {
-							if (!mcp.hasParty()) {
+							if (mcp.getParty() == null) {
 								mcp.getPlayer().sendMessage(ChatColor.GREEN + "Joined " + player.getName() + "'s party.");
 								mcp.setParty(player.getUuid());
 								player.getPlayer().sendMessage(ChatColor.GREEN + mcp.getName() + " joined your party.");
@@ -94,12 +97,12 @@ public class Party extends PlayerCommand {
 					mcp.getPlayer().sendMessage(ChatColor.RED + "You do not have permission for this command!");
 					return;
 				}
-				if (mcp.hasParty()) {
+				if (mcp.getParty() != null) {
 					mcp.getPlayer().sendMessage(ChatColor.GREEN + "Leaving " + playerApiService.getMineverseChatPlayer(mcp.getParty()).getName() + "'s party.");
 					mcp.setParty(null);
 					if (mcp.isHost()) {
 						for (VentureChatPlayer player : playerApiService.getMineverseChatPlayers()) {
-							if (player.hasParty() && player.getParty().equals(mcp.getUuid()) && !player.getName().equals(mcp.getName())) {
+							if (player.getParty() != null && player.getParty().equals(mcp.getUuid()) && !player.getName().equals(mcp.getName())) {
 								player.setParty(null);
 								if (player.isOnline()) {
 									player.getPlayer().sendMessage(ChatColor.RED + mcp.getName() + " is no longer hosting a party.");
@@ -125,7 +128,7 @@ public class Party extends PlayerCommand {
 						VentureChatPlayer player = playerApiService.getMineverseChatPlayer(args[1]);
 						if (player != null) {
 							if (!player.getName().equals(mcp.getName())) {
-								if (player.hasParty() && player.getParty().equals(mcp.getUuid())) {
+								if (player.getParty() != null && player.getParty().equals(mcp.getUuid())) {
 									player.setParty(null);
 									player.getPlayer().sendMessage(ChatColor.RED + "You have been kicked out of " + mcp.getName() + "'s party.");
 									mcp.getPlayer().sendMessage(ChatColor.RED + "You have kicked " + player.getName() + " out of your party.");
@@ -151,7 +154,7 @@ public class Party extends PlayerCommand {
 					mcp.getPlayer().sendMessage(ChatColor.RED + "You do not have permission for this command!");
 					return;
 				}
-				if (mcp.hasParty() && !mcp.isHost()) {
+				if (mcp.getParty() != null && !mcp.isHost()) {
 					mcp.getPlayer().sendMessage(ChatColor.GREEN + "You are in " + playerApiService.getMineverseChatPlayer(mcp.getParty()).getName() + "'s party.");
 				} else if (mcp.isHost()) {
 					mcp.getPlayer().sendMessage(ChatColor.GREEN + "You are hosting a party.");
@@ -175,11 +178,11 @@ public class Party extends PlayerCommand {
 					mcp.getPlayer().sendMessage(ChatColor.GREEN + "Toggled party chat off.");
 					break;
 				}
-				if (mcp.hasConversation()) {
+				if (mcp.getConversation() != null) {
 					String tellChat = playerApiService.getMineverseChatPlayer(mcp.getConversation()).getName();
 					mcp.setConversation(null);
 					for (VentureChatPlayer p : playerApiService.getOnlineMineverseChatPlayers()) {
-						if (p.isSpy()) {
+						if (configService.isSpy(p)) {
 							p.getPlayer().sendMessage(mcp.getName() + " is no longer in a private conversation with " + tellChat + ".");
 						}
 					}
@@ -241,7 +244,7 @@ public class Party extends PlayerCommand {
 			if (args[0].length() > 0) {
 				if (!args[0].equals("host") && !args[0].equals("join") && !args[0].equals("leave") && !args[0].equals("kick") && !args[0].equals("info") && !args[0].equals("chat")
 						&& !args[0].equals("help") && !args[0].equals("members") && !args[0].equals("ban") && !args[0].equals("unban")) {
-					if (mcp.hasParty()) {
+					if (mcp.getParty() != null) {
 						String msg = "";
 						String partyformat = "";
 						for (int x = 0; x < args.length; x++) {
@@ -267,7 +270,7 @@ public class Party extends PlayerCommand {
 									.replace("{host}", playerApiService.getMineverseChatPlayer(mcp.getParty()).getName()).replace("{player}", mcp.getName())) + msg;
 						}
 						for (VentureChatPlayer p : playerApiService.getOnlineMineverseChatPlayers()) {
-							if ((p.getParty().equals(mcp.getParty()) || p.isSpy())) {
+							if ((p.getParty().equals(mcp.getParty()) || configService.isSpy(p))) {
 								p.getPlayer().sendMessage(partyformat);
 							}
 						}

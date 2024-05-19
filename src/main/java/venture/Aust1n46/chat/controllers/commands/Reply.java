@@ -13,6 +13,7 @@ import venture.Aust1n46.chat.initiators.application.VentureChat;
 import venture.Aust1n46.chat.localization.LocalizedMessage;
 import venture.Aust1n46.chat.model.PlayerCommand;
 import venture.Aust1n46.chat.model.VentureChatPlayer;
+import venture.Aust1n46.chat.service.ConfigService;
 import venture.Aust1n46.chat.service.FormatService;
 import venture.Aust1n46.chat.service.PlayerApiService;
 import venture.Aust1n46.chat.utilities.FormatUtils;
@@ -26,6 +27,8 @@ public class Reply extends PlayerCommand {
 	private PluginMessageController pluginMessageController;
 	@Inject
 	private PlayerApiService playerApiService;
+	@Inject
+	private ConfigService configService;
 
 	@Inject
 	public Reply(String name) {
@@ -40,7 +43,7 @@ public class Reply extends PlayerCommand {
 		}
 		VentureChatPlayer mcp = playerApiService.getOnlineMineverseChatPlayer(sender);
 		if (args.length > 0) {
-			if (mcp.hasReplyPlayer()) {
+			if (mcp.getReplyPlayer() != null) {
 				if (plugin.getConfig().getBoolean("bungeecordmessaging", true)) {
 					sendBungeeCordReply(mcp, args);
 					return;
@@ -99,7 +102,7 @@ public class Reply extends PlayerCommand {
 							if (p.getName().equals(mcp.getName()) || p.getName().equals(player.getName())) {
 								continue;
 							}
-							if (p.isSpy()) {
+							if (configService.isSpy(p)) {
 								p.getPlayer().sendMessage(spy);
 							}
 						}

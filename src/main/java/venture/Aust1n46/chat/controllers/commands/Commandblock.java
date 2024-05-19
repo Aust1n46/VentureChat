@@ -37,9 +37,9 @@ public class Commandblock extends UniversalCommand {
                 for (String cb : (List<String>) plugin.getConfig().getStringList("blockablecommands"))
                     if (args[1].equals("/" + cb))
                         match = true;
-                if (match || player.isBlockedCommand(args[1])) {
-                    if (!player.isBlockedCommand(args[1])) {
-                        player.addBlockedCommand(args[1]);
+                if (match || player.getBlockedCommands().contains(args[1])) {
+                    if (!player.getBlockedCommands().contains(args[1])) {
+                        player.getBlockedCommands().add(args[1]);
                         player.getPlayer().sendMessage(LocalizedMessage.BLOCK_COMMAND_PLAYER.toString()
                                 .replace("{command}", args[1]));
                         sender.sendMessage(LocalizedMessage.BLOCK_COMMAND_SENDER.toString()
@@ -47,7 +47,7 @@ public class Commandblock extends UniversalCommand {
                                 .replace("{command}", args[1]));
                         return;
                     }
-                    player.removeBlockedCommand(args[1]);
+                    player.getBlockedCommands().remove(args[1]);
                     player.getPlayer().sendMessage(LocalizedMessage.UNBLOCK_COMMAND_PLAYER.toString()
                             .replace("{command}", args[1]));
                     sender.sendMessage(LocalizedMessage.UNBLOCK_COMMAND_SENDER.toString()

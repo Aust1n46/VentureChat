@@ -159,6 +159,7 @@ public class ConfigService {
 		return getChannel(channelName) != null;
 	}
 
+	// TODO Investigate if all of this logic should be here
 	public boolean isListening(VentureChatPlayer ventureChatPlayer, String channel) {
 		if (ventureChatPlayer.isOnline()) {
 			if (isChannel(channel)) {
@@ -168,13 +169,46 @@ public class ConfigService {
 						if (ventureChatPlayer.getCurrentChannel().equals(chatChannel)) {
 							ventureChatPlayer.setCurrentChannel(getDefaultChannel());
 						}
-						ventureChatPlayer.removeListening(channel);
+						ventureChatPlayer.getListening().remove(channel);
 						return false;
 					}
 				}
 			}
 		}
-		return ventureChatPlayer.isListening(channel);
+		return ventureChatPlayer.getListening().contains(channel);
+	}
+
+	// TODO Investigate if all of this logic should be here
+	public boolean isRangedSpy(final VentureChatPlayer ventureChatPlayer) {
+		if (ventureChatPlayer.isOnline()) {
+			if (!ventureChatPlayer.getPlayer().hasPermission("venturechat.rangedspy")) {
+				ventureChatPlayer.setRangedSpy(false);
+				return false;
+			}
+		}
+		return ventureChatPlayer.isRangedSpy();
+	}
+
+	// TODO Investigate if all of this logic should be here
+	public boolean isSpy(final VentureChatPlayer ventureChatPlayer) {
+		if (ventureChatPlayer.isOnline()) {
+			if (!ventureChatPlayer.getPlayer().hasPermission("venturechat.spy")) {
+				ventureChatPlayer.setSpy(false);
+				return false;
+			}
+		}
+		return ventureChatPlayer.isSpy();
+	}
+
+	// TODO Investigate if all of this logic should be here
+	public boolean isCommandSpy(final VentureChatPlayer ventureChatPlayer) {
+		if (ventureChatPlayer.isOnline()) {
+			if (!ventureChatPlayer.getPlayer().hasPermission("venturechat.commandspy")) {
+				ventureChatPlayer.setCommandSpy(false);
+				return false;
+			}
+		}
+		return ventureChatPlayer.isCommandSpy();
 	}
 
 	/**

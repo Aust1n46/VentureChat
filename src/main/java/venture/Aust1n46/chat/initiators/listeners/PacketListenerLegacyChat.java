@@ -1,5 +1,7 @@
 package venture.Aust1n46.chat.initiators.listeners;
 
+import java.util.List;
+
 import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.events.ListenerPriority;
 import com.comphenix.protocol.events.PacketAdapter;
@@ -74,6 +76,10 @@ public class PacketListenerLegacyChat extends PacketAdapter {
 			return;
 		}
 		int hash = message.hashCode();
-		mcp.addMessage(new ChatMessage(chat, message, coloredMessage, hash));
+		final List<ChatMessage> messages = mcp.getMessages();
+		if (messages.size() >= 100) {
+			messages.remove(0);
+		}
+		messages.add(new ChatMessage(chat, message, coloredMessage, hash));
 	}
 }

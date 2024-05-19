@@ -53,8 +53,9 @@ public class LoginListener implements Listener {
 			log.warn("onPlayerQuit() Could not find VentureChatPlayer");
 		} else {
 			spigotFlatFileController.savePlayerData(ventureChatPlayer);
-			ventureChatPlayer.clearMessages();
+			ventureChatPlayer.getMessages().clear();
 			ventureChatPlayer.setOnline(false);
+			ventureChatPlayer.setPlayer(null);
 			playerApiService.removeMineverseChatOnlinePlayerToMap(ventureChatPlayer);
 			log.debug("onPlayerQuit() ventureChatPlayer:{} quit", ventureChatPlayer);
 		}
@@ -75,7 +76,8 @@ public class LoginListener implements Listener {
 		String name = player.getName();
 		if (mcp == null) {
 			UUID uuid = player.getUniqueId();
-			mcp = new VentureChatPlayer(uuid, name, configService.getDefaultChannel());
+			mcp = VentureChatPlayer.builder().uuid(uuid).name(name).currentChannel(configService.getDefaultChannel()).build();
+			mcp.getListening().add(configService.getDefaultChannel().getName());
 			playerApiService.addMineverseChatPlayerToMap(mcp);
 			playerApiService.addNameToMap(mcp);
 		}
@@ -100,10 +102,10 @@ public class LoginListener implements Listener {
 		for (ChatChannel ch : configService.getAutojoinList()) {
 			if (ch.hasPermission()) {
 				if (mcp.getPlayer().hasPermission(ch.getPermission())) {
-					mcp.addListening(ch.getName());
+					mcp.getListening().add(ch.getName());
 				}
 			} else {
-				mcp.addListening(ch.getName());
+				mcp.getListening().add(ch.getName());
 			}
 		}
 		if (configService.isProxyEnabled()) {

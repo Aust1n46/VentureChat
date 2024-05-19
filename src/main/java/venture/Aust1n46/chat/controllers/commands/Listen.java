@@ -36,12 +36,12 @@ public class Listen extends PlayerCommand {
 			}
 			if (channel.hasPermission()) {
 				if (!mcp.getPlayer().hasPermission(channel.getPermission())) {
-					mcp.removeListening(channel.getName());
+					mcp.getListening().remove(channel.getName());
 					mcp.getPlayer().sendMessage(LocalizedMessage.CHANNEL_NO_PERMISSION.toString());
 					return;
 				}
 			}
-			mcp.addListening(channel.getName());
+			mcp.getListening().add(channel.getName());
 			mcp.getPlayer()
 					.sendMessage(LocalizedMessage.LISTEN_CHANNEL.toString().replace("{channel_color}", channel.getColor() + "").replace("{channel_name}", channel.getName()));
 			if (channel.getBungee()) {

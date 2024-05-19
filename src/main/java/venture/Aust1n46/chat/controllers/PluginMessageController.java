@@ -118,7 +118,7 @@ public class PluginMessageController {
 				}
 				// out.writeUTF("Mutes");
 				int muteCount = 0;
-				for (MuteContainer mute : mcp.getMutes()) {
+				for (MuteContainer mute : mcp.getMutes().values()) {
 					ChatChannel channel = configService.getChannel(mute.getChannel());
 					if (channel.getBungee()) {
 						muteCount++;
@@ -126,7 +126,7 @@ public class PluginMessageController {
 				}
 				// System.out.println(muteCount + " mutes");
 				out.write(muteCount);
-				for (MuteContainer mute : mcp.getMutes()) {
+				for (MuteContainer mute : mcp.getMutes().values()) {
 					ChatChannel channel = configService.getChannel(mute.getChannel());
 					if (channel.getBungee()) {
 						out.writeUTF(channel.getName());
@@ -143,7 +143,7 @@ public class PluginMessageController {
 				for (UUID c : mcp.getIgnores()) {
 					out.writeUTF(c.toString());
 				}
-				out.writeBoolean(mcp.isSpy());
+				out.writeBoolean(configService.isSpy(mcp));
 				out.writeBoolean(mcp.isMessageToggle());
 			}
 			sendPluginMessage(outstream);
@@ -271,7 +271,7 @@ public class PluginMessageController {
 						for (VentureChatPlayer mcp : playerApiService.getOnlineMineverseChatPlayers()) {
 							if (configService.isListening(mcp, chatchannel)) {
 								String entry = "&f" + mcp.getName();
-								if (mcp.isMuted(chatchannel)) {
+								if (mcp.getMutes().containsKey(chatchannel)) {
 									entry = "&c" + mcp.getName();
 								}
 								listening.add(entry);
@@ -324,7 +324,7 @@ public class PluginMessageController {
 					String c = ch.toString();
 					ChatChannel cha = configService.getChannel(c);
 					if (cha.getBungee()) {
-						p.removeListening(c);
+						p.getListening().remove(c);
 					}
 				}
 				int size = msgin.read();
@@ -333,11 +333,11 @@ public class PluginMessageController {
 					if (configService.isChannel(ch)) {
 						ChatChannel cha = configService.getChannel(ch);
 						if (!cha.hasPermission() || p.getPlayer().hasPermission(cha.getPermission())) {
-							p.addListening(ch);
+							p.getListening().add(ch);
 						}
 					}
 				}
-				p.getMutes().removeIf(mute -> configService.getChannel(mute.getChannel()).getBungee());
+				p.getMutes().values().removeIf(mute -> configService.getChannel(mute.getChannel()).getBungee());
 				int sizeB = msgin.read();
 				// System.out.println(sizeB + " mute size");
 				for (int b = 0; b < sizeB; b++) {
@@ -346,7 +346,7 @@ public class PluginMessageController {
 					String muteReason = msgin.readUTF();
 					// System.out.println(ch);
 					if (configService.isChannel(ch)) {
-						p.addMute(ch, muteTime, muteReason);
+						p.getMutes().put(ch, new MuteContainer(ch, muteTime, muteReason));
 					}
 				}
 				// System.out.println(msgin.available() + " available before");
@@ -354,20 +354,20 @@ public class PluginMessageController {
 				p.setMessageToggle(msgin.readBoolean());
 				// System.out.println(msgin.available() + " available after");
 				for (Object o : p.getIgnores().toArray()) {
-					p.removeIgnore((UUID) o);
+					p.getIgnores().remove((UUID) o);
 				}
 				int sizeC = msgin.read();
 				// System.out.println(sizeC + " ignore size");
 				for (int c = 0; c < sizeC; c++) {
 					String i = msgin.readUTF();
 					// System.out.println(i);
-					p.addIgnore(UUID.fromString(i));
+					p.getIgnores().add(UUID.fromString(i));
 				}
 				if (!p.isHasPlayed()) {
 					boolean isThereABungeeChannel = false;
 					for (ChatChannel ch : configService.getAutojoinList()) {
 						if ((!ch.hasPermission() || p.getPlayer().hasPermission(ch.getPermission())) && !configService.isListening(p, ch.getName())) {
-							p.addListening(ch.getName());
+							p.getListening().add(ch.getName());
 							if (ch.getBungee()) {
 								isThereABungeeChannel = true;
 							}
@@ -428,12 +428,12 @@ public class PluginMessageController {
 
 					if (p.getIgnores().contains(receiver)) {
 						p.getPlayer().sendMessage(LocalizedMessage.IGNORE_PLAYER_OFF.toString().replace("{player}", receiverName));
-						p.removeIgnore(receiver);
+						p.getIgnores().remove(receiver);
 						synchronize(p, true);
 						return;
 					}
 
-					p.addIgnore(receiver);
+					p.getIgnores().add(receiver);
 					p.getPlayer().sendMessage(LocalizedMessage.IGNORE_PLAYER_ON.toString().replace("{player}", receiverName));
 					synchronize(p, true);
 				}
@@ -469,7 +469,7 @@ public class PluginMessageController {
 						return;
 					}
 					ChatChannel chatChannelObj = configService.getChannel(channelName);
-					if (playerToMuteMCP.isMuted(chatChannelObj.getName())) {
+					if (playerToMuteMCP.getMutes().containsKey(chatChannelObj.getName())) {
 						out.writeUTF("Mute");
 						out.writeUTF("AlreadyMuted");
 						out.writeUTF(server);
@@ -482,23 +482,23 @@ public class PluginMessageController {
 					if (time > 0) {
 						long datetime = System.currentTimeMillis();
 						if (reason.isEmpty()) {
-							playerToMuteMCP.addMute(chatChannelObj.getName(), datetime + time);
+							playerToMuteMCP.getMutes().put(chatChannelObj.getName(), new MuteContainer(chatChannelObj.getName(), datetime + time, ""));
 							String timeString = FormatUtils.parseTimeStringFromMillis(time);
 							playerToMuteMCP.getPlayer().sendMessage(LocalizedMessage.MUTE_PLAYER_PLAYER_TIME.toString().replace("{channel_color}", chatChannelObj.getColor())
 									.replace("{channel_name}", chatChannelObj.getName()).replace("{time}", timeString));
 						} else {
-							playerToMuteMCP.addMute(chatChannelObj.getName(), datetime + time, reason);
+							playerToMuteMCP.getMutes().put(chatChannelObj.getName(), new MuteContainer(chatChannelObj.getName(), datetime + time, reason));
 							String timeString = FormatUtils.parseTimeStringFromMillis(time);
 							playerToMuteMCP.getPlayer().sendMessage(LocalizedMessage.MUTE_PLAYER_PLAYER_TIME_REASON.toString().replace("{channel_color}", chatChannelObj.getColor())
 									.replace("{channel_name}", chatChannelObj.getName()).replace("{time}", timeString).replace("{reason}", reason));
 						}
 					} else {
 						if (reason.isEmpty()) {
-							playerToMuteMCP.addMute(chatChannelObj.getName());
+							playerToMuteMCP.getMutes().put(chatChannelObj.getName(), new MuteContainer(chatChannelObj.getName(), 0, ""));
 							playerToMuteMCP.getPlayer().sendMessage(LocalizedMessage.MUTE_PLAYER_PLAYER.toString().replace("{channel_color}", chatChannelObj.getColor())
 									.replace("{channel_name}", chatChannelObj.getName()));
 						} else {
-							playerToMuteMCP.addMute(chatChannelObj.getName(), reason);
+							playerToMuteMCP.getMutes().put(chatChannelObj.getName(), new MuteContainer(chatChannelObj.getName(), 0, reason));
 							playerToMuteMCP.getPlayer().sendMessage(LocalizedMessage.MUTE_PLAYER_PLAYER_REASON.toString().replace("{channel_color}", chatChannelObj.getColor())
 									.replace("{channel_name}", chatChannelObj.getName()).replace("{reason}", reason));
 						}
@@ -632,7 +632,7 @@ public class PluginMessageController {
 						return;
 					}
 					ChatChannel chatChannelObj = configService.getChannel(channelName);
-					if (!playerToUnmuteMCP.isMuted(chatChannelObj.getName())) {
+					if (!playerToUnmuteMCP.getMutes().containsKey(chatChannelObj.getName())) {
 						out.writeUTF("Unmute");
 						out.writeUTF("NotMuted");
 						out.writeUTF(server);
@@ -642,7 +642,7 @@ public class PluginMessageController {
 						sendPluginMessage(stream);
 						return;
 					}
-					playerToUnmuteMCP.removeMute(chatChannelObj.getName());
+					playerToUnmuteMCP.getMutes().remove(chatChannelObj.getName());
 					playerToUnmuteMCP.getPlayer().sendMessage(LocalizedMessage.UNMUTE_PLAYER_PLAYER.toString().replace("{player}", player.getName())
 							.replace("{channel_color}", chatChannelObj.getColor()).replace("{channel_name}", chatChannelObj.getName()));
 					synchronize(playerToUnmuteMCP, true);
@@ -750,7 +750,9 @@ public class PluginMessageController {
 						formatService.playMessageSound(p);
 					}
 					if (playerApiService.getMineverseChatPlayer(sender) == null) {
-						VentureChatPlayer senderMCP = new VentureChatPlayer(sender, sName, configService.getDefaultChannel());
+//						VentureChatPlayer senderMCP = new VentureChatPlayer(sender, sName, configService.getDefaultChannel());
+						VentureChatPlayer senderMCP = VentureChatPlayer.builder().uuid(sender).name(sName).currentChannel(configService.getDefaultChannel()).build();
+						senderMCP.getListening().add(configService.getDefaultChannel().getName());
 						playerApiService.addMineverseChatPlayerToMap(senderMCP);
 						playerApiService.addNameToMap(senderMCP);
 					}
@@ -793,7 +795,9 @@ public class PluginMessageController {
 					VentureChatPlayer senderMCP = playerApiService.getOnlineMineverseChatPlayer(senderUUID);
 					String echo = msgin.readUTF();
 					if (playerApiService.getMineverseChatPlayer(receiverUUID) == null) {
-						VentureChatPlayer receiverMCP = new VentureChatPlayer(receiverUUID, receiverName, configService.getDefaultChannel());
+//						VentureChatPlayer receiverMCP = new VentureChatPlayer(receiverUUID, receiverName, configService.getDefaultChannel());
+						VentureChatPlayer receiverMCP = VentureChatPlayer.builder().uuid(receiverUUID).name(receiverName).currentChannel(configService.getDefaultChannel()).build();
+						receiverMCP.getListening().add(configService.getDefaultChannel().getName());
 						playerApiService.addMineverseChatPlayerToMap(receiverMCP);
 						playerApiService.addNameToMap(receiverMCP);
 					}
@@ -806,7 +810,7 @@ public class PluginMessageController {
 					String spy = msgin.readUTF();
 					if (!spy.startsWith("VentureChat:NoSpy")) {
 						for (VentureChatPlayer pl : playerApiService.getOnlineMineverseChatPlayers()) {
-							if (pl.isSpy() && !pl.getName().equals(senderName) && !pl.getName().equals(receiverName)) {
+							if (configService.isSpy(pl) && !pl.getName().equals(senderName) && !pl.getName().equals(receiverName)) {
 								pl.getPlayer().sendMessage(spy);
 							}
 						}

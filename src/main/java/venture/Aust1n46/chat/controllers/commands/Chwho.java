@@ -50,7 +50,7 @@ public class Chwho extends UniversalCommand {
                     if (channel.hasPermission()) {
                         if (!sender.hasPermission(channel.getPermission())) {
                             VentureChatPlayer mcp = playerApiService.getOnlineMineverseChatPlayer(((Player) sender));
-                            mcp.removeListening(channel.getName());
+                            mcp.getListening().remove(channel.getName());
                             mcp.getPlayer().sendMessage(LocalizedMessage.CHANNEL_NO_PERMISSION_VIEW.toString());
                             return;
                         }
@@ -98,7 +98,7 @@ public class Chwho extends UniversalCommand {
                                                 playerlist += "\n";
                                                 linecount = linecount + LINE_LENGTH;
                                             }
-                                            if (!p.isMuted(channel.getName())) {
+                                            if (!p.getMutes().containsKey(channel.getName())) {
                                                 playerlist += ChatColor.WHITE + p.getName();
                                             } else {
                                                 playerlist += ChatColor.RED + p.getName();
@@ -119,7 +119,7 @@ public class Chwho extends UniversalCommand {
                                                 playerlist += "\n";
                                                 linecount = linecount + LINE_LENGTH;
                                             }
-                                            if (!p.isMuted(channel.getName())) {
+                                            if (!p.getMutes().containsKey(channel.getName())) {
                                                 playerlist += ChatColor.WHITE + p.getName();
                                             } else {
                                                 playerlist += ChatColor.RED + p.getName();
@@ -146,7 +146,7 @@ public class Chwho extends UniversalCommand {
                                                 playerlist += "\n";
                                                 linecount = linecount + LINE_LENGTH;
                                             }
-                                            if (!p.isMuted(channel.getName())) {
+                                            if (!p.getMutes().containsKey(channel.getName())) {
                                                 playerlist += ChatColor.WHITE + p.getName();
                                             } else {
                                                 playerlist += ChatColor.RED + p.getName();
@@ -167,7 +167,7 @@ public class Chwho extends UniversalCommand {
                                 playerlist += "\n";
                                 linecount = linecount + LINE_LENGTH;
                             }
-                            if (!p.isMuted(channel.getName())) {
+                            if (!p.getMutes().containsKey(channel.getName())) {
                                 playerlist += ChatColor.WHITE + p.getName();
                             } else {
                                 playerlist += ChatColor.RED + p.getName();

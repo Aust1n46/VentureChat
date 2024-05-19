@@ -65,7 +65,7 @@ public class PreProcessCommandListener implements CommandExecutor, Listener {
 		VentureChatPlayer mcp = playerApiService.getOnlineMineverseChatPlayer(event.getPlayer());
 		if (!mcp.getPlayer().hasPermission("venturechat.commandspy.override")) {
 			for (VentureChatPlayer p : playerApiService.getOnlineMineverseChatPlayers()) {
-				if (p.hasCommandSpy()) {
+				if (configService.isCommandSpy(p)) {
 					if (wec) {
 						p.getPlayer().sendMessage(FormatUtils.FormatStringAll(cs.getString("format").replace("{player}", mcp.getName()).replace("{command}", event.getMessage())));
 					} else {
@@ -156,9 +156,9 @@ public class PreProcessCommandListener implements CommandExecutor, Listener {
 					if (message.equals("/" + channel.getAlias())) {
 						mcp.getPlayer().sendMessage(
 								LocalizedMessage.SET_CHANNEL.toString().replace("{channel_color}", channel.getColor() + "").replace("{channel_name}", channel.getName()));
-						if (mcp.hasConversation()) {
+						if (mcp.getConversation() != null) {
 							for (VentureChatPlayer p : playerApiService.getOnlineMineverseChatPlayers()) {
-								if (p.isSpy()) {
+								if (configService.isSpy(p)) {
 									p.getPlayer().sendMessage(LocalizedMessage.EXIT_PRIVATE_CONVERSATION_SPY.toString().replace("{player_sender}", mcp.getName())
 											.replace("{player_receiver}", playerApiService.getMineverseChatPlayer(mcp.getConversation()).getName()));
 								}
@@ -167,7 +167,7 @@ public class PreProcessCommandListener implements CommandExecutor, Listener {
 									playerApiService.getMineverseChatPlayer(mcp.getConversation()).getName()));
 							mcp.setConversation(null);
 						}
-						mcp.addListening(channel.getName());
+						mcp.getListening().add(channel.getName());
 						mcp.setCurrentChannel(channel);
 						if (channel.getBungee()) {
 							pluginMessageController.synchronize(mcp, true);
@@ -177,7 +177,7 @@ public class PreProcessCommandListener implements CommandExecutor, Listener {
 					}
 					if (message.toLowerCase().startsWith("/" + channel.getAlias() + " ")) {
 						message = message.substring(channel.getAlias().length() + 1);
-						mcp.addListening(channel.getName());
+						mcp.getListening().add(channel.getName());
 						if (channel.getBungee()) {
 							pluginMessageController.synchronize(mcp, true);
 						}
@@ -217,7 +217,7 @@ public class PreProcessCommandListener implements CommandExecutor, Listener {
 				}
 				mcp.setQuickChat(true);
 				mcp.setQuickChannel(channel);
-				mcp.addListening(channel.getName());
+				mcp.getListening().add(channel.getName());
 				if (channel.getBungee()) {
 					pluginMessageController.synchronize(mcp, true);
 				}

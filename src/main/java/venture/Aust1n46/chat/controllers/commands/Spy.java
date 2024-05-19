@@ -8,6 +8,7 @@ import venture.Aust1n46.chat.controllers.PluginMessageController;
 import venture.Aust1n46.chat.localization.LocalizedMessage;
 import venture.Aust1n46.chat.model.PlayerCommand;
 import venture.Aust1n46.chat.model.VentureChatPlayer;
+import venture.Aust1n46.chat.service.ConfigService;
 import venture.Aust1n46.chat.service.PlayerApiService;
 
 public class Spy extends PlayerCommand {
@@ -15,6 +16,8 @@ public class Spy extends PlayerCommand {
 	private PluginMessageController pluginMessageController;
 	@Inject
 	private PlayerApiService playerApiService;
+	@Inject
+	private ConfigService configService;
 
 	@Inject
 	public Spy(String name) {
@@ -25,7 +28,7 @@ public class Spy extends PlayerCommand {
 	public void executeCommand(Player player, String command, String[] args) {
 		VentureChatPlayer mcp = playerApiService.getOnlineMineverseChatPlayer(player);
 		if (mcp.getPlayer().hasPermission("venturechat.spy")) {
-			if (!mcp.isSpy()) {
+			if (!configService.isSpy(mcp)) {
 				mcp.setSpy(true);
 				mcp.getPlayer().sendMessage(LocalizedMessage.SPY_ON.toString());
 				pluginMessageController.synchronize(mcp, true);

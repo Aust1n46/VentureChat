@@ -47,9 +47,9 @@ public class Kickchannelall extends UniversalCommand {
 					}
 				}
 			}
-			player.clearListening();
+			player.getListening().clear();
 			sender.sendMessage(LocalizedMessage.KICK_CHANNEL_ALL_SENDER.toString().replace("{player}", player.getName()));
-			player.addListening(configService.getDefaultChannel().getName());
+			player.getListening().add(configService.getDefaultChannel().getName());
 			player.setCurrentChannel(configService.getDefaultChannel());
 			if (configService.getDefaultChannel().getBungee()) {
 				isThereABungeeChannel = true;

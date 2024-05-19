@@ -17,6 +17,7 @@ import com.google.inject.Inject;
 import venture.Aust1n46.chat.controllers.PluginMessageController;
 import venture.Aust1n46.chat.localization.LocalizedMessage;
 import venture.Aust1n46.chat.model.ChatChannel;
+import venture.Aust1n46.chat.model.MuteContainer;
 import venture.Aust1n46.chat.model.UniversalCommand;
 import venture.Aust1n46.chat.model.VentureChatPlayer;
 import venture.Aust1n46.chat.service.ConfigService;
@@ -77,7 +78,7 @@ public class Mute extends UniversalCommand {
 						sender.sendMessage(LocalizedMessage.PLAYER_OFFLINE.toString().replace("{args}", args[1]));
 						return;
 					}
-					if (playerToMute.isMuted(channel.getName())) {
+					if (playerToMute.getMutes().containsKey(channel.getName())) {
 						sender.sendMessage(LocalizedMessage.PLAYER_ALREADY_MUTED.toString().replace("{player}", playerToMute.getName())
 								.replace("{channel_color}", channel.getColor()).replace("{channel_name}", channel.getName()));
 						return;
@@ -85,7 +86,7 @@ public class Mute extends UniversalCommand {
 
 					if (time > 0) {
 						if (reason.isEmpty()) {
-							playerToMute.addMute(channel.getName(), datetime + time);
+							playerToMute.getMutes().put(channel.getName(), new MuteContainer(channel.getName(), datetime + time, ""));
 							String timeString = FormatUtils.parseTimeStringFromMillis(time);
 							sender.sendMessage(LocalizedMessage.MUTE_PLAYER_SENDER_TIME.toString().replace("{player}", playerToMute.getName())
 									.replace("{channel_color}", channel.getColor()).replace("{channel_name}", channel.getName()).replace("{time}", timeString));
@@ -97,7 +98,7 @@ public class Mute extends UniversalCommand {
 							}
 							return;
 						} else {
-							playerToMute.addMute(channel.getName(), datetime + time, reason);
+							playerToMute.getMutes().put(channel.getName(), new MuteContainer(channel.getName(), datetime + time, reason));
 							String timeString = FormatUtils.parseTimeStringFromMillis(time);
 							sender.sendMessage(LocalizedMessage.MUTE_PLAYER_SENDER_TIME_REASON.toString().replace("{player}", playerToMute.getName())
 									.replace("{channel_color}", channel.getColor()).replace("{channel_name}", channel.getName()).replace("{time}", timeString)
@@ -112,7 +113,7 @@ public class Mute extends UniversalCommand {
 						}
 					} else {
 						if (reason.isEmpty()) {
-							playerToMute.addMute(channel.getName());
+							playerToMute.getMutes().put(channel.getName(), new MuteContainer(channel.getName(), 0, ""));
 							sender.sendMessage(LocalizedMessage.MUTE_PLAYER_SENDER.toString().replace("{player}", playerToMute.getName())
 									.replace("{channel_color}", channel.getColor()).replace("{channel_name}", channel.getName()));
 							if (playerToMute.isOnline()) {
@@ -123,7 +124,7 @@ public class Mute extends UniversalCommand {
 							}
 							return;
 						} else {
-							playerToMute.addMute(channel.getName(), reason);
+							playerToMute.getMutes().put(channel.getName(), new MuteContainer(channel.getName(), 0, reason));
 							sender.sendMessage(LocalizedMessage.MUTE_PLAYER_SENDER_REASON.toString().replace("{player}", playerToMute.getName())
 									.replace("{channel_color}", channel.getColor()).replace("{channel_name}", channel.getName()).replace("{reason}", reason));
 							if (playerToMute.isOnline()) {
@@ -161,7 +162,7 @@ public class Mute extends UniversalCommand {
 					Collections.sort(completions);
 					return completions;
 				}
-				StringUtil.copyPartialMatches(args[1], playerApiService.getOnlineMineverseChatPlayers().stream().filter(mcp -> !mcp.isMuted(chatChannelObj.getName()))
+				StringUtil.copyPartialMatches(args[1], playerApiService.getOnlineMineverseChatPlayers().stream().filter(mcp -> !mcp.getMutes().containsKey(chatChannelObj.getName()))
 						.map(VentureChatPlayer::getName).collect(Collectors.toList()), completions);
 				Collections.sort(completions);
 				return completions;

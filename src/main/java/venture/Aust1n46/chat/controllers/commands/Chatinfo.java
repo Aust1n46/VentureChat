@@ -42,7 +42,7 @@ public class Chatinfo extends UniversalCommand {
 						ChatChannel channel = configService.getChannel(c);
 						listen += channel.getColor() + channel.getName() + " ";
 					}
-					for (MuteContainer muteContainer : mcp.getMutes()) {
+					for (MuteContainer muteContainer : mcp.getMutes().values()) {
 						ChatChannel channel = configService.getChannel(muteContainer.getChannel());
 						mute += channel.getColor() + channel.getName() + " ";
 					}
@@ -60,21 +60,26 @@ public class Chatinfo extends UniversalCommand {
 					} else {
 						mcp.getPlayer().sendMessage(ChatColor.GOLD + "Blocked Commands: " + ChatColor.RED + "N/A");
 					}
-					if (mcp.hasConversation()) {
+					if (mcp.getConversation() != null) {
 						mcp.getPlayer().sendMessage(
 								ChatColor.GOLD + "Private conversation: " + ChatColor.GREEN + playerApiService.getMineverseChatPlayer(mcp.getConversation()).getName());
 					} else {
 						mcp.getPlayer().sendMessage(ChatColor.GOLD + "Private conversation: " + ChatColor.RED + "N/A");
 					}
-					if (mcp.isSpy()) {
+					if (configService.isSpy(mcp)) {
 						mcp.getPlayer().sendMessage(ChatColor.GOLD + "Spy: " + ChatColor.GREEN + "true");
 					} else {
 						mcp.getPlayer().sendMessage(ChatColor.GOLD + "Spy: " + ChatColor.RED + "false");
 					}
-					if (mcp.hasCommandSpy()) {
+					if (configService.isCommandSpy(mcp)) {
 						mcp.getPlayer().sendMessage(ChatColor.GOLD + "Command spy: " + ChatColor.GREEN + "true");
 					} else {
 						mcp.getPlayer().sendMessage(ChatColor.GOLD + "Command spy: " + ChatColor.RED + "false");
+					}
+					if (configService.isRangedSpy(mcp)) {
+						mcp.getPlayer().sendMessage(ChatColor.GOLD + "Ranged spy: " + ChatColor.GREEN + "true");
+					} else {
+						mcp.getPlayer().sendMessage(ChatColor.GOLD + "Ranged spy: " + ChatColor.RED + "false");
 					}
 					if (mcp.isFilter()) {
 						mcp.getPlayer().sendMessage(ChatColor.GOLD + "Filter: " + ChatColor.GREEN + "true");
@@ -98,7 +103,7 @@ public class Chatinfo extends UniversalCommand {
 					ChatChannel channel = configService.getChannel(c);
 					listen += channel.getColor() + channel.getName() + " ";
 				}
-				for (MuteContainer muteContainer : p.getMutes()) {
+				for (MuteContainer muteContainer : p.getMutes().values()) {
 					ChatChannel channel = configService.getChannel(muteContainer.getChannel());
 					mute += channel.getColor() + channel.getName() + " ";
 				}
@@ -116,20 +121,25 @@ public class Chatinfo extends UniversalCommand {
 				} else {
 					sender.sendMessage(ChatColor.GOLD + "Blocked Commands: " + ChatColor.RED + "N/A");
 				}
-				if (p.hasConversation()) {
+				if (p.getConversation() != null) {
 					sender.sendMessage(ChatColor.GOLD + "Private conversation: " + ChatColor.GREEN + playerApiService.getMineverseChatPlayer(p.getConversation()).getName());
 				} else {
 					sender.sendMessage(ChatColor.GOLD + "Private conversation: " + ChatColor.RED + "N/A");
 				}
-				if (p.isSpy()) {
+				if (configService.isSpy(p)) {
 					sender.sendMessage(ChatColor.GOLD + "Spy: " + ChatColor.GREEN + "true");
 				} else {
 					sender.sendMessage(ChatColor.GOLD + "Spy: " + ChatColor.RED + "false");
 				}
-				if (p.hasCommandSpy()) {
+				if (configService.isCommandSpy(p)) {
 					sender.sendMessage(ChatColor.GOLD + "Command spy: " + ChatColor.GREEN + "true");
 				} else {
 					sender.sendMessage(ChatColor.GOLD + "Command spy: " + ChatColor.RED + "false");
+				}
+				if (configService.isRangedSpy(p)) {
+					sender.sendMessage(ChatColor.GOLD + "Ranged spy: " + ChatColor.GREEN + "true");
+				} else {
+					sender.sendMessage(ChatColor.GOLD + "Ranged spy: " + ChatColor.RED + "false");
 				}
 				if (p.isFilter()) {
 					sender.sendMessage(ChatColor.GOLD + "Filter: " + ChatColor.GREEN + "true");

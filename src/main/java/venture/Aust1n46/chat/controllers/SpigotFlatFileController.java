@@ -114,8 +114,25 @@ public class SpigotFlatFileController {
 				boolean rangedSpy = playerData.getConfigurationSection("players." + uuidString).getBoolean("rangedspy", false);
 				boolean messageToggle = playerData.getConfigurationSection("players." + uuidString).getBoolean("messagetoggle", true);
 				boolean bungeeToggle = playerData.getConfigurationSection("players." + uuidString).getBoolean("bungeetoggle", true);
-				VentureChatPlayer mcp = new VentureChatPlayer(uuid, name, currentChannel, ignores, listening, mutes, blockedCommands, host, party, filter, notifications,
-						jsonFormat, spy, commandSpy, rangedSpy, messageToggle, bungeeToggle);
+				final VentureChatPlayer mcp = VentureChatPlayer.builder()
+						.uuid(uuid)
+						.name(name)
+						.currentChannel(currentChannel)
+						.ignores(ignores)
+						.listening(listening)
+						.mutes(mutes)
+						.blockedCommands(blockedCommands)
+						.host(host)
+						.party(party)
+						.filter(filter)
+						.notifications(notifications)
+						.jsonFormat(jsonFormat)
+						.spy(spy)
+						.commandSpy(commandSpy)
+						.rangedSpy(rangedSpy)
+						.messageToggle(messageToggle)
+						.bungeeToggle(bungeeToggle)
+						.build();
 				mcp.setModified(true);
 				ventureChatApi.addMineverseChatPlayerToMap(mcp);
 				ventureChatApi.addNameToMap(mcp);
@@ -202,8 +219,25 @@ public class SpigotFlatFileController {
 			boolean rangedSpy = playerDataFileYamlConfiguration.getBoolean("rangedspy", false);
 			boolean messageToggle = playerDataFileYamlConfiguration.getBoolean("messagetoggle", true);
 			boolean bungeeToggle = playerDataFileYamlConfiguration.getBoolean("bungeetoggle", true);
-			mcp = new VentureChatPlayer(uuid, name, currentChannel, ignores, listening, mutes, blockedCommands, host, party, filter, notifications, jsonFormat, spy, commandSpy,
-					rangedSpy, messageToggle, bungeeToggle);
+			mcp = VentureChatPlayer.builder()
+					.uuid(uuid)
+					.name(name)
+					.currentChannel(currentChannel)
+					.ignores(ignores)
+					.listening(listening)
+					.mutes(mutes)
+					.blockedCommands(blockedCommands)
+					.host(host)
+					.party(party)
+					.filter(filter)
+					.notifications(notifications)
+					.jsonFormat(jsonFormat)
+					.spy(spy)
+					.commandSpy(commandSpy)
+					.rangedSpy(rangedSpy)
+					.messageToggle(messageToggle)
+					.bungeeToggle(bungeeToggle)
+					.build();
 		} catch (Exception e) {
 			plugin.getServer().getConsoleSender().sendMessage(FormatUtils.FormatStringAll("&8[&eVentureChat&8]&c - Error Loading Data File: " + playerDataFile.getName()));
 			plugin.getServer().getConsoleSender().sendMessage(FormatUtils.FormatStringAll("&8[&eVentureChat&8]&c - File will be skipped and deleted."));
@@ -249,7 +283,7 @@ public class SpigotFlatFileController {
 			playerDataFileYamlConfiguration.set("listen", listening);
 
 			ConfigurationSection muteSection = playerDataFileYamlConfiguration.createSection("mutes");
-			for (MuteContainer mute : mcp.getMutes()) {
+			for (MuteContainer mute : mcp.getMutes().values()) {
 				ConfigurationSection channelSection = muteSection.createSection(mute.getChannel());
 				channelSection.set("time", mute.getDuration());
 				channelSection.set("reason", mute.getReason());
@@ -257,12 +291,12 @@ public class SpigotFlatFileController {
 
 			playerDataFileYamlConfiguration.set("blockedcommands", blockedCommands);
 			playerDataFileYamlConfiguration.set("host", mcp.isHost());
-			playerDataFileYamlConfiguration.set("party", mcp.hasParty() ? mcp.getParty().toString() : "");
+			playerDataFileYamlConfiguration.set("party", mcp.getParty() != null ? mcp.getParty().toString() : "");
 			playerDataFileYamlConfiguration.set("filter", mcp.isFilter());
 			playerDataFileYamlConfiguration.set("notifications", mcp.isNotifications());
-			playerDataFileYamlConfiguration.set("spy", mcp.isSpy());
-			playerDataFileYamlConfiguration.set("commandspy", mcp.hasCommandSpy());
-			playerDataFileYamlConfiguration.set("rangedspy", mcp.getRangedSpy());
+			playerDataFileYamlConfiguration.set("spy", configService.isSpy(mcp));
+			playerDataFileYamlConfiguration.set("commandspy", configService.isCommandSpy(mcp));
+			playerDataFileYamlConfiguration.set("rangedspy", configService.isRangedSpy(mcp));
 			playerDataFileYamlConfiguration.set("messagetoggle", mcp.isMessageToggle());
 			playerDataFileYamlConfiguration.set("bungeetoggle", mcp.isBungeeToggle());
 			Calendar currentDate = Calendar.getInstance();

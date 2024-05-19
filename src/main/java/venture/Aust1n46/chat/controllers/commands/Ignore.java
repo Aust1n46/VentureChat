@@ -88,7 +88,7 @@ public class Ignore extends PlayerCommand {
 		}
 		if (mcp.getIgnores().contains(player.getUuid())) {
 			mcp.getPlayer().sendMessage(LocalizedMessage.IGNORE_PLAYER_OFF.toString().replace("{player}", player.getName()));
-			mcp.removeIgnore(player.getUuid());
+			mcp.getIgnores().remove(player.getUuid());
 			pluginMessageController.synchronize(mcp, true);
 			return;
 		}
@@ -97,7 +97,7 @@ public class Ignore extends PlayerCommand {
 			return;
 		}
 		mcp.getPlayer().sendMessage(LocalizedMessage.IGNORE_PLAYER_ON.toString().replace("{player}", player.getName()));
-		mcp.addIgnore(player.getUuid());
+		mcp.getIgnores().add(player.getUuid());
 		pluginMessageController.synchronize(mcp, true);
 	}
 

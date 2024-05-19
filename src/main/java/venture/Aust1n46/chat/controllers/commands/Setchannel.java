@@ -48,19 +48,19 @@ public class Setchannel extends UniversalCommand {
 					return;
 				}
 				if (!player.getPlayer().hasPermission(channel.getPermission())) {
-					player.removeListening(channel.getName());
+					player.getListening().remove(channel.getName());
 					sender.sendMessage(LocalizedMessage.SET_CHANNEL_PLAYER_CHANNEL_NO_PERMISSION.toString().replace("{player}", player.getName())
 							.replace("{channel_color}", channel.getColor() + "").replace("{channel_name}", channel.getName()));
 					return;
 				}
 			}
-			player.addListening(channel.getName());
+			player.getListening().add(channel.getName());
 			player.setCurrentChannel(channel);
 			sender.sendMessage(LocalizedMessage.SET_CHANNEL_SENDER.toString().replace("{player}", player.getName()).replace("{channel_color}", channel.getColor() + "")
 					.replace("{channel_name}", channel.getName()));
-			if (player.hasConversation()) {
+			if (player.getConversation() != null) {
 				for (VentureChatPlayer p : playerApiService.getOnlineMineverseChatPlayers()) {
-					if (p.isSpy()) {
+					if (configService.isSpy(p)) {
 						p.getPlayer().sendMessage(LocalizedMessage.EXIT_PRIVATE_CONVERSATION_SPY.toString().replace("{player_sender}", player.getName())
 								.replace("{player_receiver}", playerApiService.getMineverseChatPlayer(player.getConversation()).getName()));
 					}

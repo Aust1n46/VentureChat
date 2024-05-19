@@ -7,6 +7,7 @@ import com.google.inject.Inject;
 import venture.Aust1n46.chat.controllers.PluginMessageController;
 import venture.Aust1n46.chat.localization.LocalizedMessage;
 import venture.Aust1n46.chat.model.ChatChannel;
+import venture.Aust1n46.chat.model.MuteContainer;
 import venture.Aust1n46.chat.model.UniversalCommand;
 import venture.Aust1n46.chat.model.VentureChatPlayer;
 import venture.Aust1n46.chat.service.ConfigService;
@@ -50,7 +51,7 @@ public class Muteall extends UniversalCommand {
 				boolean bungee = false;
 				for (ChatChannel channel : configService.getChatChannels()) {
 					if (channel.isMutable()) {
-						player.addMute(channel.getName());
+						player.getMutes().put(channel.getName(), new MuteContainer(channel.getName(), 0, ""));
 						if (channel.getBungee()) {
 							bungee = true;
 						}
@@ -69,7 +70,7 @@ public class Muteall extends UniversalCommand {
 				boolean bungee = false;
 				for (ChatChannel channel : configService.getChatChannels()) {
 					if (channel.isMutable()) {
-						player.addMute(channel.getName(), reason);
+						player.getMutes().put(channel.getName(), new MuteContainer(channel.getName(), 0, reason));
 						if (channel.getBungee()) {
 							bungee = true;
 						}

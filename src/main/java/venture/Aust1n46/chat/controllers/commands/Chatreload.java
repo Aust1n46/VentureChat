@@ -53,7 +53,8 @@ public class Chatreload extends UniversalCommand {
 					plugin.getServer().getConsoleSender().sendMessage(FormatUtils.FormatStringAll("&8[&eVentureChat&8]&c - There could be an issue with your player data saving."));
 					String name = p.getName();
 					UUID uuid = p.getUniqueId();
-					mcp = new VentureChatPlayer(uuid, name, configService.getDefaultChannel());
+					mcp = VentureChatPlayer.builder().uuid(uuid).name(name).currentChannel(configService.getDefaultChannel()).build();
+					mcp.getListening().add(configService.getDefaultChannel().getName());
 				}
 				mcp.setOnline(true);
 				mcp.setPlayer(plugin.getServer().getPlayer(mcp.getUuid()));

@@ -18,6 +18,7 @@ import venture.Aust1n46.chat.initiators.application.VentureChat;
 import venture.Aust1n46.chat.localization.LocalizedMessage;
 import venture.Aust1n46.chat.model.PlayerCommand;
 import venture.Aust1n46.chat.model.VentureChatPlayer;
+import venture.Aust1n46.chat.service.ConfigService;
 import venture.Aust1n46.chat.service.FormatService;
 import venture.Aust1n46.chat.service.PlayerApiService;
 import venture.Aust1n46.chat.utilities.FormatUtils;
@@ -31,6 +32,8 @@ public class Message extends PlayerCommand {
 	private PluginMessageController pluginMessageController;
 	@Inject
 	private PlayerApiService playerApiService;
+	@Inject
+	private ConfigService configService;
 
 	@Inject
 	public Message(String name) {
@@ -116,7 +119,7 @@ public class Message extends PlayerCommand {
 						if (sp.getName().equals(mcp.getName()) || sp.getName().equals(player.getName())) {
 							continue;
 						}
-						if (sp.isSpy()) {
+						if (configService.isCommandSpy(sp)) {
 							sp.getPlayer().sendMessage(spy);
 						}
 					}
@@ -125,14 +128,14 @@ public class Message extends PlayerCommand {
 		}
 		if (args.length == 1) {
 			if (args[0].length() > 0) {
-				if (!mcp.hasConversation() || (mcp.hasConversation() && !mcp.getConversation().toString().equals(player.getUuid().toString()))) {
+				if (mcp.getConversation() == null || (!mcp.getConversation().toString().equals(player.getUuid().toString()))) {
 					mcp.setConversation(player.getUuid());
 					if (!mcp.getPlayer().hasPermission("venturechat.spy.override")) {
 						for (VentureChatPlayer sp : playerApiService.getOnlineMineverseChatPlayers()) {
 							if (sp.getName().equals(mcp.getName())) {
 								continue;
 							}
-							if (sp.isSpy()) {
+							if (configService.isCommandSpy(sp)) {
 								sp.getPlayer().sendMessage(LocalizedMessage.ENTER_PRIVATE_CONVERSATION_SPY.toString().replace("{player_sender}", mcp.getName())
 										.replace("{player_receiver}", player.getName()));
 							}
@@ -146,7 +149,7 @@ public class Message extends PlayerCommand {
 							if (sp.getName().equals(mcp.getName())) {
 								continue;
 							}
-							if (sp.isSpy()) {
+							if (configService.isCommandSpy(sp)) {
 								sp.getPlayer().sendMessage(LocalizedMessage.EXIT_PRIVATE_CONVERSATION_SPY.toString().replace("{player_sender}", mcp.getName())
 										.replace("{player_receiver}", player.getName()));
 							}

@@ -53,14 +53,14 @@ public class Channel extends PlayerCommand {
 		VentureChatPlayer mcp = playerApiService.getOnlineMineverseChatPlayer(event.getPlayer());
 		if (channel.hasPermission()) {
 			if (!mcp.getPlayer().hasPermission(channel.getPermission())) {
-				mcp.removeListening(channel.getName());
+				mcp.getListening().remove(channel.getName());
 				mcp.getPlayer().sendMessage(LocalizedMessage.CHANNEL_NO_PERMISSION.toString());
 				return;
 			}
 		}
-		if (mcp.hasConversation()) {
+		if (mcp.getConversation() != null) {
 			for (VentureChatPlayer p : playerApiService.getOnlineMineverseChatPlayers()) {
-				if (p.isSpy()) {
+				if (configService.isSpy(p)) {
 					p.getPlayer().sendMessage(LocalizedMessage.EXIT_PRIVATE_CONVERSATION_SPY.toString().replace("{player_sender}", mcp.getName()).replace("{player_receiver}",
 							playerApiService.getMineverseChatPlayer(mcp.getConversation()).getName()));
 				}
@@ -69,7 +69,7 @@ public class Channel extends PlayerCommand {
 					LocalizedMessage.EXIT_PRIVATE_CONVERSATION.toString().replace("{player_receiver}", playerApiService.getMineverseChatPlayer(mcp.getConversation()).getName()));
 			mcp.setConversation(null);
 		}
-		mcp.addListening(channel.getName());
+		mcp.getListening().add(channel.getName());
 		mcp.setCurrentChannel(channel);
 		mcp.getPlayer().sendMessage(event.getMessage());
 		if (channel.getBungee()) {

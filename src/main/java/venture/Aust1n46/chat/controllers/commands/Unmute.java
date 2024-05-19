@@ -52,12 +52,12 @@ public class Unmute extends UniversalCommand {
 					sender.sendMessage(LocalizedMessage.PLAYER_OFFLINE.toString().replace("{args}", args[1]));
 					return;
 				}
-				if (!player.isMuted(channel.getName())) {
+				if (!player.getMutes().containsKey(channel.getName())) {
 					sender.sendMessage(LocalizedMessage.PLAYER_NOT_MUTED.toString().replace("{player}", player.getName()).replace("{channel_color}", channel.getColor())
 							.replace("{channel_name}", channel.getName()));
 					return;
 				}
-				player.removeMute(channel.getName());
+				player.getMutes().remove(channel.getName());
 				sender.sendMessage(LocalizedMessage.UNMUTE_PLAYER_SENDER.toString().replace("{player}", player.getName()).replace("{channel_color}", channel.getColor())
 						.replace("{channel_name}", channel.getName()));
 				if (player.isOnline()) {
@@ -92,7 +92,7 @@ public class Unmute extends UniversalCommand {
 					Collections.sort(completions);
 					return completions;
 				}
-				StringUtil.copyPartialMatches(args[1], playerApiService.getOnlineMineverseChatPlayers().stream().filter(mcp -> mcp.isMuted(chatChannelObj.getName()))
+				StringUtil.copyPartialMatches(args[1], playerApiService.getOnlineMineverseChatPlayers().stream().filter(mcp -> mcp.getMutes().containsKey(chatChannelObj.getName()))
 						.map(VentureChatPlayer::getName).collect(Collectors.toList()), completions);
 				Collections.sort(completions);
 				return completions;

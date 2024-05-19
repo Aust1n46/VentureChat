@@ -45,12 +45,12 @@ public class Setchannelall extends UniversalCommand {
 						return;
 					}
 					if (!player.getPlayer().hasPermission(channel.getPermission())) {
-						player.removeListening(channel.getName());
+						player.getListening().remove(channel.getName());
 					} else {
-						player.addListening(channel.getName());
+						player.getListening().add(channel.getName());
 					}
 				} else {
-					player.addListening(channel.getName());
+					player.getListening().add(channel.getName());
 				}
 				if (channel.getBungee()) {
 					isThereABungeeChannel = true;

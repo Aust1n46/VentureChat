@@ -32,9 +32,9 @@ public class ChannelAlias extends PlayerCommand {
 				if (args.length == 0) {
 					mcp.getPlayer()
 							.sendMessage(LocalizedMessage.SET_CHANNEL.toString().replace("{channel_color}", channel.getColor() + "").replace("{channel_name}", channel.getName()));
-					if (mcp.hasConversation()) {
+					if (mcp.getConversation() != null) {
 						for (VentureChatPlayer p : playerApiService.getOnlineMineverseChatPlayers()) {
-							if (p.isSpy()) {
+							if (configService.isSpy(p)) {
 								p.getPlayer().sendMessage(LocalizedMessage.EXIT_PRIVATE_CONVERSATION_SPY.toString().replace("{player_sender}", mcp.getName())
 										.replace("{player_receiver}", playerApiService.getMineverseChatPlayer(mcp.getConversation()).getName()));
 							}
@@ -43,7 +43,7 @@ public class ChannelAlias extends PlayerCommand {
 								playerApiService.getMineverseChatPlayer(mcp.getConversation()).getName()));
 						mcp.setConversation(null);
 					}
-					mcp.addListening(channel.getName());
+					mcp.getListening().add(channel.getName());
 					mcp.setCurrentChannel(channel);
 					if (channel.getBungee()) {
 						pluginMessageController.synchronize(mcp, true);
@@ -52,7 +52,7 @@ public class ChannelAlias extends PlayerCommand {
 				} else {
 					mcp.setQuickChat(true);
 					mcp.setQuickChannel(channel);
-					mcp.addListening(channel.getName());
+					mcp.getListening().add(channel.getName());
 					if (channel.getBungee()) {
 						pluginMessageController.synchronize(mcp, true);
 					}
