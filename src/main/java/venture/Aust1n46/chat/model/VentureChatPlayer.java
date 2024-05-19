@@ -48,7 +48,7 @@ public class VentureChatPlayer {
 	private boolean editing;
 	private int editHash;
 	@Default
-	private boolean filter = true;
+	private boolean filterEnabled = true;
 	@Default
 	private boolean notifications = true;
 	@Default

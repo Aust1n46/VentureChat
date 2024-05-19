@@ -22,12 +22,12 @@ public class Filter extends PlayerCommand {
 	public void executeCommand(Player sender, String command, String[] args) {
 		VentureChatPlayer mcp = playerApiService.getOnlineMineverseChatPlayer((Player) sender);
 		if (mcp.getPlayer().hasPermission("venturechat.ignorefilter")) {
-			if (!mcp.isFilter()) {
-				mcp.setFilter(true);
+			if (!mcp.isFilterEnabled()) {
+				mcp.setFilterEnabled(true);
 				mcp.getPlayer().sendMessage(LocalizedMessage.FILTER_ON.toString());
 				return;
 			}
-			mcp.setFilter(false);
+			mcp.setFilterEnabled(false);
 			mcp.getPlayer().sendMessage(LocalizedMessage.FILTER_OFF.toString());
 			return;
 		}

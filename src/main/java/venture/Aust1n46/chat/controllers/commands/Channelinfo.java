@@ -31,7 +31,7 @@ public class Channelinfo extends UniversalCommand {
 				sender.sendMessage(ChatColor.RED + "Invalid channel: " + args[0]);
 				return;
 			}
-			if (chname.hasPermission()) {
+			if (chname.isPermissionRequired()) {
 				if (!sender.hasPermission(chname.getPermission())) {
 					sender.sendMessage(ChatColor.RED + "You do not have permission to look at this channel.");
 					return;
@@ -42,29 +42,29 @@ public class Channelinfo extends UniversalCommand {
 			sender.sendMessage(ChatColor.GOLD + "Color: " + chname.getColor() + chname.getColorRaw());
 			sender.sendMessage(ChatColor.GOLD + "ChatColor: " + (chname.getChatColor().equalsIgnoreCase("None") ? FormatUtils.DEFAULT_COLOR_CODE : chname.getChatColor())
 					+ chname.getChatColorRaw());
-			if (chname.hasPermission()) {
+			if (chname.isPermissionRequired()) {
 				sender.sendMessage(ChatColor.GOLD + "Permission: " + chname.getColor() + chname.getPermission());
 			} else {
 				sender.sendMessage(ChatColor.GOLD + "Permission: " + chname.getColor() + "None");
 			}
-			if (chname.hasSpeakPermission()) {
+			if (chname.isSpeakPermissionRequired()) {
 				sender.sendMessage(ChatColor.GOLD + "Speak Permission: " + chname.getColor() + chname.getSpeakPermission());
 			} else {
 				sender.sendMessage(ChatColor.GOLD + "Speak Permission: " + chname.getColor() + "None");
 			}
-			sender.sendMessage(ChatColor.GOLD + "Autojoin: " + chname.getColor() + chname.getAutojoin());
-			sender.sendMessage(ChatColor.GOLD + "Default: " + chname.getColor() + chname.hasDistance());
-			if (!chname.hasDistance() || chname.getBungee()) {
+			sender.sendMessage(ChatColor.GOLD + "Autojoin: " + chname.getColor() + chname.isAutoJoinEnabled());
+			sender.sendMessage(ChatColor.GOLD + "Default: " + chname.getColor() + chname.isDefaultChannel());
+			if (chname.getDistance() <= 0 || chname.isBungeeEnabled()) {
 				sender.sendMessage(ChatColor.GOLD + "Distance: " + ChatColor.RED + "N/A");
 			} else {
 				sender.sendMessage(ChatColor.GOLD + "Distance: " + chname.getColor() + chname.getDistance());
 			}
-			if (!chname.hasCooldown()) {
+			if (chname.getCooldown() <= 0) {
 				sender.sendMessage(ChatColor.GOLD + "Cooldown: " + ChatColor.RED + "N/A");
 			} else {
 				sender.sendMessage(ChatColor.GOLD + "Cooldown: " + chname.getColor() + chname.getCooldown());
 			}
-			sender.sendMessage(ChatColor.GOLD + "Bungeecord: " + chname.getColor() + chname.getBungee());
+			sender.sendMessage(ChatColor.GOLD + "Bungeecord: " + chname.getColor() + chname.isBungeeEnabled());
 			sender.sendMessage(ChatColor.GOLD + "Format: " + chname.getColor() + chname.getFormat());
 			return;
 		} else {

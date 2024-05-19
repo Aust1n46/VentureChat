@@ -42,7 +42,7 @@ public class Setchannel extends UniversalCommand {
 				sender.sendMessage(LocalizedMessage.INVALID_CHANNEL.toString().replace("{args}", args[1]));
 				return;
 			}
-			if (channel.hasPermission()) {
+			if (channel.isPermissionRequired()) {
 				if (!player.isOnline()) {
 					sender.sendMessage(LocalizedMessage.PLAYER_OFFLINE_NO_PERMISSIONS_CHECK.toString());
 					return;
@@ -78,7 +78,7 @@ public class Setchannel extends UniversalCommand {
 			else {
 				player.setModified(true);
 			}
-			if (channel.getBungee()) {
+			if (channel.isBungeeEnabled()) {
 				pluginMessageController.synchronize(player, true);
 			}
 			return;

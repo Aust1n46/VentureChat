@@ -69,7 +69,7 @@ public class Mute extends UniversalCommand {
 						}
 						reason = FormatUtils.FormatStringAll(reasonBuilder.toString().trim());
 					}
-					if (channel.getBungee()) {
+					if (channel.isBungeeEnabled()) {
 						sendBungeeCordMute(sender, args[1], channel, time, reason);
 						return;
 					}
@@ -157,7 +157,7 @@ public class Mute extends UniversalCommand {
 		if (args.length == 2) {
 			if (configService.isChannel(args[0])) {
 				ChatChannel chatChannelObj = configService.getChannel(args[0]);
-				if (chatChannelObj.getBungee()) {
+				if (chatChannelObj.isBungeeEnabled()) {
 					StringUtil.copyPartialMatches(args[1], playerApiService.getNetworkPlayerNames(), completions);
 					Collections.sort(completions);
 					return completions;

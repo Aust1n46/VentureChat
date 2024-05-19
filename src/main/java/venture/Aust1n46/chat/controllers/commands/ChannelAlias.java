@@ -45,7 +45,7 @@ public class ChannelAlias extends PlayerCommand {
 					}
 					mcp.getListening().add(channel.getName());
 					mcp.setCurrentChannel(channel);
-					if (channel.getBungee()) {
+					if (channel.isBungeeEnabled()) {
 						pluginMessageController.synchronize(mcp, true);
 					}
 					return;
@@ -53,7 +53,7 @@ public class ChannelAlias extends PlayerCommand {
 					mcp.setQuickChat(true);
 					mcp.setQuickChannel(channel);
 					mcp.getListening().add(channel.getName());
-					if (channel.getBungee()) {
+					if (channel.isBungeeEnabled()) {
 						pluginMessageController.synchronize(mcp, true);
 					}
 					String msg = "";

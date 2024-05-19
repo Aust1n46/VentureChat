@@ -34,7 +34,7 @@ public class Listen extends PlayerCommand {
 				mcp.getPlayer().sendMessage(LocalizedMessage.INVALID_CHANNEL.toString().replace("{args}", args[0]));
 				return;
 			}
-			if (channel.hasPermission()) {
+			if (channel.isPermissionRequired()) {
 				if (!mcp.getPlayer().hasPermission(channel.getPermission())) {
 					mcp.getListening().remove(channel.getName());
 					mcp.getPlayer().sendMessage(LocalizedMessage.CHANNEL_NO_PERMISSION.toString());
@@ -44,7 +44,7 @@ public class Listen extends PlayerCommand {
 			mcp.getListening().add(channel.getName());
 			mcp.getPlayer()
 					.sendMessage(LocalizedMessage.LISTEN_CHANNEL.toString().replace("{channel_color}", channel.getColor() + "").replace("{channel_name}", channel.getName()));
-			if (channel.getBungee()) {
+			if (channel.isBungeeEnabled()) {
 				pluginMessageController.synchronize(mcp, true);
 			}
 			return;

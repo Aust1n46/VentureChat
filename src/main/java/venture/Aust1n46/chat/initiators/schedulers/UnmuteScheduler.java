@@ -52,7 +52,7 @@ public class UnmuteScheduler {
 								iterator.remove();
 								p.getPlayer().sendMessage(LocalizedMessage.UNMUTE_PLAYER_PLAYER.toString().replace("{player}", p.getName())
 										.replace("{channel_color}", channel.getColor()).replace("{channel_name}", mute.getChannel()));
-								if (channel.getBungee()) {
+								if (channel.isBungeeEnabled()) {
 									pluginMessageController.synchronize(p, true);
 								}
 							}

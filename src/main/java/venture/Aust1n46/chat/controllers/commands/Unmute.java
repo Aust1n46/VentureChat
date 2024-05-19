@@ -43,7 +43,7 @@ public class Unmute extends UniversalCommand {
 			}
 			if (configService.isChannel(args[0])) {
 				ChatChannel channel = configService.getChannel(args[0]);
-				if (channel.getBungee()) {
+				if (channel.isBungeeEnabled()) {
 					sendBungeeCordUnmute(sender, args[1], channel);
 					return;
 				}
@@ -87,7 +87,7 @@ public class Unmute extends UniversalCommand {
 		if (args.length == 2) {
 			if (configService.isChannel(args[0])) {
 				ChatChannel chatChannelObj = configService.getChannel(args[0]);
-				if (chatChannelObj.getBungee()) {
+				if (chatChannelObj.isBungeeEnabled()) {
 					StringUtil.copyPartialMatches(args[1], playerApiService.getNetworkPlayerNames(), completions);
 					Collections.sort(completions);
 					return completions;

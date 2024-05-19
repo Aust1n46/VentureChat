@@ -31,7 +31,7 @@ public class Me extends UniversalCommand {
 				for (int x = 0; x < args.length; x++)
 					if (args[x].length() > 0)
 						msg += " " + args[x];
-				if (sender instanceof Player && playerApiService.getOnlineMineverseChatPlayer((Player) sender).isFilter()) {
+				if (sender instanceof Player && playerApiService.getOnlineMineverseChatPlayer((Player) sender).isFilterEnabled()) {
 					msg = formatService.filterChat(msg);
 				}
 				if (sender.hasPermission("venturechat.color.legacy")) {

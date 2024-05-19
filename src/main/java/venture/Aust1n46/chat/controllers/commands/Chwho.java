@@ -47,7 +47,7 @@ public class Chwho extends UniversalCommand {
             if (args.length > 0) {
                 ChatChannel channel = configService.getChannel(args[0]);
                 if (channel != null) {
-                    if (channel.hasPermission()) {
+                    if (channel.isPermissionRequired()) {
                         if (!sender.hasPermission(channel.getPermission())) {
                             VentureChatPlayer mcp = playerApiService.getOnlineMineverseChatPlayer(((Player) sender));
                             mcp.getListening().remove(channel.getName());
@@ -56,7 +56,7 @@ public class Chwho extends UniversalCommand {
                         }
                     }
 
-                    if (channel.getBungee() && sender instanceof Player) {
+                    if (channel.isBungeeEnabled() && sender instanceof Player) {
                         VentureChatPlayer mcp = playerApiService.getOnlineMineverseChatPlayer((Player) sender);
                         ByteArrayOutputStream byteOutStream = new ByteArrayOutputStream();
                         DataOutputStream out = new DataOutputStream(byteOutStream);
@@ -82,7 +82,7 @@ public class Chwho extends UniversalCommand {
                                     continue;
                                 }
                             }
-                            if (channel.hasDistance() && sender instanceof Player) {
+                            if (channel.getDistance() > 0 && sender instanceof Player) {
                                 if (!this.isPlayerWithinDistance((Player) sender, p.getPlayer(), channel.getDistance())) {
                                     continue;
                                 }

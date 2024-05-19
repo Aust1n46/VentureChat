@@ -73,7 +73,7 @@ public class Reply extends PlayerCommand {
 				if (args.length > 0) {
 					for (int r = 0; r < args.length; r++)
 						msg += " " + args[r];
-					if (mcp.isFilter()) {
+					if (mcp.isFilterEnabled()) {
 						msg = formatService.filterChat(msg);
 					}
 					if (mcp.getPlayer().hasPermission("venturechat.color.legacy")) {
@@ -130,7 +130,7 @@ public class Reply extends PlayerCommand {
 			msgBuilder.append(" " + args[r]);
 		}
 		String msg = msgBuilder.toString();
-		if (mcp.isFilter()) {
+		if (mcp.isFilterEnabled()) {
 			msg = formatService.filterChat(msg);
 		}
 		if (mcp.getPlayer().hasPermission("venturechat.color.legacy")) {

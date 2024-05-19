@@ -100,7 +100,7 @@ public class LoginListener implements Listener {
 		}
 		mcp.setJsonFormat(jsonFormat);
 		for (ChatChannel ch : configService.getAutojoinList()) {
-			if (ch.hasPermission()) {
+			if (ch.isPermissionRequired()) {
 				if (mcp.getPlayer().hasPermission(ch.getPermission())) {
 					mcp.getListening().add(ch.getName());
 				}

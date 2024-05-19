@@ -42,7 +42,7 @@ public class Kickchannelall extends UniversalCommand {
 			for (String channel : player.getListening()) {
 				if (configService.isChannel(channel)) {
 					ChatChannel chatChannelObj = configService.getChannel(channel);
-					if (chatChannelObj.getBungee()) {
+					if (chatChannelObj.isBungeeEnabled()) {
 						isThereABungeeChannel = true;
 					}
 				}
@@ -51,7 +51,7 @@ public class Kickchannelall extends UniversalCommand {
 			sender.sendMessage(LocalizedMessage.KICK_CHANNEL_ALL_SENDER.toString().replace("{player}", player.getName()));
 			player.getListening().add(configService.getDefaultChannel().getName());
 			player.setCurrentChannel(configService.getDefaultChannel());
-			if (configService.getDefaultChannel().getBungee()) {
+			if (configService.getDefaultChannel().isBungeeEnabled()) {
 				isThereABungeeChannel = true;
 			}
 			if (isThereABungeeChannel) {

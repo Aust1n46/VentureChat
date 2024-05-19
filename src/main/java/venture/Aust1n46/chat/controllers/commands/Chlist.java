@@ -22,7 +22,7 @@ public class Chlist extends UniversalCommand {
     public void executeCommand(CommandSender sender, String command, String[] args) {
         sender.sendMessage(LocalizedMessage.CHANNEL_LIST_HEADER.toString());
         for (ChatChannel chname : configService.getChatChannels()) {
-            if (chname.hasPermission()) {
+            if (chname.isPermissionRequired()) {
                 if (sender.hasPermission(chname.getPermission())) {
                     sender.sendMessage(LocalizedMessage.CHANNEL_LIST_WITH_PERMISSIONS.toString()
                             .replace("{channel_color}", (chname.getColor()).toString())

@@ -106,7 +106,7 @@ public class SpigotFlatFileController {
 				UUID party = playerData.getConfigurationSection("players." + uuidString).getString("party").length() > 0
 						? UUID.fromString(playerData.getConfigurationSection("players." + uuidString).getString("party"))
 						: null;
-				boolean filter = playerData.getConfigurationSection("players." + uuidString).getBoolean("filter");
+				boolean filterEnabled = playerData.getConfigurationSection("players." + uuidString).getBoolean("filter");
 				boolean notifications = playerData.getConfigurationSection("players." + uuidString).getBoolean("notifications");
 				String jsonFormat = "Default";
 				boolean spy = playerData.getConfigurationSection("players." + uuidString).getBoolean("spy", false);
@@ -124,7 +124,7 @@ public class SpigotFlatFileController {
 						.blockedCommands(blockedCommands)
 						.host(host)
 						.party(party)
-						.filter(filter)
+						.filterEnabled(filterEnabled)
 						.notifications(notifications)
 						.jsonFormat(jsonFormat)
 						.spy(spy)
@@ -211,7 +211,7 @@ public class SpigotFlatFileController {
 			}
 			boolean host = playerDataFileYamlConfiguration.getBoolean("host");
 			UUID party = playerDataFileYamlConfiguration.getString("party").length() > 0 ? UUID.fromString(playerDataFileYamlConfiguration.getString("party")) : null;
-			boolean filter = playerDataFileYamlConfiguration.getBoolean("filter");
+			boolean filterEnabled = playerDataFileYamlConfiguration.getBoolean("filter");
 			boolean notifications = playerDataFileYamlConfiguration.getBoolean("notifications");
 			String jsonFormat = "Default";
 			boolean spy = playerDataFileYamlConfiguration.getBoolean("spy", false);
@@ -229,7 +229,7 @@ public class SpigotFlatFileController {
 					.blockedCommands(blockedCommands)
 					.host(host)
 					.party(party)
-					.filter(filter)
+					.filterEnabled(filterEnabled)
 					.notifications(notifications)
 					.jsonFormat(jsonFormat)
 					.spy(spy)
@@ -292,7 +292,7 @@ public class SpigotFlatFileController {
 			playerDataFileYamlConfiguration.set("blockedcommands", blockedCommands);
 			playerDataFileYamlConfiguration.set("host", mcp.isHost());
 			playerDataFileYamlConfiguration.set("party", mcp.getParty() != null ? mcp.getParty().toString() : "");
-			playerDataFileYamlConfiguration.set("filter", mcp.isFilter());
+			playerDataFileYamlConfiguration.set("filter", mcp.isFilterEnabled());
 			playerDataFileYamlConfiguration.set("notifications", mcp.isNotifications());
 			playerDataFileYamlConfiguration.set("spy", configService.isSpy(mcp));
 			playerDataFileYamlConfiguration.set("commandspy", configService.isCommandSpy(mcp));

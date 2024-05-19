@@ -14,7 +14,6 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.plugin.PluginManager;
 
-import com.comphenix.protocol.events.PacketContainer;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.massivecraft.factions.entity.MPlayer;
@@ -31,9 +30,9 @@ import venture.Aust1n46.chat.model.ChatChannel;
 import venture.Aust1n46.chat.model.MuteContainer;
 import venture.Aust1n46.chat.model.VentureChatPlayer;
 import venture.Aust1n46.chat.service.ConfigService;
-import venture.Aust1n46.chat.service.VentureChatDatabaseService;
 import venture.Aust1n46.chat.service.FormatService;
 import venture.Aust1n46.chat.service.PlayerApiService;
+import venture.Aust1n46.chat.service.VentureChatDatabaseService;
 import venture.Aust1n46.chat.utilities.FormatUtils;
 
 @SuppressWarnings("deprecation")
@@ -100,7 +99,7 @@ public class ChatListener implements Listener {
 			String echo = "";
 			String send = "";
 			String spy = "";
-			if (ventureChatPlayer.isFilter()) {
+			if (ventureChatPlayer.isFilterEnabled()) {
 				filtered = formatService.filterChat(filtered);
 			}
 			if (ventureChatPlayer.getPlayer().hasPermission("venturechat.color.legacy")) {
@@ -155,7 +154,7 @@ public class ChatListener implements Listener {
 			for (VentureChatPlayer p : playerApiService.getOnlineMineverseChatPlayers()) {
 				if ((p.getParty() != null && p.getParty().toString().equals(ventureChatPlayer.getParty().toString()) || configService.isSpy(p))) {
 					String filtered = chat;
-					if (ventureChatPlayer.isFilter()) {
+					if (ventureChatPlayer.isFilterEnabled()) {
 						filtered = formatService.filterChat(filtered);
 					}
 					if (ventureChatPlayer.getPlayer().hasPermission("venturechat.color.legacy")) {
@@ -239,7 +238,7 @@ public class ChatListener implements Listener {
 			processPartyChat(mcp, chat);
 			return;
 		}
-		if (eventChannel.hasPermission() && !mcp.getPlayer().hasPermission(eventChannel.getPermission())) {
+		if (eventChannel.isPermissionRequired() && !mcp.getPlayer().hasPermission(eventChannel.getPermission())) {
 			mcp.getPlayer().sendMessage(LocalizedMessage.CHANNEL_NO_PERMISSION.toString());
 			mcp.setQuickChat(false);
 			mcp.getListening().remove(eventChannel.getName());
@@ -248,7 +247,7 @@ public class ChatListener implements Listener {
 		} else {
 			mcp.getListening().add(eventChannel.getName());
 		}
-		if (eventChannel.hasSpeakPermission() && !mcp.getPlayer().hasPermission(eventChannel.getSpeakPermission())) {
+		if (eventChannel.isSpeakPermissionRequired() && !mcp.getPlayer().hasPermission(eventChannel.getSpeakPermission())) {
 			mcp.getPlayer().sendMessage(LocalizedMessage.CHANNEL_NO_SPEAK_PERMISSIONS.toString());
 			mcp.setQuickChat(false);
 			return;
@@ -260,7 +259,7 @@ public class ChatListener implements Listener {
 
 		long dateTimeSeconds = System.currentTimeMillis() / FormatUtils.MILLISECONDS_PER_SECOND;
 		int chCooldown = 0;
-		if (eventChannel.hasCooldown()) {
+		if (eventChannel.getCooldown() > 0) {
 			chCooldown = eventChannel.getCooldown();
 		}
 		try {
@@ -274,7 +273,7 @@ public class ChatListener implements Listener {
 					return;
 				}
 			}
-			if (eventChannel.hasCooldown()) {
+			if (eventChannel.getCooldown() > 0) {
 				if (!mcp.getPlayer().hasPermission("venturechat.cooldown.bypass")) {
 					mcp.getCooldowns().put(eventChannel, dateTimeSeconds + chCooldown);
 				}
@@ -306,7 +305,7 @@ public class ChatListener implements Listener {
 						mcp.getPlayer().sendMessage(LocalizedMessage.MUTE_PLAYER_PLAYER_REASON.toString().replace("{channel_color}", eventChannel.getColor())
 								.replace("{channel_name}", eventChannel.getName()).replace("{reason}", LocalizedMessage.SPAM_MUTE_REASON_TEXT.toString()));
 					}
-					if (eventChannel.getBungee()) {
+					if (eventChannel.isBungeeEnabled()) {
 						pluginMessageController.synchronize(mcp, true);
 					}
 					mcp.getSpam().get(eventChannel).set(0, 0L);
@@ -333,7 +332,7 @@ public class ChatListener implements Listener {
 
 		format = FormatUtils.FormatStringAll(eventChannel.getFormat());
 
-		if (eventChannel.isFiltered() && mcp.isFilter()) {
+		if (eventChannel.isFiltered() && mcp.isFilterEnabled()) {
 			chat = formatService.filterChat(chat);
 		}
 		PluginManager pluginManager = plugin.getServer().getPluginManager();
@@ -414,11 +413,8 @@ public class ChatListener implements Listener {
 					}
 				}
 
-				double chDistance = 0D;
-				if (eventChannel.hasDistance()) {
-					chDistance = eventChannel.getDistance();
-				}
-				if (chDistance > (double) 0 && !eventChannel.getBungee() && !configService.isRangedSpy(p)) {
+				double chDistance = Math.max(eventChannel.getDistance(), 0);
+				if (chDistance > (double) 0 && !eventChannel.isBungeeEnabled() && !configService.isRangedSpy(p)) {
 					final Location locreceip = p.getPlayer().getLocation();
 					if (locreceip.getWorld() == mcp.getPlayer().getWorld()) {
 						final Location locsender = mcp.getPlayer().getLocation();
@@ -470,7 +466,7 @@ public class ChatListener implements Listener {
 		format = FormatUtils.FormatStringAll(PlaceholderAPI.setBracketPlaceholders(mcp.getPlayer(), FormatUtils.FormatStringAll(format)));
 		String message = FormatUtils.stripColor(format + chat); // UTF-8 encoding issues.
 		final VentureChatEvent ventureChatEvent = new VentureChatEvent(mcp, mcp.getName(), plugin.getVaultPermission().getPrimaryGroup(mcp.getPlayer()), eventChannel, recipients,
-				recipientCount, format, chat, globalJSON, message.hashCode(), eventChannel.getBungee());
+				recipientCount, format, chat, globalJSON, message.hashCode(), eventChannel.isBungeeEnabled());
 		plugin.getServer().getPluginManager().callEvent(ventureChatEvent);
 		handleVentureChatEvent(ventureChatEvent);
 		mcp.setQuickChat(false);
@@ -487,26 +483,19 @@ public class ChatListener implements Listener {
 		String globalJSON = event.getGlobalJSON();
 		int hash = event.getHash();
 		boolean bungee = event.isBungee();
-
-		if (essentialsDiscordHook && channel.isDefaultchannel()) {
+		if (essentialsDiscordHook && channel.isDefaultChannel()) {
 			plugin.getServer().getServicesManager().load(DiscordService.class).sendChatMessage(ventureChatPlayer.getPlayer(), chat);
 		}
-
 		if (!bungee) {
 			if (databaseService.isEnabled()) {
 				databaseService.writeVentureChat(ventureChatPlayer.getUuid().toString(), ventureChatPlayer.getName(), "Local", channel.getName(), chat.replace("'", "''"), "Chat");
 			}
-
 			if (recipientCount == 1) {
-				if (!plugin.getConfig().getString("emptychannelalert", "&6No one is listening to you.").equals("")) {
+				if (!plugin.getConfig().getString("emptychannelalert", "&6No one is listening to you.").isEmpty()) {
 					ventureChatPlayer.getPlayer().sendMessage(FormatUtils.FormatStringAll(plugin.getConfig().getString("emptychannelalert", "&6No one is listening to you.")));
 				}
 			}
-			for (Player p : recipients) {
-				String json = formatService.formatModerationGUI(globalJSON, p, ventureChatPlayer.getName(), channel.getName(), hash);
-				PacketContainer packet = formatService.createPacketPlayOutChat(json);
-				formatService.sendPacketPlayOutChat(p, packet);
-			}
+			formatService.createAndSendChatMessage(globalJSON, channel.getName(), hash, recipients, ventureChatPlayer.getName());
 			plugin.getServer().getConsoleSender().sendMessage(consoleChat);
 			return;
 		} else {

@@ -40,7 +40,7 @@ public class Unmuteall extends UniversalCommand {
 			boolean bungee = false;
 			for (ChatChannel channel : configService.getChatChannels()) {
 				player.getMutes().remove(channel.getName());
-				if (channel.getBungee()) {
+				if (channel.isBungeeEnabled()) {
 					bungee = true;
 				}
 			}

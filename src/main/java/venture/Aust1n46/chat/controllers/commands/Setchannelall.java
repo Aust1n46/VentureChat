@@ -39,7 +39,7 @@ public class Setchannelall extends UniversalCommand {
 			}
 			boolean isThereABungeeChannel = false;
 			for (ChatChannel channel : configService.getChatChannels()) {
-				if (channel.hasPermission()) {
+				if (channel.isPermissionRequired()) {
 					if (!player.isOnline()) {
 						sender.sendMessage(LocalizedMessage.PLAYER_OFFLINE_NO_PERMISSIONS_CHECK.toString());
 						return;
@@ -52,7 +52,7 @@ public class Setchannelall extends UniversalCommand {
 				} else {
 					player.getListening().add(channel.getName());
 				}
-				if (channel.getBungee()) {
+				if (channel.isBungeeEnabled()) {
 					isThereABungeeChannel = true;
 				}
 			}

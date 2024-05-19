@@ -52,11 +52,11 @@ public class Kickchannel extends UniversalCommand {
 			} else {
 				player.setModified(true);
 			}
-			boolean isThereABungeeChannel = channel.getBungee();
+			boolean isThereABungeeChannel = channel.isBungeeEnabled();
 			if (player.getListening().size() == 0) {
 				player.getListening().add(configService.getDefaultChannel().getName());
 				player.setCurrentChannel(configService.getDefaultChannel());
-				if (configService.getDefaultChannel().getBungee()) {
+				if (configService.getDefaultChannel().isBungeeEnabled()) {
 					isThereABungeeChannel = true;
 				}
 				if (player.isOnline()) {

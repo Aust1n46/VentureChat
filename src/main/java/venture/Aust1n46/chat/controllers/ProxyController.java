@@ -87,8 +87,8 @@ public class ProxyController {
 						source.sendConsoleMessage("&8[&eVentureChat&8]&c You probably have an issue with your player data saving and/or your login data sync!");
 						return;
 					}
-					smcp.clearMessagePackets();
-					smcp.clearMessageData();
+					smcp.setMessagePackets(0);
+					smcp.getMessageData().clear();
 					out.writeUTF("Chwho");
 					out.writeUTF("Get");
 					out.writeUTF(server);
@@ -110,10 +110,10 @@ public class ProxyController {
 						source.sendConsoleMessage("&8[&eVentureChat&8]&c You probably have an issue with your player data saving and/or your login data sync!");
 						return;
 					}
-					smcp.incrementMessagePackets();
+					smcp.setMessagePackets(smcp.getMessagePackets() + 1);
 					int players = in.readInt();
 					for(int a = 0; a < players; a++) {
-						smcp.addData(in.readUTF());
+						smcp.getMessageData().add(in.readUTF());
 					}
 					AtomicInteger servers = new AtomicInteger(0);
 					source.getServers().forEach(send -> {
@@ -122,7 +122,7 @@ public class ProxyController {
 						}
 					});
 					if(smcp.getMessagePackets() >= servers.get()) {
-						smcp.clearMessagePackets();
+						smcp.setMessagePackets(0);
 						out.writeUTF("Chwho");
 						out.writeUTF("Receive");
 						out.writeUTF(sender);
@@ -131,7 +131,7 @@ public class ProxyController {
 						for(String s : smcp.getMessageData()) {
 							out.writeUTF(s);
 						}
-						smcp.clearMessageData();
+						smcp.getMessageData().clear();
 						source.sendPluginMessage(server, outstream.toByteArray());
 					}	
 				}
@@ -158,7 +158,7 @@ public class ProxyController {
 						source.sendConsoleMessage("&8[&eVentureChat&8]&c You probably have an issue with your player data saving and/or your login data sync!");
 						return;
 					}
-					smcp.clearMessagePackets();
+					smcp.setMessagePackets(0);
 					out.writeUTF("Ignore");
 					out.writeUTF("Send");
 					out.writeUTF(server);
@@ -180,7 +180,7 @@ public class ProxyController {
 						source.sendConsoleMessage("&8[&eVentureChat&8]&c You probably have an issue with your player data saving and/or your login data sync!");
 						return;
 					}
-					smcp.incrementMessagePackets();
+					smcp.setMessagePackets(smcp.getMessagePackets() + 1);
 					AtomicInteger servers = new AtomicInteger(0);
 					source.getServers().forEach(send -> {
 						if(!send.isEmpty()) {
@@ -188,7 +188,7 @@ public class ProxyController {
 						}
 					});
 					if(smcp.getMessagePackets() >= servers.get()) {
-						smcp.clearMessagePackets();
+						smcp.setMessagePackets(0);
 						out.writeUTF("Ignore");
 						out.writeUTF("Offline");
 						out.writeUTF(player);
@@ -398,7 +398,7 @@ public class ProxyController {
 						source.sendConsoleMessage("&8[&eVentureChat&8]&c You probably have an issue with your player data saving and/or your login data sync!");
 						return;
 					}
-					smcp.clearMessagePackets();
+					smcp.setMessagePackets(0);
 					out.writeUTF("Message");
 					out.writeUTF("Send");
 					out.writeUTF(server);
@@ -425,7 +425,7 @@ public class ProxyController {
 						source.sendConsoleMessage("&8[&eVentureChat&8]&c You probably have an issue with your player data saving and/or your login data sync!");
 						return;
 					}
-					smcp.incrementMessagePackets();
+					smcp.setMessagePackets(smcp.getMessagePackets() + 1);
 					AtomicInteger servers = new AtomicInteger(0);
 					source.getServers().forEach(send -> {
 						if(!send.isEmpty()) {
@@ -433,7 +433,7 @@ public class ProxyController {
 						}
 					});
 					if(smcp.getMessagePackets() >= servers.get()) {
-						smcp.clearMessagePackets();
+						smcp.setMessagePackets(0);
 						out.writeUTF("Message");
 						out.writeUTF("Offline");
 						out.writeUTF(player);
@@ -507,7 +507,7 @@ public class ProxyController {
 					UUID uuid = UUID.fromString(in.readUTF());
 					SynchronizedVentureChatPlayer smcp = playerApiService.getSynchronizedMineverseChatPlayer(uuid);
 					if(smcp == null) {
-						smcp = new SynchronizedVentureChatPlayer(uuid);
+						smcp = SynchronizedVentureChatPlayer.builder().uuid(uuid).build();
 						playerApiService.addSynchronizedMineverseChatPlayerToMap(smcp);
 					}
 					out.writeUTF("Sync");
@@ -521,7 +521,7 @@ public class ProxyController {
 					int muteCount = smcp.getMutes().size();
 					//System.out.println(muteCount);
 					out.write(muteCount);
-					for(MuteContainer muteContainer : smcp.getMutes()) {
+					for(MuteContainer muteContainer : smcp.getMutes().values()) {
 						out.writeUTF(muteContainer.getChannel());
 						out.writeLong(muteContainer.getDuration());
 						out.writeUTF(muteContainer.getReason());
@@ -529,7 +529,7 @@ public class ProxyController {
 					//System.out.println(smcp.isSpy() + " spy value");
 					//System.out.println(out.size() + " size before");
 					out.writeBoolean(smcp.isSpy());
-					out.writeBoolean(smcp.getMessageToggle());
+					out.writeBoolean(smcp.isMessageToggleEnabled());
 					//System.out.println(out.size() + " size after");
 					int ignoreCount = smcp.getIgnores().size();
 					//System.out.println(ignoreCount + " ignore size");
@@ -545,16 +545,16 @@ public class ProxyController {
 					UUID uuid = UUID.fromString(in.readUTF());
 					SynchronizedVentureChatPlayer smcp = playerApiService.getSynchronizedMineverseChatPlayer(uuid);
 					if(smcp == null) {
-						smcp = new SynchronizedVentureChatPlayer(uuid);
+						smcp = SynchronizedVentureChatPlayer.builder().uuid(uuid).build();
 						playerApiService.addSynchronizedMineverseChatPlayerToMap(smcp);
 					}		
 					smcp.getListening().clear();
-					smcp.clearMutes();
+					smcp.getMutes().clear();
 					smcp.getIgnores().clear();
 					int sizeL = in.read();
 					//System.out.println(sizeL + " listening");
 					for(int a = 0; a < sizeL; a++) {
-						smcp.addListening(in.readUTF());
+						smcp.getListening().add(in.readUTF());
 					}
 					int sizeM = in.read();
 					for(int b = 0; b < sizeM; b++) {
@@ -562,16 +562,16 @@ public class ProxyController {
 						long muteTime = in.readLong();
 						String muteReason = in.readUTF();
 						//System.out.println(mute);
-						smcp.addMute(mute, muteTime, muteReason);
+						smcp.getMutes().put(mute, new MuteContainer(mute, muteTime, muteReason));
 					}
 					int sizeI = in.read();
 					for(int c = 0; c < sizeI; c++) {
 						String ignore = in.readUTF();
 						//System.out.println(mute);
-						smcp.addIgnore(playerApiService.getSynchronizedMineverseChatPlayer(UUID.fromString(ignore)));
+						smcp.getIgnores().add(UUID.fromString(ignore));
 					}
 					smcp.setSpy(in.readBoolean());
-					smcp.setMessageToggle(in.readBoolean());
+					smcp.setMessageToggleEnabled(in.readBoolean());
 				}
 			}
 		}

@@ -152,7 +152,7 @@ public class PreProcessCommandListener implements CommandExecutor, Listener {
 
 		if (!configService.areAliasesRegisteredAsCommands()) {
 			for (ChatChannel channel : configService.getChatChannels()) {
-				if (!channel.hasPermission() || mcp.getPlayer().hasPermission(channel.getPermission())) {
+				if (!channel.isPermissionRequired() || mcp.getPlayer().hasPermission(channel.getPermission())) {
 					if (message.equals("/" + channel.getAlias())) {
 						mcp.getPlayer().sendMessage(
 								LocalizedMessage.SET_CHANNEL.toString().replace("{channel_color}", channel.getColor() + "").replace("{channel_name}", channel.getName()));
@@ -169,7 +169,7 @@ public class PreProcessCommandListener implements CommandExecutor, Listener {
 						}
 						mcp.getListening().add(channel.getName());
 						mcp.setCurrentChannel(channel);
-						if (channel.getBungee()) {
+						if (channel.isBungeeEnabled()) {
 							pluginMessageController.synchronize(mcp, true);
 						}
 						event.setCancelled(true);
@@ -178,7 +178,7 @@ public class PreProcessCommandListener implements CommandExecutor, Listener {
 					if (message.toLowerCase().startsWith("/" + channel.getAlias() + " ")) {
 						message = message.substring(channel.getAlias().length() + 1);
 						mcp.getListening().add(channel.getName());
-						if (channel.getBungee()) {
+						if (channel.isBungeeEnabled()) {
 							pluginMessageController.synchronize(mcp, true);
 						}
 						mcp.setQuickChannel(channel);
@@ -218,7 +218,7 @@ public class PreProcessCommandListener implements CommandExecutor, Listener {
 				mcp.setQuickChat(true);
 				mcp.setQuickChannel(channel);
 				mcp.getListening().add(channel.getName());
-				if (channel.getBungee()) {
+				if (channel.isBungeeEnabled()) {
 					pluginMessageController.synchronize(mcp, true);
 				}
 				String msg = "";

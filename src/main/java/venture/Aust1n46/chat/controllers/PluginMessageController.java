@@ -6,15 +6,14 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
-import com.comphenix.protocol.events.PacketContainer;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
@@ -26,9 +25,9 @@ import venture.Aust1n46.chat.model.ChatChannel;
 import venture.Aust1n46.chat.model.MuteContainer;
 import venture.Aust1n46.chat.model.VentureChatPlayer;
 import venture.Aust1n46.chat.service.ConfigService;
-import venture.Aust1n46.chat.service.VentureChatDatabaseService;
 import venture.Aust1n46.chat.service.FormatService;
 import venture.Aust1n46.chat.service.PlayerApiService;
+import venture.Aust1n46.chat.service.VentureChatDatabaseService;
 import venture.Aust1n46.chat.utilities.FormatUtils;
 
 @Singleton
@@ -105,14 +104,14 @@ public class PluginMessageController {
 				int channelCount = 0;
 				for (String c : mcp.getListening()) {
 					ChatChannel channel = configService.getChannel(c);
-					if (channel.getBungee()) {
+					if (channel.isBungeeEnabled()) {
 						channelCount++;
 					}
 				}
 				out.write(channelCount);
 				for (String c : mcp.getListening()) {
 					ChatChannel channel = configService.getChannel(c);
-					if (channel.getBungee()) {
+					if (channel.isBungeeEnabled()) {
 						out.writeUTF(channel.getName());
 					}
 				}
@@ -120,7 +119,7 @@ public class PluginMessageController {
 				int muteCount = 0;
 				for (MuteContainer mute : mcp.getMutes().values()) {
 					ChatChannel channel = configService.getChannel(mute.getChannel());
-					if (channel.getBungee()) {
+					if (channel.isBungeeEnabled()) {
 						muteCount++;
 					}
 				}
@@ -128,7 +127,7 @@ public class PluginMessageController {
 				out.write(muteCount);
 				for (MuteContainer mute : mcp.getMutes().values()) {
 					ChatChannel channel = configService.getChannel(mute.getChannel());
-					if (channel.getBungee()) {
+					if (channel.isBungeeEnabled()) {
 						out.writeUTF(channel.getName());
 						out.writeLong(mute.getDuration());
 						out.writeUTF(mute.getReason());
@@ -167,69 +166,41 @@ public class PluginMessageController {
 			ByteArrayOutputStream stream = new ByteArrayOutputStream();
 			DataOutputStream out = new DataOutputStream(stream);
 			if (subchannel.equals("Chat")) {
-				String server = msgin.readUTF();
-				String chatchannel = msgin.readUTF();
-				String senderName = msgin.readUTF();
-				UUID senderUUID = UUID.fromString(msgin.readUTF());
-				int hash = msgin.readInt();
-				String format = msgin.readUTF();
-				String chat = msgin.readUTF();
-				String consoleChat = format + chat;
-				String globalJSON = msgin.readUTF();
-				String primaryGroup = msgin.readUTF();
-
-				if (!configService.isChannel(chatchannel)) {
+				final String server = msgin.readUTF();
+				final String chatChannelName = msgin.readUTF();
+				final String senderName = msgin.readUTF();
+				final UUID senderUUID = UUID.fromString(msgin.readUTF());
+				final int hash = msgin.readInt();
+				final String format = msgin.readUTF();
+				final String chat = msgin.readUTF();
+				final String consoleChat = format + chat;
+				final String globalJSON = msgin.readUTF();
+				final String primaryGroup = msgin.readUTF();
+				final ChatChannel chatChannel = configService.getChannel(chatChannelName);
+				if (chatChannel == null || !chatChannel.isBungeeEnabled()) {
 					return;
 				}
-				ChatChannel chatChannelObject = configService.getChannel(chatchannel);
-
-				if (!chatChannelObject.getBungee()) {
-					return;
-				}
-
-				Set<Player> recipients = new HashSet<Player>();
-				for (VentureChatPlayer p : playerApiService.getOnlineMineverseChatPlayers()) {
-					if (configService.isListening(p, chatChannelObject.getName())) {
-						recipients.add(p.getPlayer());
-					}
-				}
-
+				final Set<Player> recipients = playerApiService.getOnlineMineverseChatPlayers()
+					.stream()
+					.filter(vcp -> configService.isListening(vcp, chatChannelName))
+					.filter(vcp -> vcp.isBungeeToggle() || playerApiService.getOnlineMineverseChatPlayer(senderName) == null)
+					.filter(vcp -> !configService.isIgnoreChatEnabled() || !vcp.getIgnores().contains(senderUUID))
+					.map(VentureChatPlayer::getPlayer)
+					.collect(Collectors.toSet());
 				plugin.getServer().getScheduler().runTaskAsynchronously(plugin, new Runnable() {
 					@Override
 					public void run() {
-						// Create VentureChatEvent
-						VentureChatEvent ventureChatEvent = new VentureChatEvent(null, senderName, primaryGroup, chatChannelObject, recipients, recipients.size(), format, chat,
+						final VentureChatEvent ventureChatEvent = new VentureChatEvent(null, senderName, primaryGroup, chatChannel, recipients, recipients.size(), format, chat,
 								globalJSON, hash, false);
-						// Fire event and wait for other plugin listeners to act on it
+						// This event cannot be modified or cancelled
 						plugin.getServer().getPluginManager().callEvent(ventureChatEvent);
 					}
 				});
-
-				plugin.getServer().getConsoleSender().sendMessage(consoleChat);
-
 				if (databaseService.isEnabled()) {
-					databaseService.writeVentureChat(senderUUID.toString(), senderName, server, chatchannel, chat.replace("'", "''"), "Chat");
+					databaseService.writeVentureChat(senderUUID.toString(), senderName, server, chatChannelName, chat.replace("'", "''"), "Chat");
 				}
-
-				for (VentureChatPlayer p : playerApiService.getOnlineMineverseChatPlayers()) {
-					if (configService.isListening(p, chatChannelObject.getName())) {
-						if (!p.isBungeeToggle() && playerApiService.getOnlineMineverseChatPlayer(senderName) == null) {
-							continue;
-						}
-
-						String json = formatService.formatModerationGUI(globalJSON, p.getPlayer(), senderName, chatchannel, hash);
-						PacketContainer packet = formatService.createPacketPlayOutChat(json);
-
-						if (plugin.getConfig().getBoolean("ignorechat", false)) {
-							if (!p.getIgnores().contains(senderUUID)) {
-								// System.out.println("Chat sent");
-								formatService.sendPacketPlayOutChat(p.getPlayer(), packet);
-							}
-							continue;
-						}
-						formatService.sendPacketPlayOutChat(p.getPlayer(), packet);
-					}
-				}
+				formatService.createAndSendChatMessage(globalJSON, chatChannelName, hash, recipients, senderName);
+				plugin.getServer().getConsoleSender().sendMessage(consoleChat);
 			}
 			if (subchannel.equals("DiscordSRV")) {
 				String chatChannel = msgin.readUTF();
@@ -238,20 +209,10 @@ public class PluginMessageController {
 					return;
 				}
 				ChatChannel chatChannelObj = configService.getChannel(chatChannel);
-				if (!chatChannelObj.getBungee()) {
+				if (!chatChannelObj.isBungeeEnabled()) {
 					return;
 				}
-
-				String json = formatService.convertPlainTextToJson(message, true);
-				int hash = (message.replaceAll("([�]([a-z0-9]))", "")).hashCode();
-
-				for (VentureChatPlayer p : playerApiService.getOnlineMineverseChatPlayers()) {
-					if (configService.isListening(p, chatChannelObj.getName())) {
-						String finalJSON = formatService.formatModerationGUI(json, p.getPlayer(), "Discord", chatChannelObj.getName(), hash);
-						PacketContainer packet = formatService.createPacketPlayOutChat(finalJSON);
-						formatService.sendPacketPlayOutChat(p.getPlayer(), packet);
-					}
-				}
+				formatService.createAndSendExternalChatMessage(message, chatChannelObj.getName(), "Discord");
 			}
 			if (subchannel.equals("PlayerNames")) {
 				playerApiService.clearNetworkPlayerNames();
@@ -323,7 +284,7 @@ public class PluginMessageController {
 				for (Object ch : p.getListening().toArray()) {
 					String c = ch.toString();
 					ChatChannel cha = configService.getChannel(c);
-					if (cha.getBungee()) {
+					if (cha.isBungeeEnabled()) {
 						p.getListening().remove(c);
 					}
 				}
@@ -332,12 +293,12 @@ public class PluginMessageController {
 					String ch = msgin.readUTF();
 					if (configService.isChannel(ch)) {
 						ChatChannel cha = configService.getChannel(ch);
-						if (!cha.hasPermission() || p.getPlayer().hasPermission(cha.getPermission())) {
+						if (!cha.isPermissionRequired() || p.getPlayer().hasPermission(cha.getPermission())) {
 							p.getListening().add(ch);
 						}
 					}
 				}
-				p.getMutes().values().removeIf(mute -> configService.getChannel(mute.getChannel()).getBungee());
+				p.getMutes().values().removeIf(mute -> configService.getChannel(mute.getChannel()).isBungeeEnabled());
 				int sizeB = msgin.read();
 				// System.out.println(sizeB + " mute size");
 				for (int b = 0; b < sizeB; b++) {
@@ -366,9 +327,9 @@ public class PluginMessageController {
 				if (!p.isHasPlayed()) {
 					boolean isThereABungeeChannel = false;
 					for (ChatChannel ch : configService.getAutojoinList()) {
-						if ((!ch.hasPermission() || p.getPlayer().hasPermission(ch.getPermission())) && !configService.isListening(p, ch.getName())) {
+						if ((!ch.isPermissionRequired() || p.getPlayer().hasPermission(ch.getPermission())) && !configService.isListening(p, ch.getName())) {
 							p.getListening().add(ch.getName());
-							if (ch.getBungee()) {
+							if (ch.isBungeeEnabled()) {
 								isThereABungeeChannel = true;
 							}
 						}

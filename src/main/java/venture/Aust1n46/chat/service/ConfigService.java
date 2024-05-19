@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 
+import org.bukkit.ChatColor;
 import org.bukkit.configuration.ConfigurationSection;
 
 import com.google.inject.Inject;
@@ -25,6 +26,8 @@ import venture.Aust1n46.chat.utilities.FormatUtils;
 
 @Singleton
 public class ConfigService {
+	private static final String PERMISSION_PREFIX = "venturechat.";
+	
 	@Inject
 	private VentureChat plugin;
 
@@ -35,31 +38,45 @@ public class ConfigService {
 	private boolean aliasesRegisteredAsCommands;
 	private ChatChannel defaultChatChannel;
 	private String defaultColor;
-	
+
+	@Getter
+	private boolean ignoreChatEnabled;
 	@Getter
 	private List<Filter> filters;
+	
+	public String getValidColor(final String colorRaw) {
+		if (FormatUtils.isValidColor(colorRaw)) {
+			return String.valueOf(ChatColor.valueOf(colorRaw.toUpperCase()));
+		}
+		if (FormatUtils.isValidHexColor(colorRaw)) {
+			return FormatUtils.convertHexColorCodeToBukkitColorCode(colorRaw);
+		}
+		return FormatUtils.DEFAULT_COLOR_CODE;
+	}
 
 	@Inject
 	public void postConstruct() {
 		aliasesRegisteredAsCommands = true;
 		ConfigurationSection cs = plugin.getConfig().getConfigurationSection("channels");
-		for (String key : cs.getKeys(false)) {
-			String color = cs.getString(key + ".color", "white");
-			String chatColor = cs.getString(key + ".chatcolor", "white");
-			String name = key;
-			String permission = cs.getString(key + ".permissions", "None");
-			String speakPermission = cs.getString(key + ".speak_permissions", "None");
-			boolean mutable = cs.getBoolean(key + ".mutable", false);
-			boolean filter = cs.getBoolean(key + ".filter", true);
-			boolean bungee = cs.getBoolean(key + ".bungeecord", false);
-			String format = cs.getString(key + ".format", "Default");
-			boolean defaultChannel = cs.getBoolean(key + ".default", false);
-			String alias = cs.getString(key + ".alias", "None");
-			double distance = cs.getDouble(key + ".distance", (double) 0);
-			int cooldown = cs.getInt(key + ".cooldown", 0);
-			boolean autojoin = cs.getBoolean(key + ".autojoin", false);
-			String prefix = cs.getString(key + ".channel_prefix");
-			ChatChannel chatChannel = new ChatChannel(name, color, chatColor, permission, speakPermission, mutable, filter, defaultChannel, alias, distance, autojoin, bungee,
+		for (final String key : cs.getKeys(false)) {
+			final String colorRaw = cs.getString(key + ".color", "white");
+			final String chatColorRaw = cs.getString(key + ".chatcolor", "white");
+			final String name = key;
+			final String permission = PERMISSION_PREFIX + cs.getString(key + ".permissions", "None");
+			final String speakPermission = PERMISSION_PREFIX + cs.getString(key + ".speak_permissions", "None");
+			final boolean mutable = cs.getBoolean(key + ".mutable", false);
+			final boolean filter = cs.getBoolean(key + ".filter", true);
+			final boolean bungee = cs.getBoolean(key + ".bungeecord", false);
+			final String format = cs.getString(key + ".format", "Default");
+			final boolean defaultChannel = cs.getBoolean(key + ".default", false);
+			final String alias = cs.getString(key + ".alias", "None");
+			final double distance = cs.getDouble(key + ".distance", (double) 0);
+			final int cooldown = cs.getInt(key + ".cooldown", 0);
+			final boolean autojoin = cs.getBoolean(key + ".autojoin", false);
+			final String prefix = cs.getString(key + ".channel_prefix");
+			final String color = getValidColor(colorRaw);
+			final String chatColor = chatColorRaw.equalsIgnoreCase("None") ? "None" : getValidColor(chatColorRaw);
+			final ChatChannel chatChannel = new ChatChannel(name, color, colorRaw, chatColor, chatColorRaw, permission, speakPermission, mutable, filter, defaultChannel, alias, distance, autojoin, bungee,
 					cooldown, prefix, format);
 			chatChannels.put(name.toLowerCase(), chatChannel);
 			chatChannels.put(alias.toLowerCase(), chatChannel);
@@ -71,7 +88,7 @@ public class ConfigService {
 		// Error handling for missing default channel in the config.
 		if (defaultChatChannel == null) {
 			plugin.getServer().getConsoleSender().sendMessage(FormatUtils.FormatStringAll("&8[&eVentureChat&8]&e - &cNo default channel found!"));
-			defaultChatChannel = new ChatChannel("MissingDefault", "red", "red", "None", "None", false, true, true, "md", 0, true, false, 0, "&f[&cMissingDefault&f]",
+			defaultChatChannel = new ChatChannel("MissingDefault", "red", "RED", "red", "RED", ChatChannel.NO_PERMISSIONS, ChatChannel.NO_PERMISSIONS, false, true, true, "md", 0, true, false, 0, "&f[&cMissingDefault&f]",
 					"{venturechat_channel_prefix} {vault_prefix}{player_displayname}&c:");
 			defaultColor = defaultChatChannel.getColor();
 			chatChannels.put("missingdefault", defaultChatChannel);
@@ -124,6 +141,8 @@ public class ConfigService {
 				.map(x -> x.split(","))
 				.map(x -> new Filter(x[0], x[1]))
 				.toList();
+		
+		ignoreChatEnabled = plugin.getConfig().getBoolean("ignorechat", false);
 	}
 
 	public boolean areAliasesRegisteredAsCommands() {
@@ -164,9 +183,9 @@ public class ConfigService {
 		if (ventureChatPlayer.isOnline()) {
 			if (isChannel(channel)) {
 				ChatChannel chatChannel = getChannel(channel);
-				if (chatChannel.hasPermission()) {
+				if (chatChannel.isPermissionRequired()) {
 					if (!ventureChatPlayer.getPlayer().hasPermission(chatChannel.getPermission())) {
-						if (ventureChatPlayer.getCurrentChannel().equals(chatChannel)) {
+						if (ventureChatPlayer.getCurrentChannel().getName().equals(channel)) {
 							ventureChatPlayer.setCurrentChannel(getDefaultChannel());
 						}
 						ventureChatPlayer.getListening().remove(channel);
@@ -237,7 +256,7 @@ public class ConfigService {
 	public List<ChatChannel> getAutojoinList() {
 		List<ChatChannel> joinlist = new ArrayList<ChatChannel>();
 		for (ChatChannel c : chatChannels.values()) {
-			if (c.getAutojoin()) {
+			if (c.isAutoJoinEnabled()) {
 				joinlist.add(c);
 			}
 		}

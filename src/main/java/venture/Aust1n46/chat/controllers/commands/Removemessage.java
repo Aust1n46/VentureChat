@@ -70,7 +70,7 @@ public class Removemessage extends UniversalCommand {
 			sender.sendMessage(LocalizedMessage.INVALID_HASH.toString());
 			return;
 		}
-		if (args.length > 1 && configService.isChannel(args[1]) && configService.getChannel(args[1]).getBungee()) {
+		if (args.length > 1 && configService.isChannel(args[1]) && configService.getChannel(args[1]).isBungeeEnabled()) {
 			ByteArrayOutputStream byteOutStream = new ByteArrayOutputStream();
 			DataOutputStream out = new DataOutputStream(byteOutStream);
 			try {

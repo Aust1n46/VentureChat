@@ -9,6 +9,7 @@ import static venture.Aust1n46.chat.utilities.FormatUtils.HEX_COLOR_CODE_PREFIX;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -437,7 +438,7 @@ public class FormatService {
 		return s.replace("\\", "\\\\").replace("\"", "\\\"");
 	}
 
-	public String formatModerationGUI(String json, Player player, String sender, String channelName, int hash) {
+	private String formatModerationGUI(String json, Player player, String sender, String channelName, int hash) {
 		if (player.hasPermission("venturechat.gui")) {
 			json = json.substring(0, json.length() - 1);
 			json += "," + convertToJsonColors(FormatUtils.FormatStringAll(plugin.getConfig().getString("guiicon")),
@@ -500,6 +501,27 @@ public class FormatService {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+	}
+
+	public void createAndSendChatMessage(final String json, final String channelName, final int hash, final Set<Player> recipients, final String sender) {
+		for (final Player player : recipients) {
+			final String finalJson = formatModerationGUI(json, player, sender, channelName, hash);
+			final PacketContainer packet = createPacketPlayOutChat(finalJson);
+			sendPacketPlayOutChat(player, packet);
+		}
+	}
+
+	public void createAndSendExternalChatMessage(final String message, final String channelName, final String sender) {
+		final String json = convertPlainTextToJson(message, true);
+		final int hash = FormatUtils.stripColor(message).hashCode();
+		playerApiService.getOnlineMineverseChatPlayers()
+			.stream()
+			.filter(vcp -> configService.isListening(vcp, channelName))
+			.forEach(vcp -> {
+				final String finalJSON = formatModerationGUI(json, vcp.getPlayer(), sender, channelName, hash);
+				final PacketContainer packet = createPacketPlayOutChat(finalJSON);
+				sendPacketPlayOutChat(vcp.getPlayer(), packet);
+			});
 	}
 
 	@SuppressWarnings("unchecked")

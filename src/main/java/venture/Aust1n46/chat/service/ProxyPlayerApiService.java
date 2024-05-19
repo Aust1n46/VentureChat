@@ -13,7 +13,7 @@ public class ProxyPlayerApiService {
 	private final HashMap<UUID, SynchronizedVentureChatPlayer> proxyPlayerMap = new HashMap<>();
 
 	public void addSynchronizedMineverseChatPlayerToMap(SynchronizedVentureChatPlayer smcp) {
-		proxyPlayerMap.put(smcp.getUUID(), smcp);
+		proxyPlayerMap.put(smcp.getUuid(), smcp);
 	}
 
 	public void clearProxyPlayerMap() {

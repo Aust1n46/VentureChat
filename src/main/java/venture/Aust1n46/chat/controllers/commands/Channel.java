@@ -51,7 +51,7 @@ public class Channel extends PlayerCommand {
 			return;
 		ChatChannel channel = event.getChannel();
 		VentureChatPlayer mcp = playerApiService.getOnlineMineverseChatPlayer(event.getPlayer());
-		if (channel.hasPermission()) {
+		if (channel.isPermissionRequired()) {
 			if (!mcp.getPlayer().hasPermission(channel.getPermission())) {
 				mcp.getListening().remove(channel.getName());
 				mcp.getPlayer().sendMessage(LocalizedMessage.CHANNEL_NO_PERMISSION.toString());
@@ -72,7 +72,7 @@ public class Channel extends PlayerCommand {
 		mcp.getListening().add(channel.getName());
 		mcp.setCurrentChannel(channel);
 		mcp.getPlayer().sendMessage(event.getMessage());
-		if (channel.getBungee()) {
+		if (channel.isBungeeEnabled()) {
 			pluginMessageController.synchronize(mcp, true);
 		}
 	}

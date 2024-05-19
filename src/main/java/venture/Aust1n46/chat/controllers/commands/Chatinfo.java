@@ -81,7 +81,7 @@ public class Chatinfo extends UniversalCommand {
 					} else {
 						mcp.getPlayer().sendMessage(ChatColor.GOLD + "Ranged spy: " + ChatColor.RED + "false");
 					}
-					if (mcp.isFilter()) {
+					if (mcp.isFilterEnabled()) {
 						mcp.getPlayer().sendMessage(ChatColor.GOLD + "Filter: " + ChatColor.GREEN + "true");
 					} else {
 						mcp.getPlayer().sendMessage(ChatColor.GOLD + "Filter: " + ChatColor.RED + "false");
@@ -141,7 +141,7 @@ public class Chatinfo extends UniversalCommand {
 				} else {
 					sender.sendMessage(ChatColor.GOLD + "Ranged spy: " + ChatColor.RED + "false");
 				}
-				if (p.isFilter()) {
+				if (p.isFilterEnabled()) {
 					sender.sendMessage(ChatColor.GOLD + "Filter: " + ChatColor.GREEN + "true");
 				} else {
 					sender.sendMessage(ChatColor.GOLD + "Filter: " + ChatColor.RED + "false");

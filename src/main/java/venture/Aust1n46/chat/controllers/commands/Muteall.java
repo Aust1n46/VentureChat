@@ -52,7 +52,7 @@ public class Muteall extends UniversalCommand {
 				for (ChatChannel channel : configService.getChatChannels()) {
 					if (channel.isMutable()) {
 						player.getMutes().put(channel.getName(), new MuteContainer(channel.getName(), 0, ""));
-						if (channel.getBungee()) {
+						if (channel.isBungeeEnabled()) {
 							bungee = true;
 						}
 					}
@@ -71,7 +71,7 @@ public class Muteall extends UniversalCommand {
 				for (ChatChannel channel : configService.getChatChannels()) {
 					if (channel.isMutable()) {
 						player.getMutes().put(channel.getName(), new MuteContainer(channel.getName(), 0, reason));
-						if (channel.getBungee()) {
+						if (channel.isBungeeEnabled()) {
 							bungee = true;
 						}
 					}

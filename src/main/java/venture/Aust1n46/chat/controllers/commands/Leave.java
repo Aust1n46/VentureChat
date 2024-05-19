@@ -37,11 +37,11 @@ public class Leave extends PlayerCommand {
 			}
 			mcp.getListening().remove(channel.getName());
 			mcp.getPlayer().sendMessage(LocalizedMessage.LEAVE_CHANNEL.toString().replace("{channel_color}", channel.getColor() + "").replace("{channel_name}", channel.getName()));
-			boolean isThereABungeeChannel = channel.getBungee();
+			boolean isThereABungeeChannel = channel.isBungeeEnabled();
 			if (mcp.getListening().size() == 0) {
 				mcp.getListening().add(configService.getDefaultChannel().getName());
 				mcp.setCurrentChannel(configService.getDefaultChannel());
-				if (configService.getDefaultChannel().getBungee()) {
+				if (configService.getDefaultChannel().isBungeeEnabled()) {
 					isThereABungeeChannel = true;
 				}
 				mcp.getPlayer().sendMessage(LocalizedMessage.MUST_LISTEN_ONE_CHANNEL.toString());
