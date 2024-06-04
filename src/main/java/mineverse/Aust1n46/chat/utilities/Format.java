@@ -172,42 +172,115 @@ public class Format {
      * @return {@link String}
      */
 	private static String convertLinks(String s) {
-		String remaining = s;
-		String temp = "";
-		int indexLink = -1;
-		int indexLinkEnd = -1;
-		String link = "";
 		String lastCode = DEFAULT_COLOR_CODE;
+		StringBuilder result = new StringBuilder();
 
+		Pattern formattingPattern = Pattern.compile("(?i)(?:(" + BUKKIT_COLOR_CODE_PREFIX + "[0-9A-FK-OR])|" + // legacy §<color>
+				"(" + BUKKIT_COLOR_CODE_PREFIX + "x(?>" + BUKKIT_COLOR_CODE_PREFIX + "[0-9a-f]){6}))"); // hex
+		Matcher formattingMatcher = formattingPattern.matcher(s);
 
-		do {
-			UrlDetector parser = new UrlDetector(remaining, UrlDetectorOptions.Default);
-			List<Url> links = parser.detect();
-			if (!links.isEmpty()) {
-				String l = links.get(0).getOriginalUrl();
-				indexLink = remaining.indexOf(l);
-				indexLinkEnd = indexLink + l.length();
-				link = remaining.substring(indexLink, indexLinkEnd);
-				temp += convertToJsonColors(lastCode + remaining.substring(0, indexLink)) + ",";
-				lastCode = getLastCode(lastCode + remaining.substring(0, indexLink));
-				String https = "";
-				if (ChatColor.stripColor(link).contains("https://"))
-					https = "s";
-				temp += convertToJsonColors(lastCode + link,
-						",\"underlined\":" + underlineURLs()
-								+ ",\"clickEvent\":{\"action\":\"open_url\",\"value\":\"http" + https + "://"
-								+ ChatColor.stripColor(link.replace("http://", "").replace("https://", ""))
+		if (formattingMatcher.find()) {
+			// be warned \u00A7 aka § may not be a valid url char,
+			// BUT if theChatColor.COLOR_CHAR ever changes this could break!
+			// like using alternative formatting characters as ampersands WILL break!
+			String remainingStripped = ChatColor.stripColor(s);
+
+			UrlDetector parser = new UrlDetector(remainingStripped, UrlDetectorOptions.Default);
+
+			int startIndexStripped = 0;
+			int indexLinkStripped;
+			int indexLinkStrippedEnd;
+
+			int formattingStartIndex = 0;
+			int indexLinkFormatted;
+			int indexLinkFormattedEnd;
+			int sizeOfFormatting = 0;
+
+			int workingIndex;
+			String formattingCodeNow = lastCode;
+
+			for (Url url : parser.detect()) {
+				String strippedLink = url.getOriginalUrl();
+
+				indexLinkStripped = remainingStripped.indexOf(strippedLink, startIndexStripped);
+				indexLinkStrippedEnd = indexLinkStripped + strippedLink.length();
+
+				if (formattingMatcher.hasMatch() && // second loop +
+					(formattingMatcher.end() - sizeOfFormatting <= indexLinkStripped)) {
+					do {
+						formattingCodeNow = formattingMatcher.group();
+						sizeOfFormatting += formattingMatcher.group().length();
+
+						workingIndex = formattingMatcher.end() + 1;
+					} while (formattingMatcher.find(workingIndex) && formattingMatcher.end() - sizeOfFormatting
+							- formattingMatcher.group().length() <= indexLinkStripped);
+				}
+
+				indexLinkFormatted = indexLinkStripped + sizeOfFormatting;
+				result.append(convertToJsonColors(lastCode + s.substring(formattingStartIndex, indexLinkFormatted)))
+						.append(",");
+				lastCode = formattingCodeNow;
+
+				// find formatting in the link
+				if (formattingMatcher.hasMatch()
+						&& (formattingMatcher.end() - sizeOfFormatting <= indexLinkStrippedEnd)) {
+					do {
+						formattingCodeNow = formattingMatcher.group();
+						sizeOfFormatting += formattingMatcher.group().length();
+
+						workingIndex = formattingMatcher.end() + 1;
+					} while (formattingMatcher.find(workingIndex) && (formattingMatcher.end() - sizeOfFormatting
+							- formattingMatcher.group().length() <= indexLinkStrippedEnd));
+				}
+
+				indexLinkFormattedEnd = indexLinkStrippedEnd + sizeOfFormatting;
+				formattingStartIndex = indexLinkFormattedEnd + 1;
+				startIndexStripped = indexLinkStrippedEnd + 1;
+
+				String formattedLink = s.substring(indexLinkFormatted, indexLinkFormattedEnd);
+
+				result.append(convertToJsonColors(lastCode + formattedLink,
+						",\"underlined\":" + underlineURLs() + ",\"clickEvent\":{\"action\":\"open_url\",\"value\":\""
+								+ url.getFullUrl()
 								+ "\"},\"hoverEvent\":{\"action\":\"show_text\",\"value\":{\"text\":\"\",\"extra\":["
-								+ convertToJsonColors(lastCode + link) + "]}}")
-						+ ",";
-				lastCode = getLastCode(lastCode + link);
-				remaining = remaining.substring(indexLinkEnd);
-			} else {
-				temp += convertToJsonColors(lastCode + remaining);
-				break;
+								+ convertToJsonColors(lastCode + formattedLink) + "]}}"))
+						.append(",");
+
+				lastCode = formattingCodeNow;
 			}
-		} while (true);
-		return temp;
+
+			if (formattingStartIndex < s.length()) { // don't overflow in case we ended with a link
+				result.append(convertToJsonColors(lastCode + s.substring(formattingStartIndex)));
+			}
+
+		} else { // easy, no formatting!
+			UrlDetector parser = new UrlDetector(s, UrlDetectorOptions.Default);
+			int startIndex = 0;
+			int indexLink;
+			int indexLinkEnd;
+
+			for (Url url : parser.detect()) {
+				String link = url.getOriginalUrl();
+
+				indexLink = s.indexOf(link, startIndex);
+				indexLinkEnd = indexLink + link.length();
+
+				result.append(convertToJsonColors(lastCode + s.substring(startIndex, indexLink))).append(",")
+						.append(convertToJsonColors(lastCode + link, ",\"underlined\":" + underlineURLs()
+								+ ",\"clickEvent\":{\"action\":\"open_url\",\"value\":\"" + url.getFullUrl()
+								+ "\"},\"hoverEvent\":{\"action\":\"show_text\",\"value\":{\"text\":\"\",\"extra\":["
+								+ convertToJsonColors(lastCode + link) + "]}}"))
+						.append(",");
+
+				startIndex = indexLinkEnd +1;
+			}
+
+			if (startIndex < s.length()) { // don't overflow in case we ended with a link
+				result.append(convertToJsonColors(lastCode + s.substring(startIndex)));
+			}
+		}
+
+		return result.toString();
 	}
 
 	public static String getLastCode(String s) {

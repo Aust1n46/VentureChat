@@ -3,4 +3,4 @@ main: mineverse.Aust1n46.chat.proxy.VentureChatBungee
 version: ${project.version}
 author: Aust1n46
 libraries:
-  - com.linkedin.urls:url-detector:0.1.17
+  - io.github.url-detector:url-detector:0.1.23
