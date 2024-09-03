@@ -175,22 +175,31 @@ public class Format {
 		String lastCode = DEFAULT_COLOR_CODE;
 		StringBuilder result = new StringBuilder();
 
-		Pattern formattingPattern = Pattern.compile("(?i)(?:(" + BUKKIT_COLOR_CODE_PREFIX + "[0-9A-FK-OR])|" + // legacy §<color>
-				"(" + BUKKIT_COLOR_CODE_PREFIX + "x(?>" + BUKKIT_COLOR_CODE_PREFIX + "[0-9a-f]){6}))"); // hex
+		// matches all bukkit formatting codes
+		final Pattern formattingPattern = Pattern.compile("(?i)(?:" + // ignore casing
+			"(?<colour>" + BUKKIT_COLOR_CODE_PREFIX + "[0-9A-F])|" + // legacy §<color>
+			"(?<format>" + BUKKIT_COLOR_CODE_PREFIX + "[K-O])|" + // legacy §<formatting>
+			"(?<reset>" + BUKKIT_COLOR_CODE_PREFIX + "R)|" + // reset all formatting with §r
+			"(?<hex>" + BUKKIT_COLOR_CODE_PREFIX + "x(?>" + BUKKIT_COLOR_CODE_PREFIX + "[0-9a-f]){6}))"); // hex §x§0§0§0§0§0§0
 		Matcher formattingMatcher = formattingPattern.matcher(s);
 
+		// check whenever the String contains any formatting codes,
+		// as the code is way simpler when there are none
 		if (formattingMatcher.find()) {
 			// be warned \u00A7 aka § may not be a valid url char,
 			// BUT if theChatColor.COLOR_CHAR ever changes this could break!
 			// like using alternative formatting characters as ampersands WILL break!
 			String remainingStripped = ChatColor.stripColor(s);
 
+			// this parser will find all links in the stripped link
 			UrlDetector parser = new UrlDetector(remainingStripped, UrlDetectorOptions.Default);
 
+			// indexes in the stripped string
 			int startIndexStripped = 0;
 			int indexLinkStripped;
 			int indexLinkStrippedEnd;
 
+			// indexes in the formatted string
 			int formattingStartIndex = 0;
 			int indexLinkFormatted;
 			int indexLinkFormattedEnd;
@@ -199,16 +208,31 @@ public class Format {
 			int workingIndex;
 			String formattingCodeNow = lastCode;
 
+			// the reason why formatting is so complicated when mixing UrlDetector with formatting codes is,
+			// that we don't know where the link in the raw formatted string starts or ends
+			// and the formatting will interfere with detecting the url correctly.
+			// the solution: walking through the raw string s, comparing indexes with the stripped one before
+			// and in the current url.
+			// and remember before the current url is after and therefor between the last and the current one
 			for (Url url : parser.detect()) {
 				String strippedLink = url.getOriginalUrl();
 
+				// get the starting and end index of the url
 				indexLinkStripped = remainingStripped.indexOf(strippedLink, startIndexStripped);
 				indexLinkStrippedEnd = indexLinkStripped + strippedLink.length();
 
-				if (formattingMatcher.hasMatch() && // second loop +
+				// get how many characters before the url are formatting and fetch the formatting code at the start of the url
+				if (formattingMatcher.hasMatch() &&
 					(formattingMatcher.end() - sizeOfFormatting <= indexLinkStripped)) {
 					do {
-						formattingCodeNow = formattingMatcher.group();
+						if (formattingMatcher.group("colour") != null || formattingMatcher.group("hex") != null) {
+							formattingCodeNow = formattingMatcher.group();
+						} else if (formattingMatcher.group("format") != null) {
+							formattingCodeNow += formattingMatcher.group();
+						} else if (formattingMatcher.group("reset") != null) {
+							formattingCodeNow = DEFAULT_COLOR_CODE;
+						}
+
 						sizeOfFormatting += formattingMatcher.group().length();
 
 						workingIndex = formattingMatcher.end() + 1;
@@ -216,16 +240,24 @@ public class Format {
 							- formattingMatcher.group().length() <= indexLinkStripped);
 				}
 
+				// this is the index where the link starts in the formatted string and the reason why we don't just use getLastCode(<String>)
 				indexLinkFormatted = indexLinkStripped + sizeOfFormatting;
+				// add the formatted string before this link to the result
 				result.append(convertToJsonColors(lastCode + s.substring(formattingStartIndex, indexLinkFormatted)))
 						.append(",");
-				lastCode = formattingCodeNow;
+				lastCode = formattingCodeNow; // this is the formatting at the start of the url
 
 				// find formatting in the link
 				if (formattingMatcher.hasMatch()
 						&& (formattingMatcher.end() - sizeOfFormatting <= indexLinkStrippedEnd)) {
 					do {
-						formattingCodeNow = formattingMatcher.group();
+						if (formattingMatcher.group("colour") != null || formattingMatcher.group("hex") != null) {
+							formattingCodeNow = formattingMatcher.group();
+						} else if (formattingMatcher.group("format") != null) {
+							formattingCodeNow += formattingMatcher.group();
+						} else if (formattingMatcher.group("reset") != null) {
+							formattingCodeNow = DEFAULT_COLOR_CODE;
+						}
 						sizeOfFormatting += formattingMatcher.group().length();
 
 						workingIndex = formattingMatcher.end() + 1;
@@ -233,10 +265,13 @@ public class Format {
 							- formattingMatcher.group().length() <= indexLinkStrippedEnd));
 				}
 
+				// end index of the link in the raw string == end index in the stripped one + size of all formatting
 				indexLinkFormattedEnd = indexLinkStrippedEnd + sizeOfFormatting;
+				// next link can only ever start directly behind this one
 				formattingStartIndex = indexLinkFormattedEnd + 1;
 				startIndexStripped = indexLinkStrippedEnd + 1;
 
+				// get the url with all formatting codes
 				String formattedLink = s.substring(indexLinkFormatted, indexLinkFormattedEnd);
 
 				result.append(convertToJsonColors(lastCode + formattedLink,
@@ -253,7 +288,7 @@ public class Format {
 				result.append(convertToJsonColors(lastCode + s.substring(formattingStartIndex)));
 			}
 
-		} else { // easy, no formatting!
+		} else { // easy, no formatting! Just find the urls and insert them formatted
 			UrlDetector parser = new UrlDetector(s, UrlDetectorOptions.Default);
 			int startIndex = 0;
 			int indexLink;
