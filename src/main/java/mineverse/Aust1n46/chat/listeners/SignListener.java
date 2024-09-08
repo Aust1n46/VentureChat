@@ -19,13 +19,13 @@ public class SignListener implements Listener {
 		MineverseChatPlayer mcp = MineverseChatAPI.getOnlineMineverseChatPlayer(event.getPlayer());
 		for(int a = 0; a < event.getLines().length; a++) {
 			String line = event.getLine(a);
-			if(mcp.getPlayer().hasPermission("venturechat.color.legacy")) {
+			if(mcp.getPlayer().hasPermission("venturechat.sign.color.legacy")) {
 				line = Format.FormatStringLegacyColor(line);
 			}
-			if(mcp.getPlayer().hasPermission("venturechat.color")) {
+			if(mcp.getPlayer().hasPermission("venturechat.sign.color")) {
 				line = Format.FormatStringColor(line);
 			}
-			if(mcp.getPlayer().hasPermission("venturechat.format")) {
+			if(mcp.getPlayer().hasPermission("venturechat.sign.format")) {
 				line = Format.FormatString(line);
 			}
 			event.setLine(a, line);
