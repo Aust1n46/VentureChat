@@ -447,7 +447,7 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 						if(getConfig().getBoolean("ignorechat", false)) {
 							if(!p.getIgnores().contains(senderUUID)) {
 								// System.out.println("Chat sent");
-								Format.sendPacketPlayOutChat(p.getPlayer(), packet);					
+								Format.sendPacketPlayOutChat(p.getPlayer(), packet);
 							}
 							continue;
 						}
