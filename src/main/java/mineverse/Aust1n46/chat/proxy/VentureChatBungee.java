@@ -105,6 +105,9 @@ public class VentureChatBungee extends Plugin implements Listener, VentureChatPr
 		if(!event.getTag().equals(VentureChatProxy.PLUGIN_MESSAGING_CHANNEL_STRING) && !event.getTag().contains("viaversion:")) {
 			return;
 		}
+		// Critical to prevent client from sending or receiving messages
+		event.setCancelled(true);
+
 		if(!(event.getSender() instanceof Server)) {
 			return;
 		}
