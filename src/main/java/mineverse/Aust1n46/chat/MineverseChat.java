@@ -78,6 +78,17 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 	// Vault
 	private static Permission permission = null;
 	private static Chat chat = null;
+
+	// TODO: This won't be so poorly done in the 4.0.0 branch I promise...
+	public static boolean isConnectedToProxy() {
+		try {
+			final MineverseChat plugin = MineverseChat.getInstance();
+			return (plugin.getServer().spigot().getConfig().getBoolean("settings.bungeecord")
+					|| plugin.getServer().spigot().getPaperConfig().getBoolean("settings.velocity-support.enabled")
+					|| plugin.getServer().spigot().getPaperConfig().getBoolean("proxies.velocity.enabled"));
+		} catch (final NoSuchMethodError ignored) {} // Thrown if server isn't Paper.
+		return false;
+	}
 	
 	@Override
 	public void onEnable() {
@@ -125,10 +136,12 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 		registerListeners();
 		Bukkit.getConsoleSender().sendMessage(Format.FormatStringAll("&8[&eVentureChat&8]&e - Registering Listeners"));
 		Bukkit.getConsoleSender().sendMessage(Format.FormatStringAll("&8[&eVentureChat&8]&e - Attaching to Executors"));
-		
-		Bukkit.getConsoleSender().sendMessage(Format.FormatStringAll("&8[&eVentureChat&8]&e - Establishing BungeeCord"));
-		Bukkit.getMessenger().registerOutgoingPluginChannel(this, PLUGIN_MESSAGING_CHANNEL);
-		Bukkit.getMessenger().registerIncomingPluginChannel(this, PLUGIN_MESSAGING_CHANNEL, this);
+
+		if (MineverseChat.isConnectedToProxy()) {
+			Bukkit.getConsoleSender().sendMessage(Format.FormatStringAll("&8[&eVentureChat&8]&e - Establishing BungeeCord"));
+			Bukkit.getMessenger().registerOutgoingPluginChannel(this, PLUGIN_MESSAGING_CHANNEL);
+			Bukkit.getMessenger().registerIncomingPluginChannel(this, PLUGIN_MESSAGING_CHANNEL, this);
+		}
 		
 		PluginManager pluginManager = getServer().getPluginManager();
 		if(pluginManager.isPluginEnabled("Towny")) {
@@ -363,6 +376,9 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 
 	@Override
 	public void onPluginMessageReceived(String channel, Player player, byte[] inputStream) {
+		if (!MineverseChat.isConnectedToProxy()) {
+			return;
+		}
 		if(!channel.equals(PLUGIN_MESSAGING_CHANNEL)) {
 			return;
 		}
@@ -431,7 +447,7 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 						if(getConfig().getBoolean("ignorechat", false)) {
 							if(!p.getIgnores().contains(senderUUID)) {
 								// System.out.println("Chat sent");
-								Format.sendPacketPlayOutChat(p.getPlayer(), packet);							
+								Format.sendPacketPlayOutChat(p.getPlayer(), packet);
 							}
 							continue;
 						}

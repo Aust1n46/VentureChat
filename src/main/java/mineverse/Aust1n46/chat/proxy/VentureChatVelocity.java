@@ -134,12 +134,14 @@ public class VentureChatVelocity implements VentureChatProxySource {
 		if(!channelIdentifierId.equals(VentureChatProxy.PLUGIN_MESSAGING_CHANNEL_STRING) && !channelIdentifierId.contains("viaversion:")) {
 			return;
 		}
+		// Critical to prevent client from sending or receiving messages
+		event.setResult(ForwardResult.handled());
+
 		if(!(event.getSource() instanceof ServerConnection)) {
 			return;
 		}
 		String serverName = ((ServerConnection) event.getSource()).getServerInfo().getName();
 		VentureChatProxy.onPluginMessage(event.getData(), serverName, this);
-		event.setResult(ForwardResult.handled());
 	}
 
 	@Override
