@@ -13,10 +13,10 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.server.ServerCommandEvent;
+import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.SkullMeta;
 
-import me.clip.placeholderapi.PlaceholderAPI;
 import mineverse.Aust1n46.chat.MineverseChat;
 import mineverse.Aust1n46.chat.alias.Alias;
 import mineverse.Aust1n46.chat.api.MineverseChatAPI;
@@ -24,6 +24,7 @@ import mineverse.Aust1n46.chat.api.MineverseChatPlayer;
 import mineverse.Aust1n46.chat.channel.ChatChannel;
 import mineverse.Aust1n46.chat.database.Database;
 import mineverse.Aust1n46.chat.gui.GuiSlot;
+import mineverse.Aust1n46.chat.gui.ModerationGuiInventory;
 import mineverse.Aust1n46.chat.localization.LocalizedMessage;
 import mineverse.Aust1n46.chat.utilities.Format;
 import mineverse.Aust1n46.chat.versions.VersionHandler;
@@ -137,19 +138,22 @@ public class CommandListener implements Listener {
 
 	@SuppressWarnings("deprecation")
 	@EventHandler(priority = EventPriority.LOW)
-	public void InventoryClick(InventoryClickEvent e) {
-		ItemStack item = e.getCurrentItem();
-		if (item == null || !e.getView().getTitle().contains("VentureChat")) {
+	public void InventoryClick(final InventoryClickEvent event) {
+		final Inventory inventory = event.getInventory();
+		final InventoryHolder inventoryHolder = inventory.getHolder();
+	    if (!(inventoryHolder instanceof ModerationGuiInventory)) {
+	        return;
+	    }
+	    event.setCancelled(true);
+	    final ModerationGuiInventory moderationGuiInventory = (ModerationGuiInventory) inventoryHolder;
+		final MineverseChatPlayer mcp = MineverseChatAPI.getOnlineMineverseChatPlayer((Player) event.getWhoClicked());
+		final MineverseChatPlayer target = moderationGuiInventory.getTargetMcp();
+		final ChatChannel channel = moderationGuiInventory.getChannel();
+		final int hash = moderationGuiInventory.getHash();
+		final ItemStack item = event.getCurrentItem();
+		if (item == null) {
 			return;
 		}
-		e.setCancelled(true);
-		MineverseChatPlayer mcp = MineverseChatAPI.getOnlineMineverseChatPlayer((Player) e.getWhoClicked());
-		String playerName = e.getView().getTitle().replace(" GUI", "").replace("VentureChat: ", "");
-		MineverseChatPlayer target = MineverseChatAPI.getMineverseChatPlayer(playerName);
-		ItemStack skull = e.getInventory().getItem(0);
-		SkullMeta skullMeta = (SkullMeta) skull.getItemMeta();
-		ChatChannel channel = ChatChannel.getChannel(ChatColor.stripColor(skullMeta.getLore().get(0)).replace("Channel: ", ""));
-		int hash = Integer.parseInt(ChatColor.stripColor(skullMeta.getLore().get(1).replace("Hash: ", "")));
 		if (VersionHandler.is1_7()) {
 			if (item.getType() == Material.BEDROCK) {
 				mcp.getPlayer().closeInventory();
@@ -159,14 +163,11 @@ public class CommandListener implements Listener {
 				mcp.getPlayer().closeInventory();
 			}
 		}
-		for (GuiSlot g : GuiSlot.getGuiSlots()) {
-			if (g.getIcon() == item.getType() && g.getDurability() == item.getDurability() && g.getSlot() == e.getSlot()) {
+		for (final GuiSlot g : GuiSlot.getGuiSlots()) {
+			if (g.getIcon() == item.getType() && g.getDurability() == item.getDurability() && g.getSlot() == event.getSlot()) {
 				String command = g.getCommand().replace("{channel}", channel.getName()).replace("{hash}", hash + "");
 				if (target != null) {
 					command = command.replace("{player_name}", target.getName());
-					if (target.isOnline()) {
-						command = Format.FormatStringAll(PlaceholderAPI.setBracketPlaceholders(target.getPlayer(), command));
-					}
 				} else {
 					command = command.replace("{player_name}", "Discord_Message");
 				}
