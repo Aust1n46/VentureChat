@@ -154,7 +154,7 @@
         <dependency>
             <groupId>com.comphenix.protocol</groupId>
             <artifactId>ProtocolLib</artifactId>
-            <version>5.0.0-SNAPSHOT</version>
+            <version>5.1.0</version>
         </dependency>
         <!--These are long depreciated. I would've removed them, but that is outside the scope of what I want to do here.
         I am using the latest builds of these plugins to be published to SpigotMC.-->
@@ -171,6 +171,12 @@
             <version>2.14.0</version>
             <scope>system</scope>
             <systemPath>${basedir}/lib/MassiveCore.jar</systemPath>
+        </dependency>
+        <dependency>
+          <groupId>io.github.url-detector</groupId>
+          <artifactId>url-detector</artifactId>
+          <version>0.1.23</version>
+          <scope>provided</scope>
         </dependency>
         <!--Back to safety.-->
         <dependency>

@@ -7,3 +7,5 @@ softdepend: [Towny, Factions, EssentialsDiscord]
 author: Aust1n46
 website: https://bitbucket.org/Aust1n46/venturechat/
 description: #1 Channels Chat plugin! Spigot + Bungee. Supports PlaceholderAPI + JSON formatting. Moderation GUI!
+libraries:
+  - io.github.url-detector:url-detector:0.1.23

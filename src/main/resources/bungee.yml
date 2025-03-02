@@ -2,3 +2,5 @@ name: VentureChat
 main: mineverse.Aust1n46.chat.proxy.VentureChatBungee
 version: ${project.version}
 author: Aust1n46
+libraries:
+  - io.github.url-detector:url-detector:0.1.23
