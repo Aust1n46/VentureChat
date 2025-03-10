@@ -110,7 +110,13 @@ public class Format {
 				indexStart = matcher.start();
 				indexEnd = matcher.end();
 				placeholder = remaining.substring(indexStart, indexEnd);
+				
+				// Get the value of place holder then reprocess the formatted placeholder value to handle nested placeholders
 				formattedPlaceholder = escapeJsonChars(Format.FormatStringAll(PlaceholderAPI.setBracketPlaceholders(icp.getPlayer(), placeholder)));
+				while (PLACEHOLDERAPI_PLACEHOLDER_PATTERN.matcher(formattedPlaceholder).find()) {
+					formattedPlaceholder = escapeJsonChars(Format.FormatStringAll(PlaceholderAPI.setBracketPlaceholders(icp.getPlayer(), formattedPlaceholder)));
+				}
+
 				temp += convertToJsonColors(escapeJsonChars(lastCode + remaining.substring(0, indexStart))) + ",";
 				lastCode = getLastCode(lastCode + remaining.substring(0, indexStart));
 				boolean placeholderHasJsonAttribute = false;
