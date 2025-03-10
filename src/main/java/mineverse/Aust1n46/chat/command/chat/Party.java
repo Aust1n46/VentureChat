@@ -287,10 +287,10 @@ public class Party extends Command {
 							msg = Format.FormatStringLegacyColor(msg);
 						}
 						if (mcp.getPlayer().hasPermission("venturechat.color")) {
-							msg = Format.FormatStringColor(msg);
+							msg = Format.FormatStringColor(msg, mcp.getPlayer().hasPermission("venturechat.color.hex"));
 						}
 						if (mcp.getPlayer().hasPermission("venturechat.format")) {
-							msg = Format.FormatString(msg);
+							msg = Format.FormatString(msg, mcp.getPlayer().hasPermission("venturechat.format.magic"));
 						}
 						if (plugin.getConfig().getString("partyformat").equalsIgnoreCase("Default")) {
 							partyformat = ChatColor.GREEN + "[" + MineverseChatAPI.getMineverseChatPlayer(mcp.getParty()).getName() + "'s Party] " + mcp.getName() + ":" + msg;
