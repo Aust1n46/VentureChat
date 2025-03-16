@@ -177,8 +177,12 @@ public class Format {
 		String lastCode = DEFAULT_COLOR_CODE;
 		do {
 			Pattern pattern = Pattern.compile(
-					"([a-zA-Z0-9" + BUKKIT_COLOR_CODE_PREFIX + "\\-:/]+\\.[a-zA-Z/0-9" + BUKKIT_COLOR_CODE_PREFIX
-							+ "\\-:_#]+(\\.[a-zA-Z/0-9." + BUKKIT_COLOR_CODE_PREFIX + "\\-:;,#\\?\\+=_]+)?)");
+					"((?:[a-zA-Z" + BUKKIT_COLOR_CODE_PREFIX + "][a-zA-Z+\\-." + BUKKIT_COLOR_CODE_PREFIX
+                    + "]*)://)?(?:([^\\s:@]*)(?::([^\\s@]*))?@)?((?:[a-zA-Z0-9\\-." + BUKKIT_COLOR_CODE_PREFIX
+                    + "]*[a-zA-Z0-9])+\\.[a-zA-Z\\-" + BUKKIT_COLOR_CODE_PREFIX + "]{2,}|(?:["
+                    + BUKKIT_COLOR_CODE_PREFIX + "0-9]{1,3}\\.[" + BUKKIT_COLOR_CODE_PREFIX + "0-9]{1,3}\\.["
+                    + BUKKIT_COLOR_CODE_PREFIX + "0-9]{1,3}\\.[" + BUKKIT_COLOR_CODE_PREFIX + "0-9]{1,3}))(?::(["
+                    + BUKKIT_COLOR_CODE_PREFIX + "0-9]{1,5}))?(/[^\\s?]*)*(?:\\?([^\\s]*))?");
 			Matcher matcher = pattern.matcher(remaining);
 			if (matcher.find()) {
 				indexLink = matcher.start();
