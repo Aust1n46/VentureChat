@@ -85,4 +85,11 @@ public class Database {
 			}
 		});
 	}
+
+	public static void writeVentureChat(String uuid, String name, String channel, String text,
+			String type) {
+		String server = MineverseChat.getInstance().getConfig().getConfigurationSection("mysql")
+				.getString("from_server", "Local");
+		writeVentureChat(uuid, name, server, channel, text, type);
+	}
 }

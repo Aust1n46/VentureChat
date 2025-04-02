@@ -75,6 +75,7 @@ mysql:
   password: Password
   host: localhost
   database: Database
+  from_server: Local # Which server the chat came from, useful for filtering chat by server in multiple servers setups
 
 # Loglevel feature is still in the works for adding of debug messages
 # Valid loglevels:
