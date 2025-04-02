@@ -149,7 +149,7 @@ public class ChatListener implements Listener {
 				mcp.setReplyPlayer(tp.getUUID());
 				tp.setReplyPlayer(mcp.getUUID());
 				if(Database.isEnabled()) {
-					Database.writeVentureChat(mcp.getUUID().toString(), mcp.getName(), "Local", "Messaging_Component", chat.replace("'", "''"), "Chat");
+					Database.writeVentureChat(mcp.getUUID().toString(), mcp.getName(), "Messaging_Component", chat.replace("'", "''"), "Chat");
 				}
 			}
 			return;
@@ -185,7 +185,7 @@ public class ChatListener implements Listener {
 				}
 				Bukkit.getConsoleSender().sendMessage(partyformat);
 				if(Database.isEnabled()) {
-					Database.writeVentureChat(mcp.getUUID().toString(), mcp.getName(), "Local", "Party_Component", chat.replace("'", "''"), "Chat");
+					Database.writeVentureChat(mcp.getUUID().toString(), mcp.getName(), "Party_Component", chat.replace("'", "''"), "Chat");
 				}
 				return;
 			}
@@ -517,7 +517,7 @@ public class ChatListener implements Listener {
 		
 		if(!bungee) {
 			if(Database.isEnabled()) {
-				Database.writeVentureChat(mcp.getUUID().toString(), mcp.getName(), "Local", channel.getName(), chat.replace("'", "''"), "Chat");
+				Database.writeVentureChat(mcp.getUUID().toString(), mcp.getName(), channel.getName(), chat.replace("'", "''"), "Chat");
 			}
 			
 			if(recipientCount == 1) {

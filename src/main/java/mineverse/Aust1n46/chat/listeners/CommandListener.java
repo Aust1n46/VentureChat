@@ -68,7 +68,7 @@ public class CommandListener implements Listener {
 		String message = event.getMessage();
 
 		if (Database.isEnabled()) {
-			Database.writeVentureChat(mcp.getUUID().toString(), mcp.getName(), "Local", "Command_Component", event.getMessage().replace("'", "''"), "Command");
+			Database.writeVentureChat(mcp.getUUID().toString(), mcp.getName(), "Command_Component", event.getMessage().replace("'", "''"), "Command");
 		}
 
 		for (Alias a : Alias.getAliases()) {
@@ -131,7 +131,7 @@ public class CommandListener implements Listener {
 	@EventHandler
 	public void onServerCommand(ServerCommandEvent event) {
 		if (Database.isEnabled()) {
-			Database.writeVentureChat("N/A", "Console", "Local", "Command_Component", event.getCommand().replace("'", "''"), "Command");
+			Database.writeVentureChat("N/A", "Console", "Command_Component", event.getCommand().replace("'", "''"), "Command");
 		}
 	}
 
