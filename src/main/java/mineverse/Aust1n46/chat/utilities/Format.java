@@ -3,13 +3,12 @@ package mineverse.Aust1n46.chat.utilities;
 import static mineverse.Aust1n46.chat.MineverseChat.getInstance;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.StringTokenizer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
+import mineverse.Aust1n46.chat.MineverseChat;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -134,14 +133,14 @@ public class Format {
 						} else {
 							final String clickText = escapeJsonChars(Format.FormatStringAll(
 									PlaceholderAPI.setBracketPlaceholders(icp.getPlayer(), jsonAttribute.getClickText())));
-							actionJson = ",\"clickEvent\":{\"action\":\"" + jsonAttribute.getClickAction().toString() + "\",\"value\":\"" + clickText
+							actionJson = ",\"click_event\":{\"action\":\"" + jsonAttribute.getClickAction().toString() + "\",\"command\":\"" + clickText
 							+ "\"}";
 						}
 						final String hoverJson;
 						if (hoverText.isEmpty()) {
 							hoverJson = StringUtils.EMPTY;
 						} else {
-							hoverJson = ",\"hoverEvent\":{\"action\":\"show_text\",\"value\":{\"text\":\"\",\"extra\":["
+							hoverJson = ",\"hover_event\":{\"action\":\"show_text\",\"value\":{\"text\":\"\",\"extra\":["
 									+ convertToJsonColors(hoverText) + "]}}";
 						}
 						temp += convertToJsonColors(lastCode + formattedPlaceholder, actionJson + hoverJson) + ",";
@@ -191,9 +190,9 @@ public class Format {
 					https = "s";
 				temp += convertToJsonColors(lastCode + link,
 						",\"underlined\":" + underlineURLs()
-								+ ",\"clickEvent\":{\"action\":\"open_url\",\"value\":\"http" + https + "://"
+								+ ",\"click_event\":{\"action\":\"open_url\",\"url\":\"http" + https + "://"
 								+ ChatColor.stripColor(link.replace("http://", "").replace("https://", ""))
-								+ "\"},\"hoverEvent\":{\"action\":\"show_text\",\"value\":{\"text\":\"\",\"extra\":["
+								+ "\"},\"hover_event\":{\"action\":\"show_text\",\"value\":{\"text\":\"\",\"extra\":["
 								+ convertToJsonColors(lastCode + link) + "]}}")
 						+ ",";
 				lastCode = getLastCode(lastCode + link);
@@ -455,9 +454,9 @@ public class Format {
 		if (player.hasPermission("venturechat.gui")) {
 			json = json.substring(0, json.length() - 1);
 			json += "," + Format.convertToJsonColors(Format.FormatStringAll(getInstance().getConfig().getString("guiicon")),
-					",\"clickEvent\":{\"action\":\"run_command\",\"value\":\"/vchatgui " + sender + " " + channelName
+					",\"click_event\":{\"action\":\"run_command\",\"command\":\"/vchatgui " + sender + " " + channelName
 							+ " " + hash
-							+ "\"},\"hoverEvent\":{\"action\":\"show_text\",\"value\":{\"text\":\"\",\"extra\":["
+							+ "\"},\"hover_event\":{\"action\":\"show_text\",\"value\":{\"text\":\"\",\"extra\":["
 							+ Format.convertToJsonColors(
 									Format.FormatStringAll(getInstance().getConfig().getString("guitext")))
 							+ "]}}")
@@ -960,15 +959,23 @@ public class Format {
 	public static void playMessageSound(MineverseChatPlayer mcp) {
 		Player player = mcp.getPlayer();
 		String soundName = getInstance().getConfig().getString("message_sound", DEFAULT_MESSAGE_SOUND);
-		if(!soundName.equalsIgnoreCase("None")) {
-			Sound messageSound = getSound(soundName);
-			player.playSound(player.getLocation(), messageSound, 1, 0);
+		if (!soundName.equalsIgnoreCase("None")) {
+			try {
+				Sound messageSound = getSound(soundName);
+				player.playSound(player.getLocation(), messageSound, 1, 0);
+			} catch (final Exception e) {
+				if (MineverseChat.getInstance().getConfig().getString("loglevel", "info").equals("debug")) {
+					Bukkit.getConsoleSender().sendMessage(Format.FormatStringAll("&8[&eVentureChat&8]&c - Error playing sound, defaulting to none"));
+				}
+			}
 		}
 	}
 	
 	private static Sound getSound(String soundName) {
-		if(Arrays.asList(Sound.values()).stream().map(Sound::toString).collect(Collectors.toList()).contains(soundName)) {
-			return Sound.valueOf(soundName);
+		for (Sound sound : Sound.values()) {
+			if (sound.toString().equalsIgnoreCase(soundName)) {
+				return sound;
+			}
 		}
 		Bukkit.getConsoleSender().sendMessage(Format.FormatStringAll("&8[&eVentureChat&8]&c - Message sound invalid!"));
 		return getDefaultMessageSound();
