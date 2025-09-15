@@ -105,10 +105,10 @@ public class CommandListener implements Listener {
 						send = Format.FormatStringLegacyColor(send);
 					}
 					if (mcp.getPlayer().hasPermission("venturechat.color")) {
-						send = Format.FormatStringColor(send);
+						send = Format.FormatStringColor(send, mcp.getPlayer().hasPermission("venturechat.color.hex"));
 					}
 					if (mcp.getPlayer().hasPermission("venturechat.format")) {
-						send = Format.FormatString(send);
+						send = Format.FormatString(send, mcp.getPlayer().hasPermission("venturechat.format.magic"));
 					}
 					if (s.startsWith("Command:")) {
 						mcp.getPlayer().chat(s.substring(9).replace("$", send));

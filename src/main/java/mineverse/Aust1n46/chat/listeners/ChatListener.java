@@ -116,10 +116,10 @@ public class ChatListener implements Listener {
 					filtered = Format.FormatStringLegacyColor(filtered);
 				}
 				if(mcp.getPlayer().hasPermission("venturechat.color")) {
-					filtered = Format.FormatStringColor(filtered);
+					filtered = Format.FormatStringColor(filtered, mcp.getPlayer().hasPermission("venturechat.color.hex"));
 				}
 				if(mcp.getPlayer().hasPermission("venturechat.format")) {
-					filtered = Format.FormatString(filtered);
+					filtered = Format.FormatString(filtered, mcp.getPlayer().hasPermission("venturechat.format.magic"));
 				}
 				filtered = " " + filtered;
 				
@@ -168,10 +168,10 @@ public class ChatListener implements Listener {
 							filtered = Format.FormatStringLegacyColor(filtered);
 						}
 						if(mcp.getPlayer().hasPermission("venturechat.color")) {
-							filtered = Format.FormatStringColor(filtered);
+							filtered = Format.FormatStringColor(filtered, mcp.getPlayer().hasPermission("venturechat.color.hex"));
 						}
 						if(mcp.getPlayer().hasPermission("venturechat.format")) {
-							filtered = Format.FormatString(filtered);
+							filtered = Format.FormatString(filtered, mcp.getPlayer().hasPermission("venturechat.format.magic"));
 						}
 						filtered = " " + filtered;
 						if(plugin.getConfig().getString("partyformat").equalsIgnoreCase("Default")) {
@@ -468,10 +468,10 @@ public class ChatListener implements Listener {
 			chat = Format.FormatStringLegacyColor(chat);
 		}
 		if(mcp.getPlayer().hasPermission("venturechat.color")) {
-			chat = Format.FormatStringColor(chat);
+			chat = Format.FormatStringColor(chat, mcp.getPlayer().hasPermission("venturechat.color.hex"));
 		}
 		if(mcp.getPlayer().hasPermission("venturechat.format")) {
-			chat = Format.FormatString(chat);
+			chat = Format.FormatString(chat, mcp.getPlayer().hasPermission("venturechat.format.magic"));
 		}
 		if(!mcp.isQuickChat()) {
 			chat = " " + chat;
