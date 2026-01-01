@@ -970,16 +970,36 @@ public class Format {
 			}
 		}
 	}
-	
+
 	private static Sound getSound(String soundName) {
-		for (Sound sound : Sound.values()) {
-			if (sound.toString().equalsIgnoreCase(soundName)) {
-				return sound;
-			}
-		}
-		Bukkit.getConsoleSender().sendMessage(Format.FormatStringAll("&8[&eVentureChat&8]&c - Message sound invalid!"));
-		return getDefaultMessageSound();
-	}
+    if (soundName == null || soundName.equalsIgnoreCase("none")) {
+        return null;
+    }
+
+    String raw = soundName.trim();
+
+    // Try modern namespaced sound (needed for 1.21+)
+    NamespacedKey key = NamespacedKey.minecraft(raw.toLowerCase());
+    Sound sound = Registry.SOUNDS.get(key);
+
+    // Fallback to legacy enum name
+    if (sound == null) {
+        try {
+            sound = Sound.valueOf(raw.toUpperCase());
+        } catch (IllegalArgumentException ignored) {
+        }
+    }
+
+    // Final fallback to default
+    if (sound == null) {
+        Bukkit.getConsoleSender().sendMessage(
+            Format.FormatStringAll("&8[&eVentureChat&8]&c - Message sound invalid: " + raw)
+        );
+        sound = getDefaultMessageSound();
+    }
+
+    return sound;
+}
 	
 	private static Sound getDefaultMessageSound() {
 		if(VersionHandler.is1_7() || VersionHandler.is1_8()) {
@@ -994,3 +1014,4 @@ public class Format {
 		return message.replaceAll("(\u00A7([a-z0-9]))", "");
 	}
 }
+
