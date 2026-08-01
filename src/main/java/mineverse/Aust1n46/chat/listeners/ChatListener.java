@@ -31,6 +31,7 @@ import mineverse.Aust1n46.chat.command.mute.MuteContainer;
 import mineverse.Aust1n46.chat.database.Database;
 import mineverse.Aust1n46.chat.localization.LocalizedMessage;
 import mineverse.Aust1n46.chat.utilities.Format;
+import mineverse.Aust1n46.chat.utilities.PluginMessageUtil;
 
 //This class listens to chat through the chat event and handles the bulk of the chat channels and formatting.
 public class ChatListener implements Listener {
@@ -554,8 +555,13 @@ public class ChatListener implements Listener {
 				}
 				out.writeUTF(MineverseChat.getVaultPermission().getPrimaryGroup(mcp.getPlayer()));
 				out.writeUTF(mcp.getNickname());
-				mcp.getPlayer().sendPluginMessage(plugin, MineverseChat.PLUGIN_MESSAGING_CHANNEL, byteOutStream.toByteArray());
 				out.close();
+				byte[] payload = byteOutStream.toByteArray();
+				if(PluginMessageUtil.exceedsServerboundLimit(payload)) {
+					Bukkit.getConsoleSender().sendMessage(Format.FormatStringAll(PluginMessageUtil.createDropMessage(payload.length)));
+					return;
+				}
+				mcp.getPlayer().sendPluginMessage(plugin, MineverseChat.PLUGIN_MESSAGING_CHANNEL, payload);
 			}
 			catch(Exception e) {
 				e.printStackTrace();

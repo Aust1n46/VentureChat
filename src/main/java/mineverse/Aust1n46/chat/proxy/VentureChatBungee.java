@@ -9,6 +9,7 @@ import java.util.stream.Collectors;
 
 import mineverse.Aust1n46.chat.database.ProxyPlayerData;
 import mineverse.Aust1n46.chat.utilities.Format;
+import mineverse.Aust1n46.chat.utilities.PluginMessageUtil;
 import mineverse.Aust1n46.chat.utilities.UUIDFetcher;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.chat.TextComponent;
@@ -91,7 +92,7 @@ public class VentureChatBungee extends Plugin implements Listener, VentureChatPr
 			
 			for(String send : getProxy().getServers().keySet()) {
 				if(getProxy().getServers().get(send).getPlayers().size() > 0) {
-					getProxy().getServers().get(send).sendData(VentureChatProxy.PLUGIN_MESSAGING_CHANNEL_STRING, outstream.toByteArray());
+					sendPluginMessage(send, outstream.toByteArray());
 				}
 			}
 		}
@@ -117,6 +118,10 @@ public class VentureChatBungee extends Plugin implements Listener, VentureChatPr
 
 	@Override
 	public void sendPluginMessage(String serverName, byte[] data) {
+		if(PluginMessageUtil.exceedsServerboundLimit(data)) {
+			sendConsoleMessage(PluginMessageUtil.createDropMessage(data.length));
+			return;
+		}
 		getProxy().getServers().get(serverName).sendData(VentureChatProxy.PLUGIN_MESSAGING_CHANNEL_STRING, data);
 	}
 
