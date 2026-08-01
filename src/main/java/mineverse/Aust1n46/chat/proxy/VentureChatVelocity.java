@@ -31,6 +31,7 @@ import com.velocitypowered.api.proxy.server.RegisteredServer;
 
 import mineverse.Aust1n46.chat.database.ProxyPlayerData;
 import mineverse.Aust1n46.chat.utilities.Format;
+import mineverse.Aust1n46.chat.utilities.PluginMessageUtil;
 import net.md_5.bungee.config.Configuration;
 import net.md_5.bungee.config.ConfigurationProvider;
 import net.md_5.bungee.config.YamlConfiguration;
@@ -146,6 +147,10 @@ public class VentureChatVelocity implements VentureChatProxySource {
 
 	@Override
 	public void sendPluginMessage(String serverName, byte[] data) {
+		if(PluginMessageUtil.exceedsServerboundLimit(data)) {
+			sendConsoleMessage(Format.FormatStringAll(PluginMessageUtil.createDropMessage(data.length)));
+			return;
+		}
 		Optional<RegisteredServer> server = proxyServer.getServer(serverName);
 		if(server.isPresent()) {
 			server.get().sendPluginMessage(channelIdentifier, data);
